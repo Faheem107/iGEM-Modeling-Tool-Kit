@@ -1,0 +1,6 @@
+{
+  "name": "NYUAD iGEM 2026 Modeling Kit",
+  "description": "Interactive dry lab simulation workspace for bacteria-modified sand stabilization, modeling metabolic dynamics, thermodynamic cross-linking, aeolian geology, and protein docking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
