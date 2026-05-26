@@ -5,6 +5,7 @@ import AeolianWindTunnel from './components/AeolianWindTunnel';
 import EcologicalSpread from './components/EcologicalSpread';
 import HighFidelityProteinExplorer from './components/HighFidelityProteinExplorer';
 import WetLabSandbox2D from './components/WetLabSandbox2D';
+import GlossaryTerm from './components/GlossaryTerm';
 
 import { 
   Dna, 
@@ -21,7 +22,9 @@ import {
   Globe,
   HelpCircle,
   Sliders,
-  Award
+  Award,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { MetabolicParams, BiophysicsParams, AeolianParams, CAConfig } from './types';
 
@@ -31,6 +34,7 @@ type TabType = 'metabolic' | 'crosslink' | 'aeolian' | 'ecological';
 export default function App() {
   const [viewMode, setViewMode] = useState<ViewMode>('landing');
   const [activeTab, setActiveTab] = useState<TabType>('metabolic');
+  const [isLightMode, setIsLightMode] = useState<boolean>(true); // Default to light sandy theme on startup as requested
 
   // --- Central Simulation Orchestrator States ---
   const [metabolicParams, setMetabolicParams] = useState<MetabolicParams>({
@@ -109,7 +113,7 @@ export default function App() {
   const headerCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
-    if (viewMode !== 'landing' || !headerCanvasRef.current) return;
+    if (!headerCanvasRef.current) return;
     const canvas = headerCanvasRef.current;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -121,7 +125,7 @@ export default function App() {
       vx: number;
       vy: number;
       radius: number;
-      color: string;
+      colorIndex: number;
       alpha: number;
       phase: number;
     }> = [];
@@ -133,24 +137,19 @@ export default function App() {
     handleResize();
     window.addEventListener('resize', handleResize);
 
-    // Seed sandy and peptidic glowing coordinates
-    const count = 120;
-    const colors = [
-      '#22d3ee', // Cyan
-      '#34d399', // Emerald green
-      '#fbbf24', // Gold sand
-      '#6366f1', // Indigo
-      '#3b82f6'  // Blue
-    ];
+    // Seed sandy or peptidic glowing coordinates depending on selected theme
+    const count = isLightMode ? 220 : 130; // Increased density for small sand grains floating around
     for (let i = 0; i < count; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         vx: (Math.random() - 0.5) * 0.4,
         vy: (Math.random() - 0.5) * 0.4,
-        radius: Math.random() * 2.2 + 0.8,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        alpha: Math.random() * 0.5 + 0.25,
+        radius: isLightMode 
+          ? Math.random() * 1.6 + 0.4 // Extra small desert sand dust
+          : Math.random() * 2.5 + 0.6,
+        colorIndex: Math.floor(Math.random() * 5),
+        alpha: isLightMode ? Math.random() * 0.55 + 0.35 : Math.random() * 0.5 + 0.25,
         phase: Math.random() * Math.PI * 2
       });
     }
@@ -167,6 +166,22 @@ export default function App() {
       pointerX = -1000;
       pointerY = -1000;
     };
+    
+    const dModeColors = [
+      '#22d3ee', // Cyan
+      '#34d399', // Emerald green
+      '#fbbf24', // Gold sand
+      '#6366f1', // Indigo
+      '#3b82f6'  // Blue
+    ];
+    const lModeColors = [
+      '#5c4033', // Deep Espresso Brown (darker tone than background)
+      '#8c6239', // Terra Cotta Sand
+      '#a67c52', // Classic Ochre Sand
+      '#4a3319', // Dark Walnut Sand
+      '#a16207'  // Clay Golden brown
+    ];
+
     const handleCanvasClick = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
       const clickX = e.clientX - rect.left;
@@ -180,15 +195,15 @@ export default function App() {
           y: clickY,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
-          radius: Math.random() * 2.5 + 1.2,
-          color: colors[Math.floor(Math.random() * colors.length)],
+          radius: isLightMode ? Math.random() * 2.0 + 0.5 : Math.random() * 2.5 + 1.2,
+          colorIndex: Math.floor(Math.random() * 5),
           alpha: 0.9,
           phase: Math.random() * Math.PI * 2
         });
       }
       // Trim to avoid too many elements
-      if (particles.length > 250) {
-        particles = particles.slice(particles.length - 200);
+      if (particles.length > 350) {
+        particles = particles.slice(particles.length - 250);
       }
     };
 
@@ -215,12 +230,12 @@ export default function App() {
             y: currentY,
             vx: (Math.random() - 0.5) * 0.5 + (currentX - lastMouseX) * 0.08,
             vy: (Math.random() - 0.5) * 0.5 + (currentY - lastMouseY) * 0.08,
-            radius: Math.random() * 1.8 + 1.2,
-            color: colors[Math.floor(Math.random() * colors.length)],
+            radius: isLightMode ? Math.random() * 1.4 + 0.6 : Math.random() * 1.8 + 1.2,
+            colorIndex: Math.floor(Math.random() * 5),
             alpha: 0.85,
             phase: Math.random() * Math.PI * 2
           });
-          if (particles.length > 250) {
+          if (particles.length > 350) {
             particles.shift();
           }
         }
@@ -234,12 +249,14 @@ export default function App() {
     const animate = () => {
       globalTime += 0.006;
       
-      // Cinematic transparent background clearing for comet trailing sand trails!
-      ctx.fillStyle = 'rgba(3, 5, 8, 0.18)'; 
+      // Cinematic transparent background clearing for trailing sand and biopolymer textures!
+      ctx.fillStyle = isLightMode 
+        ? 'rgba(237, 227, 206, 0.22)' // Warm sand color clearing with slightly darker tone
+        : 'rgba(3, 5, 8, 0.18)'; 
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Draw faint structural science grids representing simulation nodes
-      ctx.strokeStyle = 'rgba(16, 185, 129, 0.02)';
+      ctx.strokeStyle = isLightMode ? 'rgba(92, 64, 51, 0.04)' : 'rgba(16, 185, 129, 0.02)';
       ctx.lineWidth = 1;
       const gridSize = 100;
       for (let x = 0; x < canvas.width; x += gridSize) {
@@ -258,31 +275,34 @@ export default function App() {
       // Draw an abstract rotating golden bio-netting center-stage
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
-      ctx.strokeStyle = 'rgba(234, 179, 8, 0.022)';
+      ctx.strokeStyle = isLightMode ? 'rgba(140, 98, 57, 0.035)' : 'rgba(234, 179, 8, 0.022)';
       ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.arc(centerX, centerY, 180 + Math.sin(globalTime) * 20, 0, Math.PI * 2);
       ctx.stroke();
 
-      ctx.strokeStyle = 'rgba(34, 211, 238, 0.015)';
+      ctx.strokeStyle = isLightMode ? 'rgba(92, 64, 51, 0.025)' : 'rgba(34, 211, 238, 0.015)';
       ctx.beginPath();
       ctx.arc(centerX, centerY, 320 + Math.cos(globalTime * 0.8) * 35, 0, Math.PI * 2);
       ctx.stroke();
 
       // Update and Draw connecting webs first with beautiful polymer matrix look
+      const runColors = isLightMode ? lModeColors : dModeColors;
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const pi = particles[i];
           const pj = particles[j];
           if (!pi || !pj) continue;
           const dist = Math.hypot(pi.x - pj.x, pi.y - pj.y);
-          if (dist < 90) {
-            const opacity = (1.0 - dist / 90) * 0.18 * Math.min(pi.alpha, pj.alpha);
-            // Dynamic color blending based on interaction state
-            ctx.strokeStyle = pi.color === pj.color 
-              ? `rgba(52, 211, 153, ${opacity})` 
-              : `rgba(34, 211, 238, ${opacity * 0.75})`;
-            ctx.lineWidth = 0.55;
+          if (dist < 80) {
+            const opacity = (1.0 - dist / 80) * 0.18 * Math.min(pi.alpha, pj.alpha);
+            // Dynamic color blending based on interaction state and theme
+            ctx.strokeStyle = isLightMode 
+              ? `rgba(140, 98, 57, ${opacity * 0.45})`
+              : pi.colorIndex === pj.colorIndex 
+                ? `rgba(52, 211, 153, ${opacity})` 
+                : `rgba(34, 211, 238, ${opacity * 0.75})`;
+            ctx.lineWidth = isLightMode ? 0.35 : 0.55;
             ctx.beginPath();
             ctx.moveTo(pi.x, pi.y);
             ctx.lineTo(pj.x, pj.y);
@@ -309,7 +329,7 @@ export default function App() {
         }
 
         // Apply a gentle horizontal desert wind drift (from left to right) simulating sand transport!
-        p.x += p.vx + 0.28; 
+        p.x += p.vx + (isLightMode ? 0.38 : 0.28); // slightly speedier sand flow in light mode
         p.y += p.vy + Math.sin(globalTime * 1.5 + p.phase) * 0.08;
 
         // Apply progressive friction/drag so sudden gusts dissipate elegantly
@@ -330,7 +350,7 @@ export default function App() {
 
         // Pulsate opacity for natural twinkling molecular/sand feel
         const pulse = Math.sin(globalTime * 8 + p.phase) * 0.12;
-        ctx.fillStyle = p.color;
+        ctx.fillStyle = runColors[p.colorIndex % runColors.length];
         ctx.globalAlpha = Math.max(0.12, Math.min(1.0, p.alpha + pulse));
 
         ctx.beginPath();
@@ -356,57 +376,99 @@ export default function App() {
       canvas.removeEventListener('click', handleCanvasClick);
       cancelAnimationFrame(animId);
     };
-  }, [viewMode]);
+  }, [viewMode, isLightMode]);
 
   return (
-    <div className="min-h-screen bg-[#030508] text-slate-200 font-sans selection:bg-cyan-500 selection:text-black">
+    <div className={`min-h-screen transition-all duration-300 font-sans relative ${
+      isLightMode 
+        ? 'bg-[#efe4cd] text-[#2d2219] selection:bg-amber-800 selection:text-white' 
+        : 'bg-[#030508] text-slate-200 selection:bg-cyan-500 selection:text-black'
+    }`}>
+      {/* Interactive/Background particles canvas backdrop - persists across views */}
+      <canvas 
+        ref={headerCanvasRef} 
+        className={`fixed inset-0 w-full h-full animate-fadeIn transition-all duration-500 overflow-hidden ${
+          viewMode === 'landing' ? 'pointer-events-auto cursor-crosshair' : 'pointer-events-none'
+        }`}
+        style={{ zIndex: 0 }}
+      />
+      
+      {/* Top Floating Theme Switcher Option */}
+      <div className="absolute top-4 right-6 z-50 flex items-center gap-3">
+        <button
+          onClick={() => setIsLightMode(!isLightMode)}
+          className={`flex items-center justify-center p-2 rounded-full border cursor-pointer shadow-md transition-all duration-300 ${
+            isLightMode
+              ? 'bg-[#dfceb0]/85 border-[#b8956c] text-[#5c4033] hover:bg-[#ebdec7]'
+              : 'bg-slate-900/90 border-slate-800 text-cyan-400 hover:bg-slate-800'
+          }`}
+          title="Toggle between warm sandy and dark biophysics theme mode"
+          id="theme-toggler-btn"
+        >
+          {isLightMode ? (
+            <Moon className="w-4 h-4 fill-[#5c4033] text-[#5c4033]" />
+          ) : (
+            <Sun className="w-4 h-4 fill-[#fbbf24] text-yellow-400 animate-spin-slow" />
+          )}
+        </button>
+      </div>
       
       {viewMode === 'landing' && (
         /* LANDING VIEW */
-        <div className="relative min-h-screen overflow-hidden flex flex-col justify-between" id="landing-page-frame">
-          {/* Interactive particles canvas background */}
-          <canvas 
-            ref={headerCanvasRef} 
-            className="absolute inset-0 w-full h-full pointer-events-auto"
-            style={{ zIndex: 0 }}
-          />
+        <div className="relative min-h-screen flex flex-col justify-between" id="landing-page-frame">
 
           <div className="relative z-10 max-w-6xl mx-auto px-6 py-12 flex-1 flex flex-col justify-center">
             
             {/* NYUAD Logo Header Badge */}
             <div className="flex justify-center mb-5">
-              <span className="bg-cyan-950/85 border border-[#14b8a6]/45 text-[#22d3ee] font-mono text-[9px] uppercase tracking-[0.25em] font-black px-4 py-1.5 rounded-full shadow-lg">
+              <span className={`font-mono text-[9px] uppercase tracking-[0.25em] font-black px-4 py-1.5 rounded-full shadow-lg transition-all ${
+                isLightMode 
+                  ? 'bg-white/80 border border-amber-900/15 text-amber-900 shadow-[0_4px_12px_rgba(139,94,26,0.06)]' 
+                  : 'bg-cyan-950/85 border border-[#14b8a6]/45 text-[#22d3ee]'
+              }`}>
                 NYUAD iGEM 2026 iGEM Research Module
               </span>
             </div>
 
             <div className="text-center max-w-4xl mx-auto col-span-full">
-              <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-none uppercase select-none mb-3 font-sans">
+              <h1 className={`text-3xl md:text-5xl font-extrabold tracking-tight leading-none uppercase select-none mb-3 font-sans transition-colors duration-300 ${
+                isLightMode ? 'text-amber-950' : 'text-white'
+              }`}>
                 Growing Eco-Friendly Sand Glue to Prevent Dust Storms
               </h1>
-              <p className="text-sm text-cyan-400 tracking-wider uppercase font-mono mb-6 max-w-2xl mx-auto">
+              <p className={`text-sm tracking-wider uppercase font-mono mb-6 max-w-2xl mx-auto transition-colors duration-300 ${
+                isLightMode ? 'text-amber-800' : 'text-cyan-400'
+              }`}>
                 Predict and Optimize Your Wet-Lab Enzyme Recipes & Wind Studies
               </p>
               
-              <div className="bg-[#0c1220]/80 backdrop-blur-md border border-slate-800/80 p-5 rounded-2xl text-left max-w-3xl mx-auto mb-10 text-xs md:text-sm space-y-3 font-sans leading-relaxed shadow-2xl">
-                <h3 className="font-bold text-[#22d3ee] uppercase text-xs tracking-wider flex items-center gap-2">
-                  <Workflow className="w-4 h-4 text-cyan-400" /> How to use this Toolkit in Your Laboratory:
+              <div className={`backdrop-blur-md p-5 rounded-2xl text-left max-w-3xl mx-auto mb-10 text-xs md:text-sm space-y-3 font-sans leading-relaxed shadow-xl transition-all duration-300 ${
+                isLightMode 
+                  ? 'bg-white/75 border border-amber-900/10 text-stone-800 shadow-[0_12px_30px_rgba(139,94,26,0.06)]' 
+                  : 'bg-[#0c1220]/80 border border-slate-800/80 text-slate-300'
+              }`}>
+                <h3 className={`font-bold uppercase text-xs tracking-wider flex items-center gap-2 ${
+                  isLightMode ? 'text-amber-900' : 'text-[#22d3ee]'
+                }`}>
+                  <Workflow className="w-4 h-4" /> How to use this Toolkit in Your Laboratory:
                 </h3>
-                <p className="text-slate-300">
-                  Our project helps you turn harmless, native soil bacteria (<em className="italic text-slate-200">Bacillus subtilis</em>) into natural glue-producing bio-reactors. By feeding them starter nutrients, they make a sticky, biodegradable web (<strong className="text-emerald-400">gamma-PGA</strong>) that binds loose desert sand grains together.
+                <p className={isLightMode ? 'text-stone-700' : 'text-slate-300'}>
+                  Our project helps you turn harmless, native soil bacteria (<GlossaryTerm term="Bacillus subtilis" theme={isLightMode ? 'light' : 'dark'}>Bacillus subtilis</GlossaryTerm>) into natural glue-producing bio-reactors. By feeding them starter nutrients, they make a sticky, biodegradable web (<GlossaryTerm term="gamma-PGA" theme={isLightMode ? 'light' : 'dark'}>gamma-PGA</GlossaryTerm>) that binds loose desert sand grains together.
                 </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs pt-2 border-t border-slate-800/80">
+                <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 text-xs pt-2 border-t ${
+                  isLightMode ? 'border-amber-900/10' : 'border-slate-800/80'
+                }`}>
                   <div className="flex items-start gap-2">
-                    <span className="text-[#22d3ee] font-black text-xs">①</span>
-                    <p className="text-slate-400">
-                      <strong className="text-slate-200 block mb-0.5">Perfect Recipe Mixes</strong>
+                    <span className={`font-black text-xs ${isLightMode ? 'text-amber-800 font-bold' : 'text-[#22d3ee]'}`}>①</span>
+                    <p className={isLightMode ? 'text-stone-600' : 'text-slate-400'}>
+                      <strong className={`block mb-0.5 ${isLightMode ? 'text-stone-900' : 'text-slate-200'}`}>Perfect Recipe Mixes</strong>
                       Find the perfect blend of starter cell concentration and calcium salt density without wasting hours of trial-and-error pipetting.
                     </p>
                   </div>
                   <div className="flex items-start gap-2">
-                    <span className="text-[#22d3ee] font-black text-xs">②</span>
-                    <p className="text-slate-400">
-                      <strong className="text-slate-200 block mb-0.5">Simulate Wind Resistance</strong>
+                    <span className={`font-black text-xs ${isLightMode ? 'text-amber-800 font-bold' : 'text-[#22d3ee]'}`}>②</span>
+                    <p className={isLightMode ? 'text-stone-600' : 'text-slate-400'}>
+                      <strong className={`block mb-0.5 ${isLightMode ? 'text-stone-900' : 'text-slate-200'}`}>Simulate Wind Resistance</strong>
                       Test if your recipe holding treated sands can withstand heavy desert storm gusts before building physical wind-chamber structures.
                     </p>
                   </div>
@@ -414,159 +476,201 @@ export default function App() {
               </div>
             </div>
 
-              {/* Research Gateways Portals Cards Section */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 text-left">
-                
-                {/* Gateway 1: Wet Lab Sandbox */}
-                <div 
-                  onClick={() => setViewMode('wetlab-sandbox')}
-                  className="bg-[#06080d]/85 border border-slate-800/80 hover:border-emerald-500/70 p-5 rounded-xl cursor-pointer transition shadow-xl hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(52,211,153,0.15)] group relative overflow-hidden"
-                >
-                  <div className="flex justify-between items-start mb-4">
-                    <span className="p-2.5 rounded bg-emerald-950/30 border border-emerald-900/40 text-[#10b981]">
-                      <Sliders className="w-5 h-5 text-[#34d399]" />
-                    </span>
-                    <span className="text-[9px] font-mono text-slate-500 group-hover:text-[#34d399] transition font-bold">LAUNCH PORTAL ◀</span>
-                  </div>
-                  <h3 className="text-sm font-bold text-white uppercase tracking-wide group-hover:text-[#34d399] transition mb-1.5 flex items-center gap-1.5">
-                    1. Wet-Lab Sandbox
-                  </h3>
-                  <p className="text-[11px] text-slate-400 leading-relaxed">
-                    Enter physical parameters from laboratory spectrophotometric assays. Compare treated vs. untreated sand dunes under wind erosion cells in 2D.
-                  </p>
-                  <div className="absolute right-0 bottom-0 w-24 h-2 bg-gradient-to-r from-transparent to-emerald-500/10"></div>
+            {/* Research Gateways Portals Cards Section */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 text-left">
+              
+              {/* Gateway 1: Wet Lab Sandbox */}
+              <div 
+                onClick={() => setViewMode('wetlab-sandbox')}
+                className={`p-5 rounded-xl cursor-pointer transition shadow-xl hover:-translate-y-1 group relative overflow-hidden ${
+                  isLightMode 
+                    ? 'bg-white/80 border border-amber-900/10 hover:border-emerald-600/50 hover:shadow-[0_10px_25px_rgba(139,94,26,0.06)]'
+                    : 'bg-[#06080d]/85 border border-slate-800/80 hover:border-emerald-500/70 hover:shadow-[0_0_20px_rgba(52,211,153,0.15)]'
+                }`}
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <span className={`p-2.5 rounded border ${isLightMode ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-emerald-950/30 border-emerald-900/40 text-[#10b981]'}`}>
+                    <Sliders className="w-5 h-5 text-current" />
+                  </span>
+                  <span className={`text-[9px] font-mono group-hover:text-emerald-600 transition font-bold ${isLightMode ? 'text-stone-400' : 'text-slate-500'}`}>LAUNCH PORTAL ◀</span>
                 </div>
+                <h3 className={`text-sm font-bold uppercase tracking-wide group-hover:text-emerald-600 transition mb-1.5 flex items-center gap-1.5 ${isLightMode ? 'text-stone-950' : 'text-white'}`}>
+                  1. Wet-Lab Sandbox
+                </h3>
+                <p className={`text-[11px] leading-relaxed ${isLightMode ? 'text-stone-600 font-medium' : 'text-slate-400'}`}>
+                  Enter physical parameters from laboratory spectrophotometric assays. Compare treated vs. untreated sand dunes under wind erosion cells in 2D.
+                </p>
+                <div className="absolute right-0 bottom-0 w-24 h-2 bg-gradient-to-r from-transparent to-emerald-500/10"></div>
+              </div>
 
-                {/* Gateway 2: Dynamic Modeling Pipeline */}
-                <div 
-                  onClick={() => setViewMode('pipeline')}
-                  className="bg-[#06080d]/85 border border-slate-800/80 hover:border-[#06b6d4]/70 p-5 rounded-xl cursor-pointer transition shadow-xl hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(6,182,212,0.15)] group relative overflow-hidden"
-                >
-                  <div className="flex justify-between items-start mb-4">
-                    <span className="p-2.5 rounded bg-cyan-950/30 border border-cyan-900/40 text-cyan-400">
-                      <Workflow className="w-5 h-5 text-cyan-400 animate-pulse" />
-                    </span>
-                    <span className="text-[9px] font-mono text-slate-500 group-hover:text-cyan-400 transition font-bold">LAUNCH PORTAL ◀</span>
-                  </div>
-                  <h3 className="text-sm font-bold text-white uppercase tracking-wide group-hover:text-cyan-400 transition mb-1.5 flex items-center gap-1.5">
-                    2. Physical Pipeline
-                  </h3>
-                  <p className="text-[11px] text-slate-400 leading-relaxed">
-                    Explore our integrated dry lab pipeline. Simulate metabolic model kinetics, cross-linking isotherms, wind-shear, and ecological cellular growth dynamics.
-                  </p>
-                  <div className="absolute right-0 bottom-0 w-24 h-2 bg-gradient-to-r from-transparent to-cyan-500/10"></div>
+              {/* Gateway 2: Dynamic Modeling Pipeline */}
+              <div 
+                onClick={() => setViewMode('pipeline')}
+                className={`p-5 rounded-xl cursor-pointer transition shadow-xl hover:-translate-y-1 group relative overflow-visible ${
+                  isLightMode 
+                    ? 'bg-white/80 border border-amber-900/10 hover:border-cyan-500/50 hover:shadow-[0_10px_25px_rgba(139,94,26,0.06)]'
+                    : 'bg-[#06080d]/85 border border-slate-800/80 hover:border-[#06b6d4]/70 hover:shadow-[0_0_20px_rgba(6,182,212,0.15)]'
+                }`}
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <span className={`p-2.5 rounded border ${isLightMode ? 'bg-cyan-50 border-cyan-200 text-cyan-800' : 'bg-cyan-950/30 border-cyan-900/40 text-cyan-400'}`}>
+                    <Workflow className="w-5 h-5 text-current animate-pulse" />
+                  </span>
+                  <span className={`text-[9px] font-mono group-hover:text-cyan-600 transition font-bold ${isLightMode ? 'text-stone-400' : 'text-slate-500'}`}>LAUNCH PORTAL ◀</span>
                 </div>
+                <h3 className={`text-sm font-bold uppercase tracking-wide group-hover:text-cyan-600 transition mb-1.5 flex items-center gap-1.5 ${isLightMode ? 'text-stone-950' : 'text-white'}`}>
+                  2. Physical Pipeline
+                </h3>
+                <p className={`text-[11px] leading-relaxed ${isLightMode ? 'text-stone-600 font-medium' : 'text-slate-400'}`}>
+                  Explore our integrated dry lab pipeline. Simulate <GlossaryTerm term="k_cat" theme={isLightMode ? 'light' : 'dark'}>metabolic model kinetics</GlossaryTerm>, <GlossaryTerm term="Cross-linking" theme={isLightMode ? 'light' : 'dark'}>cross-linking</GlossaryTerm> isotherms, wind-shear, and ecological cellular growth dynamics.
+                </p>
+                <div className="absolute right-0 bottom-0 w-24 h-2 bg-gradient-to-r from-transparent to-cyan-500/10 rounded-br-xl"></div>
+              </div>
 
-                {/* Gateway 3: 3D Protein Suite */}
-                <div 
-                  onClick={() => setViewMode('protein-suite')}
-                  className="bg-[#06080d]/85 border border-slate-800/80 hover:border-indigo-505/70 p-5 rounded-xl cursor-pointer transition shadow-xl hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(99,102,241,0.15)] group relative overflow-hidden"
-                >
-                  <div className="flex justify-between items-start mb-4">
-                    <span className="p-2.5 rounded bg-indigo-950/30 border border-indigo-900/40 text-indigo-400">
-                      <Globe className="w-5 h-5 text-indigo-400" />
-                    </span>
-                    <span className="text-[9px] font-mono text-slate-500 group-hover:text-indigo-400 transition font-bold">LAUNCH PORTAL ◀</span>
-                  </div>
-                  <h3 className="text-sm font-bold text-white uppercase tracking-wide group-hover:text-indigo-400 transition mb-1.5 flex items-center gap-1.5">
-                    3. 3D Protein Suite
-                  </h3>
-                  <p className="text-[11px] text-slate-400 leading-relaxed">
-                    Inspect high-fidelity cell-shaded structures of the synthesized Bacillus enzyme complexes with realistic coordinates guidelines.
-                  </p>
-                  <div className="absolute right-0 bottom-0 w-24 h-2 bg-gradient-to-r from-transparent to-indigo-500/10"></div>
+              {/* Gateway 3: 3D Protein Suite */}
+              <div 
+                onClick={() => setViewMode('protein-suite')}
+                className={`p-5 rounded-xl cursor-pointer transition shadow-xl hover:-translate-y-1 group relative overflow-visible ${
+                  isLightMode 
+                    ? 'bg-white/80 border border-amber-900/10 hover:border-indigo-500/50 hover:shadow-[0_10px_25px_rgba(139,94,26,0.06)]'
+                    : 'bg-[#06080d]/85 border border-slate-800/80 hover:border-indigo-500/70 hover:shadow-[0_0_20px_rgba(99,102,241,0.15)]'
+                }`}
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <span className={`p-2.5 rounded border ${isLightMode ? 'bg-indigo-50 border-indigo-200 text-indigo-800' : 'bg-indigo-950/30 border-indigo-900/40 text-indigo-400'}`}>
+                    <Globe className="w-5 h-5 text-current" />
+                  </span>
+                  <span className={`text-[9px] font-mono group-hover:text-indigo-600 transition font-bold ${isLightMode ? 'text-stone-400' : 'text-slate-500'}`}>LAUNCH PORTAL ◀</span>
                 </div>
-
+                <h3 className={`text-sm font-bold uppercase tracking-wide group-hover:text-indigo-600 transition mb-1.5 flex items-center gap-1.5 ${isLightMode ? 'text-stone-950' : 'text-white'}`}>
+                  3. 3D Protein Suite
+                </h3>
+                <p className={`text-[11px] leading-relaxed ${isLightMode ? 'text-stone-600 font-medium' : 'text-slate-400'}`}>
+                  Inspect high-fidelity structures of synthesized <GlossaryTerm term="Bacillus subtilis" theme={isLightMode ? 'light' : 'dark'}>Bacillus enzyme complexes</GlossaryTerm> using crystallographic <GlossaryTerm term="PDB File" theme={isLightMode ? 'light' : 'dark'}>PDB coordinate maps</GlossaryTerm>.
+                </p>
+                <div className="absolute right-0 bottom-0 w-24 h-2 bg-gradient-to-r from-transparent to-indigo-500/10 rounded-br-xl"></div>
               </div>
 
             </div>
 
-            {/* Brief Laboratory Workflows section */}
-            <div className="border-t border-slate-800/70 pt-10">
-              <h3 className="text-[10px] font-extrabold uppercase tracking-[0.25em] text-slate-500 text-center mb-6 font-mono">
-                PRACTICAL APPLICATIONS IN YOUR RESEARCH
+          </div>
+
+          {/* Brief Laboratory Workflows section */}
+          <div className="max-w-6xl mx-auto px-6 pb-6">
+            <div className={`border-t pt-10 ${isLightMode ? 'border-amber-900/15' : 'border-slate-800/70'}`}>
+              <h3 className={`text-[10px] font-extrabold uppercase tracking-[0.25em] text-center mb-6 font-mono ${
+                isLightMode ? 'text-stone-500' : 'text-slate-500'
+              }`}>
+                practical applications
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {/* Flow 1 */}
-                <div className="bg-[#06080d]/80 backdrop-blur-sm p-4 rounded-xl border border-slate-900/90 flex flex-col justify-between">
+                <div className={`p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 ${
+                  isLightMode
+                    ? 'bg-white/80 border-amber-900/10 shadow-[0_4px_12px_rgba(139,94,26,0.04)] text-stone-800'
+                    : 'bg-[#06080d]/80 border-slate-900/90 backdrop-blur-sm'
+                }`}>
                   <div>
-                    <span className="text-[9px] font-black text-cyan-400 font-mono uppercase tracking-wider block mb-2">
+                    <span className={`text-[9px] font-black font-mono uppercase tracking-wider block mb-2 ${isLightMode ? 'text-amber-800' : 'text-cyan-400'}`}>
                       I. Calibrate Bacterial Growth
                     </span>
-                    <div className="py-2 px-3 bg-black/40 rounded border border-slate-900 font-sans text-xs text-slate-300 leading-relaxed">
+                    <div className={`py-2 px-3 rounded border font-sans text-xs leading-relaxed ${isLightMode ? 'bg-amber-50/50 border-amber-900/5 text-stone-700 font-medium' : 'bg-black/40 border-slate-905 text-slate-300'}`}>
                       Optimize incubation parameters (like 37°C targets) and nutrient concentrations to maximize bio-glue mass generation before prepping physical agar plates.
                     </div>
                   </div>
-                  <p className="text-[9px] text-[#22d3ee]/70 font-mono mt-3 uppercase tracking-wider">
+                  <p className={`text-[9px] font-mono mt-3 uppercase tracking-wider ${isLightMode ? 'text-amber-900' : 'text-[#22d3ee]/70'}`}>
                     → SAVE HOURS OF CULTURE MEDIATING
                   </p>
                 </div>
 
                 {/* Flow 2 */}
-                <div className="bg-[#06080d]/80 backdrop-blur-sm p-4 rounded-xl border border-slate-900/90 flex flex-col justify-between">
+                <div className={`p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 ${
+                  isLightMode
+                    ? 'bg-white/80 border-amber-900/10 shadow-[0_4px_12px_rgba(139,94,26,0.04)] text-stone-800'
+                    : 'bg-[#06080d]/80 border-slate-900/90 backdrop-blur-sm'
+                }`}>
                   <div>
-                    <span className="text-[9px] font-black text-amber-400 font-mono uppercase tracking-wider block mb-2">
+                    <span className={`text-[9px] font-black font-mono uppercase tracking-wider block mb-2 ${isLightMode ? 'text-[#b45309]' : 'text-amber-400'}`}>
                       II. Calculate Salt Ratios
                     </span>
-                    <div className="py-2 px-3 bg-black/40 rounded border border-slate-900 font-sans text-xs text-slate-300 leading-relaxed">
+                    <div className={`py-2 px-3 rounded border font-sans text-xs leading-relaxed ${isLightMode ? 'bg-amber-50/50 border-amber-900/5 text-stone-700 font-medium' : 'bg-black/40 border-slate-905 text-slate-300'}`}>
                       Calibrate the perfect magnesium and calcium mineral salt concentrations to bind individual monomer fibers into tough, durable soil netting.
                     </div>
                   </div>
-                  <p className="text-[9px] text-amber-400/80 font-mono mt-3 uppercase tracking-wider">
+                  <p className={`text-[9px] font-mono mt-3 uppercase tracking-wider ${isLightMode ? 'text-stone-500' : 'text-amber-400/80'}`}>
                     → ELIMINATE CHELATION GUESSWORK
                   </p>
                 </div>
 
                 {/* Flow 3 */}
-                <div className="bg-[#06080d]/80 backdrop-blur-sm p-4 rounded-xl border border-slate-900/90 flex flex-col justify-between">
+                <div className={`p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 ${
+                  isLightMode
+                    ? 'bg-white/80 border-amber-900/10 shadow-[0_4px_12px_rgba(139,94,26,0.04)] text-stone-800'
+                    : 'bg-[#06080d]/80 border-slate-900/90 backdrop-blur-sm'
+                }`}>
                   <div>
-                    <span className="text-[9px] font-black text-emerald-400 font-mono uppercase tracking-wider block mb-2">
+                    <span className={`text-[9px] font-black font-mono uppercase tracking-wider block mb-2 ${isLightMode ? 'text-emerald-700' : 'text-emerald-400'}`}>
                       III. Wind Stress Thresholds
                     </span>
-                    <div className="py-2 px-3 bg-black/40 rounded border border-slate-900 font-sans text-xs text-slate-300 leading-relaxed">
+                    <div className={`py-2 px-3 rounded border font-sans text-xs leading-relaxed ${isLightMode ? 'bg-amber-50/50 border-amber-900/5 text-stone-700 font-medium' : 'bg-black/40 border-slate-905 text-slate-300'}`}>
                       Convert laboratory soil stiffness readings directly into wind resistance speeds (m/s) to see if treated sands stay secure during Liwa wind gales.
                     </div>
                   </div>
-                  <p className="text-[9px] text-emerald-400/80 font-mono mt-3 uppercase tracking-wider">
+                  <p className={`text-[9px] font-mono mt-3 uppercase tracking-wider ${isLightMode ? 'text-emerald-850' : 'text-emerald-400/80'}`}>
                     → PREDICT SHEAR FORCE SUCCESS
                   </p>
                 </div>
 
                 {/* Flow 4 */}
-                <div className="bg-[#06080d]/80 backdrop-blur-sm p-4 rounded-xl border border-slate-900/90 flex flex-col justify-between">
+                <div className={`p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 ${
+                  isLightMode
+                    ? 'bg-white/80 border-amber-900/10 shadow-[0_4px_12px_rgba(139,94,26,0.04)] text-stone-800'
+                    : 'bg-[#06080d]/80 border-slate-900/90 backdrop-blur-sm'
+                }`}>
                   <div>
-                    <span className="text-[9px] font-black text-indigo-400 font-mono uppercase tracking-wider block mb-2">
+                    <span className={`text-[9px] font-black font-mono uppercase tracking-wider block mb-2 ${isLightMode ? 'text-indigo-700' : 'text-indigo-400'}`}>
                       IV. Safety Biosensors
                     </span>
-                    <div className="py-2 px-3 bg-black/40 rounded border border-slate-900 font-sans text-xs text-slate-300 leading-relaxed">
+                    <div className={`py-2 px-3 rounded border font-sans text-xs leading-relaxed ${isLightMode ? 'bg-amber-50/50 border-amber-900/5 text-stone-700 font-medium' : 'bg-black/40 border-slate-905 text-slate-300'}`}>
                       Simulate built-in genetic kill switches to ensure bacterial soil coatings only stay alive in wet regions and safely degrade in dry desert settings.
                     </div>
                   </div>
-                  <p className="text-[9px] text-indigo-300/80 font-mono mt-3 uppercase tracking-wider">
+                  <p className={`text-[9px] font-mono mt-3 uppercase tracking-wider ${isLightMode ? 'text-indigo-850' : 'text-indigo-300/80'}`}>
                     → VERIFY 100% REGULATORY SAFETY
                   </p>
                 </div>
               </div>
             </div>
 
-          <div className="text-center py-6 text-[10px] text-slate-600 font-mono select-none" style={{ zIndex: 10 }}>
-            NYUAD iGEM Simulation Toolkit. Built for iGEM 2026.
+            <div className={`text-center py-6 text-[10px] font-mono select-none mt-4 ${isLightMode ? 'text-stone-500' : 'text-slate-600'}`} style={{ zIndex: 10 }}>
+              NYUAD iGEM Simulation Toolkit. Built for iGEM 2026.
+            </div>
           </div>
         </div>
       )}
 
       {/* 1. Unified Sticky Navigation Header for Deep Portals (Requirement 1 & 4) */}
       {viewMode !== 'landing' && (
-        <header className="sticky top-0 z-50 bg-[#05070a]/90 backdrop-blur-md border-b border-slate-800/80 px-6 py-3 flex flex-wrap gap-4 justify-between items-center max-w-7xl mx-auto rounded-b-xl shadow-lg my-2">
+        <header className={`sticky top-0 z-50 backdrop-blur-md px-6 py-3 flex flex-wrap gap-4 justify-between items-center max-w-7xl mx-auto rounded-b-xl shadow-lg my-2 border transition-all duration-300 ${
+          isLightMode 
+            ? 'bg-amber-100/90 border-amber-900/10 text-stone-900 shadow-sm' 
+            : 'bg-[#05070a]/90 border-b border-slate-800/80 text-slate-200'
+        }`}>
           <div 
             onClick={handleBackToLanding}
             className="flex items-center gap-2 cursor-pointer group"
           >
-            <span className="bg-emerald-950 border border-emerald-500/60 text-emerald-400 font-mono text-[9px] uppercase tracking-wider font-extrabold px-2.5 py-0.5 rounded">
+            <span className={`font-mono text-[9px] uppercase tracking-wider font-extrabold px-2.5 py-0.5 rounded transition-all ${
+              isLightMode 
+                ? 'bg-amber-200 border border-amber-900/20 text-amber-900' 
+                : 'bg-emerald-950 border border-emerald-500/60 text-emerald-400'
+            }`}>
               NYUAD iGEM
             </span>
-            <span className="text-white text-xs font-bold tracking-wide group-hover:text-emerald-400 transition font-sans">
+            <span className={`text-xs font-bold tracking-wide transition font-sans ${
+              isLightMode ? 'text-amber-950 group-hover:text-amber-700' : 'text-white group-hover:text-emerald-400'
+            }`}>
               Sand Bio-Stabilizer Toolkit
             </span>
           </div>
@@ -574,29 +678,43 @@ export default function App() {
           <div className="flex items-center gap-1 text-xs">
             <button 
               onClick={handleBackToLanding}
-              className="text-[11px] text-slate-400 hover:text-white px-2 py-1 transition rounded font-medium font-sans"
+              className={`text-[11px] px-2 py-1 transition rounded font-medium font-sans ${
+                isLightMode ? 'text-stone-600 hover:text-stone-900' : 'text-slate-400 hover:text-white'
+              }`}
             >
               ← Back Home
             </button>
-            <div className="w-px h-3.5 bg-slate-800 mx-1.5" />
+            <div className={`w-px h-3.5 mx-1.5 ${isLightMode ? 'bg-amber-900/20' : 'bg-slate-800'}`} />
             
             <button 
               onClick={() => { setViewMode('wetlab-sandbox'); }}
-              className={`text-[11px] px-3 py-1.5 transition rounded-lg font-semibold font-sans ${viewMode === 'wetlab-sandbox' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'text-slate-400 hover:text-slate-200'}`}
+              className={`text-[11px] px-3 py-1.5 transition rounded-lg font-semibold font-sans ${
+                viewMode === 'wetlab-sandbox' 
+                  ? (isLightMode ? 'bg-emerald-200 text-emerald-900 border border-emerald-300' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20') 
+                  : (isLightMode ? 'text-stone-600 hover:text-stone-900' : 'text-slate-400 hover:text-slate-200')
+              }`}
             >
               Wet-Lab Sandbox
             </button>
             <button 
               onClick={() => { setViewMode('pipeline'); }}
-              className={`text-[11px] px-3 py-1.5 transition rounded-lg font-semibold font-sans ${viewMode === 'pipeline' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'text-slate-400 hover:text-slate-200'}`}
+              className={`text-[11px] px-3 py-1.5 transition rounded-lg font-semibold font-sans ${
+                viewMode === 'pipeline' 
+                  ? (isLightMode ? 'bg-cyan-200 text-cyan-900 border border-cyan-300' : 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20') 
+                  : (isLightMode ? 'text-stone-600 hover:text-stone-900' : 'text-slate-400 hover:text-slate-200')
+              }`}
             >
               Dry-Lab Pipeline
             </button>
             <button 
               onClick={() => { setViewMode('protein-suite'); }}
-              className={`text-[11px] px-3 py-1.5 transition rounded-lg font-bold font-sans flex items-center gap-1 ${viewMode === 'protein-suite' ? 'bg-[#6366f1]/15 text-[#a5b4fc] border border-indigo-500/35' : 'text-indigo-400 hover:text-indigo-300'}`}
+              className={`text-[11px] px-3 py-1.5 transition rounded-lg font-bold font-sans flex items-center gap-1 ${
+                viewMode === 'protein-suite' 
+                  ? (isLightMode ? 'bg-indigo-200 text-indigo-900 border border-indigo-300' : 'bg-[#6366f1]/15 text-[#a5b4fc] border border-indigo-500/35') 
+                  : (isLightMode ? 'text-indigo-700 hover:text-indigo-900 font-bold' : 'text-indigo-400 hover:text-indigo-300')
+              }`}
             >
-              ✨ 3D Protein Suite
+              3D Protein Suite
             </button>
           </div>
         </header>
@@ -604,39 +722,55 @@ export default function App() {
 
       {/* PORTAL 1: Wet Lab Sandbox onboarding & simulation views */}
       {viewMode === 'wetlab-sandbox' && (
-        <div className="max-w-7xl mx-auto px-4 md:px-0">
+        <div className="max-w-7xl mx-auto px-4 md:px-0 relative z-10">
           {!activeWetlabStarted ? (
             /* Splash Onboarding for Wet-Lab Sandbox */
             <div className="min-h-[70vh] flex items-center justify-center p-6 font-sans">
-              <div className="max-w-md w-full bg-[#0a0f18]/90 border border-slate-800 p-8 rounded-2xl shadow-2xl relative overflow-hidden text-center space-y-5 animate-fadeIn">
-                <div className="mx-auto w-12 h-12 rounded-full bg-emerald-950/40 border border-emerald-800 flex items-center justify-center text-[#34d399]">
-                  <Sliders className="w-5 h-5 text-emerald-400" />
+              <div className={`max-w-md w-full p-8 rounded-2xl shadow-2xl relative overflow-hidden text-center space-y-5 animate-fadeIn border transition-all duration-300 ${
+                isLightMode 
+                  ? 'bg-white/95 border-amber-900/15 text-stone-800 shadow-[0_12px_30px_rgba(139,94,26,0.06)]' 
+                  : 'bg-[#0a0f18]/90 border-slate-800 text-slate-200'
+              }`}>
+                <div className={`mx-auto w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
+                  isLightMode ? 'bg-emerald-100 border border-emerald-300 text-emerald-800' : 'bg-emerald-950/40 border border-emerald-800 text-emerald-400'
+                }`}>
+                  <Sliders className="w-5 h-5 text-current" />
                 </div>
                 <div className="space-y-1.5">
-                  <span className="text-[10px] font-mono font-bold text-[#34d399] tracking-wider uppercase bg-emerald-950/60 border border-emerald-900/60 px-3 py-1 rounded-full">
+                  <span className={`text-[10px] font-mono font-bold tracking-wider uppercase border px-3 py-1 rounded-full transition-colors ${
+                    isLightMode ? 'bg-emerald-100/55 border-emerald-200 text-emerald-900' : 'bg-emerald-950/60 border-emerald-900/60 text-[#34d399]'
+                  }`}>
                     Portal 1: Recipe Optimizer
                   </span>
-                  <h2 className="text-xl font-bold text-white uppercase tracking-tight pt-1">
+                  <h2 className={`text-xl font-bold uppercase tracking-tight pt-1 ${
+                    isLightMode ? 'text-stone-900' : 'text-white'
+                  }`}>
                     Wet-Lab Sand Simulator
                   </h2>
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed font-sans">
+                <p className={`text-xs leading-relaxed font-sans ${
+                  isLightMode ? 'text-stone-600' : 'text-slate-300'
+                }`}>
                   Here you can test different laboratory recipes (such as starting cell density, mineral salt density, glutamate feed, and temperature) on a live sandbed. Adjust sliders to see a side-by-side comparative simulation of untreated sand vs sand protected by our organic bacterial glue.
                 </p>
-                <div className="p-3 bg-[#05070a]/90 border border-slate-900 rounded-xl text-left text-slate-400 text-[10.5px] leading-relaxed">
-                  <span className="font-extrabold text-[#34d399] block mb-0.5">🔬 WHAT YOU WILL TEST:</span>
+                <div className={`p-3 border rounded-xl text-left text-[10.5px] leading-relaxed ${
+                  isLightMode ? 'bg-amber-50/50 border-amber-900/10 text-stone-600' : 'bg-[#05070a]/90 border-slate-900 text-slate-400'
+                }`}>
+                  <span className="font-extrabold text-[#34d399] block mb-0.5">WHAT YOU WILL TEST:</span>
                   The effect of recipe changes on sand erosion under high-speed shamal desert wind gusts.
                 </div>
                 <div className="flex gap-3 justify-center pt-1.5">
                   <button 
                     onClick={handleBackToLanding}
-                    className="px-4 py-2 bg-slate-905 hover:bg-slate-900 text-slate-400 hover:text-slate-200 text-xs rounded-xl border border-slate-800/80 transition"
+                    className={`px-4 py-2 text-xs rounded-xl border transition ${
+                      isLightMode ? 'bg-stone-100 hover:bg-stone-200 border-stone-200 text-stone-700' : 'bg-slate-905 hover:bg-slate-900 text-slate-400 hover:text-slate-200 border-slate-800/80'
+                    }`}
                   >
-                    ◀ Back Home
+                    Back Home
                   </button>
                   <button 
                     onClick={() => setActiveWetlabStarted(true)}
-                    className="px-6 py-2 bg-[#34d399] hover:bg-[#10b981] text-black font-extrabold text-xs rounded-xl shadow-lg hover:shadow-[0_0_15px_rgba(52,211,153,0.3)] transition"
+                    className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs rounded-xl shadow-lg transition"
                   >
                     Begin Sandbox Simulation
                   </button>
@@ -648,6 +782,7 @@ export default function App() {
             <WetLabSandbox2D 
               onBack={handleBackToLanding}
               universalVitals={{ pgaAccum, shearModulus }}
+              isLightMode={isLightMode}
             />
           )}
         </div>
@@ -655,39 +790,55 @@ export default function App() {
 
       {/* PORTAL 2: 3D Protein Suite onboarding & visualizer views */}
       {viewMode === 'protein-suite' && (
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4 relative z-10">
           {!activeProteinStarted ? (
             /* Splash Onboarding for 3D Protein Suite */
             <div className="min-h-[70vh] flex items-center justify-center p-6 font-sans">
-              <div className="max-w-md w-full bg-[#0a0f18]/90 border border-slate-800 p-8 rounded-2xl shadow-2xl relative overflow-hidden text-center space-y-5 animate-fadeIn">
-                <div className="mx-auto w-12 h-12 rounded-full bg-indigo-950/40 border border-indigo-900 flex items-center justify-center text-indigo-400">
-                  <Globe className="w-5 h-5 text-indigo-400" />
+              <div className={`max-w-md w-full p-8 rounded-2xl shadow-2xl relative overflow-hidden text-center space-y-5 animate-fadeIn border transition-all duration-300 ${
+                isLightMode 
+                  ? 'bg-white/95 border-amber-900/15 text-stone-800 shadow-[0_12px_30px_rgba(139,94,26,0.06)]' 
+                  : 'bg-[#0a0f18]/90 border-slate-800 text-slate-200'
+              }`}>
+                <div className={`mx-auto w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
+                  isLightMode ? 'bg-indigo-100 border border-indigo-200 text-indigo-800' : 'bg-indigo-950/40 border border-indigo-900 text-indigo-400'
+                }`}>
+                  <Globe className="w-5 h-5 text-current" />
                 </div>
                 <div className="space-y-1.5">
-                  <span className="text-[10px] font-mono font-bold text-indigo-300 tracking-wider uppercase bg-indigo-950/60 border border-indigo-900/60 px-3 py-1 rounded-full">
+                  <span className={`text-[10px] font-mono font-bold tracking-wider uppercase border px-3 py-1 rounded-full transition-colors ${
+                    isLightMode ? 'bg-indigo-100/55 border-indigo-200 text-indigo-900' : 'bg-indigo-950/60 border-indigo-900/60 text-indigo-300'
+                  }`}>
                     Portal 3: Molecular View
                   </span>
-                  <h2 className="text-xl font-bold text-white uppercase tracking-tight pt-1">
+                  <h2 className={`text-xl font-bold uppercase tracking-tight pt-1 ${
+                    isLightMode ? 'text-stone-900' : 'text-white'
+                  }`}>
                     3D Enzyme Structures
                   </h2>
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed font-sans">
+                <p className={`text-xs leading-relaxed font-sans ${
+                  isLightMode ? 'text-stone-600' : 'text-slate-300'
+                }`}>
                   Inspect the crystallographic molecular models calibrated for our desert <em className="italic">Bacillus</em> synthesizing enzymes. Drag to rotate atoms in 3D, and spotlight active binding pockets that link substrates to turn sticky glue networks rigid.
                 </p>
-                <div className="p-3 bg-[#05070a]/90 border border-slate-900 rounded-xl text-left text-slate-400 text-[10.5px] leading-relaxed">
-                  <span className="font-extrabold text-indigo-400 block mb-0.5">🧬 WHAT YOU WILL TEST:</span>
+                <div className={`p-3 border rounded-xl text-left text-[10.5px] leading-relaxed ${
+                  isLightMode ? 'bg-amber-50/50 border-amber-900/10 text-stone-600' : 'bg-[#05070a]/90 border-slate-900 text-slate-400'
+                }`}>
+                  <span className="font-extrabold text-indigo-400 block mb-0.5">WHAT YOU WILL TEST:</span>
                   Interact with real amino acid coordinates (like Lys-181) to see how they anchor substrates inside the molecular active site cleft.
                 </div>
                 <div className="flex gap-3 justify-center pt-1.5">
                   <button 
                     onClick={handleBackToLanding}
-                    className="px-4 py-2 bg-slate-905 hover:bg-slate-900 text-slate-400 hover:text-slate-200 text-xs rounded-xl border border-slate-800/80 transition"
+                    className={`px-4 py-2 text-xs rounded-xl border transition ${
+                      isLightMode ? 'bg-stone-100 hover:bg-stone-200 border-stone-200 text-stone-700' : 'bg-slate-905 hover:bg-slate-900 text-slate-400 hover:text-slate-200 border-slate-800/80'
+                    }`}
                   >
-                    ◀ Back Home
+                    Back Home
                   </button>
                   <button 
                     onClick={() => setActiveProteinStarted(true)}
-                    className="px-6 py-2 bg-[#6366f1] hover:bg-indigo-600 text-white font-extrabold text-xs rounded-xl shadow-lg hover:shadow-[0_0_15px_rgba(99,102,241,0.3)] transition"
+                    className="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs rounded-xl shadow-lg transition"
                   >
                     Launch 3D Visualizer
                   </button>
@@ -697,7 +848,7 @@ export default function App() {
           ) : (
             /* Standalone 3D Protein Imager view */
             <div className="space-y-6 pt-4 animate-fadeIn">
-              <HighFidelityProteinExplorer />
+              <HighFidelityProteinExplorer isLightMode={isLightMode} />
             </div>
           )}
         </div>
@@ -705,39 +856,55 @@ export default function App() {
 
       {/* PORTAL 3: Dynamic modeling workspace panel views */}
       {viewMode === 'pipeline' && (
-        <div id="dynamic-workspace-frame" className="max-w-7xl mx-auto px-4 md:px-6">
+        <div id="dynamic-workspace-frame" className="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
           {!activePipelineStarted ? (
             /* Splash Onboarding for Dry-Lab Pipeline */
             <div className="min-h-[70vh] flex items-center justify-center p-6 font-sans">
-              <div className="max-w-md w-full bg-[#0a0f18]/90 border border-slate-800 p-8 rounded-2xl shadow-2xl relative overflow-hidden text-center space-y-5 animate-fadeIn">
-                <div className="mx-auto w-12 h-12 rounded-full bg-cyan-950/40 border border-cyan-800 flex items-center justify-center text-cyan-400">
-                  <Workflow className="w-5 h-5 text-cyan-400 animate-pulse" />
+              <div className={`max-w-md w-full p-8 rounded-2xl shadow-2xl relative overflow-hidden text-center space-y-5 animate-fadeIn border transition-all duration-300 ${
+                isLightMode 
+                  ? 'bg-white/95 border-amber-900/15 text-stone-800 shadow-[0_12px_30px_rgba(139,94,26,0.06)]' 
+                  : 'bg-[#0a0f18]/90 border-slate-800 text-slate-200'
+              }`}>
+                <div className={`mx-auto w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
+                  isLightMode ? 'bg-cyan-100 border border-cyan-300 text-cyan-800' : 'bg-cyan-950/40 border border-cyan-800 text-cyan-400'
+                }`}>
+                  <Workflow className="w-5 h-5 text-current" />
                 </div>
                 <div className="space-y-1.5">
-                  <span className="text-[10px] font-mono font-bold text-cyan-400 tracking-wider uppercase bg-cyan-950/60 border border-cyan-900/60 px-3 py-1 rounded-full">
+                  <span className={`text-[10px] font-mono font-bold tracking-wider uppercase border px-3 py-1 rounded-full transition-colors ${
+                    isLightMode ? 'bg-cyan-100/55 border-cyan-200 text-cyan-900' : 'bg-cyan-950/60 border-cyan-900/60 text-cyan-400'
+                  }`}>
                     Portal 2: Design Pipeline
                   </span>
-                  <h2 className="text-xl font-bold text-white uppercase tracking-tight pt-1">
+                  <h2 className={`text-xl font-bold uppercase tracking-tight pt-1 ${
+                    isLightMode ? 'text-stone-900' : 'text-white'
+                  }`}>
                     Dry-Lab Modeling Pipeline
                   </h2>
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed font-sans">
+                <p className={`text-xs leading-relaxed font-sans ${
+                  isLightMode ? 'text-stone-600' : 'text-slate-300'
+                }`}>
                   Step through our integrated dry-lab modeling modules. This connecting pipeline starts with cellular growth models, feeds outputs to polymer crosslinking stiffness calculations, tests dunes against gale gusts, and evaluates ecological safety boundaries.
                 </p>
-                <div className="p-3 bg-[#05070a]/90 border border-slate-900 rounded-xl text-left text-slate-400 text-[10.5px] leading-relaxed">
-                  <span className="font-extrabold text-cyan-400 block mb-0.5">🔗 PIPELINE CONNECTION:</span>
+                <div className={`p-3 border rounded-xl text-left text-[10.5px] leading-relaxed ${
+                  isLightMode ? 'bg-amber-50/50 border-amber-900/10 text-stone-600' : 'bg-[#05070a]/90 border-slate-900 text-slate-400'
+                }`}>
+                  <span className="font-extrabold text-cyan-400 block mb-0.5">PIPELINE CONNECTION:</span>
                   Modifications inside early phases seamlessly propagate ahead to update soil stiffness thresholds and safety zones.
                 </div>
                 <div className="flex gap-3 justify-center pt-1.5">
                   <button 
                     onClick={handleBackToLanding}
-                    className="px-4 py-2 bg-slate-905 hover:bg-slate-900 text-slate-400 hover:text-slate-200 text-xs rounded-xl border border-slate-800/80 transition"
+                    className={`px-4 py-2 text-xs rounded-xl border transition ${
+                      isLightMode ? 'bg-stone-100 hover:bg-stone-200 border-stone-200 text-stone-700' : 'bg-slate-905 hover:bg-slate-900 text-slate-400 hover:text-slate-200 border-slate-800/80'
+                    }`}
                   >
-                    ◀ Back Home
+                    Back Home
                   </button>
                   <button 
                     onClick={() => setActivePipelineStarted(true)}
-                    className="px-6 py-2 bg-[#22d3ee] hover:bg-[#06b6d4] text-black font-extrabold text-xs rounded-xl shadow-lg hover:shadow-[0_0_15px_rgba(6,182,212,0.3)] transition"
+                    className="px-6 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-extrabold text-xs rounded-xl shadow-lg transition"
                   >
                     Launch Pipeline Workspace
                   </button>
@@ -751,71 +918,83 @@ export default function App() {
               {/* Minimal Dashboard Overview Cards (NO REDUNDANCY, ONLY KEY DYNAMIC STATS) */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 
-                <div className="bg-[#080b12] p-4 rounded-xl border border-slate-800/80 shadow-lg flex items-center justify-between">
+                <div className={`p-4 rounded-xl border shadow-lg flex items-center justify-between transition-colors ${
+                  isLightMode ? 'bg-[#fcfaf5]/90 border-amber-900/10 text-stone-900' : 'bg-[#080b12] border-slate-800/80 text-white'
+                }`}>
                   <div>
-                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest block mb-0.5">Biopolymer Secreted Yield</span>
-                    <span className="text-sm font-extrabold text-white block font-mono">{pgaAccum.toFixed(1)} mg/L</span>
+                    <span className={`text-[9px] font-bold uppercase tracking-widest block mb-0.5 ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>Biopolymer Secreted Yield</span>
+                    <span className={`text-sm font-extrabold block font-mono ${isLightMode ? 'text-stone-900' : 'text-white'}`}>{pgaAccum.toFixed(1)} mg/L</span>
                   </div>
-                  <div className="bg-cyan-950/30 p-2 rounded border border-cyan-800/40">
-                    <Dna className="w-4 h-4 text-cyan-400" />
+                  <div className={`p-2 rounded border ${isLightMode ? 'bg-cyan-50/50 border-cyan-200 text-cyan-800' : 'bg-cyan-950/30 border-cyan-800/40 text-cyan-400'}`}>
+                    <Dna className="w-4 h-4 text-current" />
                   </div>
                 </div>
 
-                <div className="bg-[#080b12] p-4 rounded-xl border border-slate-800/80 shadow-lg flex items-center justify-between">
+                <div className={`p-4 rounded-xl border shadow-lg flex items-center justify-between transition-colors ${
+                  isLightMode ? 'bg-[#fcfaf5]/90 border-amber-900/10 text-stone-900' : 'bg-[#080b12] border-slate-800/80 text-white'
+                }`}>
                   <div>
-                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest block mb-0.5">Lattice Shear Modulus</span>
-                    <span className="text-sm font-extrabold text-amber-400 block font-mono">{shearModulus.toFixed(1)} Pa</span>
+                    <span className={`text-[9px] font-bold uppercase tracking-widest block mb-0.5 ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>Lattice Shear Modulus</span>
+                    <span className={`text-sm font-extrabold block font-mono ${isLightMode ? 'text-stone-900' : 'text-white'}`}>{shearModulus.toFixed(1)} Pa</span>
                   </div>
-                  <div className="bg-amber-950/30 p-2 rounded border border-amber-900/30">
-                    <Layers className="w-4 h-4 text-amber-400" />
+                  <div className={`p-2 rounded border ${isLightMode ? 'bg-amber-50/50 border-amber-200 text-amber-800' : 'bg-amber-950/30 border-amber-900/30 text-amber-400'}`}>
+                    <Layers className="w-4 h-4 text-current" />
                   </div>
                 </div>
 
-                <div className="bg-[#080b12] p-4 rounded-xl border border-slate-800/80 shadow-lg flex items-center justify-between">
+                <div className={`p-4 rounded-xl border shadow-lg flex items-center justify-between transition-colors ${
+                  isLightMode ? 'bg-[#fcfaf5]/90 border-amber-900/10 text-stone-900' : 'bg-[#080b12] border-slate-800/80 text-white'
+                }`}>
                   <div>
-                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest block mb-0.5">Erosion Safeguard Factor</span>
-                    <span className="text-sm font-extrabold text-emerald-400 block font-mono">
+                    <span className={`text-[9px] font-bold uppercase tracking-widest block mb-0.5 ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>Erosion Safeguard Factor</span>
+                    <span className={`text-sm font-extrabold block font-mono ${isLightMode ? 'text-stone-900' : 'text-white'}`}>
                       {Math.max(1.0, (shearModulus / 1500 + 1)).toFixed(2)}x
                     </span>
                   </div>
-                  <div className="bg-emerald-950/30 p-2 rounded border border-emerald-900/30">
-                    <Wind className="w-4 h-4 text-emerald-400" />
+                  <div className={`p-2 rounded border ${isLightMode ? 'bg-emerald-50/50 border-emerald-200 text-emerald-800' : 'bg-emerald-950/30 border-emerald-900/30 text-emerald-400'}`}>
+                    <Wind className="w-4 h-4 text-current" />
                   </div>
                 </div>
 
-                <div className="bg-[#080b12] p-4 rounded-xl border border-slate-800/80 shadow-lg flex items-center justify-between">
+                <div className={`p-4 rounded-xl border shadow-lg flex items-center justify-between transition-colors ${
+                  isLightMode ? 'bg-[#fcfaf5]/90 border-amber-900/10 text-stone-900' : 'bg-[#080b12] border-slate-800/80 text-white'
+                }`}>
                   <div>
-                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest block mb-0.5">Containment Switch Status</span>
-                    <span className="text-sm font-extrabold text-rose-400 block font-mono uppercase">Arid Apoptosis Active</span>
+                    <span className={`text-[9px] font-bold uppercase tracking-widest block mb-0.5 ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>Containment Switch Status</span>
+                    <span className="text-sm font-extrabold text-rose-500 block font-mono uppercase">Arid Apoptosis Active</span>
                   </div>
-                  <div className="bg-rose-950/30 p-2 rounded border border-rose-900/30">
-                    <Bug className="w-4 h-4 text-rose-400" />
+                  <div className={`p-2 rounded border ${isLightMode ? 'bg-rose-50/50 border-rose-200 text-rose-800' : 'bg-rose-950/30 border-rose-900/30 text-rose-400'}`}>
+                    <Bug className="w-4 h-4 text-current" />
                   </div>
                 </div>
 
               </div>
 
               {/* Input integration system notification badge */}
-              <div className="p-3.5 bg-cyan-950/10 border border-cyan-900/30 rounded-lg text-xs text-slate-300 font-semibold mb-6 flex items-center justify-between gap-3">
+              <div className={`p-3.5 border rounded-lg text-xs font-semibold mb-6 flex items-center justify-between gap-3 ${
+                isLightMode ? 'bg-amber-100/50 border-amber-200 text-stone-800' : 'bg-cyan-950/10 border-cyan-900/30 text-slate-300'
+              }`}>
                 <div className="flex items-center gap-2">
                   <Workflow className="w-4.5 h-4.5 text-cyan-500 animate-pulse shrink-0" />
                   <span>
                     <strong>Interactive Synthesis Pipeline Active:</strong> Inputs modifications from metabolic kinetics automatically adjust polymer density and threshold aerodynamics parameters!
                   </span>
                 </div>
-                <span className="hidden md:inline-block font-mono text-[9px] text-cyan-400 bg-cyan-950/45 px-2.5 py-0.5 rounded border border-cyan-850">
-                  PIPELINE BOUND 🔗
+                <span className={`hidden md:inline-block font-mono text-[9px] px-2.5 py-0.5 rounded border ${
+                  isLightMode ? 'bg-amber-200/50 border-amber-300 text-amber-900' : 'bg-cyan-950/45 border-cyan-850 text-cyan-400'
+                }`}>
+                  PIPELINE BOUND
                 </span>
               </div>
 
               {/* Modeling approaches selector tabs */}
-              <div className="flex flex-wrap gap-2.5 mb-6 border-b border-slate-800 pb-3.5" id="nav-dock-tabs">
+              <div className={`flex flex-wrap gap-2.5 mb-6 border-b pb-3.5 ${isLightMode ? 'border-amber-900/15' : 'border-slate-800'}`} id="nav-dock-tabs">
                 <button
                   onClick={() => setActiveTab('metabolic')}
                   className={`flex-1 min-w-[155px] text-left p-3.5 rounded-xl border transition-all cursor-pointer ${
                     activeTab === 'metabolic'
-                      ? 'bg-cyan-950/20 border-cyan-800 text-cyan-400'
-                      : 'bg-[#080b12] border-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-900/40'
+                      ? (isLightMode ? 'bg-amber-100/90 border-[#b8956c] text-[#3e271e] shadow-sm font-semibold' : 'bg-cyan-950/20 border-cyan-800 text-cyan-400')
+                      : (isLightMode ? 'bg-[#fcfaf5] border-amber-900/10 text-stone-600 hover:text-stone-900 hover:bg-amber-50' : 'bg-[#080b12] border-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-900/40')
                   }`}
                 >
                   <div className="text-xs font-bold uppercase flex items-center gap-1.5 font-sans">
@@ -829,8 +1008,8 @@ export default function App() {
                   onClick={() => setActiveTab('crosslink')}
                   className={`flex-1 min-w-[155px] text-left p-3.5 rounded-xl border transition-all cursor-pointer ${
                     activeTab === 'crosslink'
-                      ? 'bg-cyan-950/20 border-cyan-850 text-cyan-400'
-                      : 'bg-[#080b12] border-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-900/40'
+                      ? (isLightMode ? 'bg-amber-100/90 border-[#b8956c] text-[#3e271e] shadow-sm font-semibold' : 'bg-cyan-950/20 border-cyan-850 text-cyan-400')
+                      : (isLightMode ? 'bg-[#fcfaf5] border-amber-900/10 text-stone-600 hover:text-stone-900 hover:bg-amber-50' : 'bg-[#080b12] border-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-900/40')
                   }`}
                 >
                   <div className="text-xs font-bold uppercase flex items-center gap-1.5 font-sans">
@@ -844,12 +1023,12 @@ export default function App() {
                   onClick={() => setActiveTab('aeolian')}
                   className={`flex-1 min-w-[155px] text-left p-3.5 rounded-xl border transition-all cursor-pointer ${
                     activeTab === 'aeolian'
-                      ? 'bg-cyan-950/20 border-cyan-850 text-cyan-400'
-                      : 'bg-[#080b12] border-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-900/40'
+                      ? (isLightMode ? 'bg-amber-100/90 border-[#b8956c] text-[#3e271e] shadow-sm font-semibold' : 'bg-cyan-950/20 border-cyan-850 text-cyan-400')
+                      : (isLightMode ? 'bg-[#fcfaf5] border-amber-900/10 text-stone-600 hover:text-stone-900 hover:bg-amber-50' : 'bg-[#080b12] border-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-900/40')
                   }`}
                 >
                   <div className="text-xs font-bold uppercase flex items-center gap-1.5 font-sans">
-                    <Wind className="w-3.5 h-3.5 text-cyan-500 text-cyan-500" />
+                    <Wind className="w-3.5 h-3.5 text-cyan-500" />
                     3. Aeolian Transport
                   </div>
                   <div className="text-[9px] opacity-70 italic font-mono pl-5 mt-0.5">Sand Shear Strength</div>
@@ -859,8 +1038,8 @@ export default function App() {
                   onClick={() => setActiveTab('ecological')}
                   className={`flex-1 min-w-[155px] text-left p-3.5 rounded-xl border transition-all cursor-pointer ${
                     activeTab === 'ecological'
-                      ? 'bg-cyan-950/20 border-cyan-850 text-cyan-400'
-                      : 'bg-[#080b12] border-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-900/40'
+                      ? (isLightMode ? 'bg-amber-100/90 border-[#b8956c] text-[#3e271e] shadow-sm font-semibold' : 'bg-cyan-950/20 border-cyan-850 text-cyan-400')
+                      : (isLightMode ? 'bg-[#fcfaf5] border-amber-900/10 text-stone-600 hover:text-stone-900 hover:bg-amber-50' : 'bg-[#080b12] border-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-900/40')
                   }`}
                 >
                   <div className="text-xs font-bold uppercase flex items-center gap-1.5 font-sans">
@@ -872,18 +1051,20 @@ export default function App() {
               </div>
 
               {/* Introductory Section Explanations for Everyone (Non-Technical summaries) */}
-              <div className="mb-6 bg-slate-900/35 border border-slate-800/85 p-5 rounded-xl flex items-start gap-4">
-                <div className="p-2.5 rounded-lg bg-cyan-950/40 border border-cyan-800/30 text-cyan-400 shrink-0">
+              <div className={`mb-6 border p-5 rounded-xl flex items-start gap-4 ${
+                isLightMode ? 'bg-[#fcfaf5]/90 border-amber-900/10 text-stone-850' : 'bg-slate-900/35 border-slate-800/85 text-slate-300'
+              }`}>
+                <div className={`p-2.5 rounded-lg shrink-0 ${isLightMode ? 'bg-amber-100 border border-amber-200 text-[#5c4033]' : 'bg-cyan-950/40 border border-cyan-800/30 text-cyan-400'}`}>
                   <BookOpen className="w-5 h-5" />
                 </div>
                 <div className="text-xs">
                   {activeTab === 'metabolic' && (
                     <>
-                      <h3 className="font-extrabold text-slate-100 font-sans uppercase tracking-wider text-[11px] mb-1">
-                        🧬 Step 1: Cell Growth &amp; Glue Secreting
+                      <h3 className={`font-extrabold font-sans uppercase tracking-wider text-[11px] mb-1 ${isLightMode ? 'text-amber-950' : 'text-slate-100'}`}>
+                        Step 1: Cell Growth &amp; Glue Secreting
                       </h3>
-                      <p className="text-slate-400 leading-relaxed font-sans text-xs">
-                        We grow native soil bacteria called <code className="text-[#22d3ee] font-mono">Bacillus</code>. 
+                      <p className={`leading-relaxed font-sans text-xs ${isLightMode ? 'text-stone-800' : 'text-slate-400'}`}>
+                        We grow native soil bacteria called <code className={isLightMode ? 'text-amber-900 bg-amber-50 px-1 rounded font-mono font-semibold' : 'text-[#22d3ee] font-mono'}>Bacillus</code>. 
                         By providing nutrients (like glutamate), we trigger their metabolic paths to make natural, sticky poly-glutamic acid (gamma-PGA) glue. 
                         Adjust sliders below to see cell populations grow and optimize physical glue output.
                       </p>
@@ -891,10 +1072,10 @@ export default function App() {
                   )}
                   {activeTab === 'crosslink' && (
                     <>
-                      <h3 className="font-extrabold text-slate-100 font-sans uppercase tracking-wider text-[11px] mb-1">
-                        🔗 Step 2: Locking Chains with Minerals
+                      <h3 className={`font-extrabold font-sans uppercase tracking-wider text-[11px] mb-1 ${isLightMode ? 'text-amber-950' : 'text-slate-100'}`}>
+                        Step 2: Locking Chains with Minerals
                       </h3>
-                      <p className="text-slate-400 leading-relaxed font-sans text-xs">
+                      <p className={`leading-relaxed font-sans text-xs ${isLightMode ? 'text-stone-800' : 'text-slate-400'}`}>
                         The bacteria-secreted glue is flexible. To make it hold load stresses, we introduce mineral salt solutions (calcium ions). 
                         The positive mineral charges lock negative polymer rings together. 
                         This cross-linking transforms watery gels into a resilient net that bounds quartz particles tightly.
@@ -903,10 +1084,10 @@ export default function App() {
                   )}
                   {activeTab === 'aeolian' && (
                     <>
-                      <h3 className="font-extrabold text-slate-100 font-sans uppercase tracking-wider text-[11px] mb-1">
-                        🌪 Step 3: Wind-Dunes Stabilization Limits
+                      <h3 className={`font-extrabold font-sans uppercase tracking-wider text-[11px] mb-1 ${isLightMode ? 'text-amber-950' : 'text-slate-100'}`}>
+                        Step 3: Wind-Dunes Stabilization Limits
                       </h3>
-                      <p className="text-slate-400 leading-relaxed font-sans text-xs">
+                      <p className={`leading-relaxed font-sans text-xs ${isLightMode ? 'text-stone-800' : 'text-slate-400'}`}>
                         Once grains are bounded, they become robust ground structures. 
                         This tests wind stress protection as heavy storms blow across a simulated sand bed. 
                         You can trigger severe storm velocities to observe if sand drifts and verify how dense polymer networks hold sands intact.
@@ -915,10 +1096,10 @@ export default function App() {
                   )}
                   {activeTab === 'ecological' && (
                     <>
-                      <h3 className="font-extrabold text-slate-100 font-sans uppercase tracking-wider text-[11px] mb-1">
-                        🧫 Step 4: Environmental Biosafety &amp; Spreading
+                      <h3 className={`font-extrabold font-sans uppercase tracking-wider text-[11px] mb-1 ${isLightMode ? 'text-amber-950' : 'text-slate-100'}`}>
+                        Step 4: Environmental Biosafety &amp; Spreading
                       </h3>
-                      <p className="text-slate-400 leading-relaxed font-sans text-xs">
+                      <p className={`leading-relaxed font-sans text-xs ${isLightMode ? 'text-stone-800' : 'text-slate-400'}`}>
                         Will our strains remain contained and safe, or grow uncontrollably? 
                         We designed built-in environmental apoptosis switches so cells only survive in wet Treated Zones and safely degrade in dry environments. 
                         This maps live bacterial expansion to demonstrate 100% biosafety containment.
@@ -929,7 +1110,9 @@ export default function App() {
               </div>
 
               {/* Dynamic modeling workspace panel views */}
-              <div className="transition-all duration-300 shadow-2xl rounded-xl overflow-hidden" id="modeller-workspace-feed">
+              <div className={`transition-all duration-300 shadow-2xl rounded-xl overflow-hidden border ${
+                isLightMode ? 'bg-[#fbf9f4] border-amber-900/10' : 'bg-[#06080d] border-slate-800'
+              }`} id="modeller-workspace-feed">
                 {activeTab === 'metabolic' && (
                   <MetabolicModel 
                     params={metabolicParams} 
@@ -939,6 +1122,7 @@ export default function App() {
                     setTargetYield={setTargetYield}
                     calibratedKcat={calibratedKcat}
                     setCalibratedKcat={setCalibratedKcat}
+                    isLightMode={isLightMode}
                   />
                 )}
                 {activeTab === 'crosslink' && (
@@ -950,6 +1134,7 @@ export default function App() {
                     setIsLinked={setIsLinkedPga}
                     shearModulus={shearModulus}
                     onUpdateShearModulus={setShearModulus}
+                    isLightMode={isLightMode}
                   />
                 )}
                 {activeTab === 'aeolian' && (
@@ -959,6 +1144,7 @@ export default function App() {
                     shearModulus={shearModulus}
                     isLinked={isLinkedShear}
                     setIsLinked={setIsLinkedShear}
+                    isLightMode={isLightMode}
                   />
                 )}
                 {activeTab === 'ecological' && (
@@ -968,6 +1154,7 @@ export default function App() {
                     pgaAccum={pgaAccum}
                     isLinked={isLinkedSpread}
                     setIsLinked={setIsLinkedSpread}
+                    isLightMode={isLightMode}
                   />
                 )}
               </div>

@@ -8,6 +8,7 @@ interface AeolianProps {
   shearModulus: number;
   isLinked: boolean;
   setIsLinked: (val: boolean) => void;
+  isLightMode: boolean;
 }
 
 export default function AeolianWindTunnel({
@@ -16,6 +17,7 @@ export default function AeolianWindTunnel({
   shearModulus,
   isLinked,
   setIsLinked,
+  isLightMode,
 }: AeolianProps) {
   const [simulationActive, setSimulationActive] = useState<boolean>(true);
 
@@ -105,12 +107,12 @@ export default function AeolianWindTunnel({
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       time += 0.035;
 
-      // Dark sci-fi container viewport background
-      ctx.fillStyle = '#06080d';
+      // Background viewport color
+      ctx.fillStyle = isLightMode ? '#fdfaf3' : '#06080d';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Diagnostic radar grid lines
-      ctx.strokeStyle = '#0e1726';
+      ctx.strokeStyle = isLightMode ? '#eae1cd' : '#0e1726';
       ctx.lineWidth = 1;
       for (let x = 0; x < canvas.width; x += 40) {
         ctx.beginPath();
@@ -126,7 +128,7 @@ export default function AeolianWindTunnel({
       }
 
       // Wind chamber partition lines
-      ctx.strokeStyle = '#1e293b';
+      ctx.strokeStyle = isLightMode ? '#efe7d1' : '#1e293b';
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(canvas.width / 2, 0);
@@ -135,7 +137,7 @@ export default function AeolianWindTunnel({
 
       // Dynamic wind vectors (blowing lines that flow with friction speed)
       const windActiveStr = Math.min(1.0, params.wind_velocity * 0.9);
-      ctx.strokeStyle = `rgba(165, 243, 252, ${0.1 + windActiveStr * 0.4})`;
+      ctx.strokeStyle = isLightMode ? `rgba(14, 165, 233, ${0.12 + windActiveStr * 0.45})` : `rgba(165, 243, 252, ${0.1 + windActiveStr * 0.4})`;
       ctx.lineWidth = 1 + params.wind_velocity * 3.5;
       
       const flowLines = 6;
@@ -152,18 +154,20 @@ export default function AeolianWindTunnel({
       }
 
       // Chamber title card indicators
-      ctx.fillStyle = 'rgba(15, 23, 42, 0.7)';
+      ctx.fillStyle = isLightMode ? 'rgba(255, 255, 255, 0.9)' : 'rgba(15, 23, 42, 0.7)';
       ctx.fillRect(10, 8, 120, 20);
       ctx.fillRect(canvas.width / 2 + 10, 8, 155, 20);
-      ctx.strokeStyle = '#1d283c';
+      ctx.strokeStyle = isLightMode ? '#eae1cd' : '#1d283c';
       ctx.strokeRect(10, 8, 120, 20);
       ctx.strokeRect(canvas.width / 2 + 10, 8, 155, 20);
 
-      ctx.fillStyle = '#94a3b8';
+      ctx.fillStyle = isLightMode ? '#475569' : '#94a3b8';
       ctx.font = 'bold 9px "JetBrains Mono", monospace';
       ctx.textAlign = 'left';
-      ctx.fillText('🔴 UNTREATED SANDS', 16, 21);
-      ctx.fillText('🟢 NYUAD iGEM BIO-GEL', canvas.width / 2 + 16, 21);
+      ctx.fillStyle = '#ef4444';
+      ctx.fillText('UNTREATED SANDS', 16, 21);
+      ctx.fillStyle = isLightMode ? '#059669' : '#10b981';
+      ctx.fillText('NYUAD iGEM BIO-GEL', canvas.width / 2 + 16, 21);
 
       // Simulation physics engine updates
       particles.forEach((p) => {
@@ -277,13 +281,13 @@ export default function AeolianWindTunnel({
       }
 
       // Air flow velocity meter center widget
-      ctx.fillStyle = '#0a0f18';
+      ctx.fillStyle = isLightMode ? '#ffffff' : '#0a0f18';
       ctx.fillRect(canvas.width / 2 - 55, canvas.height - 35, 110, 28);
-      ctx.strokeStyle = '#1e293b';
+      ctx.strokeStyle = isLightMode ? '#eae1cd' : '#1e293b';
       ctx.lineWidth = 1;
       ctx.strokeRect(canvas.width / 2 - 55, canvas.height - 35, 110, 28);
 
-      ctx.fillStyle = '#22d3ee';
+      ctx.fillStyle = isLightMode ? '#0ea5e9' : '#22d3ee';
       ctx.font = 'bold 9px "JetBrains Mono", monospace';
       ctx.textAlign = 'center';
       ctx.fillText(`WIND u*: ${params.wind_velocity.toFixed(2)} m/s`, canvas.width / 2, canvas.height - 18);
@@ -294,23 +298,27 @@ export default function AeolianWindTunnel({
     render();
 
     return () => cancelAnimationFrame(animId);
-  }, [params, physics, simulationActive, effectiveCohesion]);
+  }, [params, physics, simulationActive, effectiveCohesion, isLightMode]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 bg-[#06080d] rounded-xl border border-slate-800 shadow-xl" id="aeolian-wind-tunnel">
+    <div className={`grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 rounded-xl border transition-all duration-300 ${
+      isLightMode 
+        ? 'bg-[#fdfaf3] border-amber-900/10 shadow-[0_4px_24px_rgba(139,94,26,0.06)]' 
+        : 'bg-[#06080d] border-slate-800 shadow-xl'
+    }`} id="aeolian-wind-tunnel">
       {/* Parameters */}
-      <div className="lg:col-span-5 bg-[#0a0f18] p-5 rounded border border-slate-800/80">
-        <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-100 flex items-center gap-2 mb-4 font-mono">
-          <Wind className="w-5 h-5 text-cyan-400" />
+      <div className={`lg:col-span-12 xl:col-span-5 p-5 rounded border transition-colors duration-300 ${isLightMode ? 'bg-white border-amber-900/10' : 'bg-[#0a0f18] border-slate-800/80'}`}>
+        <h3 className={`text-xs font-extrabold uppercase tracking-wider flex items-center gap-2 mb-4 font-mono ${isLightMode ? 'text-amber-955' : 'text-slate-100'}`}>
+          <Wind className={`w-5 h-5 ${isLightMode ? 'text-cyan-650' : 'text-cyan-400'}`} />
           Aeolian Dynamics Simulator
         </h3>
 
         <div className="space-y-5">
           {/* Universal Link to Biophysics */}
-          <div className="p-3 rounded bg-cyan-950/15 border border-cyan-900/40 text-xs mb-2">
+          <div className={`p-3 rounded text-xs mb-2 ${isLightMode ? 'bg-cyan-50/45 border border-cyan-200' : 'bg-cyan-950/15 border border-cyan-900/40'}`}>
             <label className="flex items-center justify-between cursor-pointer">
-              <span className="flex items-center gap-1.5 font-bold text-cyan-400">
-                <Link2 className="w-4 h-4 text-cyan-500 animate-pulse" />
+              <span className={`flex items-center gap-1.5 font-bold ${isLightMode ? 'text-cyan-800' : 'text-cyan-400'}`}>
+                <Link2 className={`w-4 h-4 animate-pulse ${isLightMode ? 'text-cyan-600' : 'text-cyan-500'}`} />
                 Link Bio-Cohesion to Shear Modulus
               </span>
               <input 
@@ -320,67 +328,79 @@ export default function AeolianWindTunnel({
                 className="rounded accent-cyan-500"
               />
             </label>
-            <p className="text-[10px] text-slate-400 mt-1 font-sans leading-normal">
-              When enabled, sand cohesive attachment (<code className="text-emerald-400">γ_bio</code>) is dynamically calculated from downstream shear modulus strength of crosslinked soil gel networks.
+            <p className={`text-[10px] mt-1 font-sans leading-normal ${isLightMode ? 'text-stone-600 font-medium' : 'text-slate-400'}`}>
+              When enabled, sand cohesive attachment (<code className={isLightMode ? 'text-emerald-700 font-mono font-bold' : 'text-emerald-400'}>γ_bio</code>) is dynamically calculated from downstream shear modulus strength of crosslinked soil gel networks.
             </p>
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] text-slate-400 mb-1">
+            <div className={`flex justify-between text-[11px] mb-1 ${isLightMode ? 'text-stone-700' : 'text-slate-400'}`}>
               <div className="group relative flex items-center gap-1 cursor-help">
-                <span className="underline decoration-dotted decoration-slate-600 underline-offset-2">Friction Wind Velocity (<code className="text-cyan-400 font-mono">u_*</code>)</span>
-                <Info className="w-3.5 h-3.5 text-slate-500 hover:text-cyan-400 transition" />
-                <div className="absolute left-0 bottom-full mb-1.5 hidden group-hover:block w-64 p-2 bg-slate-950 text-[10px] text-slate-300 rounded border border-slate-800 shadow-xl z-25 font-sans leading-relaxed">
+                <span className={`underline decoration-dotted underline-offset-2 ${isLightMode ? 'decoration-stone-300' : 'decoration-slate-600'}`}>Friction Wind Velocity (<code className={isLightMode ? 'text-cyan-700 font-mono font-bold' : 'text-cyan-400 font-mono'}>u_*</code>)</span>
+                <Info className="w-3.5 h-3.5 text-slate-500 hover:text-cyan-455 transition" />
+                <div className={`absolute left-0 bottom-full mb-1.5 hidden group-hover:block w-64 p-2 text-[10px] rounded shadow-xl z-25 font-sans leading-relaxed ${isLightMode ? 'bg-white text-stone-800 border border-amber-900/15' : 'bg-slate-950 text-slate-300 border border-slate-800'}`}>
                   Friction speed of ambient wind stress forcing sand lift dislodgements.
                 </div>
               </div>
-              <span className="font-mono bg-cyan-950/50 text-cyan-400 px-1.5 py-0.5 rounded border border-cyan-900/40 text-[10px]">{params.wind_velocity.toFixed(2)} m/s</span>
+              <span className={`font-mono px-1.5 py-0.5 rounded border text-[10px] ${isLightMode ? 'bg-cyan-50 border-cyan-200 text-cyan-800 font-bold' : 'bg-cyan-950/50 border border-cyan-900/40 text-cyan-400'}`}>{params.wind_velocity.toFixed(2)} m/s</span>
             </div>
             <input 
               type="range" min="0.05" max="1.50" step="0.05" 
               value={params.wind_velocity} 
               onChange={(e) => setParams(p => ({ ...p, wind_velocity: parseFloat(e.target.value) }))}
-              className="w-full accent-cyan-500 cursor-ew-resize"
+              className={`w-full accent-cyan-500 cursor-ew-resize ${isLightMode ? 'bg-stone-200 h-1.5 rounded' : ''}`}
             />
-            <span className="text-[10px] text-slate-500 block mt-1 font-sans">Wind force exerted physically onto sand bed surfaces</span>
+            <span className={`text-[10px] block mt-1 font-sans ${isLightMode ? 'text-stone-400' : 'text-slate-500'}`}>Wind force exerted physically onto sand bed surfaces</span>
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] text-slate-400 mb-1">
+            <div className={`flex justify-between text-[11px] mb-1 ${isLightMode ? 'text-stone-700' : 'text-slate-400'}`}>
               <div className="group relative flex items-center gap-1 cursor-help">
-                <span className="underline decoration-dotted decoration-slate-600 underline-offset-2">Sand Particle Diameter (<code className="text-amber-400 font-mono">d</code>)</span>
-                <Info className="w-3.5 h-3.5 text-slate-500 hover:text-cyan-400 transition" />
-                <div className="absolute left-0 bottom-full mb-1.5 hidden group-hover:block w-64 p-2 bg-slate-950 text-[10px] text-slate-300 rounded border border-slate-800 shadow-xl z-25 font-sans leading-relaxed">
+                <span className={`underline decoration-dotted underline-offset-2 ${isLightMode ? 'decoration-stone-300' : 'decoration-slate-600'}`}>Sand Particle Diameter (<code className={isLightMode ? 'text-amber-700 font-mono font-bold' : 'text-amber-400 font-mono'}>d</code>)</span>
+                <Info className="w-3.5 h-3.5 text-slate-500 hover:text-cyan-455 transition" />
+                <div className={`absolute left-0 bottom-full mb-1.5 hidden group-hover:block w-64 p-2 text-[10px] z-25 font-sans leading-relaxed rounded border shadow-xl ${isLightMode ? 'bg-white text-stone-800 border-amber-900/15' : 'bg-slate-950 text-slate-300 border border-slate-800'}`}>
                   Grain diameter size of sand particles; larger sizes require significantly more lift.
                 </div>
               </div>
-              <span className="font-mono bg-amber-950/30 text-amber-400 px-1.5 py-0.5 rounded border border-amber-900/40 text-[10px]">{(params.sand_diameter * 1000).toFixed(3)} mm</span>
+              <span className={`font-mono px-1.5 py-0.5 rounded border text-[10px] ${isLightMode ? 'bg-amber-50 border-amber-200 text-amber-850 font-bold' : 'bg-amber-950/30 border border-amber-900/40 text-amber-400'}`}>{(params.sand_diameter * 1000).toFixed(3)} mm</span>
             </div>
             <div className="flex gap-2">
               <input 
                 type="range" min="0.00005" max="0.00100" step="0.00005" 
                 value={params.sand_diameter} 
                 onChange={(e) => setParams(p => ({ ...p, sand_diameter: parseFloat(e.target.value) }))}
-                className="w-full h-2 rounded accent-amber-500 mt-2 cursor-ew-resize"
+                className={`w-full h-2 rounded accent-amber-500 mt-2 cursor-ew-resize ${isLightMode ? 'bg-stone-200' : ''}`}
               />
             </div>
             {/* Quick Presets for grain sizes */}
             <div className="flex gap-2.5 mt-2 font-mono">
               <button 
                 onClick={() => setParams(p => ({ ...p, sand_diameter: 0.00005 }))}
-                className="text-[9px] font-bold text-slate-400 bg-[#06080d] hover:bg-slate-900/60 px-2 py-1 rounded border border-slate-800 cursor-pointer"
+                className={`text-[9px] font-bold px-2 py-1 rounded border cursor-pointer transition-colors ${
+                  isLightMode 
+                    ? 'text-amber-900 bg-amber-50/60 border-amber-900/15 hover:bg-amber-100/60' 
+                    : 'text-slate-400 bg-[#06080d] hover:bg-slate-900/60 border border-slate-800'
+                }`}
               >
                 Fine (0.05mm)
               </button>
               <button 
                 onClick={() => setParams(p => ({ ...p, sand_diameter: 0.00025 }))}
-                className="text-[9px] font-bold text-slate-400 bg-[#06080d] hover:bg-slate-900/60 px-2 py-1 rounded border border-slate-800 cursor-pointer"
+                className={`text-[9px] font-bold px-2 py-1 rounded border cursor-pointer transition-colors ${
+                  isLightMode 
+                    ? 'text-amber-900 bg-amber-50/60 border-amber-900/15 hover:bg-amber-100/60' 
+                    : 'text-slate-400 bg-[#06080d] hover:bg-slate-900/60 border border-slate-800'
+                }`}
               >
                 Medium (0.25mm)
               </button>
               <button 
                 onClick={() => setParams(p => ({ ...p, sand_diameter: 0.00085 }))}
-                className="text-[9px] font-bold text-slate-400 bg-[#06080d] hover:bg-slate-900/60 px-2 py-1 rounded border border-slate-800 cursor-pointer"
+                className={`text-[9px] font-bold px-2 py-1 rounded border cursor-pointer transition-colors ${
+                  isLightMode 
+                    ? 'text-amber-900 bg-amber-50/60 border-amber-900/15 hover:bg-amber-100/60' 
+                    : 'text-slate-400 bg-[#06080d] hover:bg-slate-900/60 border border-slate-800'
+                }`}
               >
                 Coarse (0.85mm)
               </button>
@@ -388,18 +408,22 @@ export default function AeolianWindTunnel({
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] text-slate-400 mb-1">
+            <div className={`flex justify-between text-[11px] mb-1 ${isLightMode ? 'text-stone-700' : 'text-slate-400'}`}>
               <div className="group relative flex items-center gap-1 cursor-help">
-                <span className="underline decoration-dotted decoration-slate-600 underline-offset-2">Biofilm Cohesive Adhesion (<code className="text-emerald-400 font-mono">γ_bio</code>)</span>
-                <Info className="w-3.5 h-3.5 text-slate-500 hover:text-cyan-400 transition" />
-                <div className="absolute left-0 bottom-full mb-1.5 hidden group-hover:block w-64 p-2 bg-slate-950 text-[10px] text-slate-300 rounded border border-slate-800 shadow-xl z-25 font-sans leading-relaxed">
+                <span className={`underline decoration-dotted underline-offset-2 ${isLightMode ? 'decoration-stone-300' : 'decoration-slate-600'}`}>Biofilm Cohesive Adhesion (<code className={isLightMode ? 'text-emerald-700 font-mono' : 'text-emerald-400 font-mono'}>γ_bio</code>)</span>
+                <Info className="w-3.5 h-3.5 text-slate-500 hover:text-cyan-455 transition" />
+                <div className={`absolute left-0 bottom-full mb-1.5 hidden group-hover:block w-64 p-2 text-[10px] z-25 font-sans leading-relaxed rounded border shadow-xl ${isLightMode ? 'bg-white text-stone-800 border-amber-900/15' : 'bg-slate-950 text-slate-300 border border-slate-800'}`}>
                   Sticky bio-gel adhesive coefficient securing loose sand grains together.
                 </div>
               </div>
-              <span className="font-mono bg-emerald-950/30 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-900/40 text-[10px]">{effectiveCohesion.toFixed(5)} Pa</span>
+              <span className={`font-mono px-1.5 py-0.5 rounded border text-[10px] ${isLightMode ? 'bg-emerald-50 border-emerald-200 text-emerald-800 font-bold' : 'bg-emerald-950/30 border border-emerald-900/40 text-emerald-400'}`}>{effectiveCohesion.toFixed(5)} Pa</span>
             </div>
             {isLinked ? (
-              <div className="py-2.5 px-3 rounded bg-slate-900/40 text-[11px] text-emerald-400/90 border border-emerald-950 font-mono flex items-center gap-1.5">
+              <div className={`py-2.5 px-3 rounded text-[11px] font-mono flex items-center gap-1.5 border ${
+                isLightMode 
+                  ? 'bg-emerald-50/45 text-emerald-800 border-emerald-200 shadow-sm' 
+                  : 'bg-slate-900/40 text-emerald-400/90 border border-emerald-953'
+              }`}>
                 <span>🔗 Bound: shearModulus * 0.000002</span>
               </div>
             ) : (
@@ -407,55 +431,65 @@ export default function AeolianWindTunnel({
                 type="range" min="0.0" max="0.002" step="0.0001" 
                 value={params.biofilm_cohesion} 
                 onChange={(e) => setParams(p => ({ ...p, biofilm_cohesion: parseFloat(e.target.value) }))}
-                className="w-full accent-emerald-500 cursor-ew-resize"
+                className={`w-full accent-emerald-500 cursor-ew-resize ${isLightMode ? 'bg-stone-200 h-1.5 rounded' : ''}`}
               />
             )}
           </div>
         </div>
 
         {/* State Indicators */}
-        <div className="mt-5 pt-4 border-t border-slate-800 space-y-2">
-          <div className="flex items-center justify-between text-xs font-mono text-slate-400">
+        <div className={`mt-5 pt-4 border-t space-y-2 ${isLightMode ? 'border-amber-900/10' : 'border-slate-800'}`}>
+          <div className={`flex items-center justify-between text-xs font-mono ${isLightMode ? 'text-stone-600 font-medium' : 'text-slate-400'}`}>
             <span>UNTREATED THRESHOLD SPEED (u_*t0):</span>
-            <span className="font-bold text-slate-400">{physics.u_star_t0.toFixed(3)} m/s</span>
+            <span className={`font-bold ${isLightMode ? 'text-stone-704' : 'text-slate-400'}`}>{physics.u_star_t0.toFixed(3)} m/s</span>
           </div>
-          <div className="flex items-center justify-between text-xs font-mono text-emerald-400">
+          <div className={`flex items-center justify-between text-xs font-mono ${isLightMode ? 'text-emerald-700' : 'text-emerald-404'}`}>
             <span>BIO-CEMENTED THRESHOLD (u_*t):</span>
-            <span className="font-bold text-emerald-400">{physics.u_star_t.toFixed(3)} m/s</span>
+            <span className="font-bold">{physics.u_star_t.toFixed(3)} m/s</span>
           </div>
 
-          <div className="mt-4 p-3 rounded-lg flex items-center gap-3 bg-[#0a1824] border border-cyan-950/80">
-            <ShieldCheck className="w-8 h-8 text-cyan-400 shrink-0" />
-            <div className="text-[11px] text-slate-300 leading-snug font-sans">
-              <strong>Erosion Protection Verified:</strong> Overexpressing γ-PGA increases the desert dislodgement threshold speed from <span className="text-amber-400 font-mono">{physics.u_star_t0.toFixed(2)} m/s</span> up to <span className="text-cyan-400 font-mono">{physics.u_star_t.toFixed(2)} m/s</span>!
+          <div className={`mt-4 p-3 rounded-lg flex items-center gap-3 ${
+            isLightMode 
+              ? 'bg-[#ffeed6] border border-amber-900/12 shadow-[0_2px_8px_rgba(139,94,26,0.04)]' 
+              : 'bg-[#0a1824] border border-cyan-950/80'
+          }`}>
+            <ShieldCheck className={`w-8 h-8 shrink-0 ${isLightMode ? 'text-amber-600' : 'text-cyan-400'}`} />
+            <div className={`text-[11px] leading-snug font-sans ${isLightMode ? 'text-stone-700 font-medium' : 'text-slate-300'}`}>
+              <strong>Erosion Protection Verified:</strong> Overexpressing γ-PGA increases the desert dislodgement threshold speed from <span className="text-amber-600 font-mono">{physics.u_star_t0.toFixed(2)} m/s</span> up to <span className="text-cyan-700 font-mono font-bold">{physics.u_star_t.toFixed(2)} m/s</span>!
             </div>
           </div>
         </div>
       </div>
 
       {/* Wind Tunnel Simulation Showcase */}
-      <div className="lg:col-span-7 bg-[#0a0f18] p-5 rounded border border-slate-800/80 flex flex-col justify-between font-sans">
+      <div className={`lg:col-span-12 xl:col-span-7 p-5 rounded border flex flex-col justify-between font-sans transition-colors duration-300 ${
+        isLightMode ? 'bg-white border-amber-900/10' : 'bg-[#0a0f18] border-slate-800/80'
+      }`}>
         <div>
           <div className="flex justify-between items-center mb-3">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-200 flex items-center gap-2">
-              <Zap className="w-5 h-5 text-amber-400 animate-pulse" />
+            <h3 className={`text-xs font-bold uppercase tracking-wider flex items-center gap-2 ${isLightMode ? 'text-amber-955 font-bold' : 'text-slate-200'}`}>
+              <Zap className={`w-5 h-5 animate-pulse ${isLightMode ? 'text-amber-600' : 'text-amber-400'}`} />
               Dynamic Aeolian Wind Tunnel Simulator
             </h3>
             <div className="flex items-center gap-2">
               <button 
                 onClick={() => setSimulationActive(s => !s)}
-                className="px-3 py-1 bg-[#06080d] border border-slate-800 rounded font-mono text-cyan-400 hover:text-cyan-300 text-[10px] font-bold tracking-wider uppercase transition flex items-center gap-1 cursor-pointer"
+                className={`px-3 py-1 rounded font-mono text-[10px] font-bold tracking-wider uppercase transition flex items-center gap-1 cursor-pointer ${
+                  isLightMode 
+                    ? 'bg-amber-50 text-cyan-800 border border-amber-900/12 hover:bg-amber-100/50' 
+                    : 'bg-[#06080d] border border-slate-800 text-cyan-400 hover:text-cyan-300'
+                }`}
               >
-                <Play className="w-3 h-3 text-cyan-400" />
+                <Play className="w-3 h-3 text-cyan-500" />
                 {simulationActive ? 'Pause Sim' : 'Resume Sim'}
               </button>
             </div>
           </div>
-          <p className="text-[11px] text-slate-400 leading-relaxed mb-4">
+          <p className={`text-[11px] leading-relaxed mb-4 ${isLightMode ? 'text-stone-600 font-medium' : 'text-slate-400'}`}>
             Compare chambers. Left contains loose, untreated sand grains; right contains NYUAD&apos;s polymer bonded bio-cement. Turn up friction speed and notice coherent bio-cement layers resisting wind dislodgement.
           </p>
 
-          <div className="border border-slate-800 rounded overflow-hidden relative shadow-2xl bg-[#06090f]">
+          <div className={`border rounded overflow-hidden relative shadow-2xl ${isLightMode ? 'border-amber-900/15 bg-[#fdfaf3]' : 'border-slate-800 bg-[#06090f]'}`}>
             <canvas 
               ref={canvasRef} 
               width={520} 

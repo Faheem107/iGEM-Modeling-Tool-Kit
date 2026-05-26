@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Wind, ShieldCheck, HelpCircle, Sliders, RefreshCw, Layers, ArrowLeft, Play, Pause, Thermometer, Droplet } from 'lucide-react';
+import GlossaryTerm from './GlossaryTerm';
 
 interface WetLabSandbox2DProps {
   onBack: () => void;
@@ -7,9 +8,10 @@ interface WetLabSandbox2DProps {
     pgaAccum: number;
     shearModulus: number;
   };
+  isLightMode?: boolean;
 }
 
-export default function WetLabSandbox2D({ onBack, universalVitals }: WetLabSandbox2DProps) {
+export default function WetLabSandbox2D({ onBack, universalVitals, isLightMode = false }: WetLabSandbox2DProps) {
   // --- REAL LABORATORY ENTER-ABLE VALUES IN WET LAB ASSAY ---
   const [labOD600, setLabOD600] = useState<number>(1.8);          // OD600 units (range 0.1 to 4.0)
   const [labInocVolume, setLabInocVolume] = useState<number>(30);   // mL/dm3 sand (range 2 to 100)
@@ -376,10 +378,10 @@ export default function WetLabSandbox2D({ onBack, universalVitals }: WetLabSandb
 
       ctx.font = 'bold 10px "JetBrains Mono", monospace';
       ctx.textAlign = 'left';
-      ctx.fillStyle = '#f59e0b';
-      ctx.fillText('🔴 UNTREATED DRY DUNES', 30, 31);
-      ctx.fillStyle = '#34d399';
-      ctx.fillText('🟢 BIO-STABILIZED COATED DUNES', canvas.width / 2 + 30, 31);
+      ctx.fillStyle = '#ef4444';
+      ctx.fillText('UNTREATED DRY DUNES (RED GRID)', 30, 31);
+      ctx.fillStyle = '#10b981';
+      ctx.fillText('BIO-STABILIZED COATED DUNES (GREEN GRID)', canvas.width / 2 + 30, 31);
 
       // Warning alarm overlay if storm triggered
       if (stormActive) {
@@ -389,7 +391,7 @@ export default function WetLabSandbox2D({ onBack, universalVitals }: WetLabSandb
         ctx.fillStyle = '#fca5a5';
         ctx.font = 'bold 9px "JetBrains Mono", monospace';
         ctx.textAlign = 'center';
-        ctx.fillText('⚡️ ACTIVE COYOTE AEOLIAN GUST STORM TEST IN PROGRESS ⚡️', canvas.width / 2, canvas.height - 20);
+        ctx.fillText('ACTIVE COYOTE AEOLIAN GUST STORM TEST IN PROGRESS', canvas.width / 2, canvas.height - 20);
       }
 
       animId = requestAnimationFrame(render);
@@ -403,27 +405,41 @@ export default function WetLabSandbox2D({ onBack, universalVitals }: WetLabSandb
   }, [cellDensity, precursorFeed, salinityInput, windFriction, isSimulating, stormActive, u_star_critical, derivedShearModulus]);
 
   return (
-    <div className="min-h-screen bg-[#030508] text-slate-200 p-6 md:p-8 font-sans" id="wetlab-comparison-frame">
+    <div className={`min-h-screen transition-all duration-300 p-6 md:p-8 font-sans ${
+      isLightMode ? 'bg-[#f4ebd0] text-stone-850' : 'bg-[#030508] text-slate-200'
+    }`} id="wetlab-comparison-frame">
       <div className="max-w-7xl mx-auto">
         
         {/* Header Block */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-6 border-b border-slate-800">
+        <div className={`flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-6 border-b transition-colors ${
+          isLightMode ? 'border-amber-900/10' : 'border-slate-800'
+        }`}>
           <div>
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="bg-emerald-950 border border-emerald-500/80 text-emerald-400 font-mono text-[9px] uppercase tracking-widest font-black px-2.5 py-1 rounded">
+              <span className={`font-mono text-[9px] uppercase tracking-widest font-black px-2.5 py-1 rounded transition-colors ${
+                isLightMode ? 'bg-emerald-100 border border-emerald-300 text-emerald-800' : 'bg-emerald-950 border border-emerald-500/80 text-emerald-400'
+              }`}>
                 NYUAD iGEM 2026 Wet-Lab Assay
               </span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight uppercase">
+            <h1 className={`text-2xl md:text-3xl font-extrabold tracking-tight uppercase transition-colors ${
+              isLightMode ? 'text-stone-900' : 'text-white'
+            }`}>
               Wet-Lab Parameter Simulation Sandbox
             </h1>
-            <p className="text-xs text-slate-400 max-w-2xl mt-1 leading-relaxed">
+            <p className={`text-xs max-w-2xl mt-1 leading-relaxed transition-colors ${
+              isLightMode ? 'text-stone-600' : 'text-slate-400'
+            }`}>
               Feed experimental laboratory values directly into our 2D birds-eye dune lattice. Monitor organic matrix propagation and see sands protected structurally during real-time Simulated Dust Gales.
             </p>
           </div>
           <button 
             onClick={onBack}
-            className="px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 rounded font-bold font-mono text-[#22d3ee] hover:text-white text-xs tracking-wider transition cursor-pointer flex items-center gap-1.5 shrink-0"
+            className={`px-4 py-2 border rounded font-bold font-mono text-xs tracking-wider transition cursor-pointer flex items-center gap-1.5 shrink-0 ${
+              isLightMode 
+                ? 'bg-white hover:bg-stone-50 border-amber-900/15 text-amber-800' 
+                : 'bg-slate-900 hover:bg-slate-800 border-slate-700/80 text-[#22d3ee] hover:text-white'
+            }`}
           >
             <ArrowLeft className="w-4 h-4" /> Exit Sandbox & Equations
           </button>
@@ -433,14 +449,22 @@ export default function WetLabSandbox2D({ onBack, universalVitals }: WetLabSandb
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* Controls Sidebar (Left Column) */}
-          <div className="lg:col-span-5 space-y-6 bg-[#0a0f18] p-5 rounded-xl border border-slate-800">
-            <div className="flex justify-between items-center pb-2 border-b border-slate-800/80">
-              <h3 className="text-xs font-black uppercase tracking-wider text-slate-100 flex items-center gap-2 font-mono">
-                <Sliders className="w-4 h-4 text-[#22d3ee]" />
+          <div className={`lg:col-span-5 space-y-6 p-5 rounded-xl border transition-all duration-300 ${
+            isLightMode ? 'bg-white/95 border-amber-900/10 shadow-[0_8px_20px_rgba(139,94,26,0.05)] text-stone-800' : 'bg-[#0a0f18] border-slate-800 text-slate-200'
+          }`}>
+            <div className={`flex justify-between items-center pb-2 border-b transition-colors ${
+              isLightMode ? 'border-amber-900/10' : 'border-slate-800/80'
+            }`}>
+              <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-2 font-mono transition-colors ${
+                isLightMode ? 'text-stone-900' : 'text-slate-100'
+              }`}>
+                <Sliders className="w-4 h-4 text-cyan-500" />
                 Lab Parameter Registry
               </h3>
               {/* Noise toggle control */}
-              <label className="flex items-center gap-1.5 cursor-pointer text-[10px] text-slate-400 p-1 bg-slate-900 border border-slate-800 rounded">
+              <label className={`flex items-center gap-1.5 cursor-pointer text-[10px] p-1 rounded border transition-colors ${
+                isLightMode ? 'bg-stone-100 border-stone-200 text-stone-600' : 'bg-slate-900 border-slate-800 text-slate-400'
+              }`}>
                 <input 
                   type="checkbox" 
                   checked={enableNoise}
@@ -453,142 +477,162 @@ export default function WetLabSandbox2D({ onBack, universalVitals }: WetLabSandb
 
             {/* Input Slider 1 - Initial OD600 */}
             <div>
-              <div className="flex justify-between text-[11px] text-slate-400 mb-1.5">
-                <span className="font-semibold text-slate-200">Initial Colony Optical Density (<code className="text-[#22d3ee]">OD₆₀₀</code>)</span>
-                <span className="font-mono text-cyan-400 bg-cyan-950/40 border border-cyan-900/35 px-1.5 py-0.5 rounded text-[10px]">{labOD600.toFixed(2)} Target</span>
+              <div className={`flex justify-between text-[11px] mb-1.5 ${isLightMode ? 'text-stone-600' : 'text-slate-400'}`}>
+                <span className={`font-semibold ${isLightMode ? 'text-stone-800' : 'text-slate-200'}`}>Initial Colony Optical Density (<code className={isLightMode ? 'text-cyan-800 font-bold font-mono' : 'text-[#22d3ee]'}>OD₆₀₀</code>)</span>
+                <span className={`font-mono px-1.5 py-0.5 rounded text-[10px] border ${isLightMode ? 'bg-cyan-50 border-cyan-200 text-cyan-800 font-bold' : 'text-cyan-400 bg-cyan-950/40 border border-cyan-900/35'}`}>{labOD600.toFixed(2)} Target</span>
               </div>
               <div className="flex items-center gap-3">
                 <input 
                   type="range" min="0.1" max="4.0" step="0.1"
                   value={labOD600} 
                   onChange={(e) => setLabOD600(parseFloat(e.target.value))}
-                  className="grow h-1.5 rounded accent-cyan-500 cursor-ew-resize"
+                  className={`grow h-1.5 rounded accent-cyan-500 cursor-ew-resize ${isLightMode ? 'bg-stone-200' : ''}`}
                 />
                 <input 
                   type="number" min="0.1" max="4.0" step="0.1"
                   value={labOD600}
                   onChange={(e) => setLabOD600(Math.max(0.1, Math.min(4.0, parseFloat(e.target.value) || 0.1)))}
-                  className="w-16 bg-[#030508] text-[#22d3ee] border border-slate-800 focus:border-cyan-500 rounded px-1.5 py-0.5 text-xs font-mono text-center outline-none"
+                  className={`w-16 border rounded px-1.5 py-0.5 text-xs font-mono text-center outline-none transition ${
+                    isLightMode 
+                      ? 'bg-amber-50/55 border-amber-900/15 text-cyan-800 focus:border-cyan-500' 
+                      : 'bg-[#030508] text-[#22d3ee] border border-slate-800 focus:border-cyan-500'
+                  }`}
                 />
               </div>
-              <span className="text-[9px] text-slate-500 block mt-1">Direct spectrophotometer measurement of initial Bacillus cell density.</span>
+              <span className={`text-[9px] block mt-1 ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>Direct spectrophotometer measurement of initial Bacillus cell density.</span>
             </div>
 
             {/* Input Slider 2 - Inoculation Volume */}
             <div>
-              <div className="flex justify-between text-[11px] text-slate-400 mb-1.5">
-                <span className="font-semibold text-slate-200">Inoculation Vol (Per dm³ soil)</span>
-                <span className="font-mono text-indigo-400 bg-indigo-950/40 border border-indigo-900/30 px-1.5 py-0.5 rounded text-[10px]">{labInocVolume.toFixed(0)} mL</span>
+              <div className={`flex justify-between text-[11px] mb-1.5 ${isLightMode ? 'text-stone-600' : 'text-slate-400'}`}>
+                <span className={`font-semibold ${isLightMode ? 'text-stone-800' : 'text-slate-200'}`}>Inoculation Vol (Per dm³ soil)</span>
+                <span className={`font-mono px-1.5 py-0.5 rounded text-[10px] border ${isLightMode ? 'bg-indigo-50 border-indigo-200 text-indigo-700 font-bold' : 'text-indigo-400 bg-indigo-950/40 border border-indigo-900/30'}`}>{labInocVolume.toFixed(0)} mL</span>
               </div>
               <div className="flex items-center gap-3">
                 <input 
                   type="range" min="2" max="100" step="2"
                   value={labInocVolume} 
                   onChange={(e) => setLabInocVolume(parseInt(e.target.value))}
-                  className="grow h-1.5 rounded accent-indigo-500 cursor-ew-resize"
+                  className={`grow h-1.5 rounded accent-indigo-500 cursor-ew-resize ${isLightMode ? 'bg-stone-200' : ''}`}
                 />
                 <input 
                   type="number" min="2" max="100" step="2"
                   value={labInocVolume}
                   onChange={(e) => setLabInocVolume(Math.max(2, Math.min(100, parseInt(e.target.value) || 2)))}
-                  className="w-16 bg-[#030508] text-indigo-400 border border-slate-800 focus:border-indigo-500 rounded px-1.5 py-0.5 text-xs font-mono text-center outline-none"
+                  className={`w-16 border rounded px-1.5 py-0.5 text-xs font-mono text-center outline-none transition ${
+                    isLightMode 
+                      ? 'bg-amber-50/55 border-amber-900/15 text-indigo-800 focus:border-indigo-500' 
+                      : 'bg-[#030508] text-indigo-400 border border-slate-800 focus:border-indigo-500'
+                  }`}
                 />
               </div>
-              <span className="text-[9px] text-slate-500 block mt-1">Suspended liquid volume distributed through the sand matrix.</span>
+              <span className={`text-[9px] block mt-1 ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>Suspended liquid volume distributed through the sand matrix.</span>
             </div>
 
             {/* Input Slider 3 - Glutamate Precursor */}
             <div>
-              <div className="flex justify-between text-[11px] text-slate-400 mb-1.5">
-                <span className="font-semibold text-slate-200">L-Glutamate Dosing (<code className="text-emerald-400">[S]₀</code>)</span>
-                <span className="font-mono text-emerald-400 bg-emerald-950/40 border border-emerald-900/30 px-1.5 py-0.5 rounded text-[10px]">{labGlutamate.toFixed(0)} mM</span>
+              <div className={`flex justify-between text-[11px] mb-1.5 ${isLightMode ? 'text-stone-600' : 'text-slate-400'}`}>
+                <span className={`font-semibold ${isLightMode ? 'text-stone-800' : 'text-slate-200'}`}>L-Glutamate Dosing (<code className={isLightMode ? 'text-emerald-700 font-bold font-mono' : 'text-emerald-400'}>[S]₀</code>)</span>
+                <span className={`font-mono px-1.5 py-0.5 rounded text-[10px] border ${isLightMode ? 'bg-emerald-50 border-emerald-200 text-emerald-800 font-bold' : 'text-emerald-400 bg-emerald-950/40 border border-emerald-900/30'}`}>{labGlutamate.toFixed(0)} mM</span>
               </div>
               <div className="flex items-center gap-3">
                 <input 
                   type="range" min="0" max="120" step="5"
                   value={labGlutamate} 
                   onChange={(e) => setLabGlutamate(parseInt(e.target.value))}
-                  className="grow h-1.5 rounded accent-emerald-500 cursor-ew-resize"
+                  className={`grow h-1.5 rounded accent-emerald-500 cursor-ew-resize ${isLightMode ? 'bg-stone-200' : ''}`}
                 />
                 <input 
                   type="number" min="0" max="120" step="5"
                   value={labGlutamate}
                   onChange={(e) => setLabGlutamate(Math.max(0, Math.min(120, parseInt(e.target.value) || 0)))}
-                  className="w-16 bg-[#030508] text-emerald-400 border border-slate-800 focus:border-emerald-500 rounded px-1.5 py-0.5 text-xs font-mono text-center outline-none"
+                  className={`w-16 border rounded px-1.5 py-0.5 text-xs font-mono text-center outline-none transition ${
+                    isLightMode 
+                      ? 'bg-amber-50/55 border-amber-900/15 text-emerald-800 focus:border-emerald-500' 
+                      : 'bg-[#030508] text-emerald-400 border border-slate-800 focus:border-emerald-500'
+                  }`}
                 />
               </div>
-              <span className="text-[9px] text-slate-500 block mt-1">Precursor concentrations fueling Bacillus monomer production kinetics.</span>
+              <span className={`text-[9px] block mt-1 ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>Precursor concentrations fueling Bacillus monomer production kinetics.</span>
             </div>
 
             {/* Input Slider 4 - Nutrient Salinity Ca2+ */}
             <div>
-              <div className="flex justify-between text-[11px] text-slate-400 mb-1.5">
-                <span className="font-semibold text-slate-200">Divalent Calcium salt (<code className="text-[#f59e0b]">[CaCl₂]</code>)</span>
-                <span className="font-mono text-amber-400 bg-amber-950/30 border border-amber-900/30 px-1.5 py-0.5 rounded text-[10px]">{labSalinity.toFixed(2)} g/L</span>
+              <div className={`flex justify-between text-[11px] mb-1.5 ${isLightMode ? 'text-stone-600' : 'text-slate-400'}`}>
+                <span className={`font-semibold ${isLightMode ? 'text-stone-800' : 'text-slate-200'}`}>Divalent Calcium salt (<code className={isLightMode ? 'text-amber-850 font-bold font-mono' : 'text-[#f59e0b]'}>[CaCl₂]</code>)</span>
+                <span className={`font-mono px-1.5 py-0.5 rounded text-[10px] border ${isLightMode ? 'bg-amber-50 border-amber-200 text-amber-800 font-bold' : 'text-amber-400 bg-amber-950/30 border border-amber-900/30'}`}>{labSalinity.toFixed(2)} g/L</span>
               </div>
               <div className="flex items-center gap-3">
                 <input 
                   type="range" min="0.1" max="12.0" step="0.1"
                   value={labSalinity} 
                   onChange={(e) => setLabSalinity(parseFloat(e.target.value))}
-                  className="grow h-1.5 rounded accent-amber-550 cursor-ew-resize"
+                  className={`grow h-1.5 rounded accent-amber-500 cursor-ew-resize ${isLightMode ? 'bg-stone-200' : ''}`}
                 />
                 <input 
                   type="number" min="0.1" max="12.0" step="0.1"
                   value={labSalinity}
                   onChange={(e) => setLabSalinity(Math.max(0.1, Math.min(12.0, parseFloat(e.target.value) || 0.1)))}
-                  className="w-16 bg-[#030508] text-amber-400 border border-slate-800 focus:border-amber-500 rounded px-1.5 py-0.5 text-xs font-mono text-center outline-none"
+                  className={`w-16 border rounded px-1.5 py-0.5 text-xs font-mono text-center outline-none transition ${
+                    isLightMode 
+                      ? 'bg-amber-50/55 border-amber-900/15 text-amber-800 focus:border-amber-500' 
+                      : 'bg-[#030508] text-amber-400 border border-slate-800 focus:border-amber-500'
+                  }`}
                 />
               </div>
-              <span className="text-[9px] text-slate-500 block mt-1">Divalent calcium sources to crosslink polymeric carboxylate chains.</span>
+              <span className={`text-[9px] block mt-1 ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>Divalent calcium sources to crosslink polymeric carboxylate chains.</span>
             </div>
 
             {/* Input Slider 5 - Incubation Temp */}
             <div>
-              <div className="flex justify-between text-[11px] text-slate-400 mb-1.5">
-                <span className="font-semibold text-slate-200">Incubation Temperature (<code className="text-rose-400">T</code>)</span>
-                <span className="font-mono text-rose-450 bg-rose-950/30 border border-rose-900/30 px-1.5 py-0.5 rounded text-[10px]">{labTemp.toFixed(1)} °C</span>
+              <div className={`flex justify-between text-[11px] mb-1.5 ${isLightMode ? 'text-stone-600' : 'text-slate-400'}`}>
+                <span className={`font-semibold ${isLightMode ? 'text-stone-800' : 'text-slate-200'}`}>Incubation Temperature (<code className={isLightMode ? 'text-rose-700 font-bold font-mono' : 'text-rose-400'}>T</code>)</span>
+                <span className={`font-mono px-1.5 py-0.5 rounded text-[10px] border ${isLightMode ? 'bg-rose-50 border-rose-200 text-rose-700 font-bold' : 'text-rose-400 bg-rose-950/30 border border-rose-900/30'}`}>{labTemp.toFixed(1)} °C</span>
               </div>
               <div className="flex items-center gap-3">
                 <input 
                   type="range" min="15" max="55" step="1"
                   value={labTemp} 
                   onChange={(e) => setLabTemp(parseFloat(e.target.value))}
-                  className="grow h-1.5 rounded accent-rose-500 cursor-ew-resize"
+                  className={`grow h-1.5 rounded accent-rose-500 cursor-ew-resize ${isLightMode ? 'bg-stone-200' : ''}`}
                 />
                 <input 
                   type="number" min="15" max="55" step="1"
                   value={labTemp}
                   onChange={(e) => setLabTemp(Math.max(15, Math.min(55, parseInt(e.target.value) || 37)))}
-                  className="w-16 bg-[#030508] text-rose-400 border border-slate-800 focus:border-rose-500 rounded px-1.5 py-0.5 text-xs font-mono text-center outline-none"
+                  className={`w-16 border rounded px-1.5 py-0.5 text-xs font-mono text-center outline-none transition ${
+                    isLightMode 
+                      ? 'bg-amber-50/55 border-amber-900/15 text-rose-800 focus:border-rose-500' 
+                      : 'bg-[#030508] text-rose-400 border border-slate-800 focus:border-rose-500'
+                  }`}
                 />
               </div>
-              <span className="text-[9px] text-slate-550 block mt-1">Optimal growth temperature is 37°C. Extreme temperatures inhibit yield.</span>
+              <span className={`text-[9px] block mt-1 ${isLightMode ? 'text-stone-500' : 'text-slate-550'}`}>Optimal growth temperature is 37°C. Extreme temperatures inhibit yield.</span>
             </div>
 
             {/* UAE Region Wind Speeds Presets */}
-            <div className="pt-3 border-t border-slate-850/80">
-              <span className="text-[9px] font-black text-slate-400 tracking-wider block mb-2 font-mono uppercase">UAE Desert Profile Wind Presets</span>
+            <div className={`pt-3 border-t transition-colors ${isLightMode ? 'border-amber-900/10' : 'border-slate-850/80'}`}>
+              <span className={`text-[9px] font-black tracking-wider block mb-2 font-mono uppercase ${isLightMode ? 'text-stone-500' : 'text-slate-400'}`}>UAE Desert Profile Wind Presets</span>
               <div className="grid grid-cols-3 gap-1.5 text-[9px] font-mono">
                 <button 
                   onClick={() => setWindFriction(0.35)}
-                  className={`p-1.5 rounded border transition cursor-pointer text-left ${windFriction === 0.35 ? 'bg-cyan-950/40 text-cyan-400 border-cyan-500/80' : 'bg-slate-900 text-slate-400 border-slate-800'}`}
+                  className={`p-1.5 rounded border transition cursor-pointer text-left ${windFriction === 0.35 ? (isLightMode ? 'bg-cyan-50 text-cyan-700 border-cyan-300' : 'bg-cyan-950/40 text-cyan-400 border-cyan-500/80') : (isLightMode ? 'bg-white text-stone-600 border-stone-200' : 'bg-slate-900 text-slate-400 border-slate-800')}`}
                 >
-                  <strong className="block text-[8px] text-slate-200">Al Ain Shamal</strong>
+                  <strong className={`block text-[8px] ${isLightMode ? 'text-stone-800' : 'text-slate-200'}`}>Al Ain Shamal</strong>
                   <span>u* = 0.35 m/s</span>
                 </button>
                 <button 
                   onClick={() => setWindFriction(0.65)}
-                  className={`p-1.5 rounded border transition cursor-pointer text-left ${windFriction === 0.65 ? 'bg-indigo-950/40 text-indigo-400 border-indigo-500/80' : 'bg-slate-900 text-slate-400 border-slate-800'}`}
+                  className={`p-1.5 rounded border transition cursor-pointer text-left ${windFriction === 0.65 ? (isLightMode ? 'bg-indigo-50 text-indigo-700 border-indigo-300' : 'bg-indigo-950/40 text-indigo-400 border-indigo-500/80') : (isLightMode ? 'bg-white text-stone-600 border-stone-200' : 'bg-slate-900 text-slate-400 border-slate-800')}`}
                 >
-                  <strong className="block text-[8px] text-slate-200">Al Jaraf Gale</strong>
+                  <strong className={`block text-[8px] ${isLightMode ? 'text-stone-800' : 'text-slate-200'}`}>Al Jaraf Gale</strong>
                   <span>u* = 0.65 m/s</span>
                 </button>
                 <button 
                   onClick={() => setWindFriction(1.15)}
-                  className={`p-1.5 rounded border transition cursor-pointer text-left ${windFriction === 1.15 ? 'bg-red-950/40 text-red-400 border-red-500/80' : 'bg-slate-900 text-slate-400 border-slate-800'}`}
+                  className={`p-1.5 rounded border transition cursor-pointer text-left ${windFriction === 1.15 ? (isLightMode ? 'bg-red-50 text-red-700 border-red-300' : 'bg-red-950/40 text-red-400 border-red-500/80') : (isLightMode ? 'bg-white text-stone-600 border-stone-200' : 'bg-slate-900 text-slate-400 border-slate-800')}`}
                 >
-                  <strong className="block text-[8px] text-slate-200">Liwa Severe Sand</strong>
+                  <strong className={`block text-[8px] ${isLightMode ? 'text-stone-800' : 'text-slate-200'}`}>Liwa Severe Sand</strong>
                   <span>u* = 1.15 m/s</span>
                 </button>
               </div>
@@ -596,63 +640,81 @@ export default function WetLabSandbox2D({ onBack, universalVitals }: WetLabSandb
 
             {/* Wind Friction Slider */}
             <div>
-              <div className="flex justify-between text-[11px] text-slate-400 mb-1">
-                <span>Custom Wind Friction speed (<code className="text-emerald-400">u*</code>)</span>
-                <span className="font-mono bg-emerald-950/30 text-emerald-400 px-1.5 py-0.5 rounded text-[10px]">{windFriction.toFixed(2)} m/s</span>
+              <div className={`flex justify-between text-[11px] mb-1 ${isLightMode ? 'text-stone-600' : 'text-slate-400'}`}>
+                <span>Custom Wind Friction speed (<code className={isLightMode ? 'text-[#059669] font-bold' : 'text-emerald-400'}>u*</code>)</span>
+                <span className={`font-mono px-1.5 py-0.5 rounded text-[10px] border ${isLightMode ? 'bg-emerald-50 border-emerald-200 text-emerald-800 font-bold' : 'bg-emerald-950/30 text-emerald-400 border border-emerald-900/30'}`}>{windFriction.toFixed(2)} m/s</span>
               </div>
               <input 
                 type="range" min="0.10" max="1.50" step="0.05" 
                 value={windFriction} 
                 onChange={(e) => setWindFriction(parseFloat(e.target.value))}
-                className="w-full h-1.5 rounded accent-emerald-500 cursor-ew-resize"
+                className={`w-full h-1.5 rounded accent-emerald-500 cursor-ew-resize ${isLightMode ? 'bg-stone-200' : ''}`}
               />
             </div>
 
             {/* Downstream Calculated Physical Metrics */}
-            <div className="pt-4 border-t border-slate-850/80 space-y-2 font-mono text-xs">
-              <div className="flex justify-between text-[9px] font-black text-slate-500 tracking-wider">
-                <span>CONVERTED OUTCOMES</span>
+            <div className={`pt-4 border-t space-y-2 font-mono text-xs transition-colors ${isLightMode ? 'border-amber-900/10' : 'border-slate-850/80'}`}>
+              <div className="flex justify-between text-[9px] font-black tracking-wider">
+                <span className={isLightMode ? 'text-stone-500 font-bold' : 'text-slate-500'}>CONVERTED OUTCOMES</span>
                 {enableNoise && (
-                  <span className="text-[#34d399] animate-pulse">Live Noise: {noiseVal.toFixed(3)}x</span>
+                  <span className={`${isLightMode ? 'text-emerald-700 font-bold' : 'text-[#34d399]'} animate-pulse`}>Live Noise: {noiseVal.toFixed(3)}x</span>
                 )}
               </div>
               
-              <div className="flex justify-between items-center py-1 bg-black/35 rounded border border-slate-900/40 px-2">
-                <span className="text-slate-400">Bacterial Density (X_0):</span>
-                <span className="font-bold text-[#22d3ee]">{cellDensity.toFixed(2)} × 10⁷ c/mL</span>
+              <div className={`flex justify-between items-center py-1 rounded border px-2 ${isLightMode ? 'bg-amber-50/15 border-amber-900/10 text-stone-800' : 'bg-black/35 border-slate-900/40 text-slate-400'}`}>
+                <span>
+                  <GlossaryTerm term="Bacillus subtilis" theme={isLightMode ? 'light' : 'dark'}>Bacterial Density (X_0):</GlossaryTerm>
+                </span>
+                <span className={`font-bold ${isLightMode ? 'text-cyan-700' : 'text-[#22d3ee]'}`}>{cellDensity.toFixed(2)} × 10⁷ c/mL</span>
               </div>
 
-              <div className="flex justify-between items-center py-1 bg-black/35 rounded border border-slate-900/40 px-2">
-                <span className="text-slate-400">Secreted γ-PGA:</span>
-                <span className="font-bold text-indigo-400">{derivedPGA.toFixed(1)} mg/L</span>
+              <div className={`flex justify-between items-center py-1 rounded border px-2 ${isLightMode ? 'bg-amber-50/15 border-amber-900/10 text-stone-800' : 'bg-black/35 border-slate-900/40 text-slate-400'}`}>
+                <span>
+                  <GlossaryTerm term="gamma-PGA" theme={isLightMode ? 'light' : 'dark'}>Secreted γ-PGA:</GlossaryTerm>
+                </span>
+                <span className={`font-bold ${isLightMode ? 'text-indigo-700' : 'text-indigo-400'}`}>{derivedPGA.toFixed(1)} mg/L</span>
               </div>
 
-              <div className="flex justify-between items-center py-1 bg-black/35 rounded border border-slate-900/40 px-2">
-                <span className="text-slate-400">Lattice Shear Modulus (Gs):</span>
-                <span className="font-bold text-[#f59e0b]">{derivedShearModulus.toFixed(1)} Pa</span>
+              <div className={`flex justify-between items-center py-1 rounded border px-2 ${isLightMode ? 'bg-amber-50/15 border-amber-900/10 text-stone-800' : 'bg-black/35 border-slate-900/40 text-slate-400'}`}>
+                <span>
+                  <GlossaryTerm term="Shear Modulus" theme={isLightMode ? 'light' : 'dark'}>Lattice Shear Modulus (Gs):</GlossaryTerm>
+                </span>
+                <span className={`font-bold ${isLightMode ? 'text-amber-800' : 'text-[#f59e0b]'}`}>{derivedShearModulus.toFixed(1)} Pa</span>
               </div>
 
-              <div className="flex justify-between items-center py-1 bg-black/35 rounded border border-slate-900/40 px-2">
-                <span className="text-slate-400">Erosion Speed Threshold (u_s_t):</span>
-                <span className="font-bold text-emerald-400">{u_star_critical.toFixed(3)} m/s</span>
+              <div className={`flex justify-between items-center py-1 rounded border px-2 ${isLightMode ? 'bg-amber-50/15 border-amber-900/10 text-stone-800' : 'bg-black/35 border-slate-900/40 text-slate-400'}`}>
+                <span>
+                  <GlossaryTerm term="Aeolian Transport" theme={isLightMode ? 'light' : 'dark'}>Erosion Speed Threshold (u_s_t):</GlossaryTerm>
+                </span>
+                <span className={`font-bold ${isLightMode ? 'text-emerald-700' : 'text-emerald-400'}`}>{u_star_critical.toFixed(3)} m/s</span>
               </div>
             </div>
 
             {/* Interactive Simulation Controls */}
-            <div className="pt-4 border-t border-slate-850/80 space-y-2">
+            <div className={`pt-4 border-t space-y-2 transition-colors ${
+              isLightMode ? 'border-amber-900/10' : 'border-slate-850/80'
+            }`}>
               <span className="text-[10px] font-black font-mono text-slate-400 tracking-widest block uppercase">Dune Gale Test Rig</span>
               
               <button 
                 onClick={() => setStormActive(prev => !prev)}
-                className={`w-full py-2.5 rounded font-mono font-bold text-xs tracking-wider uppercase transition flex items-center justify-center gap-2 cursor-pointer ${stormActive ? 'bg-red-500 hover:bg-red-600 text-black shadow-[0_0_15px_rgba(239,68,68,0.4)] animate-pulse' : 'bg-amber-500 hover:bg-amber-600 text-black'}`}
+                className={`w-full py-2.5 rounded font-mono font-bold text-xs tracking-wider uppercase transition flex items-center justify-center gap-2 cursor-pointer ${
+                  stormActive 
+                    ? 'bg-red-500 hover:bg-red-600 text-white shadow-[0_0_15px_rgba(239,68,68,0.4)]' 
+                    : 'bg-amber-600 hover:bg-amber-700 text-white shadow'
+                }`}
               >
-                <Wind className="w-4 h-4 animate-spin" />
-                {stormActive ? '🔥 STOP STORM EVENT' : '🌪 LAUNCH STORM GALE EVENT'}
+                <Wind className="w-4 h-4" />
+                {stormActive ? 'STOP STORM EVENT' : 'LAUNCH STORM GALE EVENT'}
               </button>
 
               <button 
                 onClick={() => setIsSimulating(prev => !prev)}
-                className="w-full py-2 bg-slate-900 hover:bg-slate-800 text-slate-450 hover:text-white rounded font-mono text-[10px] tracking-widest uppercase transition flex items-center justify-center gap-2 cursor-pointer border border-slate-800"
+                className={`w-full py-2 rounded font-mono text-[10px] tracking-widest uppercase transition flex items-center justify-center gap-2 cursor-pointer border ${
+                  isLightMode 
+                    ? 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200' 
+                    : 'bg-slate-900 hover:bg-slate-800 text-slate-350 hover:text-white border-slate-800'
+                }`}
               >
                 {isSimulating ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
                 {isSimulating ? 'Pause dune grid' : 'Resume dune grid'}
@@ -708,59 +770,67 @@ export default function WetLabSandbox2D({ onBack, universalVitals }: WetLabSandb
             </div>
 
             {/* TWO-TABS PANEL: HELP vs MATHEMATICAL MODELS */}
-            <div className="bg-[#0a0f18] border border-slate-800 rounded-xl overflow-hidden">
-              <div className="flex border-b border-slate-800 bg-[#070b12] text-[11px] font-mono">
+            <div className={`border rounded-xl overflow-hidden transition-all duration-300 ${
+              isLightMode ? 'bg-[#fcfbf9] border-amber-900/10 text-stone-800' : 'bg-[#0a0f18] border-slate-800'
+            }`}>
+              <div className={`flex border-b text-[11px] font-mono transition-colors ${
+                isLightMode ? 'border-amber-900/10 bg-amber-50/50' : 'border-slate-800 bg-[#070b12]'
+              }`}>
                 <button 
                   onClick={() => setExplainTab('context')}
-                  className={`px-4 py-2.5 border-r border-slate-800 font-bold transition flex items-center gap-1.5 cursor-pointer selection:bg-transparent ${explainTab === 'context' ? 'bg-[#0a0f18] text-[#22d3ee]' : 'text-slate-400 hover:text-slate-200 bg-black/10'}`}
+                  className={`px-4 py-2.5 border-r font-bold transition flex items-center gap-1.5 cursor-pointer selection:bg-transparent ${
+                    isLightMode ? 'border-amber-900/10' : 'border-slate-800'
+                  } ${explainTab === 'context' ? (isLightMode ? 'bg-[#fcfbf9] text-amber-900' : 'bg-[#0a0f18] text-[#22d3ee]') : 'text-slate-400 hover:text-slate-200'}`}
                 >
-                  <HelpCircle className="w-4 h-4 text-cyan-400" /> Assay Context
+                  <HelpCircle className="w-4 h-4 text-cyan-500" /> Assay Context
                 </button>
                 <button 
                   onClick={() => setExplainTab('math')}
-                  className={`px-4 py-2.5 font-bold transition flex items-center gap-1.5 cursor-pointer selection:bg-transparent ${explainTab === 'math' ? 'bg-[#0a0f18] text-[#a5b4fc]' : 'text-slate-400 hover:text-slate-200 bg-black/10'}`}
+                  className={`px-4 py-2.5 font-bold transition flex items-center gap-1.5 cursor-pointer selection:bg-transparent ${
+                    explainTab === 'math' ? (isLightMode ? 'bg-[#fcfbf9] text-indigo-900' : 'bg-[#0a0f18] text-[#a5b4fc]') : 'text-slate-400 hover:text-slate-200'
+                  }`}
                 >
-                  📖 Mathematical Equations & Logic
+                  Mathematical Equations & Logic
                 </button>
               </div>
               <div className="p-4 text-xs">
                 {explainTab === 'context' ? (
                   <div className="animate-fadeIn space-y-3 leading-relaxed">
-                    <p className="text-slate-350">
-                      Our synthetic <em className="italic text-slate-100">Bacillus subtilis</em> cells secrete robust <span className="text-[#34d399] font-bold">Poly-γ-Glutamic Acid (γ-PGA)</span> biopolymers upon eating glutamate precursors. Divalent cations (Ca²⁺ molecules from divalent calcium salt) then chelate the carboxyl groups on adjacent γ-PGA strands, securing quartz particles within a microscopic stabilizing mesh.
+                    <p className={isLightMode ? 'text-stone-600' : 'text-slate-350'}>
+                      Our synthetic <em className="italic text-slate-100">Bacillus subtilis</em> cells secrete robust <span className="text-emerald-700 font-bold">Poly-γ-Glutamic Acid (γ-PGA)</span> biopolymers upon eating glutamate precursors. Divalent cations (Ca²⁺ molecules from divalent calcium salt) then chelate the carboxyl groups on adjacent γ-PGA strands, securing quartz particles within a microscopic stabilizing mesh.
                     </p>
-                    <p className="text-slate-350">
-                      In this comparative top-down model, the left lane models pristine untreated sand dunes which rapidly wash, blow, and erode away at wind friction thresholds above <code className="text-amber-400 text-[10px]">0.22 m/s</code>. The right lane shows the sand treated with our bio-organic glue matrix, securely resisting extreme Shamal wind friction speeds up to <code className="text-[#34d399] text-[10px]">{u_star_critical.toFixed(2)} m/s</code>.
+                    <p className={isLightMode ? 'text-stone-600' : 'text-slate-350'}>
+                      In this comparative top-down model, the left lane models pristine untreated sand dunes which rapidly wash, blow, and erode away at wind friction thresholds above <code className="text-amber-500 text-[10px]">0.22 m/s</code>. The right lane shows the sand treated with our bio-organic glue matrix, securely resisting extreme Shamal wind friction speeds up to <code className="text-[#10b981] text-[10px]">{u_star_critical.toFixed(2)} m/s</code>.
                     </p>
                   </div>
                 ) : (
-                  <div className="animate-fadeIn space-y-3 font-mono text-[10.5px] text-slate-450 leading-normal">
-                    <h4 className="text-xs font-bold text-slate-250 font-sans uppercase tracking-wider mb-2">🔭 Downstream System Relationships</h4>
+                  <div className={`animate-fadeIn space-y-3 font-mono text-[10.5px] leading-normal ${isLightMode ? 'text-stone-700' : 'text-slate-450'}`}>
+                    <h4 className={`text-xs font-bold font-sans uppercase tracking-wider mb-2 ${isLightMode ? 'text-stone-900' : 'text-slate-250'}`}>Downstream System Relationships</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                      <div className="p-2.5 bg-[#04060a] border border-slate-850 rounded">
-                        <span className="text-cyan-400 font-bold block mb-1">1. Bio-synthetic Yield:</span>
+                      <div className={`p-2.5 border rounded ${isLightMode ? 'bg-[#fcfaf5]/85 border-[#b8956c]/20' : 'bg-[#04060a] border-slate-850'}`}>
+                        <span className="text-cyan-600 font-bold block mb-1">1. Bio-synthetic Yield:</span>
                         <code>γ-PGA = Density(X₀) * Feed(S₀) * Optimum(T)</code>
-                        <p className="text-[10px] text-slate-500 mt-1 leading-normal">
+                        <p className="text-[10px] text-slate-500 mt-1 leading-normal font-sans">
                           Maximized near biological optimum warm temperature (37°C), regulating organic glue abundance.
                         </p>
                       </div>
-                      <div className="p-2.5 bg-[#04060a] border border-slate-850 rounded text-left">
-                        <span className="text-amber-400 font-bold block mb-1 font-sans">2. Metal-Polymer Coordinate Chelation:</span>
-                        <code>Saturation (θ) = [Ca²⁺] / (Kd + [Ca²⁺])</code>
+                      <div className={`p-2.5 border rounded text-left ${isLightMode ? 'bg-[#fcfaf5]/85 border-[#b8956c]/20' : 'bg-[#04060a] border-slate-850'}`}>
+                        <span className="text-amber-600 font-bold block mb-1 font-sans">2. Metal-Polymer Coordinate Chelation:</span>
+                        <code>{"Saturation (θ) = [Ca²⁺] / (Kd + [Ca²⁺])"}</code>
                         <p className="text-[10px] text-slate-500 mt-1 leading-normal font-sans">
                           Binds polymer chains using divalent calcium links, solidifying sand cohesiveness.
                         </p>
                       </div>
-                      <div className="p-2.5 bg-[#04060a] border border-slate-850 rounded">
-                        <span className="text-indigo-400 font-bold block mb-1">3. Sand Shear Modulus Gs:</span>
+                      <div className={`p-2.5 border rounded ${isLightMode ? 'bg-[#fcfaf5]/85 border-[#b8956c]/20' : 'bg-[#04060a] border-slate-850'}`}>
+                        <span className="text-indigo-600 font-bold block mb-1">3. Sand Shear Modulus Gs:</span>
                         <code>Gs = G_base + Yield_PGA * θ * Elasticity</code>
                         <p className="text-[10px] text-slate-500 mt-1 leading-normal font-sans">
                           Affinement elastomer network model calculating structural stiffness (measured in Pascals).
                         </p>
                       </div>
-                      <div className="p-2.5 bg-[#04060a] border border-slate-850 rounded">
-                        <span className="text-emerald-400 font-bold block mb-1">4. Threshold Windspeed u*t:</span>
-                        <code>u*t = u_base + sqrt(Cohesion_Gs * Thickness / Air_Density)</code>
+                      <div className={`p-2.5 border rounded ${isLightMode ? 'bg-[#fcfaf5]/85 border-[#b8956c]/20' : 'bg-[#04060a] border-slate-850'}`}>
+                        <span className="text-emerald-650 font-bold block mb-1">4. Threshold Windspeed u*t:</span>
+                        <code>{"u*t = u_base + sqrt(Cohesion_Gs * Thickness / Air_Density)"}</code>
                         <p className="text-[10px] text-slate-500 mt-1 leading-normal font-sans">
                           The absolute wind friction speed limit before the dune starts suffering aeolian erosion.
                         </p>
