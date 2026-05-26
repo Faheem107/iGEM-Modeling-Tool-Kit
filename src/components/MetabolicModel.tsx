@@ -10,6 +10,7 @@ interface MetabolicProps {
   setTargetYield: (val: number) => void;
   calibratedKcat: number | null;
   setCalibratedKcat: (val: number | null) => void;
+  isLightMode?: boolean;
 }
 
 export default function MetabolicModel({ 
@@ -19,7 +20,8 @@ export default function MetabolicModel({
   targetYield,
   setTargetYield,
   calibratedKcat,
-  setCalibratedKcat
+  setCalibratedKcat,
+  isLightMode = false
 }: MetabolicProps) {
 
   // Runge-Kutta 4th Order (RK4) ODE solver
@@ -165,139 +167,147 @@ export default function MetabolicModel({
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 bg-[#06080d] rounded-xl border border-slate-800 shadow-xl" id="metabolic-module-panel">
+    <div className={`grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 rounded-xl border transition-all duration-300 ${
+      isLightMode 
+        ? 'bg-[#fdfaf3] border-amber-900/10 shadow-[0_4px_24px_rgba(139,94,26,0.06)]' 
+        : 'bg-[#06080d] border-slate-800 shadow-xl'
+    }`} id="metabolic-module-panel">
       {/* Parameters Panel */}
-      <div className="lg:col-span-5 bg-[#0a0f18] p-5 rounded border border-slate-800/80">
-        <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-100 flex items-center gap-2 mb-4 font-sans">
-          <Dna className="w-5 h-5 text-cyan-400" />
+      <div className={`lg:col-span-12 xl:col-span-5 p-5 rounded border transition-colors duration-300 ${isLightMode ? 'bg-white border-amber-900/10' : 'bg-[#0a0f18] border-slate-800/80'}`}>
+        <h3 className={`text-xs font-extrabold uppercase tracking-wider flex items-center gap-2 mb-4 font-sans ${isLightMode ? 'text-amber-950' : 'text-slate-100'}`}>
+          <Dna className={`w-5 h-5 ${isLightMode ? 'text-cyan-600' : 'text-cyan-400'}`} />
           Intracellular Kinetic Control Unit
         </h3>
 
         {/* Sliders */}
         <div className="space-y-4 font-sans">
           <div>
-            <div className="flex justify-between text-[11px] text-slate-400 mb-1">
+            <div className="flex justify-between text-[11px] mb-1">
               <div className="group relative flex items-center gap-1 cursor-help">
-                <span className="underline decoration-dotted decoration-slate-600 underline-offset-2">Transcription Rate (<code className="text-cyan-400 font-mono">α_m</code>)</span>
-                <Info className="w-3.5 h-3.5 text-slate-500 hover:text-cyan-400 Transition" />
-                <div className="absolute left-0 bottom-full mb-1.5 hidden group-hover:block w-64 p-2 bg-slate-950 text-[10px] text-slate-300 rounded border border-slate-800 shadow-xl z-25 font-sans leading-relaxed">
+                <span className={`underline decoration-dotted underline-offset-2 ${isLightMode ? 'text-stone-701 decoration-stone-300' : 'text-slate-400 decoration-slate-600'}`}>Transcription Rate (<code className={isLightMode ? 'text-cyan-700 font-mono font-bold' : 'text-cyan-400 font-mono'}>α_m</code>)</span>
+                <Info className={`w-3.5 h-3.5 ${isLightMode ? 'text-stone-400 hover:text-cyan-600' : 'text-slate-500 hover:text-cyan-400'} transition`} />
+                <div className={`absolute left-0 bottom-full mb-1.5 hidden group-hover:block w-64 p-2 text-[10px] rounded border shadow-xl z-25 font-sans leading-relaxed ${isLightMode ? 'bg-white text-stone-800 border-amber-900/15' : 'bg-slate-950 text-slate-300 border-slate-800'}`}>
                   Rate of transcribing PgsBCA operon mRNA strands from the DNA synthetic promoter.
                 </div>
               </div>
-              <span className="font-mono bg-cyan-950/50 text-cyan-400 px-1.5 py-0.5 rounded border border-cyan-900/50 text-[10px]">{params.alpha_m.toFixed(1)} h⁻¹</span>
+              <span className={`font-mono px-1.5 py-0.5 rounded text-[10px] ${isLightMode ? 'bg-cyan-50 border border-cyan-200 text-cyan-800 font-bold' : 'bg-cyan-950/50 border border-cyan-900/50 text-cyan-400'}`}>{params.alpha_m.toFixed(1)} h⁻¹</span>
             </div>
             <input 
               type="range" min="0.5" max="15" step="0.5" 
               value={params.alpha_m} 
               onChange={(e) => setParams(p => ({ ...p, alpha_m: parseFloat(e.target.value) }))}
-              className="w-full accent-cyan-500 cursor-ew-resize"
+              className={`w-full cursor-ew-resize ${isLightMode ? 'accent-cyan-600 bg-stone-200' : 'accent-cyan-500'}`}
             />
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] text-slate-400 mb-1">
+            <div className="flex justify-between text-[11px] mb-1">
               <div className="group relative flex items-center gap-1 cursor-help">
-                <span className="underline decoration-dotted decoration-slate-600 underline-offset-2">mRNA Half-life Degradation (<code className="text-orange-400 font-mono">β_m</code>)</span>
-                <Info className="w-3.5 h-3.5 text-slate-500 hover:text-cyan-400 Transition" />
-                <div className="absolute left-0 bottom-full mb-1.5 hidden group-hover:block w-64 p-2 bg-slate-950 text-[10px] text-slate-300 rounded border border-slate-800 shadow-xl z-25 font-sans leading-relaxed">
+                <span className={`underline decoration-dotted underline-offset-2 ${isLightMode ? 'text-stone-701 decoration-stone-300' : 'text-slate-400 decoration-slate-600'}`}>mRNA Half-life Degradation (<code className={isLightMode ? 'text-orange-700 font-mono font-bold' : 'text-orange-400 font-mono'}>β_m</code>)</span>
+                <Info className={`w-3.5 h-3.5 ${isLightMode ? 'text-stone-400 hover:text-cyan-600' : 'text-slate-500 hover:text-cyan-400'} transition`} />
+                <div className={`absolute left-0 bottom-full mb-1.5 hidden group-hover:block w-64 p-2 text-[10px] rounded border shadow-xl z-25 font-sans leading-relaxed ${isLightMode ? 'bg-white text-stone-800 border-amber-900/15' : 'bg-slate-950 text-slate-300 border-slate-800'}`}>
                   Rate at which cellular RNases degrade the transcribed mRNA species.
                 </div>
               </div>
-              <span className="font-mono bg-orange-950/30 text-orange-400 px-1.5 py-0.5 rounded border border-orange-900/40 text-[10px]">{params.beta_m.toFixed(2)} h⁻¹</span>
+              <span className={`font-mono px-1.5 py-0.5 rounded text-[10px] ${isLightMode ? 'bg-orange-50 border border-orange-200 text-orange-850 font-bold' : 'bg-orange-950/30 border border-orange-900/40 text-orange-400'}`}>{params.beta_m.toFixed(2)} h⁻¹</span>
             </div>
             <input 
               type="range" min="0.01" max="1.0" step="0.05" 
               value={params.beta_m} 
               onChange={(e) => setParams(p => ({ ...p, beta_m: parseFloat(e.target.value) }))}
-              className="w-full accent-orange-500 cursor-ew-resize"
+              className={`w-full cursor-ew-resize ${isLightMode ? 'accent-orange-600 bg-stone-200' : 'accent-orange-500'}`}
             />
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] text-slate-400 mb-1">
+            <div className="flex justify-between text-[11px] mb-1">
               <div className="group relative flex items-center gap-1 cursor-help">
-                <span className="underline decoration-dotted decoration-slate-600 underline-offset-2">Enzyme Translation Rate (<code className="text-cyan-400 font-mono">α_e</code>)</span>
-                <Info className="w-3.5 h-3.5 text-slate-500 hover:text-cyan-400 Transition" />
-                <div className="absolute left-0 bottom-full mb-1.5 hidden group-hover:block w-64 p-2 bg-slate-950 text-[10px] text-slate-300 rounded border border-slate-800 shadow-xl z-25 font-sans leading-relaxed">
+                <span className={`underline decoration-dotted underline-offset-2 ${isLightMode ? 'text-stone-701 decoration-stone-300' : 'text-slate-400 decoration-slate-600'}`}>Enzyme Translation Rate (<code className={isLightMode ? 'text-cyan-700 font-mono font-bold' : 'text-cyan-400 font-mono'}>α_e</code>)</span>
+                <Info className={`w-3.5 h-3.5 ${isLightMode ? 'text-stone-400 hover:text-cyan-600' : 'text-slate-500 hover:text-cyan-400'} transition`} />
+                <div className={`absolute left-0 bottom-full mb-1.5 hidden group-hover:block w-64 p-2 text-[10px] rounded border shadow-xl z-25 font-sans leading-relaxed ${isLightMode ? 'bg-white text-stone-800 border-amber-900/15' : 'bg-slate-950 text-slate-300 border-slate-800'}`}>
                   Ribosome recruitment speed to translate active PgsB, PgsC, and PgsA enzymes.
                 </div>
               </div>
-              <span className="font-mono bg-cyan-950/50 text-cyan-400 px-1.5 py-0.5 rounded border border-cyan-900/50 text-[10px]">{params.alpha_e.toFixed(1)} h⁻¹</span>
+              <span className={`font-mono px-1.5 py-0.5 rounded text-[10px] ${isLightMode ? 'bg-cyan-50 border border-cyan-200 text-cyan-850 font-bold' : 'bg-cyan-950/50 border border-cyan-900/50 text-cyan-400'}`}>{params.alpha_e.toFixed(1)} h⁻¹</span>
             </div>
             <input 
               type="range" min="0.2" max="5.0" step="0.2" 
               value={params.alpha_e} 
               onChange={(e) => setParams(p => ({ ...p, alpha_e: parseFloat(e.target.value) }))}
-              className="w-full accent-cyan-400 cursor-ew-resize"
+              className={`w-full cursor-ew-resize ${isLightMode ? 'accent-cyan-600 bg-stone-200' : 'accent-cyan-400'}`}
             />
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] text-slate-400 mb-1">
+            <div className="flex justify-between text-[11px] mb-1">
               <div className="group relative flex items-center gap-1 cursor-help">
-                <span className="underline decoration-dotted decoration-slate-600 underline-offset-2">Enzyme Degradation (<code className="text-amber-400 font-mono">β_e</code>)</span>
-                <Info className="w-3.5 h-3.5 text-slate-500 hover:text-cyan-400 Transition" />
-                <div className="absolute left-0 bottom-full mb-1.5 hidden group-hover:block w-64 p-2 bg-slate-950 text-[10px] text-slate-300 rounded border border-slate-800 shadow-xl z-25 font-sans leading-relaxed">
+                <span className={`underline decoration-dotted underline-offset-2 ${isLightMode ? 'text-stone-701 decoration-stone-300' : 'text-slate-400 decoration-slate-600'}`}>Enzyme Degradation (<code className={isLightMode ? 'text-amber-700 font-mono font-bold' : 'text-amber-400 font-mono'}>β_e</code>)</span>
+                <Info className={`w-3.5 h-3.5 ${isLightMode ? 'text-stone-400 hover:text-cyan-600' : 'text-slate-500 hover:text-cyan-400'} transition`} />
+                <div className={`absolute left-0 bottom-full mb-1.5 hidden group-hover:block w-64 p-2 text-[10px] rounded border shadow-xl z-25 font-sans leading-relaxed ${isLightMode ? 'bg-white text-stone-800 border-amber-900/15' : 'bg-slate-950 text-slate-300 border-slate-800'}`}>
                   Intracellular enzyme clearance speed orchestrated by host cell proteasome machinery.
                 </div>
               </div>
-              <span className="font-mono bg-amber-950/30 text-amber-400 px-1.5 py-0.5 rounded border border-amber-900/40 text-[10px]">{params.beta_e.toFixed(3)} h⁻¹</span>
+              <span className={`font-mono px-1.5 py-0.5 rounded text-[10px] ${isLightMode ? 'bg-amber-50 border border-amber-200 text-amber-850 font-bold' : 'bg-amber-950/30 border border-amber-900/40 text-amber-400'}`}>{params.beta_e.toFixed(3)} h⁻¹</span>
             </div>
             <input 
               type="range" min="0.01" max="0.2" step="0.01" 
               value={params.beta_e} 
               onChange={(e) => setParams(p => ({ ...p, beta_e: parseFloat(e.target.value) }))}
-              className="w-full accent-amber-500 cursor-ew-resize"
+              className={`w-full cursor-ew-resize ${isLightMode ? 'accent-amber-600 bg-stone-200' : 'accent-amber-500'}`}
             />
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] text-slate-400 mb-1">
+            <div className="flex justify-between text-[11px] mb-1">
               <div className="group relative flex items-center gap-1 cursor-help">
-                <span className="underline decoration-dotted decoration-slate-600 underline-offset-2">Catalytic Efficiency (<code className="text-emerald-400 font-mono">k_cat</code>)</span>
-                <Info className="w-3.5 h-3.5 text-slate-500 hover:text-cyan-400 Transition" />
-                <div className="absolute left-0 bottom-full mb-1.5 hidden group-hover:block w-64 p-2 bg-slate-950 text-[10px] text-slate-300 rounded border border-slate-800 shadow-xl z-25 font-sans leading-relaxed">
+                <span className={`underline decoration-dotted underline-offset-2 ${isLightMode ? 'text-stone-701 decoration-stone-300' : 'text-slate-400 decoration-slate-600'}`}>Catalytic Efficiency (<code className={isLightMode ? 'text-emerald-700 font-mono font-bold' : 'text-emerald-400 font-mono'}>k_cat</code>)</span>
+                <Info className={`w-3.5 h-3.5 ${isLightMode ? 'text-stone-400 hover:text-cyan-600' : 'text-slate-500 hover:text-cyan-400'} transition`} />
+                <div className={`absolute left-0 bottom-full mb-1.5 hidden group-hover:block w-64 p-2 text-[10px] rounded border shadow-xl z-25 font-sans leading-relaxed ${isLightMode ? 'bg-white text-stone-800 border-amber-900/15' : 'bg-slate-950 text-slate-300 border-slate-800'}`}>
                   Maximum polymer chain synthesis turnover cycle count of the PgsBCA complex per hour.
                 </div>
               </div>
-              <span className="font-mono bg-emerald-950/30 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-900/40 text-[10px]">{params.k_cat.toFixed(2)} h⁻¹</span>
+              <span className={`font-mono px-1.5 py-0.5 rounded text-[10px] ${isLightMode ? 'bg-emerald-50 border border-emerald-200 text-emerald-850 font-bold' : 'bg-emerald-950/30 border border-emerald-900/40 text-emerald-400'}`}>{params.k_cat.toFixed(2)} h⁻¹</span>
             </div>
             <input 
               type="range" min="0.1" max="5.0" step="0.1" 
               value={params.k_cat} 
               onChange={(e) => setParams(p => ({ ...p, k_cat: parseFloat(e.target.value) }))}
-              className="w-full accent-emerald-500 cursor-ew-resize"
+              className={`w-full cursor-ew-resize ${isLightMode ? 'accent-emerald-600 bg-stone-200' : 'accent-emerald-500'}`}
             />
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] text-slate-400 mb-1">
+            <div className="flex justify-between text-[11px] mb-1">
               <div className="group relative flex items-center gap-1 cursor-help">
-                <span className="underline decoration-dotted decoration-slate-600 underline-offset-2">L-Glutamate Precursor (<code className="text-purple-400 font-mono">[S]</code>)</span>
-                <Info className="w-3.5 h-3.5 text-slate-500 hover:text-cyan-400 Transition" />
-                <div className="absolute left-0 bottom-full mb-1.5 hidden group-hover:block w-64 p-2 bg-slate-950 text-[10px] text-slate-300 rounded border border-slate-800 shadow-xl z-25 font-sans leading-relaxed">
+                <span className={`underline decoration-dotted underline-offset-2 ${isLightMode ? 'text-stone-701 decoration-stone-300' : 'text-slate-400 decoration-slate-600'}`}>L-Glutamate Precursor (<code className={isLightMode ? 'text-purple-700 font-mono font-bold' : 'text-purple-400 font-mono'}>[S]</code>)</span>
+                <Info className={`w-3.5 h-3.5 ${isLightMode ? 'text-stone-400 hover:text-cyan-600' : 'text-slate-500 hover:text-cyan-400'} transition`} />
+                <div className={`absolute left-0 bottom-full mb-1.5 hidden group-hover:block w-64 p-2 text-[10px] rounded border shadow-xl z-25 font-sans leading-relaxed ${isLightMode ? 'bg-white text-stone-800 border-amber-900/15' : 'bg-slate-950 text-slate-300 border-slate-800'}`}>
                   Extracellular precursor feeding stock concentration providing monomer units.
                 </div>
               </div>
-              <span className="font-mono bg-purple-950/30 text-purple-400 px-1.5 py-0.5 rounded border border-purple-900/40 text-[10px]">{params.s_precursor.toFixed(1)} mM</span>
+              <span className={`font-mono px-1.5 py-0.5 rounded text-[10px] ${isLightMode ? 'bg-purple-50 border border-purple-200 text-purple-850 font-bold' : 'bg-purple-950/30 border border-purple-900/40 text-purple-400'}`}>{params.s_precursor.toFixed(1)} mM</span>
             </div>
             <input 
               type="range" min="0.5" max="25" step="0.5" 
               value={params.s_precursor} 
               onChange={(e) => setParams(p => ({ ...p, s_precursor: parseFloat(e.target.value) }))}
-              className="w-full accent-purple-500 cursor-ew-resize"
+              className={`w-full cursor-ew-resize ${isLightMode ? 'accent-purple-600 bg-stone-200' : 'accent-purple-500'}`}
             />
           </div>
         </div>
 
         {/* Gene Knockouts (Biosafety & Yield Hack) */}
-        <div className="mt-5 pt-4 border-t border-slate-800">
-          <span className="text-[10px] font-bold text-slate-500 block mb-3 uppercase tracking-wider font-mono">Gene Knockout Status</span>
+        <div className={`mt-5 pt-4 border-t ${isLightMode ? 'border-amber-905_10' : 'border-slate-800'}`}>
+          <span className={`text-[10px] font-bold block mb-3 uppercase tracking-wider font-mono ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>Gene Knockout Status</span>
           <div className="grid grid-cols-2 gap-3">
-            <label className={`flex items-center justify-between p-2.5 rounded border text-xs cursor-pointer transition ${params.ggtKnockout ? 'border-emerald-800 bg-emerald-950/20 text-emerald-300' : 'border-slate-800 bg-[#080b12] text-slate-500 hover:text-slate-300'}`}>
+            <label className={`flex items-center justify-between p-2.5 rounded border text-xs cursor-pointer transition ${
+              params.ggtKnockout 
+                ? isLightMode ? 'border-emerald-700 bg-emerald-50 text-emerald-900' : 'border-emerald-800 bg-emerald-950/20 text-emerald-300' 
+                : isLightMode ? 'border-amber-900/10 bg-stone-50 text-stone-600 hover:text-stone-900' : 'border-slate-800 bg-[#080b12] text-slate-500 hover:text-slate-300'
+            }`}>
               <div className="flex flex-col">
                 <span className="font-mono font-bold">Δggt</span>
-                <span className="text-[9px] text-slate-500 font-mono">Glutamyl-Tferase</span>
+                <span className={`text-[9px] font-mono ${isLightMode ? 'text-stone-400' : 'text-slate-500'}`}>Glutamyl-Tferase</span>
               </div>
               <input 
                 type="checkbox" 
@@ -307,10 +317,14 @@ export default function MetabolicModel({
               />
             </label>
 
-            <label className={`flex items-center justify-between p-2.5 rounded border text-xs cursor-pointer transition ${params.pgcAKnockout ? 'border-emerald-800 bg-emerald-950/20 text-emerald-300' : 'border-slate-800 bg-[#080b12] text-slate-500 hover:text-slate-300'}`}>
+            <label className={`flex items-center justify-between p-2.5 rounded border text-xs cursor-pointer transition ${
+              params.pgcAKnockout 
+                ? isLightMode ? 'border-emerald-700 bg-emerald-50 text-emerald-900' : 'border-emerald-800 bg-emerald-950/20 text-emerald-300' 
+                : isLightMode ? 'border-amber-900/10 bg-stone-50 text-stone-600 hover:text-stone-900' : 'border-slate-800 bg-[#080b12] text-slate-500 hover:text-slate-300'
+            }`}>
               <div className="flex flex-col">
                 <span className="font-mono font-bold">ΔpgcA</span>
-                <span className="text-[9px] text-slate-500 font-mono">Glutamic Hydrolase</span>
+                <span className={`text-[9px] font-mono ${isLightMode ? 'text-stone-400' : 'text-slate-500'}`}>Glutamic Hydrolase</span>
               </div>
               <input 
                 type="checkbox" 
@@ -324,28 +338,28 @@ export default function MetabolicModel({
       </div>
 
       {/* Analytics & Graph Panel */}
-      <div className="lg:col-span-7 bg-[#0a0f18] p-5 rounded border border-slate-800/80 flex flex-col justify-between">
+      <div className={`lg:col-span-12 xl:col-span-7 p-5 rounded border flex flex-col justify-between transition-colors duration-300 ${isLightMode ? 'bg-white border-amber-900/10' : 'bg-[#0a0f18] border-slate-800/80'}`}>
         <div>
           <div className="flex flex-wrap justify-between items-center gap-3 mb-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-200 flex items-center gap-2">
-              <Database className="w-4 h-4 text-cyan-400 animate-pulse" />
+            <h3 className={`text-xs font-bold uppercase tracking-wider flex items-center gap-2 ${isLightMode ? 'text-amber-950' : 'text-slate-200'}`}>
+              <Database className={`w-4 h-4 animate-pulse ${isLightMode ? 'text-cyan-600' : 'text-cyan-400'}`} />
               Real-time Concentration Dynamics
             </h3>
             <div className="flex gap-4 text-[10px] font-mono">
-              <span className="flex items-center gap-1.5 text-cyan-400">
-                <span className="w-2 h-2 rounded-full bg-cyan-400"></span> mRNA
+              <span className={`flex items-center gap-1.5 ${isLightMode ? 'text-cyan-700 font-bold' : 'text-cyan-400'}`}>
+                <span className={`w-2 h-2 rounded-full ${isLightMode ? 'bg-cyan-650' : 'bg-cyan-400'}`}></span> mRNA
               </span>
-              <span className="flex items-center gap-1.5 text-orange-400">
-                <span className="w-2 h-2 rounded-full bg-orange-400"></span> Enzyme Complex
+              <span className={`flex items-center gap-1.5 ${isLightMode ? 'text-orange-700 font-bold' : 'text-orange-400'}`}>
+                <span className={`w-2 h-2 rounded-full ${isLightMode ? 'bg-orange-550' : 'bg-orange-400'}`}></span> Enzyme Complex
               </span>
-              <span className="flex items-center gap-1.5 text-emerald-400">
-                <span className="w-2 h-2 rounded-full bg-emerald-400"></span> γ-PGA Output
+              <span className={`flex items-center gap-1.5 ${isLightMode ? 'text-emerald-700 font-bold' : 'text-emerald-400'}`}>
+                <span className={`w-2 h-2 rounded-full ${isLightMode ? 'bg-emerald-550' : 'bg-emerald-400'}`}></span> γ-PGA Output
               </span>
             </div>
           </div>
 
           {/* SVG Graph */}
-          <div className="relative border border-slate-800/80 rounded bg-[#06080d] p-2 overflow-hidden select-none">
+          <div className={`relative border rounded p-2 overflow-hidden select-none transition-colors duration-300 ${isLightMode ? 'bg-[#fcfbf9] border-amber-900/10' : 'bg-[#06080d] border-slate-800/80'}`}>
             <svg 
               viewBox={`0 0 ${width} ${height}`} 
               className="w-full h-auto cursor-crosshair overflow-visible"
@@ -358,7 +372,7 @@ export default function MetabolicModel({
                 return (
                   <line 
                     key={v} x1={paddingLeft} y1={y} x2={width - paddingRight} y2={y} 
-                    stroke="#161f30" strokeDasharray="3,3" 
+                    stroke={isLightMode ? "#efe7d3" : "#161f30"} strokeDasharray="3,3" 
                   />
                 );
               })}
@@ -367,35 +381,35 @@ export default function MetabolicModel({
                 return (
                   <line 
                     key={t} x1={x} y1={paddingTop} x2={x} y2={height - paddingBottom} 
-                    stroke="#161f30" strokeDasharray="3,3" 
+                    stroke={isLightMode ? "#efe7d3" : "#161f30"} strokeDasharray="3,3" 
                   />
                 );
               })}
 
               {/* Slotted Paths */}
-              <polyline fill="none" strokeWidth="2" stroke="#06b6d4" points={pathMRNA} strokeLinecap="round" strokeLinejoin="round" />
-              <polyline fill="none" strokeWidth="2" stroke="#fb923c" points={pathEnzyme} strokeLinecap="round" strokeLinejoin="round" />
-              <polyline fill="none" strokeWidth="3" stroke="#4ade80" points={pathPGA} strokeLinecap="round" strokeLinejoin="round" />
+              <polyline fill="none" strokeWidth={isLightMode ? "2.5" : "2"} stroke={isLightMode ? "#4f46e5" : "#06b6d4"} points={pathMRNA} strokeLinecap="round" strokeLinejoin="round" />
+              <polyline fill="none" strokeWidth={isLightMode ? "2.5" : "2"} stroke={isLightMode ? "#ea580c" : "#fb923c"} points={pathEnzyme} strokeLinecap="round" strokeLinejoin="round" />
+              <polyline fill="none" strokeWidth={isLightMode ? "3.5" : "3"} stroke={isLightMode ? "#16a34a" : "#4ade80"} points={pathPGA} strokeLinecap="round" strokeLinejoin="round" />
 
               {/* Axes */}
-              <line x1={paddingLeft} y1={height - paddingBottom} x2={width - paddingRight} y2={height - paddingBottom} stroke="#1e293b" strokeWidth="1" />
-              <line x1={paddingLeft} y1={paddingTop} x2={paddingLeft} y2={height - paddingBottom} stroke="#1e293b" strokeWidth="1" />
-              <line x1={width - paddingRight} y1={paddingTop} x2={width - paddingRight} y2={height - paddingBottom} stroke="#1e293b" strokeWidth="1" />
+              <line x1={paddingLeft} y1={height - paddingBottom} x2={width - paddingRight} y2={height - paddingBottom} stroke={isLightMode ? "#c8b49c" : "#1e293b"} strokeWidth="1" />
+              <line x1={paddingLeft} y1={paddingTop} x2={paddingLeft} y2={height - paddingBottom} stroke={isLightMode ? "#c8b49c" : "#1e293b"} strokeWidth="1" />
+              <line x1={width - paddingRight} y1={paddingTop} x2={width - paddingRight} y2={height - paddingBottom} stroke={isLightMode ? "#c8b49c" : "#1e293b"} strokeWidth="1" />
 
               {/* Axis Labels */}
-              <text x={paddingLeft - 8} y={paddingTop + 5} fill="#475569" fontSize="9" textAnchor="end" fontWeight="500" fontFamily="monospace">
+              <text x={paddingLeft - 8} y={paddingTop + 5} fill={isLightMode ? "#78350f" : "#475569"} fontSize="9" textAnchor="end" fontWeight="bold" fontFamily="monospace">
                 {Math.max(maxVals.mRNA, maxVals.enzyme).toFixed(1)}
               </text>
-              <text x={paddingLeft - 8} y={height - paddingBottom} fill="#475569" fontSize="9" textAnchor="end" fontWeight="500" fontFamily="monospace">0.0</text>
-              <text x={paddingLeft - 32} y={height/2} transform={`rotate(-90, ${paddingLeft - 32}, ${height/2})`} fill="#06b6d4" fontSize="9" textAnchor="middle" fontWeight="bold" fontFamily="monospace" letterSpacing="0.05em">
+              <text x={paddingLeft - 8} y={height - paddingBottom} fill={isLightMode ? "#78350f" : "#475569"} fontSize="9" textAnchor="end" fontWeight="bold" fontFamily="monospace">0.0</text>
+              <text x={paddingLeft - 32} y={height/2} transform={`rotate(-90, ${paddingLeft - 32}, ${height/2})`} fill={isLightMode ? "#4f46e5" : "#06b6d4"} fontSize="9" textAnchor="middle" fontWeight="bold" fontFamily="monospace" letterSpacing="0.05em">
                 SPECIES LEVEL (AU)
               </text>
 
-              <text x={width - paddingRight + 8} y={paddingTop + 5} fill="#4ade80" fontSize="9" textAnchor="start" fontWeight="500" fontFamily="monospace">
+              <text x={width - paddingRight + 8} y={paddingTop + 5} fill={isLightMode ? "#16a34a" : "#4ade80"} fontSize="9" textAnchor="start" fontWeight="bold" fontFamily="monospace">
                 {maxVals.pga.toFixed(1)}
               </text>
-              <text x={width - paddingRight + 8} y={height - paddingBottom} fill="#4ade80" fontSize="9" textAnchor="start" fontWeight="500" fontFamily="monospace">0.0</text>
-              <text x={width - paddingRight + 32} y={height/2} transform={`rotate(90, ${width - paddingRight + 32}, ${height/2})`} fill="#4ade80" fontSize="9" textAnchor="middle" fontWeight="bold" fontFamily="monospace" letterSpacing="0.05em">
+              <text x={width - paddingRight + 8} y={height - paddingBottom} fill={isLightMode ? "#16a34a" : "#4ade80"} fontSize="9" textAnchor="start" fontWeight="bold" fontFamily="monospace">0.0</text>
+              <text x={width - paddingRight + 32} y={height/2} transform={`rotate(90, ${width - paddingRight + 32}, ${height/2})`} fill={isLightMode ? "#16a34a" : "#4ade80"} fontSize="9" textAnchor="middle" fontWeight="bold" fontFamily="monospace" letterSpacing="0.05em">
                 γ-PGA ACCUM. (mol/m³)
               </text>
 
@@ -403,12 +417,12 @@ export default function MetabolicModel({
               {[0, 12, 24, 36, 48].map((t) => {
                 const x = paddingLeft + (t / 48) * (width - paddingLeft - paddingRight);
                 return (
-                  <text key={t} x={x} y={height - paddingBottom + 16} fill="#475569" fontSize="9" textAnchor="middle" fontWeight="500" fontFamily="monospace">
+                  <text key={t} x={x} y={height - paddingBottom + 16} fill={isLightMode ? "#78350f" : "#475569"} fontSize="9" textAnchor="middle" fontWeight="bold" fontFamily="monospace">
                     {t}h
                   </text>
                 );
               })}
-              <text x={width/2} y={height - 5} fill="#475569" fontSize="9" fontWeight="bold" textAnchor="middle" fontFamily="monospace" letterSpacing="0.05em">CULTIVATION DURATION (HOURS)</text>
+              <text x={width/2} y={height - 5} fill={isLightMode ? "#78350f" : "#475569"} fontSize="9" fontWeight="bold" textAnchor="middle" fontFamily="monospace" letterSpacing="0.05em">CULTIVATION DURATION (HOURS)</text>
 
               {/* Interactive Hover Point Element */}
               {hoverIndex !== null && activeHoverPoint && (
@@ -416,61 +430,77 @@ export default function MetabolicModel({
                   <line 
                     x1={points[hoverIndex].x} y1={paddingTop} 
                     x2={points[hoverIndex].x} y2={height - paddingBottom} 
-                    stroke="#334155" strokeWidth="1" strokeDasharray="4,4" 
+                    stroke={isLightMode ? "#b4a088" : "#334155"} strokeWidth="1" strokeDasharray="4,4" 
                   />
-                  <circle cx={points[hoverIndex].x} cy={points[hoverIndex].yMRNA} r="4" fill="#06b6d4" />
-                  <circle cx={points[hoverIndex].x} cy={points[hoverIndex].yEnzyme} r="4" fill="#fb923c" />
-                  <circle cx={points[hoverIndex].x} cy={points[hoverIndex].yPGA} r="4" fill="#4ade80" />
+                  <circle cx={points[hoverIndex].x} cy={points[hoverIndex].yMRNA} r="5" fill={isLightMode ? "#4f46e5" : "#06b6d4"} />
+                  <circle cx={points[hoverIndex].x} cy={points[hoverIndex].yEnzyme} r="5" fill={isLightMode ? "#ea580c" : "#fb923c"} />
+                  <circle cx={points[hoverIndex].x} cy={points[hoverIndex].yPGA} r="5" fill={isLightMode ? "#16a34a" : "#4ade80"} />
                 </>
               )}
             </svg>
 
             {/* Hover tooltip absolute overlay */}
             {activeHoverPoint && (
-              <div className="absolute top-4 left-16 bg-[#080b12]/95 border border-slate-800 backdrop-blur shadow-2xl rounded p-3 text-[10px] font-mono select-none pointer-events-none space-y-1">
-                <p className="font-bold text-slate-100 text-xs">T-Epoch: {activeHoverPoint.time.toFixed(2)} hrs</p>
-                <p className="text-cyan-400">mRNA level: {activeHoverPoint.mRNA.toFixed(3)}</p>
-                <p className="text-orange-400">Pgs Enzyme: {activeHoverPoint.enzyme.toFixed(3)}</p>
-                <p className="text-emerald-400 font-bold">γ-PGA output: {activeHoverPoint.pga.toFixed(3)} mol/m³</p>
+              <div className={`absolute top-4 left-16 select-none pointer-events-none space-y-1 p-3 text-[10px] font-mono rounded border shadow-2xl ${
+                isLightMode 
+                  ? 'bg-white/95 border-amber-900/15 text-stone-850 shadow-md' 
+                  : 'bg-[#080b12]/95 border border-slate-800 text-slate-300'
+              }`}>
+                <p className={`font-bold text-xs ${isLightMode ? 'text-stone-900' : 'text-slate-100'}`}>T-Epoch: {activeHoverPoint.time.toFixed(2)} hrs</p>
+                <p className={isLightMode ? 'text-cyan-700 font-semibold' : 'text-cyan-400'}>mRNA level: {activeHoverPoint.mRNA.toFixed(3)}</p>
+                <p className={isLightMode ? 'text-orange-700 font-semibold' : 'text-orange-400'}>Pgs Enzyme: {activeHoverPoint.enzyme.toFixed(3)}</p>
+                <p className={isLightMode ? 'text-emerald-700 font-bold' : 'text-emerald-400 font-bold'}>γ-PGA output: {activeHoverPoint.pga.toFixed(3)} mol/m³</p>
               </div>
             )}
           </div>
         </div>
 
         {/* Wet Lab Calibration Assistant Module */}
-        <div className="mt-5 bg-[#091522]/60 p-4 rounded border border-emerald-950/80 relative overflow-hidden">
+        <div className={`mt-5 p-4 rounded border relative overflow-hidden transition-colors ${
+          isLightMode 
+            ? 'bg-amber-50/50 border-amber-900/10' 
+            : 'bg-[#091522]/60 border border-emerald-950/80'
+        }`}>
           <div className="absolute right-3 top-3 opacity-5">
-            <Award className="w-16 h-16 text-emerald-400" />
+            <Award className={`w-16 h-16 ${isLightMode ? 'text-emerald-650' : 'text-emerald-400'}`} />
           </div>
-          <h4 className="text-xs font-bold font-mono text-emerald-400 uppercase tracking-widest flex items-center gap-1.5 mb-1.5">
-            <Sparkles className="w-4 h-4 text-emerald-400" />
+          <h4 className={`text-xs font-bold font-mono uppercase tracking-widest flex items-center gap-1.5 mb-1.5 ${isLightMode ? 'text-emerald-805' : 'text-emerald-400'}`}>
+            <Sparkles className={`w-4 h-4 ${isLightMode ? 'text-emerald-700' : 'text-emerald-400'}`} />
             iGEM Wet Lab Calibration Interface
           </h4>
-          <p className="text-[11px] text-slate-400 leading-relaxed mb-3">
+          <p className={`text-[11px] leading-relaxed mb-3 ${isLightMode ? 'text-stone-600 font-medium' : 'text-slate-400'}`}>
             To integrate our dry-lab model with NYUAD laboratory assays: enter your spectrophotometric 
             experimental yield to reverse-calibrate and store our synthetic enzyme efficiency rate (<code>k_cat</code>).
           </p>
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-2 bg-[#06080d] px-3 py-1.5 rounded border border-slate-800">
-              <span className="text-[10px] text-slate-400 font-mono">EXPERIMENTAL YIELD:</span>
+            <div className={`flex items-center gap-2 px-3 py-1.5 rounded border ${isLightMode ? 'bg-white border-amber-900/15' : 'bg-[#06080d] border-slate-800'}`}>
+              <span className={`text-[10px] font-mono ${isLightMode ? 'text-stone-500' : 'text-slate-400'}`}>EXPERIMENTAL YIELD:</span>
               <input 
                 type="number" 
                 value={targetYield} 
                 onChange={(e) => setTargetYield(Math.max(1, parseFloat(e.target.value) || 0))}
-                className="w-16 bg-transparent font-mono text-xs font-bold text-white outline-none border-b border-transparent focus:border-cyan-500" 
+                className={`w-16 bg-transparent font-mono text-xs font-bold outline-none border-b border-transparent focus:border-cyan-550 ${isLightMode ? 'text-stone-900' : 'text-white'}`} 
               />
-              <span className="text-[10px] text-emerald-400 font-mono">mol/m³</span>
+              <span className={`text-[10px] font-mono ${isLightMode ? 'text-emerald-700 font-bold' : 'text-emerald-400'}`}>mol/m³</span>
             </div>
             <button 
               onClick={handleCalibrate}
-              className="px-3.5 py-1.5 text-[10px] font-mono font-bold text-black bg-cyan-400 hover:bg-cyan-500 rounded uppercase tracking-wider shadow-sm transition flex items-center gap-1 cursor-pointer"
+              className={`px-3.5 py-1.5 text-[10px] font-mono font-bold rounded uppercase tracking-wider shadow-sm transition flex items-center gap-1 cursor-pointer ${
+                isLightMode 
+                  ? 'text-white bg-cyan-705 hover:bg-cyan-800 bg-[#0284c7]' 
+                  : 'text-black bg-cyan-400 hover:bg-cyan-500'
+              }`}
             >
               <RotateCcw className="w-3.5 h-3.5" />
               Calibrate k_cat
             </button>
             {calibratedKcat !== null && (
-              <span className="text-[10px] text-emerald-400 font-mono bg-emerald-950/50 border border-emerald-900 px-2 py-1 rounded">
-                CALIBRATED: <code className="text-white">k_cat = {calibratedKcat}</code>
+              <span className={`text-[10px] font-mono px-2 py-1 rounded border ${
+                isLightMode 
+                  ? 'bg-emerald-50 border-emerald-200 text-emerald-800 font-bold' 
+                  : 'bg-emerald-950/50 border border-emerald-900'
+              }`}>
+                CALIBRATED: <code className={isLightMode ? 'text-emerald-950' : 'text-white'}>k_cat = {calibratedKcat}</code>
               </span>
             )}
           </div>

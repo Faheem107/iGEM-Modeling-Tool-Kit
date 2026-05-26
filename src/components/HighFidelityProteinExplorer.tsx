@@ -346,7 +346,7 @@ const generateSyntheticProtein = (): ParsedPDBData => {
   return { backbone, ligands };
 };
 
-export default function HighFidelityProteinExplorer() {
+export default function HighFidelityProteinExplorer({ isLightMode = false }: { isLightMode?: boolean }) {
   const [selectedResidue, setSelectedResidue] = useState<string | null>(null);
   
   // Custom uploaded state
@@ -602,17 +602,17 @@ export default function HighFidelityProteinExplorer() {
         if (colorTheme === 'rainbow') {
           // Absolute rainbow terminus (N-to-C transition, matches attached cartoon layout)
           const hue = 240 - frac * 240; 
-          return `hsl(${hue}, 95%, 48%)`;
+          return isLightMode ? `hsl(${hue}, 85%, 38%)` : `hsl(${hue}, 95%, 48%)`;
         } else if (colorTheme === 'structure') {
           // Helix RED, Sheet GOLD, Loop CYAN/EMERALD
           if (res.structType === 'helix') return '#f87171'; // Warm crimson red
           if (res.structType === 'sheet') return '#facc15'; // Golden amber
-          return '#06b6d4'; // Cyan loops
+          return isLightMode ? '#4f46e5' : '#06b6d4'; // Rich Indigo loops in light mode, cyan in dark mode
         } else {
           // Fluctuations B-factor (Deep blue to hot neon magenta)
           const norm = Math.min(1.0, Math.max(0.0, (res.bFactor - 10) / 50));
           const hue = 240 - norm * 240;
-          return `hsl(${hue}, 98%, 56%)`;
+          return isLightMode ? `hsl(${hue}, 85%, 40%)` : `hsl(${hue}, 98%, 56%)`;
         }
       };
 
@@ -1033,7 +1033,7 @@ export default function HighFidelityProteinExplorer() {
 
               {uploadError && (
                 <div className="absolute top-14 left-3 right-3 py-2 px-3.5 bg-red-950/90 backdrop-blur-md border border-red-800/40 text-red-300 text-[10.5px] rounded-lg font-mono text-left shadow-xl animate-fadeIn flex items-center justify-between gap-2">
-                  <span className="flex items-center gap-1.5">⚠️ Warning: {uploadError}</span>
+                  <span className="flex items-center gap-1.5">Warning: {uploadError}</span>
                   <button onClick={() => setUploadError(null)} className="text-red-400 hover:text-red-200 font-bold px-1 select-none">✕</button>
                 </div>
               )}
@@ -1072,31 +1072,31 @@ export default function HighFidelityProteinExplorer() {
         <div className="lg:col-span-4 space-y-5">
           
           {/* Display & Styling Control Hub */}
-          <div className="bg-[#0a0f18] p-5 rounded-xl border border-slate-805 space-y-4">
-            <h3 className="text-xs font-black uppercase tracking-wider text-slate-100 flex items-center gap-2 font-mono pb-2 border-b border-slate-800/85">
-              <Palette className="w-4 h-4 text-indigo-400 animate-pulse" />
+          <div className={`p-5 rounded-xl border space-y-4 ${isLightMode ? 'bg-white border-amber-900/10' : 'bg-[#0a0f18] border-slate-800'}`}>
+            <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-2 font-mono pb-2 border-b ${isLightMode ? 'text-amber-900 border-amber-900/10' : 'text-slate-100 border-slate-800/85'}`}>
+              <Palette className={`w-4 h-4 animate-pulse ${isLightMode ? 'text-indigo-650' : 'text-indigo-400'}`} />
               Viewer Customization
             </h3>
 
             {/* Theme Select */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-300 font-mono">Color Theme</label>
-              <div className="grid grid-cols-3 bg-[#06080d] p-1 rounded border border-slate-800 text-[10px] font-mono gap-1">
+              <label className={`text-[10px] font-extrabold uppercase tracking-wider font-mono ${isLightMode ? 'text-amber-800' : 'text-indigo-300'}`}>Color Theme</label>
+              <div className={`grid grid-cols-3 p-1 rounded border text-[10px] font-mono gap-1 ${isLightMode ? 'bg-[#fcfaf5] border-amber-900/15' : 'bg-[#06080d] border-slate-800'}`}>
                 <button 
                   onClick={() => setColorTheme('rainbow')}
-                  className={`py-1 rounded cursor-pointer transition text-center ${colorTheme === 'rainbow' ? 'bg-indigo-905 text-indigo-200 border border-indigo-900/60 font-black' : 'text-slate-500 hover:text-slate-350'}`}
+                  className={`py-1 rounded cursor-pointer transition text-center ${colorTheme === 'rainbow' ? (isLightMode ? 'bg-indigo-600 text-white border border-indigo-700 font-bold' : 'bg-indigo-950 text-indigo-200 border border-indigo-900/60 font-black') : (isLightMode ? 'text-stone-500 hover:text-stone-850' : 'text-slate-500 hover:text-slate-350')}`}
                 >
                   Rainbow
                 </button>
                 <button 
                   onClick={() => setColorTheme('structure')}
-                  className={`py-1 rounded cursor-pointer transition text-center ${colorTheme === 'structure' ? 'bg-indigo-905 text-indigo-200 border border-indigo-900/60 font-black' : 'text-slate-500 hover:text-slate-350'}`}
+                  className={`py-1 rounded cursor-pointer transition text-center ${colorTheme === 'structure' ? (isLightMode ? 'bg-indigo-600 text-white border border-indigo-700 font-bold' : 'bg-indigo-950 text-indigo-200 border border-indigo-900/60 font-black') : (isLightMode ? 'text-stone-500 hover:text-stone-850' : 'text-slate-500 hover:text-slate-350')}`}
                 >
                   Secondary
                 </button>
                 <button 
                   onClick={() => setColorTheme('fluctuation')}
-                  className={`py-1 rounded cursor-pointer transition text-center ${colorTheme === 'fluctuation' ? 'bg-indigo-905 text-indigo-200 border border-indigo-900/60 font-black' : 'text-slate-500 hover:text-slate-350'}`}
+                  className={`py-1 rounded cursor-pointer transition text-center ${colorTheme === 'fluctuation' ? (isLightMode ? 'bg-indigo-600 text-white border border-indigo-700 font-bold' : 'bg-indigo-950 text-indigo-200 border border-indigo-900/60 font-black') : (isLightMode ? 'text-stone-500 hover:text-stone-850' : 'text-slate-500 hover:text-slate-350')}`}
                 >
                   Fluctuation
                 </button>
@@ -1105,23 +1105,23 @@ export default function HighFidelityProteinExplorer() {
 
             {/* Model Styles Select */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-300 font-mono">Backbone Style</label>
-              <div className="grid grid-cols-3 bg-[#06080d] p-1 rounded border border-slate-800 text-[10px] font-mono gap-1">
+              <label className={`text-[10px] font-extrabold uppercase tracking-wider font-mono ${isLightMode ? 'text-amber-800' : 'text-indigo-300'}`}>Backbone Style</label>
+              <div className={`grid grid-cols-3 p-1 rounded border text-[10px] font-mono gap-1 ${isLightMode ? 'bg-[#fcfaf5] border-amber-900/15' : 'bg-[#06080d] border-slate-800'}`}>
                 <button 
                   onClick={() => setRenderStyle('cartoon')}
-                  className={`py-1 rounded cursor-pointer transition text-center ${renderStyle === 'cartoon' ? 'bg-indigo-905 text-indigo-200 border border-indigo-900/60 font-black' : 'text-slate-500 hover:text-slate-350'}`}
+                  className={`py-1 rounded cursor-pointer transition text-center ${renderStyle === 'cartoon' ? (isLightMode ? 'bg-indigo-600 text-white border border-indigo-700 font-bold' : 'bg-indigo-950 text-indigo-200 border border-indigo-900/60 font-black') : (isLightMode ? 'text-stone-500 hover:text-stone-850' : 'text-slate-500 hover:text-slate-350')}`}
                 >
                   3D Ribbon
                 </button>
                 <button 
                   onClick={() => setRenderStyle('trace')}
-                  className={`py-1 rounded cursor-pointer transition text-center ${renderStyle === 'trace' ? 'bg-indigo-905 text-indigo-200 border border-indigo-900/60 font-black' : 'text-slate-500 hover:text-slate-350'}`}
+                  className={`py-1 rounded cursor-pointer transition text-center ${renderStyle === 'trace' ? (isLightMode ? 'bg-indigo-600 text-white border border-indigo-700 font-bold' : 'bg-indigo-950 text-indigo-200 border border-indigo-900/60 font-black') : (isLightMode ? 'text-stone-500 hover:text-stone-850' : 'text-slate-500 hover:text-slate-350' )}`}
                 >
                   Thin Trace
                 </button>
                 <button 
                   onClick={() => setRenderStyle('spacefill')}
-                  className={`py-1 rounded cursor-pointer transition text-center ${renderStyle === 'spacefill' ? 'bg-indigo-905 text-indigo-200 border border-indigo-900/60 font-black' : 'text-slate-500 hover:text-slate-350'}`}
+                  className={`py-1 rounded cursor-pointer transition text-center ${renderStyle === 'spacefill' ? (isLightMode ? 'bg-indigo-600 text-white border border-indigo-700 font-bold' : 'bg-indigo-950 text-indigo-200 border border-indigo-900/60 font-black') : (isLightMode ? 'text-stone-500 hover:text-stone-850' : 'text-slate-500 hover:text-slate-350' )}`}
                 >
                   Spacefill
                 </button>
@@ -1129,14 +1129,14 @@ export default function HighFidelityProteinExplorer() {
             </div>
 
             {/* Ligand Toggle Switches */}
-            <div className="flex items-center justify-between py-2 border-t border-slate-850/50">
+            <div className={`flex items-center justify-between py-2 border-t ${isLightMode ? 'border-amber-900/10' : 'border-slate-850/50'}`}>
               <div className="text-left">
-                <span className="text-[11px] font-black font-mono text-slate-250 block">Docked Active-Site Ligands</span>
+                <span className={`text-[11px] font-black font-mono block ${isLightMode ? 'text-stone-850' : 'text-slate-250'}`}>Docked Active-Site Ligands</span>
                 <span className="text-[9px] text-slate-500 block">Show/hide simulated drug or substrate complex models</span>
               </div>
               <button 
                 onClick={() => setShowLigands(!showLigands)}
-                className={`px-3 py-1 rounded text-[10px] font-mono font-black border transition cursor-pointer ${showLigands ? 'bg-emerald-950/20 text-emerald-400 border-emerald-800/40' : 'bg-slate-900 text-slate-600 border-slate-800'}`}
+                className={`px-3 py-1 rounded text-[10px] font-mono font-black border transition cursor-pointer ${showLigands ? (isLightMode ? 'bg-emerald-50 text-emerald-800 border-emerald-300 font-bold' : 'bg-emerald-950/20 text-emerald-400 border-emerald-800/40') : (isLightMode ? 'bg-white text-stone-600 border-stone-200' : 'bg-slate-900 text-slate-600 border-slate-800')}`}
               >
                 {showLigands ? 'Visible' : 'Hidden'}
               </button>
@@ -1144,9 +1144,9 @@ export default function HighFidelityProteinExplorer() {
           </div>
 
           {/* Interactive Coordinates Highlight Dashboard */}
-          <div className="bg-[#0a0f18] p-5 rounded-xl border border-slate-805 space-y-4">
-            <h3 className="text-xs font-black uppercase tracking-wider text-slate-100 flex items-center gap-2 font-mono pb-2 border-b border-slate-800/85">
-              <Eye className="w-4 h-4 text-emerald-400 animate-pulse" />
+          <div className={`p-5 rounded-xl border space-y-4 ${isLightMode ? 'bg-white border-amber-900/10' : 'bg-[#0a0f18] border-slate-805'}`}>
+            <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-2 font-mono pb-2 border-b ${isLightMode ? 'text-amber-900 border-amber-900/10' : 'text-slate-100 border-slate-800/85'}`}>
+              <Eye className={`w-4 h-4 animate-pulse ${isLightMode ? 'text-emerald-700' : 'text-emerald-400'}`} />
               Secondary Residue Folds
             </h3>
 
@@ -1158,8 +1158,8 @@ export default function HighFidelityProteinExplorer() {
                   onClick={() => handleLayerClick(layer.id)}
                   className={`p-3 rounded border text-left cursor-pointer transition flex items-center justify-between ${
                     selectedResidue === layer.id 
-                      ? 'bg-indigo-950/45 border-indigo-500 text-indigo-300' 
-                      : 'bg-[#06080d] border-[#101726]/60 text-slate-350 hover:bg-[#06080d]/60'
+                      ? (isLightMode ? 'bg-indigo-50/70 border-indigo-400/40 text-indigo-900' : 'bg-indigo-950/45 border-indigo-500 text-indigo-300') 
+                      : (isLightMode ? 'bg-white border-stone-200/95 text-stone-700 hover:bg-stone-50/50' : 'bg-[#06080d] border-[#101726]/60 text-slate-350 hover:bg-[#06080d]/60')
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -1168,12 +1168,12 @@ export default function HighFidelityProteinExplorer() {
                       style={{ backgroundColor: layer.color, borderColor: 'rgba(0,0,0,0.3)' }}
                     ></span>
                     <div>
-                      <span className="font-bold font-sans text-slate-200 block text-[11px]">{layer.label}</span>
+                      <span className={`font-bold font-sans block text-[11px] ${isLightMode ? 'text-stone-850' : 'text-slate-200'}`}>{layer.label}</span>
                       <span className="text-[9px] text-slate-500 block mt-0.5 leading-normal">{layer.description}</span>
                     </div>
                   </div>
                   {selectedResidue === layer.id && (
-                    <span className="text-[8px] text-indigo-400 bg-indigo-950/50 px-2 py-0.5 border border-indigo-900 rounded font-extrabold select-none shrink-0 self-center">
+                    <span className={`text-[8px] px-2 py-0.5 rounded font-extrabold select-none shrink-0 self-center border ${isLightMode ? 'bg-indigo-100 border-indigo-300 text-indigo-700' : 'text-indigo-400 bg-indigo-950/50 border border-indigo-900'}`}>
                       HIGHLIGHT
                     </span>
                   )}
@@ -1182,15 +1182,15 @@ export default function HighFidelityProteinExplorer() {
             </div>
 
             {selectedResidue && (
-              <div className="p-3 bg-indigo-950/15 border border-indigo-900/35 rounded text-[10px] text-indigo-300 font-mono leading-relaxed animate-fadeIn">
-                <span className="font-bold block text-[#a5b4fc] text-[11px] mb-1">🔍 Isolation Tracking Active:</span>
+              <div className={`p-3 border rounded text-[10px] font-mono leading-relaxed animate-fadeIn ${isLightMode ? 'bg-indigo-50/45 border-indigo-200/65 text-indigo-900 font-medium' : 'bg-indigo-950/15 border-indigo-900/35 text-indigo-300'}`}>
+                <span className={`font-bold block text-[11px] mb-1 ${isLightMode ? 'text-indigo-805' : 'text-[#a5b4fc]'}`}>🔍 Isolation Tracking Active:</span>
                 Target coordinates are marked with blinking alignment overlays in the active 3D visualization canvas.
               </div>
             )}
 
             {!pdbFileName && (
-              <div className="p-3 bg-indigo-950/10 border border-slate-800/40 rounded text-[10px] text-slate-450 leading-relaxed font-sans">
-                <Info className="w-4 h-4 text-indigo-400 inline-block align-text-bottom mr-1.5 shrink-0" />
+              <div className={`p-3 border rounded text-[10px] leading-relaxed font-sans ${isLightMode ? 'bg-amber-50/45 border-amber-900/10 text-stone-600' : 'bg-indigo-950/10 border-slate-800/40 text-slate-450'}`}>
+                <Info className={`w-4 h-4 inline-block align-text-bottom mr-1.5 shrink-0 ${isLightMode ? 'text-amber-800' : 'text-indigo-400'}`} />
                 Observe the difference between the <strong>α-helix spiral ribbon path</strong> and <strong>β-pleated sheets</strong> using the display options above.
               </div>
             )}
