@@ -30,6 +30,71 @@ body {
   color: #cbd5e1;
 }
 
+/* Highly readable text colors inside light mode elements */
+.light-mode-active {
+  color: #0f172a !important; /* Force text-slate-900 */
+}
+
+/* Force primary texts / headings / labels / numbers */
+.light-mode-active h1,
+.light-mode-active h2,
+.light-mode-active h3,
+.light-mode-active h4,
+.light-mode-active h5,
+.light-mode-active h6,
+.light-mode-active th,
+.light-mode-active strong,
+.light-mode-active label,
+.light-mode-active button:not(.btn-colored),
+.light-mode-active .text-slate-900,
+.light-mode-active .text-zinc-900,
+.light-mode-active .text-stone-900,
+.light-mode-active .text-stone-950,
+.light-mode-active .text-black,
+.light-mode-active .font-black {
+  color: #000000 !important; /* Force black for headings/primary text */
+}
+
+/* Force secondary body text */
+.light-mode-active p,
+.light-mode-active li,
+.light-mode-active td,
+.light-mode-active .text-stone-600,
+.light-mode-active .text-slate-600,
+.light-mode-active .text-slate-800,
+.light-mode-active .text-slate-700,
+.light-mode-active .text-stone-700,
+.light-mode-active .text-slate-550 {
+  color: #1e293b !important; /* Force text-slate-800 */
+}
+
+/* Eradicate any faded text (gray-400, slate-500, etc.) in light mode */
+.light-mode-active .text-slate-500,
+.light-mode-active .text-slate-400,
+.light-mode-active .text-gray-400,
+.light-mode-active .text-zinc-500,
+.light-mode-active .text-stone-400,
+.light-mode-active .text-stone-500,
+.light-mode-active .text-muted,
+.light-mode-active .opacity-70,
+.light-mode-active .opacity-60 {
+  color: #1e293b !important; /* Elevate to text-slate-800 */
+  opacity: 1 !important;
+}
+
+/* Clear exceptions for active, colorful labels or markers so they maintain meaning but are extremely legible */
+.light-mode-active .text-indigo-900 {
+  color: #1e1b4b !important;
+}
+.light-mode-active .text-emerald-900, 
+.light-mode-active .text-emerald-800 {
+  color: #064e3b !important;
+}
+.light-mode-active .text-cyan-800, 
+.light-mode-active .text-cyan-900 {
+  color: #164e63 !important;
+}
+
 /* Custom range inputs for cybernetic precise knobs */
 input[type="range"] {
   accent-color: #06b6d4;

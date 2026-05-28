@@ -433,16 +433,6 @@ export default function WetLabSandbox2D({ onBack, universalVitals, isLightMode =
               Feed experimental laboratory values directly into our 2D birds-eye dune lattice. Monitor organic matrix propagation and see sands protected structurally during real-time Simulated Dust Gales.
             </p>
           </div>
-          <button 
-            onClick={onBack}
-            className={`px-4 py-2 border rounded font-bold font-mono text-xs tracking-wider transition cursor-pointer flex items-center gap-1.5 shrink-0 ${
-              isLightMode 
-                ? 'bg-white hover:bg-stone-50 border-amber-900/15 text-amber-800' 
-                : 'bg-slate-900 hover:bg-slate-800 border-slate-700/80 text-[#22d3ee] hover:text-white'
-            }`}
-          >
-            <ArrowLeft className="w-4 h-4" /> Exit Sandbox & Equations
-          </button>
         </div>
 
         {/* Central Core Layout */}
@@ -796,8 +786,8 @@ export default function WetLabSandbox2D({ onBack, universalVitals, isLightMode =
               <div className="p-4 text-xs">
                 {explainTab === 'context' ? (
                   <div className="animate-fadeIn space-y-3 leading-relaxed">
-                    <p className={isLightMode ? 'text-stone-600' : 'text-slate-350'}>
-                      Our synthetic <em className="italic text-slate-100">Bacillus subtilis</em> cells secrete robust <span className="text-emerald-700 font-bold">Poly-γ-Glutamic Acid (γ-PGA)</span> biopolymers upon eating glutamate precursors. Divalent cations (Ca²⁺ molecules from divalent calcium salt) then chelate the carboxyl groups on adjacent γ-PGA strands, securing quartz particles within a microscopic stabilizing mesh.
+                    <p className={isLightMode ? 'text-stone-700 font-medium' : 'text-slate-350'}>
+                      Our synthetic <em className={`italic font-semibold ${isLightMode ? 'text-amber-900' : 'text-slate-100'}`}>Bacillus subtilis</em> cells secrete robust <span className={`font-bold ${isLightMode ? 'text-emerald-800' : 'text-emerald-400'}`}>Poly-γ-Glutamic Acid (γ-PGA)</span> biopolymers upon eating glutamate precursors. Divalent cations (Ca²⁺ molecules from divalent calcium salt) then chelate the carboxyl groups on adjacent γ-PGA strands, securing quartz particles within a microscopic stabilizing mesh.
                     </p>
                     <p className={isLightMode ? 'text-stone-600' : 'text-slate-350'}>
                       In this comparative top-down model, the left lane models pristine untreated sand dunes which rapidly wash, blow, and erode away at wind friction thresholds above <code className="text-amber-500 text-[10px]">0.22 m/s</code>. The right lane shows the sand treated with our bio-organic glue matrix, securely resisting extreme Shamal wind friction speeds up to <code className="text-[#10b981] text-[10px]">{u_star_critical.toFixed(2)} m/s</code>.

@@ -11,6 +11,7 @@ interface CrossLinkingProps {
   shearModulus: number;
   onUpdateShearModulus?: (g: number) => void;
   isLightMode?: boolean;
+  environmentalModifier?: number;
 }
 
 export default function CrossLinkingBiophysics({
@@ -22,6 +23,7 @@ export default function CrossLinkingBiophysics({
   shearModulus,
   onUpdateShearModulus,
   isLightMode = false,
+  environmentalModifier = 1.0,
 }: CrossLinkingProps) {
   const [activePreset, setActivePreset] = useState<'day' | 'night' | 'custom'>('day');
 
@@ -45,18 +47,19 @@ export default function CrossLinkingBiophysics({
   const results = useMemo(() => {
     const R = 8.314; // Ideal gas constant J/(mol*K)
     
-    // Saturation theta
-    const theta = params.ion_conc / (params.Kd + params.ion_conc);
+    // Saturation theta: scaled down directly by the environmental viability modifier
+    const rawTheta = params.ion_conc / (params.Kd + params.ion_conc);
+    const theta = rawTheta * environmentalModifier;
     
     // Volumetric cross-link density nu
     const factor = 1 - (2 * params.Mx) / params.Mn;
     const nu = Math.max(0, effectiveRhoPolymer * theta * factor);
     
-    // Shear modulus G (Pa)
-    const G = nu * R * params.temperature;
+    // Shear modulus G (Pa) scaled down directly by environmental modifier to represent polymer breakdown
+    const G = nu * R * params.temperature * environmentalModifier;
     
     return { theta, nu, G };
-  }, [params, effectiveRhoPolymer]);
+  }, [params, effectiveRhoPolymer, environmentalModifier]);
 
   // Bubble up raw modulus calculated values to parent
   useEffect(() => {

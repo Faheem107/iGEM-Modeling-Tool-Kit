@@ -85,6 +85,12 @@ export const glossaryTerms: Record<string, TermDetail> = {
     definition: "A structured crystallographic file format detailing the precise 3D arrangement of every single atom inside an enzyme complex, allowing high-resolution ribbon diagnostics.",
     category: "Structural Biology",
     usageContext: "Upload any custom RCSB .pdb file to map secondary structures."
+  },
+  "flux balance analysis": {
+    title: "Flux Balance Analysis (FBA)",
+    definition: "A core mathematical modeling method in systems biology to calculate the flow of cellular metabolites through a genome-scale metabolic network, solving the steady-state S • v = 0 equation under specified environmental bounds.",
+    category: "Metabolic Modeling",
+    usageContext: "Underpins our active B. subtilis central carbon optimization solver."
   }
 };
 
@@ -92,95 +98,178 @@ interface GlossaryTermProps {
   term: keyof typeof glossaryTerms;
   children?: React.ReactNode;
   theme?: 'light' | 'dark';
+  id?: string;
 }
 
-export const GlossaryTerm: React.FC<GlossaryTermProps> = ({ term, children, theme = 'dark' }) => {
+import { createPortal } from 'react-dom';
+
+export const GlossaryContext = React.createContext<{
+  activeTooltipId: string | null;
+  setActiveTooltipId: (id: string | null) => void;
+} | null>(null);
+
+export const GlossaryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [activeTooltipId, setActiveTooltipId] = React.useState<string | null>(null);
+  return (
+    <GlossaryContext.Provider value={{ activeTooltipId, setActiveTooltipId }}>
+      {children}
+    </GlossaryContext.Provider>
+  );
+};
+
+export const GlossaryTerm: React.FC<GlossaryTermProps> = ({ 
+  term, 
+  children, 
+  theme = 'dark',
+  id,
+}) => {
   const detail = glossaryTerms[term];
-  const [isOpen, setIsOpen] = React.useState<boolean>(false);
+  const context = React.useContext(GlossaryContext);
+  
+  const [localActiveId, setLocalActiveId] = React.useState<string | null>(null);
+  const activeTooltipId = context ? context.activeTooltipId : localActiveId;
+  const setActiveTooltipId = context ? context.setActiveTooltipId : setLocalActiveId;
+
+  const selfId = id || term;
+  const isOpen = activeTooltipId === selfId;
+
   const triggerRef = React.useRef<HTMLSpanElement>(null);
   const [openUpward, setOpenUpward] = React.useState<boolean>(false);
-  const [alignRight, setAlignRight] = React.useState<boolean>(false);
+  const [coords, setCoords] = React.useState<{ top: number; left: number } | null>(null);
 
   if (!detail) {
     return <span className="font-medium">{children || term}</span>;
   }
 
+  React.useEffect(() => {
+    if (isOpen && triggerRef.current) {
+      const updateCoords = () => {
+        if (triggerRef.current) {
+          const rect = triggerRef.current.getBoundingClientRect();
+          const spaceBelow = window.innerHeight - rect.bottom;
+          const isUpward = spaceBelow < 230;
+          setOpenUpward(isUpward);
+
+          const tooltipWidth = 288; // w-72 matches 18rem
+          let leftVal = rect.left + rect.width / 2 - tooltipWidth / 2;
+
+          if (leftVal < 12) {
+            leftVal = 12;
+          }
+          if (leftVal + tooltipWidth > window.innerWidth - 12) {
+            leftVal = window.innerWidth - tooltipWidth - 12;
+          }
+
+          const topVal = isUpward ? rect.top - 8 : rect.bottom + 8;
+          setCoords({ top: topVal, left: leftVal });
+        }
+      };
+
+      updateCoords();
+      window.addEventListener('resize', updateCoords, { capture: true, passive: true });
+      window.addEventListener('scroll', updateCoords, { capture: true, passive: true });
+      return () => {
+        window.removeEventListener('resize', updateCoords, { capture: true });
+        window.removeEventListener('scroll', updateCoords, { capture: true });
+      };
+    }
+  }, [isOpen]);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      const handleOutsideClick = (event: MouseEvent) => {
+        if (triggerRef.current && !triggerRef.current.contains(event.target as Node)) {
+          const target = event.target as HTMLElement;
+          if (target && target.closest('.glossary-portal-tooltip')) {
+            return;
+          }
+          setActiveTooltipId(null);
+        }
+      };
+      const timer = setTimeout(() => {
+        document.addEventListener('click', handleOutsideClick);
+      }, 50);
+      return () => {
+        clearTimeout(timer);
+        document.removeEventListener('click', handleOutsideClick);
+      };
+    }
+  }, [isOpen, setActiveTooltipId]);
+
   const isLightTheme = theme === 'light';
+
+  const tooltipElement = isOpen && coords && (
+    <div 
+      className="glossary-portal-tooltip font-sans"
+      style={{
+        position: 'fixed',
+        top: `${coords.top}px`,
+        left: `${coords.left}px`,
+        transform: openUpward ? 'translateY(-100%)' : 'none',
+        zIndex: 9999,
+        width: '18rem',
+      }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div className={`p-4 rounded-xl text-xs leading-relaxed shadow-2xl border ${
+        isLightTheme
+          ? 'bg-white border-indigo-950/20 text-slate-900 shadow-md'
+          : 'bg-slate-950 border-slate-800 text-slate-50'
+      }`}>
+        <span className="block font-bold uppercase tracking-wider text-[10px] mb-2 flex justify-between items-center">
+          <span className={isLightTheme ? 'text-indigo-900 font-extrabold' : 'text-indigo-300 dark:text-indigo-300'}>
+            {detail.category || 'Term Explanation'}
+          </span>
+          <button 
+            onClick={() => setActiveTooltipId(null)}
+            className={`font-black text-[10px] px-2 py-0.5 rounded border transition-colors ${
+              isLightTheme 
+                ? 'text-slate-900 border-slate-350 bg-slate-50 hover:text-red-650 hover:bg-red-50 hover:border-red-200' 
+                : 'text-slate-50 border-slate-700 bg-slate-900 hover:text-white hover:border-slate-500'
+            }`}
+          >
+            CLOSE
+          </button>
+        </span>
+        <strong className={`block text-xs font-black mb-1.5 uppercase ${isLightTheme ? 'text-slate-900' : 'text-slate-50 dark:text-slate-50'}`}>
+          {detail.title}
+        </strong>
+        <span className={`block font-sans text-[11.5px] leading-relaxed ${isLightTheme ? 'text-slate-850 font-medium' : 'text-slate-300'}`}>
+          {detail.definition}
+        </span>
+        
+        {detail.usageContext && (
+          <span className={`block mt-2.5 pt-2 border-t border-dashed ${
+            isLightTheme ? 'border-indigo-900/15 text-indigo-900 font-semibold' : 'border-slate-800 text-indigo-300'
+          } text-[9px] font-mono leading-tight`}>
+            IMPLEMENTATION: {detail.usageContext}
+          </span>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <span 
       ref={triggerRef}
-      className="relative inline-block" 
+      className="relative inline-block text-slate-900 dark:text-slate-50" 
       id={`glossary-trigger-${term.replace(/[^a-zA-Z0-9]/g, '-')}`}
     >
       <span 
         onClick={(e) => {
           e.stopPropagation();
-          if (!isOpen && triggerRef.current) {
-            const rect = triggerRef.current.getBoundingClientRect();
-            const spaceBelow = window.innerHeight - rect.bottom;
-            const spaceRight = window.innerWidth - rect.left;
-            // Open upward if there's less than 230px space below
-            setOpenUpward(spaceBelow < 230);
-            // Align to right if there's less than 300px space to the right
-            setAlignRight(spaceRight < 300);
-          }
-          setIsOpen(!isOpen);
+          setActiveTooltipId(activeTooltipId === selfId ? null : selfId);
         }}
         className={`cursor-pointer border-b border-dashed font-semibold transition-colors duration-200 select-none ${
           isLightTheme 
-            ? 'border-amber-700/80 text-amber-950 hover:text-amber-805 hover:bg-amber-100/50 rounded px-1' 
-            : 'border-cyan-400/80 text-cyan-200 hover:text-[#fbbf24] hover:bg-cyan-950/30 rounded px-1'
+            ? 'border-indigo-900/40 text-slate-900 hover:text-indigo-900 hover:bg-slate-100 rounded px-1' 
+            : 'border-indigo-300/40 text-slate-50 hover:text-indigo-300 hover:bg-slate-900 rounded px-1'
         }`}
         title="Click to view definition"
       >
         {children || term}
       </span>
-      
-      {isOpen && (
-        <span 
-          onClick={(e) => e.stopPropagation()}
-          className={`absolute w-72 p-3.5 rounded-lg text-xs leading-relaxed transition-all duration-300 ease-out z-[200] text-left font-sans block ${
-            openUpward ? 'bottom-full mb-2' : 'top-full mt-2'
-          } ${
-            alignRight ? 'right-0 origin-top-right' : 'left-0 origin-top-left'
-          } ${
-            isLightTheme
-              ? 'bg-white border-2 border-amber-900/40 text-stone-900 shadow-[0_12px_32px_rgba(139,94,26,0.25)]'
-              : 'bg-[#0f172a] border-2 border-slate-700 text-slate-100 shadow-2xl'
-          }`}
-        >
-          <span className="block font-bold uppercase tracking-wider text-[10px] mb-2 flex justify-between items-center">
-            <span className={isLightTheme ? 'text-indigo-800 font-extrabold' : 'text-indigo-400'}>
-              {detail.category || 'Term Explanation'}
-            </span>
-            <button 
-              onClick={() => setIsOpen(false)}
-              className={`font-black text-[10px] px-2 py-0.5 rounded border transition-colors ${
-                isLightTheme 
-                  ? 'text-amber-950 border-amber-950/20 bg-amber-50 hover:text-red-650 hover:bg-red-50 hover:border-red-200' 
-                  : 'text-slate-450 border-slate-700 bg-slate-900 hover:text-white hover:border-slate-500'
-              }`}
-            >
-              CLOSE
-            </button>
-          </span>
-          <strong className={`block text-xs font-black mb-1.5 uppercase ${isLightTheme ? 'text-stone-950' : 'text-white'}`}>
-            {detail.title}
-          </strong>
-          <span className={`block font-sans text-[11.5px] leading-relaxed ${isLightTheme ? 'text-stone-850 font-medium' : 'text-slate-300'}`}>
-            {detail.definition}
-          </span>
-          
-          {detail.usageContext && (
-            <span className={`block mt-2.5 pt-2 border-t border-dashed ${
-              isLightTheme ? 'border-amber-900/15 text-amber-900 font-semibold' : 'border-slate-800 text-[#38bdf8]'
-            } text-[9px] font-mono leading-tight`}>
-              IMPLEMENTATION: {detail.usageContext}
-            </span>
-          )}
-        </span>
-      )}
+      {typeof document !== 'undefined' && createPortal(tooltipElement, document.body)}
     </span>
   );
 };

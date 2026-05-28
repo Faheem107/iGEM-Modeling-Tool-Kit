@@ -1,11 +1,15 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import MetabolicModel from './components/MetabolicModel';
+import AdvancedFbaPortal from './components/AdvancedFbaPortal';
+import ProteinThermalDecay from './components/ProteinThermalDecay';
 import CrossLinkingBiophysics from './components/CrossLinkingBiophysics';
 import AeolianWindTunnel from './components/AeolianWindTunnel';
 import EcologicalSpread from './components/EcologicalSpread';
+import EconomicScalabilityEngine from './components/EconomicScalabilityEngine';
 import HighFidelityProteinExplorer from './components/HighFidelityProteinExplorer';
 import WetLabSandbox2D from './components/WetLabSandbox2D';
-import GlossaryTerm from './components/GlossaryTerm';
+import GlossaryTerm, { GlossaryProvider } from './components/GlossaryTerm';
+import MultiscaleGuidedTour from './components/MultiscaleGuidedTour';
 
 import { 
   Dna, 
@@ -23,17 +27,20 @@ import {
   HelpCircle,
   Sliders,
   Award,
+  Coins,
   Sun,
   Moon
 } from 'lucide-react';
 import { MetabolicParams, BiophysicsParams, AeolianParams, CAConfig } from './types';
 
-type ViewMode = 'landing' | 'pipeline' | 'wetlab-sandbox' | 'protein-suite';
-type TabType = 'metabolic' | 'crosslink' | 'aeolian' | 'ecological';
+type ViewMode = 'landing' | 'pipeline' | 'wetlab-sandbox' | 'protein-suite' | 'guided-tour';
+type TabType = 'metabolic' | 'fba' | 'crosslink' | 'aeolian' | 'ecological' | 'economic';
 
 export default function App() {
+  const PORTAL_TABS: TabType[] = ['fba', 'metabolic', 'crosslink', 'aeolian', 'ecological', 'economic'];
   const [viewMode, setViewMode] = useState<ViewMode>('landing');
-  const [activeTab, setActiveTab] = useState<TabType>('metabolic');
+  const [activePortal, setActivePortal] = useState<number>(0);
+  const activeTab = PORTAL_TABS[activePortal];
   const [isLightMode, setIsLightMode] = useState<boolean>(true); // Default to light sandy theme on startup as requested
 
   // --- Central Simulation Orchestrator States ---
@@ -88,9 +95,28 @@ export default function App() {
     }
   }, [calibratedKcat]);
 
+  const handleUpdatePrecursorFlux = (val: number) => {
+    // Treat the FBA output direct precursor flux (v_precursor) as starting nutrient substrate availability
+    const cleanVal = Math.max(0, val);
+    setMetabolicParams(prev => {
+      if (Math.abs(prev.s_precursor - cleanVal) < 0.001) return prev;
+      return { ...prev, s_precursor: Number(cleanVal.toFixed(4)) };
+    });
+  };
+
   // Derived outputs passing between modules
   const [pgaAccum, setPgaAccum] = useState<number>(35.0);
   const [shearModulus, setShearModulus] = useState<number>(1450.0);
+  const [environmentalModifier, setEnvironmentalModifier] = useState<number>(1.0);
+
+  // Derived biophysics crust thickness (mm) needed to hold down sand based on physical shear strength
+  const calculatedCrustThickness = useMemo(() => {
+    // Stiffer sand-polymer matrix (higher shearModulus Pa) requires a thinner overall protective crust depth
+    // Baseline required depth: 15.0 mm. Range: 5.0 mm to 45.0 mm.
+    const baselineModulus = 1500;
+    const thickness = 15.0 * (baselineModulus / Math.max(200, shearModulus));
+    return Math.max(5.0, Math.min(45.0, thickness));
+  }, [shearModulus]);
 
   // Link status toggles
   const [isLinkedPga, setIsLinkedPga] = useState<boolean>(true);
@@ -379,11 +405,12 @@ export default function App() {
   }, [viewMode, isLightMode]);
 
   return (
-    <div className={`min-h-screen transition-all duration-300 font-sans relative ${
-      isLightMode 
-        ? 'bg-[#efe4cd] text-[#2d2219] selection:bg-amber-800 selection:text-white' 
-        : 'bg-[#030508] text-slate-200 selection:bg-cyan-500 selection:text-black'
-    }`}>
+    <GlossaryProvider>
+      <div className={`min-h-screen transition-all duration-350 font-sans relative ${
+        isLightMode 
+          ? 'bg-[#efe4cd] text-slate-900 selection:bg-amber-800 selection:text-white light-mode-active' 
+          : 'bg-[#030508] text-slate-200 selection:bg-cyan-500 selection:text-black'
+      }`}>
       {/* Interactive/Background particles canvas backdrop - persists across views */}
       <canvas 
         ref={headerCanvasRef} 
@@ -394,7 +421,7 @@ export default function App() {
       />
       
       {/* Top Floating Theme Switcher Option */}
-      <div className="absolute top-4 right-6 z-50 flex items-center gap-3">
+      <div className="fixed top-4 right-6 z-50 flex items-center gap-3">
         <button
           onClick={() => setIsLightMode(!isLightMode)}
           className={`flex items-center justify-center p-2 rounded-full border cursor-pointer shadow-md transition-all duration-300 ${
@@ -477,7 +504,7 @@ export default function App() {
             </div>
 
             {/* Research Gateways Portals Cards Section */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 text-left">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12 text-left">
               
               {/* Gateway 1: Wet Lab Sandbox */}
               <div 
@@ -549,6 +576,30 @@ export default function App() {
                   Inspect high-fidelity structures of synthesized <GlossaryTerm term="Bacillus subtilis" theme={isLightMode ? 'light' : 'dark'}>Bacillus enzyme complexes</GlossaryTerm> using crystallographic <GlossaryTerm term="PDB File" theme={isLightMode ? 'light' : 'dark'}>PDB coordinate maps</GlossaryTerm>.
                 </p>
                 <div className="absolute right-0 bottom-0 w-24 h-2 bg-gradient-to-r from-transparent to-indigo-500/10 rounded-br-xl"></div>
+              </div>
+
+              {/* Gateway 4: Multiscale Guided Tour */}
+              <div 
+                onClick={() => setViewMode('guided-tour')}
+                className={`p-5 rounded-xl cursor-pointer transition shadow-xl hover:-translate-y-1 group relative overflow-visible ${
+                  isLightMode 
+                    ? 'bg-white/80 border border-amber-900/10 hover:border-amber-500/50 hover:shadow-[0_10px_25px_rgba(139,94,26,0.06)]'
+                    : 'bg-[#06080d]/85 border border-slate-800/80 hover:border-amber-500/70 hover:shadow-[0_0_20px_rgba(245,158,11,0.15)]'
+                }`}
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <span className={`p-2.5 rounded border ${isLightMode ? 'bg-amber-50 border-amber-200 text-amber-800' : 'bg-amber-950/30 border-amber-900/40 text-amber-550'}`}>
+                    <Sparkles className="w-5 h-5 text-current" />
+                  </span>
+                  <span className={`text-[9px] font-mono group-hover:text-amber-600 transition font-bold ${isLightMode ? 'text-stone-400' : 'text-slate-500'}`}>LAUNCH PORTAL ◀</span>
+                </div>
+                <h3 className={`text-sm font-bold uppercase tracking-wide group-hover:text-amber-600 transition mb-1.5 flex items-center gap-1.5 ${isLightMode ? 'text-stone-950' : 'text-white'}`}>
+                  4. Interactive Tour
+                </h3>
+                <p className={`text-[11px] leading-relaxed ${isLightMode ? 'text-stone-600 font-medium' : 'text-slate-400'}`}>
+                  Walk step-by-step through our integrated design pipeline. Watch genomic enzyme parameters resolve directly into global dune sand lock outcomes.
+                </p>
+                <div className="absolute right-0 bottom-0 w-24 h-2 bg-gradient-to-r from-transparent to-amber-500/10 rounded-br-xl"></div>
               </div>
 
             </div>
@@ -711,10 +762,20 @@ export default function App() {
               className={`text-[11px] px-3 py-1.5 transition rounded-lg font-bold font-sans flex items-center gap-1 ${
                 viewMode === 'protein-suite' 
                   ? (isLightMode ? 'bg-indigo-200 text-indigo-900 border border-indigo-300' : 'bg-[#6366f1]/15 text-[#a5b4fc] border border-indigo-500/35') 
-                  : (isLightMode ? 'text-indigo-700 hover:text-indigo-900 font-bold' : 'text-indigo-400 hover:text-indigo-300')
+                  : (isLightMode ? 'text-indigo-700 hover:text-indigo-900 font-bold' : 'text-indigo-400 hover:text-indigo-305')
               }`}
             >
               3D Protein Suite
+            </button>
+            <button 
+              onClick={() => { setViewMode('guided-tour'); }}
+              className={`text-[11px] px-3 py-1.5 transition rounded-lg font-bold font-sans flex items-center gap-1 ${
+                viewMode === 'guided-tour' 
+                  ? (isLightMode ? 'bg-amber-200 text-amber-900 border border-amber-300' : 'bg-amber-500/15 text-amber-400 border border-amber-500/35') 
+                  : (isLightMode ? 'text-amber-700 hover:text-amber-900 font-bold' : 'text-amber-400 hover:text-amber-300')
+              }`}
+            >
+              Interactive Tour
             </button>
           </div>
         </header>
@@ -990,7 +1051,22 @@ export default function App() {
               {/* Modeling approaches selector tabs */}
               <div className={`flex flex-wrap gap-2.5 mb-6 border-b pb-3.5 ${isLightMode ? 'border-amber-900/15' : 'border-slate-800'}`} id="nav-dock-tabs">
                 <button
-                  onClick={() => setActiveTab('metabolic')}
+                  onClick={() => setActivePortal(0)}
+                  className={`flex-1 min-w-[155px] text-left p-3.5 rounded-xl border transition-all cursor-pointer ${
+                    activeTab === 'fba'
+                      ? (isLightMode ? 'bg-amber-100/90 border-[#b8956c] text-[#3e271e] shadow-sm font-semibold' : 'bg-cyan-950/20 border-cyan-800 text-cyan-400')
+                      : (isLightMode ? 'bg-[#fcfaf5] border-amber-900/10 text-stone-600 hover:text-stone-900 hover:bg-amber-50' : 'bg-[#080b12] border-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-900/40')
+                  }`}
+                >
+                  <div className="text-xs font-bold uppercase flex items-center gap-1.5 font-sans">
+                    <Sparkles className="w-3.5 h-3.5 text-[#db2777]" />
+                    Portal 0: Metabolic Flux Workspace
+                  </div>
+                  <div className="text-[9px] opacity-70 italic font-mono pl-5 mt-0.5">Simplex Stoichiometrics</div>
+                </button>
+
+                <button
+                  onClick={() => setActivePortal(1)}
                   className={`flex-1 min-w-[155px] text-left p-3.5 rounded-xl border transition-all cursor-pointer ${
                     activeTab === 'metabolic'
                       ? (isLightMode ? 'bg-amber-100/90 border-[#b8956c] text-[#3e271e] shadow-sm font-semibold' : 'bg-cyan-950/20 border-cyan-800 text-cyan-400')
@@ -999,13 +1075,13 @@ export default function App() {
                 >
                   <div className="text-xs font-bold uppercase flex items-center gap-1.5 font-sans">
                     <Dna className="w-3.5 h-3.5 text-cyan-500" />
-                    1. Metabolic Flux
+                    Portal 1: Enzyme Bio-kinetics
                   </div>
                   <div className="text-[9px] opacity-70 italic font-mono pl-5 mt-0.5">PGA Synthase Kinetics</div>
                 </button>
 
                 <button
-                  onClick={() => setActiveTab('crosslink')}
+                  onClick={() => setActivePortal(2)}
                   className={`flex-1 min-w-[155px] text-left p-3.5 rounded-xl border transition-all cursor-pointer ${
                     activeTab === 'crosslink'
                       ? (isLightMode ? 'bg-amber-100/90 border-[#b8956c] text-[#3e271e] shadow-sm font-semibold' : 'bg-cyan-950/20 border-cyan-850 text-cyan-400')
@@ -1014,13 +1090,13 @@ export default function App() {
                 >
                   <div className="text-xs font-bold uppercase flex items-center gap-1.5 font-sans">
                     <Layers className="w-3.5 h-3.5 text-cyan-500" />
-                    2. Cross-Linking
+                    Portal 2: Chelation Biophysics
                   </div>
                   <div className="text-[9px] opacity-70 italic font-mono pl-5 mt-0.5">Chelation & Viscosity</div>
                 </button>
 
                 <button
-                  onClick={() => setActiveTab('aeolian')}
+                  onClick={() => setActivePortal(3)}
                   className={`flex-1 min-w-[155px] text-left p-3.5 rounded-xl border transition-all cursor-pointer ${
                     activeTab === 'aeolian'
                       ? (isLightMode ? 'bg-amber-100/90 border-[#b8956c] text-[#3e271e] shadow-sm font-semibold' : 'bg-cyan-950/20 border-cyan-850 text-cyan-400')
@@ -1029,13 +1105,13 @@ export default function App() {
                 >
                   <div className="text-xs font-bold uppercase flex items-center gap-1.5 font-sans">
                     <Wind className="w-3.5 h-3.5 text-cyan-500" />
-                    3. Aeolian Transport
+                    Portal 3: Aeolian Transport
                   </div>
                   <div className="text-[9px] opacity-70 italic font-mono pl-5 mt-0.5">Sand Shear Strength</div>
                 </button>
 
                 <button
-                  onClick={() => setActiveTab('ecological')}
+                  onClick={() => setActivePortal(4)}
                   className={`flex-1 min-w-[155px] text-left p-3.5 rounded-xl border transition-all cursor-pointer ${
                     activeTab === 'ecological'
                       ? (isLightMode ? 'bg-amber-100/90 border-[#b8956c] text-[#3e271e] shadow-sm font-semibold' : 'bg-cyan-950/20 border-cyan-850 text-cyan-400')
@@ -1044,9 +1120,24 @@ export default function App() {
                 >
                   <div className="text-xs font-bold uppercase flex items-center gap-1.5 font-sans">
                     <Bug className="w-3.5 h-3.5 text-cyan-500" />
-                    4. Biofilm Expansion
+                    Portal 4: Environmental Biosafety
                   </div>
                   <div className="text-[9px] opacity-70 italic font-mono pl-5 mt-0.5">Stochastic Growth CA</div>
+                </button>
+
+                <button
+                  onClick={() => setActivePortal(5)}
+                  className={`flex-1 min-w-[155px] text-left p-3.5 rounded-xl border transition-all cursor-pointer ${
+                    activeTab === 'economic'
+                      ? (isLightMode ? 'bg-amber-100/90 border-[#b8956c] text-[#3e271e] shadow-sm font-semibold' : 'bg-cyan-950/20 border-cyan-850 text-cyan-400')
+                      : (isLightMode ? 'bg-[#fcfaf5] border-amber-900/10 text-stone-600 hover:text-stone-900 hover:bg-amber-50' : 'bg-[#080b12] border-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-900/40')
+                  }`}
+                >
+                  <div className="text-xs font-bold uppercase flex items-center gap-1.5 font-sans">
+                    <Coins className="w-3.5 h-3.5 text-amber-500" />
+                    Portal 5: Economic Scalability
+                  </div>
+                  <div className="text-[9px] opacity-70 italic font-mono pl-5 mt-0.5">LCA &amp; Budget Ledger</div>
                 </button>
               </div>
 
@@ -1058,22 +1149,34 @@ export default function App() {
                   <BookOpen className="w-5 h-5" />
                 </div>
                 <div className="text-xs">
+                  {activeTab === 'fba' && (
+                    <>
+                      <h3 className={`font-extrabold font-sans uppercase tracking-wider text-[11px] mb-1 ${isLightMode ? 'text-amber-950' : 'text-slate-100'}`}>
+                        Portal 0: Metabolic Flux Workspace (FBA Sim)
+                      </h3>
+                      <p className={`leading-relaxed font-sans text-xs ${isLightMode ? 'text-stone-800' : 'text-slate-400'}`}>
+                        Take full control of the intracellular machinery. Adjust carbon inputs, oxygen availability, and genetic knockouts.
+                        Our Simplex Optimizer solves the metabolic balance in real-time to identify metabolic bottlenecks and maximize biopolymer yield.
+                        The optimized biopolymer export flux runs as a continuous data feed directly into our Portal 1 starting substrate availability.
+                      </p>
+                    </>
+                  )}
                   {activeTab === 'metabolic' && (
                     <>
                       <h3 className={`font-extrabold font-sans uppercase tracking-wider text-[11px] mb-1 ${isLightMode ? 'text-amber-950' : 'text-slate-100'}`}>
-                        Step 1: Cell Growth &amp; Glue Secreting
+                        Portal 1: Enzyme Bio-kinetics &amp; Secretion
                       </h3>
                       <p className={`leading-relaxed font-sans text-xs ${isLightMode ? 'text-stone-800' : 'text-slate-400'}`}>
                         We grow native soil bacteria called <code className={isLightMode ? 'text-amber-900 bg-amber-50 px-1 rounded font-mono font-semibold' : 'text-[#22d3ee] font-mono'}>Bacillus</code>. 
-                        By providing nutrients (like glutamate), we trigger their metabolic paths to make natural, sticky poly-glutamic acid (gamma-PGA) glue. 
-                        Adjust sliders below to see cell populations grow and optimize physical glue output.
+                        By providing nutrients, we trigger their metabolic paths to make natural, sticky poly-glutamic acid (gamma-PGA) glue. 
+                        Adjust sliders below to see cell populations grow and optimize physical glue output, driven by our FBA model's precursor feed.
                       </p>
                     </>
                   )}
                   {activeTab === 'crosslink' && (
                     <>
                       <h3 className={`font-extrabold font-sans uppercase tracking-wider text-[11px] mb-1 ${isLightMode ? 'text-amber-950' : 'text-slate-100'}`}>
-                        Step 2: Locking Chains with Minerals
+                        Portal 2: Locking Chains with Minerals
                       </h3>
                       <p className={`leading-relaxed font-sans text-xs ${isLightMode ? 'text-stone-800' : 'text-slate-400'}`}>
                         The bacteria-secreted glue is flexible. To make it hold load stresses, we introduce mineral salt solutions (calcium ions). 
@@ -1085,7 +1188,7 @@ export default function App() {
                   {activeTab === 'aeolian' && (
                     <>
                       <h3 className={`font-extrabold font-sans uppercase tracking-wider text-[11px] mb-1 ${isLightMode ? 'text-amber-950' : 'text-slate-100'}`}>
-                        Step 3: Wind-Dunes Stabilization Limits
+                        Portal 3: Wind-Dunes Stabilization Limits
                       </h3>
                       <p className={`leading-relaxed font-sans text-xs ${isLightMode ? 'text-stone-800' : 'text-slate-400'}`}>
                         Once grains are bounded, they become robust ground structures. 
@@ -1097,12 +1200,23 @@ export default function App() {
                   {activeTab === 'ecological' && (
                     <>
                       <h3 className={`font-extrabold font-sans uppercase tracking-wider text-[11px] mb-1 ${isLightMode ? 'text-amber-950' : 'text-slate-100'}`}>
-                        Step 4: Environmental Biosafety &amp; Spreading
+                        Portal 4: Environmental Biosafety &amp; Spreading
                       </h3>
                       <p className={`leading-relaxed font-sans text-xs ${isLightMode ? 'text-stone-800' : 'text-slate-400'}`}>
                         Will our strains remain contained and safe, or grow uncontrollably? 
                         We designed built-in environmental apoptosis switches so cells only survive in wet Treated Zones and safely degrade in dry environments. 
                         This maps live bacterial expansion to demonstrate 100% biosafety containment.
+                      </p>
+                    </>
+                  )}
+                  {activeTab === 'economic' && (
+                    <>
+                      <h3 className={`font-extrabold font-sans uppercase tracking-wider text-[11px] mb-1 ${isLightMode ? 'text-amber-950' : 'text-slate-100'}`}>
+                        Portal 5: Economic Scalability &amp; LCA Ledger
+                      </h3>
+                      <p className={`leading-relaxed font-sans text-xs ${isLightMode ? 'text-stone-800' : 'text-slate-400'}`}>
+                        Evaluate project financial and environmental viability dynamically. Our ledger scale maps total CapEx, 
+                        reactor production runs, and global CO₂ offsets comparing biological systems vs. high-firing concrete blankets or chemical sprays.
                       </p>
                     </>
                   )}
@@ -1125,17 +1239,30 @@ export default function App() {
                     isLightMode={isLightMode}
                   />
                 )}
-                {activeTab === 'crosslink' && (
-                  <CrossLinkingBiophysics 
-                    params={crosslinkParams} 
-                    setParams={setCrosslinkParams} 
-                    pgaAccum={pgaAccum}
-                    isLinked={isLinkedPga}
-                    setIsLinked={setIsLinkedPga}
-                    shearModulus={shearModulus}
-                    onUpdateShearModulus={setShearModulus}
-                    isLightMode={isLightMode}
+                {activeTab === 'fba' && (
+                  <AdvancedFbaPortal 
+                    isLightMode={isLightMode} 
+                    onUpdatePrecursorFlux={handleUpdatePrecursorFlux}
                   />
+                )}
+                {activeTab === 'crosslink' && (
+                  <div className="flex flex-col gap-6 p-2 md:p-4">
+                    <ProteinThermalDecay 
+                      isLightMode={isLightMode}
+                      onUpdateEnvironmentalModifier={setEnvironmentalModifier}
+                    />
+                    <CrossLinkingBiophysics 
+                      params={crosslinkParams} 
+                      setParams={setCrosslinkParams} 
+                      pgaAccum={pgaAccum}
+                      isLinked={isLinkedPga}
+                      setIsLinked={setIsLinkedPga}
+                      shearModulus={shearModulus}
+                      onUpdateShearModulus={setShearModulus}
+                      isLightMode={isLightMode}
+                      environmentalModifier={environmentalModifier}
+                    />
+                  </div>
                 )}
                 {activeTab === 'aeolian' && (
                   <AeolianWindTunnel 
@@ -1157,6 +1284,13 @@ export default function App() {
                     isLightMode={isLightMode}
                   />
                 )}
+                {activeTab === 'economic' && (
+                  <EconomicScalabilityEngine 
+                    isLightMode={isLightMode}
+                    polymerYield={pgaAccum}
+                    requiredCrustThickness={calculatedCrustThickness}
+                  />
+                )}
               </div>
 
               <div className="text-center mt-12 text-[10px] text-slate-600 font-mono py-8 select-none">
@@ -1166,6 +1300,17 @@ export default function App() {
           )}
         </div>
       )}
-    </div>
+
+      {/* PORTAL 4: Multiscale Guided Tour presentation component */}
+      {viewMode === 'guided-tour' && (
+        <div id="guided-tour-view" className="max-w-7xl mx-auto px-4 md:px-6 relative z-10 py-6">
+          <MultiscaleGuidedTour 
+            isLightMode={isLightMode} 
+            onClose={() => setViewMode('landing')} 
+          />
+        </div>
+      )}
+      </div>
+    </GlossaryProvider>
   );
 }
