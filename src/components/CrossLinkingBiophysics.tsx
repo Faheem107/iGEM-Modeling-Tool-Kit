@@ -433,7 +433,7 @@ export default function CrossLinkingBiophysics({
                     ? 'bg-emerald-50/55 border-emerald-200 text-emerald-800 font-bold shadow-sm' 
                     : 'bg-slate-900/45 text-[#34d399] border-emerald-900/20'
                 }`}>
-                  <span>🔗 Dynamic Feed: Math.min(8.0, 0.1 + PGA * 0.04)</span>
+                  <span>Dynamic Feed: Math.min(8.0, 0.1 + PGA * 0.04)</span>
                 </div>
               ) : (
                 <input 
@@ -531,7 +531,7 @@ export default function CrossLinkingBiophysics({
                     ? 'bg-white/95 border-amber-900/15 text-indigo-700 shadow-sm' 
                     : 'bg-black/85 border-slate-800 text-indigo-300 opacity-0'
                 }`}>
-                  🖱 Hover cursor to shift 3D parallax layers
+                  Hover cursor to shift 3D parallax layers
                 </div>
               </div>
             </div>

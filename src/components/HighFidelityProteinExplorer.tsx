@@ -1183,7 +1183,7 @@ export default function HighFidelityProteinExplorer({ isLightMode = false }: { i
 
             {selectedResidue && (
               <div className={`p-3 border rounded text-[10px] font-mono leading-relaxed animate-fadeIn ${isLightMode ? 'bg-indigo-50/45 border-indigo-200/65 text-indigo-900 font-medium' : 'bg-indigo-950/15 border-indigo-900/35 text-indigo-300'}`}>
-                <span className={`font-bold block text-[11px] mb-1 ${isLightMode ? 'text-indigo-805' : 'text-[#a5b4fc]'}`}>🔍 Isolation Tracking Active:</span>
+                <span className={`font-bold block text-[11px] mb-1 ${isLightMode ? 'text-indigo-805' : 'text-[#a5b4fc]'}`}>Isolation Tracking Active:</span>
                 Target coordinates are marked with blinking alignment overlays in the active 3D visualization canvas.
               </div>
             )}

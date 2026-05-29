@@ -123,17 +123,25 @@ export default function App() {
   const [isLinkedShear, setIsLinkedShear] = useState<boolean>(true);
   const [isLinkedSpread, setIsLinkedSpread] = useState<boolean>(true);
 
-  // --- Onboarding Splash Flags (Requirement 4) ---
+  // --- Onboarding Splash Flags ---
   const [activeWetlabStarted, setActiveWetlabStarted] = useState<boolean>(true);
-  const [activePipelineStarted, setActivePipelineStarted] = useState<boolean>(true);
+  const [activePipelineStarted, setActivePipelineStarted] = useState<boolean>(false);
   const [activeProteinStarted, setActiveProteinStarted] = useState<boolean>(true);
 
   const handleBackToLanding = () => {
     setViewMode('landing');
     setActiveWetlabStarted(true);
-    setActivePipelineStarted(true);
+    setActivePipelineStarted(false);
     setActiveProteinStarted(true);
   };
+
+  // Completely wipe pipeline memory and reset defaults on unmount
+  useEffect(() => {
+    if (viewMode !== 'pipeline') {
+      setActivePipelineStarted(false);
+      setActivePortal(0); // Land on Portal 0: FBA Workspace
+    }
+  }, [viewMode]);
 
   // --- Particle Background Renderer for Landing Page ---
   const headerCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -917,7 +925,7 @@ export default function App() {
 
       {/* PORTAL 3: Dynamic modeling workspace panel views */}
       {viewMode === 'pipeline' && (
-        <div id="dynamic-workspace-frame" className="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
+        <div key="dry-lab-pipeline-workspace" id="dynamic-workspace-frame" className="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
           {!activePipelineStarted ? (
             /* Splash Onboarding for Dry-Lab Pipeline */
             <div className="min-h-[70vh] flex items-center justify-center p-6 font-sans">
@@ -1228,25 +1236,29 @@ export default function App() {
                 isLightMode ? 'bg-[#fbf9f4] border-amber-900/10' : 'bg-[#06080d] border-slate-800'
               }`} id="modeller-workspace-feed">
                 {activeTab === 'metabolic' && (
-                  <MetabolicModel 
-                    params={metabolicParams} 
-                    setParams={setMetabolicParams} 
-                    onUpdatePgaAccum={setPgaAccum} 
-                    targetYield={targetYield}
-                    setTargetYield={setTargetYield}
-                    calibratedKcat={calibratedKcat}
-                    setCalibratedKcat={setCalibratedKcat}
-                    isLightMode={isLightMode}
-                  />
+                  <div key="metabolic" className="contents">
+                    <MetabolicModel 
+                      params={metabolicParams} 
+                      setParams={setMetabolicParams} 
+                      onUpdatePgaAccum={setPgaAccum} 
+                      targetYield={targetYield}
+                      setTargetYield={setTargetYield}
+                      calibratedKcat={calibratedKcat}
+                      setCalibratedKcat={setCalibratedKcat}
+                      isLightMode={isLightMode}
+                    />
+                  </div>
                 )}
                 {activeTab === 'fba' && (
-                  <AdvancedFbaPortal 
-                    isLightMode={isLightMode} 
-                    onUpdatePrecursorFlux={handleUpdatePrecursorFlux}
-                  />
+                  <div key="fba" className="contents">
+                    <AdvancedFbaPortal 
+                      isLightMode={isLightMode} 
+                      onUpdatePrecursorFlux={handleUpdatePrecursorFlux}
+                    />
+                  </div>
                 )}
                 {activeTab === 'crosslink' && (
-                  <div className="flex flex-col gap-6 p-2 md:p-4">
+                  <div key="crosslink" className="flex flex-col gap-6 p-2 md:p-4">
                     <ProteinThermalDecay 
                       isLightMode={isLightMode}
                       onUpdateEnvironmentalModifier={setEnvironmentalModifier}
@@ -1265,31 +1277,37 @@ export default function App() {
                   </div>
                 )}
                 {activeTab === 'aeolian' && (
-                  <AeolianWindTunnel 
-                    params={aeolianParams} 
-                    setParams={setAeolianParams} 
-                    shearModulus={shearModulus}
-                    isLinked={isLinkedShear}
-                    setIsLinked={setIsLinkedShear}
-                    isLightMode={isLightMode}
-                  />
+                  <div key="aeolian" className="contents">
+                    <AeolianWindTunnel 
+                      params={aeolianParams} 
+                      setParams={setAeolianParams} 
+                      shearModulus={shearModulus}
+                      isLinked={isLinkedShear}
+                      setIsLinked={setIsLinkedShear}
+                      isLightMode={isLightMode}
+                    />
+                  </div>
                 )}
                 {activeTab === 'ecological' && (
-                  <EcologicalSpread 
-                    config={ecologicalConfig} 
-                    setConfig={setEcologicalConfig} 
-                    pgaAccum={pgaAccum}
-                    isLinked={isLinkedSpread}
-                    setIsLinked={setIsLinkedSpread}
-                    isLightMode={isLightMode}
-                  />
+                  <div key="ecological" className="contents">
+                    <EcologicalSpread 
+                      config={ecologicalConfig} 
+                      setConfig={setEcologicalConfig} 
+                      pgaAccum={pgaAccum}
+                      isLinked={isLinkedSpread}
+                      setIsLinked={setIsLinkedSpread}
+                      isLightMode={isLightMode}
+                    />
+                  </div>
                 )}
                 {activeTab === 'economic' && (
-                  <EconomicScalabilityEngine 
-                    isLightMode={isLightMode}
-                    polymerYield={pgaAccum}
-                    requiredCrustThickness={calculatedCrustThickness}
-                  />
+                  <div key="economic" className="contents">
+                    <EconomicScalabilityEngine 
+                      isLightMode={isLightMode}
+                      polymerYield={pgaAccum}
+                      requiredCrustThickness={calculatedCrustThickness}
+                    />
+                  </div>
                 )}
               </div>
 

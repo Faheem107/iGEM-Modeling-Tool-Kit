@@ -590,7 +590,7 @@ export default function AeolianWindTunnel({
                         onClick={() => setIsLinked(true)}
                         className="text-emerald-700 dark:text-emerald-450 hover:underline font-bold"
                       >
-                        🔗 Re-link to App Modulus
+                        Re-link to App Modulus
                       </button>
                       <span>Compact (15000 Pa)</span>
                     </div>
@@ -832,7 +832,7 @@ export default function AeolianWindTunnel({
           }`}>
             <div className="space-y-1">
               <span className="text-[9.5px] uppercase font-mono font-black tracking-wider text-indigo-700 dark:text-indigo-400 block mb-1">
-                🏆 Panel A // Durability Stopwatch
+                Panel A // Durability Stopwatch
               </span>
               <p className="text-[10px] text-slate-500 leading-normal mb-3">
                 Stopwatch records exact simulated failure points at complete cumulative mass dislodgement.
@@ -934,7 +934,7 @@ export default function AeolianWindTunnel({
           }`}>
             <div className="space-y-1">
               <span className="text-[9.5px] uppercase font-mono font-black tracking-wider text-indigo-700 dark:text-indigo-400 block mb-1">
-                💰 Panel C // Field Economics
+                Panel C // Field Economics
               </span>
               <p className="text-[10px] text-slate-500 leading-normal mb-3">
                 Calculates macro project deployment volume estimates and costs mapped to a single standard hectare.

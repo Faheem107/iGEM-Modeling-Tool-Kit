@@ -328,7 +328,7 @@ export default function EcologicalSpread({
                   ? 'bg-indigo-50/45 text-indigo-800 border-indigo-200 shadow-sm' 
                   : 'bg-slate-900/40 text-indigo-400 border border-indigo-950/60'
               }`}>
-                <span>🔗 Bound: Math.min(0.95, 0.2 + PGA * 0.003)</span>
+                <span>Bound: Math.min(0.95, 0.2 + PGA * 0.003)</span>
               </div>
             ) : (
               <input 
