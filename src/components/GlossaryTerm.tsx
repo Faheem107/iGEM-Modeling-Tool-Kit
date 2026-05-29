@@ -198,57 +198,6 @@ export const GlossaryTerm: React.FC<GlossaryTermProps> = ({
 
   const isLightTheme = theme === 'light';
 
-  const tooltipElement = isOpen && coords && (
-    <div 
-      className="glossary-portal-tooltip font-sans"
-      style={{
-        position: 'fixed',
-        top: `${coords.top}px`,
-        left: `${coords.left}px`,
-        transform: openUpward ? 'translateY(-100%)' : 'none',
-        zIndex: 9999,
-        width: '18rem',
-      }}
-      onClick={(e) => e.stopPropagation()}
-    >
-      <div className={`p-4 rounded-xl text-xs leading-relaxed shadow-2xl border ${
-        isLightTheme
-          ? 'bg-white border-indigo-950/20 text-slate-900 shadow-md'
-          : 'bg-slate-950 border-slate-800 text-slate-50'
-      }`}>
-        <span className="block font-bold uppercase tracking-wider text-[10px] mb-2 flex justify-between items-center">
-          <span className={isLightTheme ? 'text-indigo-900 font-extrabold' : 'text-indigo-300 dark:text-indigo-300'}>
-            {detail.category || 'Term Explanation'}
-          </span>
-          <button 
-            onClick={() => setActiveTooltipId(null)}
-            className={`font-black text-[10px] px-2 py-0.5 rounded border transition-colors ${
-              isLightTheme 
-                ? 'text-slate-900 border-slate-350 bg-slate-50 hover:text-red-650 hover:bg-red-50 hover:border-red-200' 
-                : 'text-slate-50 border-slate-700 bg-slate-900 hover:text-white hover:border-slate-500'
-            }`}
-          >
-            CLOSE
-          </button>
-        </span>
-        <strong className={`block text-xs font-black mb-1.5 uppercase ${isLightTheme ? 'text-slate-900' : 'text-slate-50 dark:text-slate-50'}`}>
-          {detail.title}
-        </strong>
-        <span className={`block font-sans text-[11.5px] leading-relaxed ${isLightTheme ? 'text-slate-850 font-medium' : 'text-slate-300'}`}>
-          {detail.definition}
-        </span>
-        
-        {detail.usageContext && (
-          <span className={`block mt-2.5 pt-2 border-t border-dashed ${
-            isLightTheme ? 'border-indigo-900/15 text-indigo-900 font-semibold' : 'border-slate-800 text-indigo-300'
-          } text-[9px] font-mono leading-tight`}>
-            IMPLEMENTATION: {detail.usageContext}
-          </span>
-        )}
-      </div>
-    </div>
-  );
-
   return (
     <span 
       ref={triggerRef}
@@ -269,7 +218,60 @@ export const GlossaryTerm: React.FC<GlossaryTermProps> = ({
       >
         {children || term}
       </span>
-      {typeof document !== 'undefined' && createPortal(tooltipElement, document.body)}
+      {isOpen && coords && typeof document !== 'undefined' && createPortal(
+        <div 
+          className="glossary-portal-tooltip font-sans"
+          style={{
+            position: 'fixed',
+            top: `${coords.top}px`,
+            left: `${coords.left}px`,
+            transform: openUpward ? 'translateY(-100%)' : 'none',
+            zIndex: 9999,
+            width: '18rem',
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className={`p-4 rounded-xl text-xs leading-relaxed shadow-2xl border ${
+            isLightTheme
+              ? 'bg-white border-indigo-950/20 text-slate-900 shadow-md'
+              : 'bg-slate-950 border-slate-800 text-slate-50'
+          }`}>
+            <span className="block font-bold uppercase tracking-wider text-[10px] mb-2 flex justify-between items-center">
+              <span className={isLightTheme ? 'text-indigo-900 font-extrabold' : 'text-indigo-300 dark:text-indigo-300'}>
+                {detail.category || 'Term Explanation'}
+              </span>
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveTooltipId(null);
+                }}
+                className={`font-black text-[10px] px-2 py-0.5 rounded border transition-colors ${
+                  isLightTheme 
+                    ? 'text-slate-900 border-slate-350 bg-slate-50 hover:text-red-650 hover:bg-red-50 hover:border-red-200' 
+                    : 'text-slate-50 border-slate-700 bg-slate-900 hover:text-white hover:border-slate-500'
+                }`}
+              >
+                CLOSE
+              </button>
+            </span>
+            <strong className={`block text-xs font-black mb-1.5 uppercase ${isLightTheme ? 'text-slate-900' : 'text-slate-50 dark:text-slate-50'}`}>
+              {detail.title}
+            </strong>
+            <span className={`block font-sans text-[11.5px] leading-relaxed ${isLightTheme ? 'text-slate-850 font-medium' : 'text-slate-300'}`}>
+              {detail.definition}
+            </span>
+            
+            {detail.usageContext && (
+              <span className={`block mt-2.5 pt-2 border-t border-dashed ${
+                isLightTheme ? 'border-indigo-900/15 text-indigo-900 font-semibold' : 'border-slate-800 text-indigo-300'
+              } text-[9px] font-mono leading-tight`}>
+                IMPLEMENTATION: {detail.usageContext}
+              </span>
+            )}
+          </div>
+        </div>,
+        document.body
+      )}
     </span>
   );
 };
