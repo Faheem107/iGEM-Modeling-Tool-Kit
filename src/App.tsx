@@ -444,17 +444,9 @@ export default function App() {
     <GlossaryProvider>
       <div className={`min-h-screen transition-all duration-350 font-sans relative ${
         isLightMode 
-          ? 'bg-[#efe4cd] text-slate-900 selection:bg-amber-800 selection:text-white light-mode-active' 
-          : 'bg-[#030508] text-slate-200 selection:bg-cyan-500 selection:text-black'
+          ? 'bg-transparent text-slate-900 selection:bg-amber-800 selection:text-white light-mode-active' 
+          : 'bg-transparent text-slate-200 selection:bg-cyan-500 selection:text-black'
       }`}>
-      {/* Interactive/Background particles canvas backdrop - persists across views */}
-      <canvas 
-        ref={headerCanvasRef} 
-        className={`fixed inset-0 w-full h-full animate-fadeIn transition-all duration-500 overflow-hidden ${
-          viewMode === 'landing' ? 'pointer-events-auto cursor-crosshair' : 'pointer-events-none'
-        }`}
-        style={{ zIndex: 0 }}
-      />
       
       {/* Top Floating Theme Switcher Option */}
       <div className="fixed top-4 right-6 z-50 flex items-center gap-3">
