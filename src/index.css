@@ -1,9 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Outfit", "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: 'Montserrat', Arial, sans-serif;
+  --font-mono: 'Montserrat', Arial, sans-serif;
+}
+
+/* TASK 1: Complete Typography Overhaul */
+/* Default to Montserrat for standard text elements, code, pre, equations, and math variables */
+*, html, body, p, label, span, button, input, select, option, textarea, div, a, td, th, li, code, pre, var, kbd, samp, .font-mono, .math-style, [class*="math"], [class*="formula"], [class*="equation"], code *, pre * {
+  font-family: 'Montserrat', Arial, sans-serif !important;
+}
+
+/* Enforce bold Helvetica for all Headings, section titles */
+h1, h2, h3, h4, h5, h6, .section-title, [class*="section-title"], [class*="heading"], h1 *, h2 *, h3 *, h4 *, h5 *, h6 * {
+  font-family: "Helvetica", Arial, sans-serif !important;
+  font-weight: bold !important;
 }
 
 /* Sci-fi instrumentation visual scrollbars */
@@ -98,8 +110,14 @@ body {
 /* Custom range inputs for cybernetic precise knobs */
 input[type="range"] {
   accent-color: #06b6d4;
+  cursor: grab;
+}
+input[type="range"]:active {
+  cursor: grabbing;
+  transform: scaleY(1.05);
 }
 
 input[type="checkbox"] {
   accent-color: #06b6d4;
+  cursor: pointer;
 }

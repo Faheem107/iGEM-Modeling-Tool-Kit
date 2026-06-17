@@ -972,15 +972,15 @@ export default function HighFidelityProteinExplorer({ isLightMode = false }: { i
   }, [currentStructure, colorTheme, renderStyle, showLigands, selectedResidue, scaleTranslationFactor, legendLayers]);
 
   return (
-    <div className="bg-[#06080d] p-6 rounded-xl border border-slate-800 shadow-2xl relative" id="hifi-protein-sandbox border-amber-950/20">
+    <div className={isLightMode ? 'bg-white p-6 rounded-xl border border-slate-200 text-slate-900 shadow-xl relative' : 'bg-[#0b1324] p-6 rounded-xl border border-slate-900 text-slate-100 shadow-2xl relative'} id="hifi-protein-sandbox">
           {/* Dynamic Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-800">
+      <div className={`flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b ${isLightMode ? 'border-slate-200' : 'border-slate-800'}`}>
         <div>
-          <h2 className="text-sm font-extrabold uppercase tracking-wider text-slate-100 flex items-center gap-2 font-mono">
-            <Globe className="w-5 h-5 text-indigo-400" />
+          <h2 className={`text-sm font-extrabold uppercase tracking-wider flex items-center gap-2 font-mono ${isLightMode ? 'text-slate-900' : 'text-slate-100'}`}>
+            <Globe className={`w-5 h-5 ${isLightMode ? 'text-indigo-600' : 'text-indigo-400'}`} />
             3D Crystallographic Protein Imager
           </h2>
-          <p className="text-[11px] text-slate-400 leading-relaxed">
+          <p className={`text-[11px] leading-relaxed ${isLightMode ? 'text-slate-600' : 'text-slate-400'}`}>
             {pdbFileName 
               ? `Currently parsing PDB model: ${pdbFileName} (${currentStructure.backbone.length} amino-acid alpha positions mapped)` 
               : "Simulated 3D Enzyme Cartoon Sandbox. Features ribbon helices and beta strands folded dynamically with ample space."
@@ -989,8 +989,8 @@ export default function HighFidelityProteinExplorer({ isLightMode = false }: { i
         </div>
 
         {/* Global actions */}
-        <div className="flex flex-wrap bg-[#06080d] p-1 rounded border border-slate-800 text-[10px] font-bold font-mono gap-1.5 items-center">
-          <label className="px-2.5 py-1.5 rounded cursor-pointer transition text-indigo-305 hover:bg-indigo-950/30 flex items-center gap-1.5 border border-indigo-900/20 bg-indigo-950/10 hover:text-indigo-200">
+        <div className={`flex flex-wrap p-1 rounded border text-[10px] font-bold font-mono gap-1.5 items-center ${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-[#06080d] border-slate-800'}`}>
+          <label className={`px-2.5 py-1.5 rounded cursor-pointer transition flex items-center gap-1.5 border ${isLightMode ? 'text-indigo-700 hover:bg-indigo-100/50 border-indigo-200 bg-indigo-50/50' : 'text-indigo-305 hover:bg-indigo-950/30 border-indigo-900/20 bg-indigo-950/10 hover:text-indigo-200'}`}>
             <UploadCloud className="w-3.5 h-3.5 text-indigo-400" />
             <span>Load PDB File</span>
             <input 
@@ -1003,13 +1003,13 @@ export default function HighFidelityProteinExplorer({ isLightMode = false }: { i
           {pdbFileName && (
             <button 
               onClick={handleResetToDefault}
-              className="px-2.5 py-1.5 rounded cursor-pointer transition text-rose-400 hover:bg-rose-950/20 flex items-center gap-1 border border-rose-900/15"
+              className={`px-2.5 py-1.5 rounded cursor-pointer transition flex items-center gap-1 border ${isLightMode ? 'text-rose-700 hover:bg-rose-50 border-rose-200 bg-rose-50/30' : 'text-rose-400 hover:bg-rose-950/20 border-rose-900/15'}`}
               title="Reset workspace back to default simulated enzyme structure"
             >
               <Trash2 className="w-3.5 h-3.5" /> Close PDB
             </button>
           )}
-          <span className="px-3 py-1.5 rounded text-indigo-400 bg-indigo-950/15 border border-indigo-900/20 flex items-center gap-1">
+          <span className={`px-3 py-1.5 rounded flex items-center gap-1 border ${isLightMode ? 'text-indigo-700 bg-indigo-50/55 border-indigo-200' : 'text-indigo-400 bg-indigo-950/15 border-indigo-900/20'}`}>
             <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Cartoon Mode Enabled
           </span>
         </div>
@@ -1021,9 +1021,9 @@ export default function HighFidelityProteinExplorer({ isLightMode = false }: { i
         <div className="lg:col-span-8 space-y-4">
           
           {/* Main 3D Stage viewport container */}
-          <div className="bg-[#0a0f18] p-4 rounded-xl border border-slate-800/80 flex flex-col justify-between align-center relative group">
+          <div className={`p-4 rounded-xl border flex flex-col justify-between align-center relative group ${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-[#0a0f18] border-slate-800/80'}`}>
             
-            <div className="relative border border-slate-800/60 rounded-lg bg-[#04060b] w-full min-h-[460px] flex items-center justify-center overflow-hidden custom-protein-viewport">
+            <div className={`relative border rounded-lg w-full min-h-[460px] flex items-center justify-center overflow-hidden custom-protein-viewport ${isLightMode ? 'border-slate-200 bg-slate-100' : 'border-slate-800/60 bg-[#04060b]'}`}>
               <canvas 
                 ref={canvasRef} 
                 width={620} 
@@ -1039,27 +1039,27 @@ export default function HighFidelityProteinExplorer({ isLightMode = false }: { i
               )}
 
               {/* Interaction Guide */}
-              <div className="absolute top-3 left-3 bg-[#0a0f18]/85 px-3 py-1.5 rounded border border-slate-805 text-[9px] text-[#38bdf8] font-mono uppercase tracking-wider flex items-center gap-1.5 pointer-events-none shadow-lg">
-                <span className="w-2 h-2 rounded-full bg-[#38bdf8] animate-ping shrink-0"></span>
+              <div className={`absolute top-3 left-3 px-3 py-1.5 rounded border text-[9px] font-mono uppercase tracking-wider flex items-center gap-1.5 pointer-events-none shadow-lg ${isLightMode ? 'bg-white/95 border-slate-200 text-indigo-650 shadow-sm font-semibold' : 'bg-[#0a0f18]/85 border-slate-805 text-[#38bdf8]'}`}>
+                <span className={`w-2 h-2 rounded-full animate-ping shrink-0 ${isLightMode ? 'bg-indigo-600' : 'bg-[#38bdf8]'}`}></span>
                 Hold and Drag Left Mouse Button to Rotate • Scroll to Zoom
               </div>
 
               {/* Watermark sign */}
-              <div className="absolute bottom-3 right-3 bg-[#0a0f18]/90 p-2 py-1.5 rounded border border-slate-800/80 text-[10px] text-indigo-400 font-mono flex items-center gap-1.5 pointer-events-none shadow">
+              <div className={`absolute bottom-3 right-3 p-2 py-1.5 rounded border text-[10px] font-mono flex items-center gap-1.5 pointer-events-none shadow ${isLightMode ? 'bg-white/95 border-slate-200 text-indigo-700 shadow-sm font-semibold' : 'bg-[#0a0f18]/90 border-slate-800/80 text-indigo-400'}`}>
                 <Sparkles className="w-3.5 h-3.5 text-indigo-455 animate-pulse" />
                 <span>3D Spline Ribbon Engine</span>
               </div>
             </div>
 
             {/* Stage bottom actions controls */}
-            <div className="mt-4 flex flex-wrap justify-between items-center gap-3 text-xs text-slate-400">
+            <div className={`mt-4 flex flex-wrap justify-between items-center gap-3 text-xs ${isLightMode ? 'text-slate-650' : 'text-slate-400'}`}>
               <span className="flex items-center gap-1.5 font-sans">
-                <HelpCircle className="w-4 h-4 text-indigo-400 shrink-0" />
+                <HelpCircle className={`w-4 h-4 shrink-0 ${isLightMode ? 'text-indigo-650' : 'text-indigo-400'}`} />
                 <span>Drag to explore folding subunits. Use the right-hand panel to isolate secondary layers.</span>
               </span>
               <button 
                 onClick={() => { camRef.current.rotX = -0.45; camRef.current.rotY = 0.35; camRef.current.targetZoom = 3.2; }}
-                className="px-2.5 py-1 bg-slate-900 border border-slate-850 hover:bg-slate-800 text-[10px] font-mono rounded text-slate-200 transition flex items-center gap-1 cursor-pointer"
+                className={`px-2.5 py-1 text-[10px] font-mono rounded transition flex items-center gap-1 cursor-pointer border ${isLightMode ? 'bg-white border-slate-250 hover:bg-slate-50 text-slate-800 shadow-sm font-bold' : 'bg-slate-900 border-slate-850 hover:bg-slate-800 text-slate-200'}`}
               >
                 <RotateCcw className="w-3.5 h-3.5" /> Align Camera
               </button>

@@ -41,7 +41,7 @@ export default function App() {
   const [viewMode, setViewMode] = useState<ViewMode>('landing');
   const [activePortal, setActivePortal] = useState<number>(0);
   const activeTab = PORTAL_TABS[activePortal];
-  const [isLightMode, setIsLightMode] = useState<boolean>(true); // Default to light sandy theme on startup as requested
+  const [isLightMode, setIsLightMode] = useState<boolean>(false); // Enforced dark mode on startup as requested by user
 
   // --- Central Simulation Orchestrator States ---
   const [metabolicParams, setMetabolicParams] = useState<MetabolicParams>({
@@ -614,94 +614,8 @@ export default function App() {
 
           </div>
 
-          {/* Brief Laboratory Workflows section */}
+          {/* Footer section */}
           <div className="max-w-6xl mx-auto px-6 pb-6">
-            <div className={`border-t pt-10 ${isLightMode ? 'border-amber-900/15' : 'border-slate-800/70'}`}>
-              <h3 className={`text-[10px] font-extrabold uppercase tracking-[0.25em] text-center mb-6 font-mono ${
-                isLightMode ? 'text-stone-500' : 'text-slate-500'
-              }`}>
-                practical applications
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {/* Flow 1 */}
-                <div className={`p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 ${
-                  isLightMode
-                    ? 'bg-white/80 border-amber-900/10 shadow-[0_4px_12px_rgba(139,94,26,0.04)] text-stone-800'
-                    : 'bg-[#06080d]/80 border-slate-900/90 backdrop-blur-sm'
-                }`}>
-                  <div>
-                    <span className={`text-[9px] font-black font-mono uppercase tracking-wider block mb-2 ${isLightMode ? 'text-amber-800' : 'text-cyan-400'}`}>
-                      I. Calibrate Bacterial Growth
-                    </span>
-                    <div className={`py-2 px-3 rounded border font-sans text-xs leading-relaxed ${isLightMode ? 'bg-amber-50/50 border-amber-900/5 text-stone-700 font-medium' : 'bg-black/40 border-slate-905 text-slate-300'}`}>
-                      Optimize incubation parameters (like 37°C targets) and nutrient concentrations to maximize bio-glue mass generation before prepping physical agar plates.
-                    </div>
-                  </div>
-                  <p className={`text-[9px] font-mono mt-3 uppercase tracking-wider ${isLightMode ? 'text-amber-900' : 'text-[#22d3ee]/70'}`}>
-                    → SAVE HOURS OF CULTURE MEDIATING
-                  </p>
-                </div>
-
-                {/* Flow 2 */}
-                <div className={`p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 ${
-                  isLightMode
-                    ? 'bg-white/80 border-amber-900/10 shadow-[0_4px_12px_rgba(139,94,26,0.04)] text-stone-800'
-                    : 'bg-[#06080d]/80 border-slate-900/90 backdrop-blur-sm'
-                }`}>
-                  <div>
-                    <span className={`text-[9px] font-black font-mono uppercase tracking-wider block mb-2 ${isLightMode ? 'text-[#b45309]' : 'text-amber-400'}`}>
-                      II. Calculate Salt Ratios
-                    </span>
-                    <div className={`py-2 px-3 rounded border font-sans text-xs leading-relaxed ${isLightMode ? 'bg-amber-50/50 border-amber-900/5 text-stone-700 font-medium' : 'bg-black/40 border-slate-905 text-slate-300'}`}>
-                      Calibrate the perfect magnesium and calcium mineral salt concentrations to bind individual monomer fibers into tough, durable soil netting.
-                    </div>
-                  </div>
-                  <p className={`text-[9px] font-mono mt-3 uppercase tracking-wider ${isLightMode ? 'text-stone-500' : 'text-amber-400/80'}`}>
-                    → ELIMINATE CHELATION GUESSWORK
-                  </p>
-                </div>
-
-                {/* Flow 3 */}
-                <div className={`p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 ${
-                  isLightMode
-                    ? 'bg-white/80 border-amber-900/10 shadow-[0_4px_12px_rgba(139,94,26,0.04)] text-stone-800'
-                    : 'bg-[#06080d]/80 border-slate-900/90 backdrop-blur-sm'
-                }`}>
-                  <div>
-                    <span className={`text-[9px] font-black font-mono uppercase tracking-wider block mb-2 ${isLightMode ? 'text-emerald-700' : 'text-emerald-400'}`}>
-                      III. Wind Stress Thresholds
-                    </span>
-                    <div className={`py-2 px-3 rounded border font-sans text-xs leading-relaxed ${isLightMode ? 'bg-amber-50/50 border-amber-900/5 text-stone-700 font-medium' : 'bg-black/40 border-slate-905 text-slate-300'}`}>
-                      Convert laboratory soil stiffness readings directly into wind resistance speeds (m/s) to see if treated sands stay secure during Liwa wind gales.
-                    </div>
-                  </div>
-                  <p className={`text-[9px] font-mono mt-3 uppercase tracking-wider ${isLightMode ? 'text-emerald-850' : 'text-emerald-400/80'}`}>
-                    → PREDICT SHEAR FORCE SUCCESS
-                  </p>
-                </div>
-
-                {/* Flow 4 */}
-                <div className={`p-4 rounded-xl border flex flex-col justify-between transition-all duration-300 ${
-                  isLightMode
-                    ? 'bg-white/80 border-amber-900/10 shadow-[0_4px_12px_rgba(139,94,26,0.04)] text-stone-800'
-                    : 'bg-[#06080d]/80 border-slate-900/90 backdrop-blur-sm'
-                }`}>
-                  <div>
-                    <span className={`text-[9px] font-black font-mono uppercase tracking-wider block mb-2 ${isLightMode ? 'text-indigo-700' : 'text-indigo-400'}`}>
-                      IV. Safety Biosensors
-                    </span>
-                    <div className={`py-2 px-3 rounded border font-sans text-xs leading-relaxed ${isLightMode ? 'bg-amber-50/50 border-amber-900/5 text-stone-700 font-medium' : 'bg-black/40 border-slate-905 text-slate-300'}`}>
-                      Simulate built-in genetic kill switches to ensure bacterial soil coatings only stay alive in wet regions and safely degrade in dry desert settings.
-                    </div>
-                  </div>
-                  <p className={`text-[9px] font-mono mt-3 uppercase tracking-wider ${isLightMode ? 'text-indigo-850' : 'text-indigo-300/80'}`}>
-                    → VERIFY 100% REGULATORY SAFETY
-                  </p>
-                </div>
-              </div>
-            </div>
-
             <div className={`text-center py-6 text-[10px] font-mono select-none mt-4 ${isLightMode ? 'text-stone-500' : 'text-slate-600'}`} style={{ zIndex: 10 }}>
               NYUAD iGEM Simulation Toolkit. Built for iGEM 2026.
             </div>
