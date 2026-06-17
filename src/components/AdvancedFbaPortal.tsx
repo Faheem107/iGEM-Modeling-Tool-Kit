@@ -1083,7 +1083,7 @@ export default function AdvancedFbaPortal({
               FBA Core Central Metabolism Optimizer
             </h2>
             <p className="text-[10px] text-slate-500 mt-0.5">
-              Simulating <GlossaryTerm term="flux balance analysis" theme={isLightMode ? 'light' : 'dark'} activeTooltip={activeTooltip} setActiveTooltip={setActiveTooltip}>Flux Balance Analysis</GlossaryTerm> (S • v = 0) of 32 central reactions in <em>Bacillus subtilis</em>.
+              Simulating <GlossaryTerm term="flux balance analysis" theme={isLightMode ? 'light' : 'dark'}>Flux Balance Analysis</GlossaryTerm> (S • v = 0) of 32 central reactions in <em>Bacillus subtilis</em>.
             </p>
           </div>
         </div>
