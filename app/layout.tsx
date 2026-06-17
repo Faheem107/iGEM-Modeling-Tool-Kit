@@ -1,16 +1,16 @@
 import type React from "react";
 import type { Metadata } from "next";
-import { Instrument_Serif } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-context";
 import { GradientBackground } from "@/components/gradient-background";
 
-const instrumentSerif = Instrument_Serif({
+const montserrat = Montserrat({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-instrument-serif",
-  weight: "400",
+  variable: "--font-montserrat",
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -24,10 +24,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${instrumentSerif.variable} antialiased`}>
-      <body className="font-serif antialiased bg-transparent select-none relative overflow-x-hidden min-h-screen">
+    <html lang="en" className={`${montserrat.variable} antialiased`}>
+      <body className="antialiased bg-transparent select-none relative overflow-x-hidden min-h-screen">
         <ThemeProvider>
-          <GradientBackground />
+          <div className="fixed inset-0 z-[-1]">
+            <GradientBackground />
+          </div>
           <Suspense fallback={null}>
             {children}
           </Suspense>
