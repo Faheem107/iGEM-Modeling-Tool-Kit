@@ -7,19 +7,19 @@ export function GradientBackground() {
   const { isLightMode } = useTheme();
 
   return (
-    <div className="fixed inset-0 -z-50 pointer-events-none select-none w-screen h-screen overflow-hidden">
+    <div className="absolute inset-0 -z-10">
       <GrainGradient
         style={{ height: "100%", width: "100%" }}
-        colorBack={isLightMode ? "#FFFFFF" : "#05070a"}
+        colorBack={isLightMode ? "#FFFFFF" : "hsl(0, 0%, 0%)"}
         softness={0.76}
         intensity={0.45}
         noise={0}
         shape="corners"
         offsetX={0}
         offsetY={0}
-        scale={1.2}
+        scale={1}
         rotation={0}
-        speed={0.6}
+        speed={1}
         colors={isLightMode ? ["#D96A5D", "#D96A5D", "#D96A5D"] : ["#E8A7A0", "#E8A7A0", "#E8A7A0"]}
       />
     </div>

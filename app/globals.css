@@ -59,9 +59,9 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-instrument-serif), serif;
-  --font-mono: var(--font-instrument-serif), serif;
-  --font-serif: var(--font-instrument-serif), serif;
+  --font-sans: var(--font-montserrat), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: var(--font-montserrat), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-serif: var(--font-montserrat), "Helvetica Neue", Helvetica, Arial, sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -98,13 +98,13 @@
   }
 }
 
-/* Complete typography overhaul: everyone inherits 'Instrument Serif' */
+/* Complete typography overloads: everything perfectly inherits Montserrat */
 *, html, body, p, label, span, button, input, select, option, textarea, div, a, td, th, li, code, pre, var, kbd, samp, .font-mono, .math-style, [class*="math"], [class*="formula"], [class*="equation"], code *, pre * {
-  font-family: var(--font-instrument-serif), serif !important;
+  font-family: var(--font-montserrat), "Helvetica Neue", Helvetica, Arial, sans-serif !important;
 }
 
 h1, h2, h3, h4, h5, h6, .section-title, [class*="section-title"], [class*="heading"], h1 *, h2 *, h3 *, h4 *, h5 *, h6 * {
-  font-family: var(--font-instrument-serif), serif !important;
+  font-family: var(--font-montserrat), "Helvetica Neue", Helvetica, Arial, sans-serif !important;
   font-weight: bold !important;
 }
 
