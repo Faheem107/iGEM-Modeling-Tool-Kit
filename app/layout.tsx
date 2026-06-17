@@ -25,9 +25,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${montserrat.variable} antialiased`}>
-      <body className="antialiased bg-transparent select-none relative overflow-x-hidden min-h-screen">
+      <body className="antialiased bg-transparent select-none relative overflow-x-hidden min-h-screen font-sans">
         <ThemeProvider>
-          <div className="fixed inset-0 z-[-1]">
+          <div className="fixed inset-0 z-[-1] pointer-events-none">
             <GradientBackground />
           </div>
           <Suspense fallback={null}>
