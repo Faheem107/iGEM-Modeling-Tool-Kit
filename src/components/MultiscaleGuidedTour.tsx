@@ -458,7 +458,7 @@ export default function MultiscaleGuidedTour({
                       I. Carbon Feedstock Allocation
                     </h3>
                     <p className={`text-xs font-semibold leading-relaxed ${isLightMode ? 'text-slate-800' : 'text-slate-50'}`}>
-                      Calculates cellular precursor flux using stoichiometric boundaries. Reallocates glucose influx toward L-glutamate biosynthesis inside <GlossaryTerm term="Bacillus subtilis" theme={isLightMode ? 'light' : 'dark'} activePopupId={activePopupId} setActivePopupId={setActivePopupId} />.
+                      Calculates cellular precursor flux using stoichiometric boundaries. Reallocates glucose influx toward L-glutamate biosynthesis inside <GlossaryTerm term="Bacillus subtilis" theme={isLightMode ? 'light' : 'dark'} />.
                     </p>
                     <div className={`p-3 border rounded-lg text-xs font-mono space-y-1 ${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-900 border-slate-800'}`}>
                       <div className={`text-[10px] uppercase font-bold ${isLightMode ? 'text-slate-800' : 'text-slate-400'}`}>Stoichiometric System Matrix:</div>
@@ -473,7 +473,7 @@ export default function MultiscaleGuidedTour({
                       II. Synthesis Kinetic Simulation
                     </h3>
                     <p className={`text-xs font-semibold leading-relaxed ${isLightMode ? 'text-slate-800' : 'text-slate-50'}`}>
-                      Integrates transcription, translation, and biopolymer assembly rates over a 48H growth cycle. Computes real-time cellular accumulation of <GlossaryTerm term="gamma-PGA" theme={isLightMode ? 'light' : 'dark'} activePopupId={activePopupId} setActivePopupId={setActivePopupId} />.
+                      Integrates transcription, translation, and biopolymer assembly rates over a 48H growth cycle. Computes real-time cellular accumulation of <GlossaryTerm term="gamma-PGA" theme={isLightMode ? 'light' : 'dark'} />.
                     </p>
                     <div className={`p-3 border rounded-lg text-xs font-mono space-y-1 ${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-900 border-slate-800'}`}>
                       <div className={`text-[10px] uppercase font-bold ${isLightMode ? 'text-slate-800' : 'text-slate-400'}`}>Polymer Synthesis ODE:</div>
@@ -488,7 +488,7 @@ export default function MultiscaleGuidedTour({
                       III. Ionic Cross-Linking Thermodynamics
                     </h3>
                     <p className={`text-xs font-semibold leading-relaxed ${isLightMode ? 'text-slate-800' : 'text-slate-50'}`}>
-                      Models electrostatic matrix binding between quartz grain surfaces under desert temperatures. Uses Boltzmann mechanics to calculate polymer folded states and overall sand <GlossaryTerm term="Shear Modulus" theme={isLightMode ? 'light' : 'dark'} activePopupId={activePopupId} setActivePopupId={setActivePopupId} /> stiffness.
+                      Models electrostatic matrix binding between quartz grain surfaces under desert temperatures. Uses Boltzmann mechanics to calculate polymer folded states and overall sand <GlossaryTerm term="Shear Modulus" theme={isLightMode ? 'light' : 'dark'} /> stiffness.
                     </p>
                     <div className={`p-3 border rounded-lg text-xs font-mono space-y-1 ${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-900 border-slate-800'}`}>
                       <div className={`text-[10px] uppercase font-bold ${isLightMode ? 'text-slate-800' : 'text-slate-400'}`}>Thermodynamic Modulus Scaling:</div>
@@ -503,7 +503,7 @@ export default function MultiscaleGuidedTour({
                       IV. Aeolian Boundary Stress Testing
                     </h3>
                     <p className={`text-xs font-semibold leading-relaxed ${isLightMode ? 'text-slate-800' : 'text-slate-50'}`}>
-                      Subjects protected soil matrices to wind shear. Simulates sand transport mechanisms (including <GlossaryTerm term="Saltation" theme={isLightMode ? 'light' : 'dark'} activePopupId={activePopupId} setActivePopupId={setActivePopupId} />) and tracks soil failure boundaries.
+                      Subjects protected soil matrices to wind shear. Simulates sand transport mechanisms (including <GlossaryTerm term="Saltation" theme={isLightMode ? 'light' : 'dark'} />) and tracks soil failure boundaries.
                     </p>
                     <div className={`p-3 border rounded-lg text-xs font-mono space-y-1 ${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-900 border-slate-800'}`}>
                       <div className={`text-[10px] uppercase font-bold ${isLightMode ? 'text-slate-800' : 'text-slate-400'}`}>Critical Friction Threshold Rate:</div>
@@ -749,14 +749,22 @@ export default function MultiscaleGuidedTour({
         <div className="lg:col-span-12 xl:col-span-7 flex flex-col justify-between gap-6">
           
           {/* EQUATION MODULES SCREEN */}
-          <div className="p-5 bg-slate-950 text-slate-200 rounded-2xl border border-slate-900 shadow-inner relative overflow-hidden flex flex-col justify-between">
-            <div className="absolute top-2.5 right-3.5 text-[8.5px] font-mono uppercase text-slate-500 flex items-center gap-1">
+          <div className={`p-5 rounded-2xl border shadow-inner relative overflow-hidden flex flex-col justify-between transition-colors duration-300 ${
+            isLightMode 
+              ? 'bg-amber-100/10 text-slate-800 border-amber-900/10' 
+              : 'bg-slate-950 text-slate-200 border-slate-900'
+          }`}>
+            <div className={`absolute top-2.5 right-3.5 text-[8.5px] font-mono uppercase flex items-center gap-1 ${
+              isLightMode ? 'text-amber-800/80' : 'text-slate-500'
+            }`}>
               <span className="w-1.5 h-1.5 bg-sky-400 rounded-full animate-ping" />
               STOCHASTIC RESOLVER STATUS ONLINE
             </div>
 
             <div className="space-y-4 font-mono">
-              <div className="text-[10px] text-slate-550 font-bold uppercase tracking-wider">
+              <div className={`text-[10px] font-bold uppercase tracking-wider ${
+                isLightMode ? 'text-amber-900' : 'text-slate-550'
+              }`}>
                 Active Mathematical Processing Matrix
               </div>
 
@@ -765,17 +773,23 @@ export default function MultiscaleGuidedTour({
                 {/* Stoichiometric FBA solve */}
                 <div className={`p-3 rounded-xl border transition-all duration-300 ${
                   activeStage === 1 
-                    ? 'border-amber-500/40 bg-amber-950/15 text-amber-500' 
-                    : 'border-slate-900 bg-slate-950/45 text-slate-400 opacity-60'
+                    ? (isLightMode ? 'border-amber-500/50 bg-amber-100/50 text-amber-950' : 'border-amber-500/40 bg-amber-950/15 text-amber-500')
+                    : (isLightMode ? 'border-amber-900/5 bg-transparent text-slate-500 opacity-60' : 'border-slate-900 bg-slate-950/45 text-slate-400 opacity-60')
                 }`}>
-                  <div className="text-[9.5px] text-slate-500 font-bold uppercase mb-1">
+                  <div className={`text-[9.5px] font-bold uppercase mb-1 ${
+                    isLightMode ? 'text-amber-800' : 'text-slate-550'
+                  }`}>
                     [Stoichiometric Carbon Balance]
                   </div>
-                  <div className="text-[10px] italic text-slate-400">{"S • v = 0"}</div>
-                  <div className="text-[11px] font-semibold text-amber-500">
+                  <div className={`text-[10px] italic ${isLightMode ? 'text-slate-600' : 'text-slate-400'}`}>{"S • v = 0"}</div>
+                  <div className={`text-[11px] font-semibold ${
+                    activeStage === 1 && isLightMode ? 'text-amber-950' : (activeStage === 1 ? 'text-amber-500' : 'text-slate-500')
+                  }`}>
                     {"v_glutamate = (18.5 * " + glucoseInput.toFixed(1) + ") / (" + (4.2) + " + " + glucoseInput.toFixed(1) + ") * 0.68"}
                   </div>
-                  <div className="text-xs font-bold text-amber-400 mt-1">
+                  <div className={`text-xs font-bold mt-1 ${
+                    isLightMode ? 'text-amber-900' : 'text-amber-400'
+                  }`}>
                     {"= " + fbaMetrics.v_glutamate.toFixed(3) + " mmol/gCDW/h"}
                   </div>
                 </div>
@@ -783,17 +797,23 @@ export default function MultiscaleGuidedTour({
                 {/* Coupled ODE integration translation */}
                 <div className={`p-3 rounded-xl border transition-all duration-300 ${
                   activeStage === 2 
-                    ? 'border-emerald-500/40 bg-emerald-950/15 text-emerald-450' 
-                    : 'border-slate-900 bg-slate-950/45 text-slate-400 opacity-60'
+                    ? (isLightMode ? 'border-emerald-500/50 bg-emerald-100/40 text-emerald-950' : 'border-emerald-500/40 bg-emerald-950/15 text-emerald-450')
+                    : (isLightMode ? 'border-amber-900/5 bg-transparent text-slate-500 opacity-60' : 'border-slate-900 bg-slate-950/45 text-slate-400 opacity-60')
                 }`}>
-                  <div className="text-[9.5px] text-slate-500 font-bold uppercase mb-1">
+                  <div className={`text-[9.5px] font-bold uppercase mb-1 ${
+                    isLightMode ? 'text-emerald-800' : 'text-slate-550'
+                  }`}>
                     [Coupled ODE Translation Loop]
                   </div>
-                  <div className="text-[10px] italic text-slate-400">{"d[PGA]/dt = k_pga * [ActiveEnzyme]"}</div>
-                  <div className="text-[11px] font-semibold text-emerald-400">
+                  <div className={`text-[10px] italic ${isLightMode ? 'text-slate-600' : 'text-slate-400'}`}>{"d[PGA]/dt = k_pga * [ActiveEnzyme]"}</div>
+                  <div className={`text-[11px] font-semibold ${
+                    activeStage === 2 && isLightMode ? 'text-emerald-950' : (activeStage === 2 ? 'text-emerald-400' : 'text-slate-500')
+                  }`}>
                     {"dPGA/dt = 1.15 * enzyme_t * (flux_glutamate / (2.5 + flux_glutamate))"}
                   </div>
-                  <div className="text-xs font-bold text-emerald-450 mt-1">
+                  <div className={`text-xs font-bold mt-1 ${
+                    isLightMode ? 'text-emerald-900' : 'text-emerald-450'
+                  }`}>
                     {"Total Bio-yield => " + odeKinetics.finalPgaYield.toFixed(2) + " g/L"}
                   </div>
                 </div>
@@ -801,17 +821,23 @@ export default function MultiscaleGuidedTour({
                 {/* Biophysics stability folding */}
                 <div className={`p-3 rounded-xl border transition-all duration-300 ${
                   activeStage === 3 
-                    ? 'border-sky-500/40 bg-sky-950/15 text-sky-400' 
-                    : 'border-slate-900 bg-slate-950/45 text-slate-400 opacity-60'
+                    ? (isLightMode ? 'border-sky-500/50 bg-sky-100/40 text-sky-950' : 'border-sky-500/40 bg-sky-950/15 text-sky-400')
+                    : (isLightMode ? 'border-amber-900/5 bg-transparent text-slate-500 opacity-60' : 'border-slate-900 bg-slate-950/45 text-slate-400 opacity-60')
                 }`}>
-                  <div className="text-[9.5px] text-slate-500 font-bold uppercase mb-1">
+                  <div className={`text-[9.5px] font-bold uppercase mb-1 ${
+                    isLightMode ? 'text-sky-800' : 'text-slate-550'
+                  }`}>
                     [Boltzmann Denaturation stability]
                   </div>
-                  <div className="text-[10px] italic text-slate-400">{"Gs = G_base + Yield * 162.0 * FoldProbability"}</div>
-                  <div className="text-[11px] font-semibold text-sky-400">
+                  <div className={`text-[10px] italic ${isLightMode ? 'text-slate-600' : 'text-slate-400'}`}>{"Gs = G_base + Yield * 162.0 * FoldProbability"}</div>
+                  <div className={`text-[11px] font-semibold ${
+                    activeStage === 3 && isLightMode ? 'text-sky-950' : (activeStage === 3 ? 'text-sky-400' : 'text-slate-500')
+                  }`}>
                     {"Fold(T): 1 / (1 + exp((" + desertTemp.toFixed(1) + " - 46.0) / 4.8))"}
                   </div>
-                  <div className="text-xs font-bold text-sky-450 mt-1">
+                  <div className={`text-xs font-bold mt-1 ${
+                    isLightMode ? 'text-sky-900' : 'text-sky-450'
+                  }`}>
                     {"Shear Modulus Gs => " + biophysicalMetrics.shearModulusGs.toFixed(1) + " Pa"}
                   </div>
                 </div>
@@ -819,17 +845,23 @@ export default function MultiscaleGuidedTour({
                 {/* Wind boundary layer safety cutoff */}
                 <div className={`p-3 rounded-xl border transition-all duration-300 ${
                   activeStage === 4 
-                    ? 'border-pink-500/40 bg-pink-950/15 text-pink-400' 
-                    : 'border-slate-900 bg-slate-950/45 text-slate-400 opacity-60'
+                    ? (isLightMode ? 'border-pink-500/50 bg-pink-100/40 text-pink-950' : 'border-pink-500/40 bg-pink-950/15 text-pink-400')
+                    : (isLightMode ? 'border-amber-900/5 bg-transparent text-slate-500 opacity-60' : 'border-slate-900 bg-slate-950/45 text-slate-400 opacity-60')
                 }`}>
-                  <div className="text-[9.5px] text-slate-500 font-bold uppercase mb-1">
+                  <div className={`text-[9.5px] font-bold uppercase mb-1 ${
+                    isLightMode ? 'text-pink-800' : 'text-slate-550'
+                  }`}>
                     [Aeolian cohesive Shield Cutoff]
                   </div>
-                  <div className="text-[10px] italic text-slate-400">{"u_*t = 10.5 + 0.22 * sqrt(Gs)"}</div>
-                  <div className="text-[11px] font-semibold text-pink-400">
+                  <div className={`text-[10px] italic ${isLightMode ? 'text-slate-600' : 'text-slate-400'}`}>{"u_*t = 10.5 + 0.22 * sqrt(Gs)"}</div>
+                  <div className={`text-[11px] font-semibold ${
+                    activeStage === 4 && isLightMode ? 'text-pink-950' : (activeStage === 4 ? 'text-pink-450' : 'text-slate-500')
+                  }`}>
                     {"u_*t = 10.5 + 0.22 * sqrt(" + biophysicalMetrics.shearModulusGs.toFixed(0) + " )"}
                   </div>
-                  <div className="text-xs font-bold text-pink-400 mt-1">
+                  <div className={`text-xs font-bold mt-1 ${
+                    isLightMode ? 'text-pink-905' : 'text-pink-400'
+                  }`}>
                     {"Critical Velocity Limit => " + aeolianThreshold.thresholdWindSpeed.toFixed(2) + " m/s"}
                   </div>
                 </div>
