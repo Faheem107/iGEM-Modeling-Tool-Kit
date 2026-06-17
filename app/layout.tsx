@@ -24,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${montserrat.variable} antialiased`}>
+    <html lang="en" className={`${montserrat.variable} antialiased`} suppressHydrationWarning>
       <body className="antialiased bg-transparent select-none relative overflow-x-hidden min-h-screen font-sans">
         <ThemeProvider>
           <div className="fixed inset-0 z-[-1] pointer-events-none">
