@@ -347,16 +347,6 @@ export default function WetLabSandbox2D({ onBack, universalVitals, isLightMode =
 
   return (
     <div className={`space-y-6 pb-24 animate-fadeIn ${isLightMode ? 'text-stone-800' : 'text-slate-200'}`}>
-      <div className="flex items-center justify-between">
-        <button 
-          onClick={onBack}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition ${
-            isLightMode ? 'bg-stone-100 hover:bg-stone-200 text-stone-700' : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300'
-          }`}
-        >
-          <ArrowLeft className="w-4 h-4" /> Exit Wet-Lab Sandbox
-        </button>
-      </div>
 
       <div className={`p-6 md:p-8 rounded-2xl border transition-colors ${
         isLightMode ? 'bg-[#fcfaf5] border-amber-900/10 shadow-sm' : 'bg-[#030508]/80 border-slate-850/60 shadow-xl'

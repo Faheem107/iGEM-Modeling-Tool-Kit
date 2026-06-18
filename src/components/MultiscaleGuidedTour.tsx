@@ -347,20 +347,6 @@ export default function MultiscaleGuidedTour({
             </p>
           </div>
         </div>
-
-        {onClose && (
-          <button 
-            type="button" 
-            onClick={onClose}
-            className={`text-xs px-4 py-2 rounded-xl font-mono font-bold transition flex items-center gap-2 ${
-              isLightMode 
-                ? 'bg-slate-200 hover:bg-slate-300 text-slate-850' 
-                : 'bg-slate-900 hover:bg-slate-800 text-slate-350 border border-slate-800'
-            }`}
-          >
-            ✕ Close View
-          </button>
-        )}
       </div>
 
       {/* HORIZONTAL STEP SENSOR TRAIN */}
