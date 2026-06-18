@@ -6,12 +6,13 @@ const ThemeContext = createContext<{
   isLightMode: boolean;
   setIsLightMode: (val: boolean) => void;
 }>({
-  isLightMode: false,
+  isLightMode: true, // Set to true by default
   setIsLightMode: () => {},
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [isLightMode, setIsLightMode] = useState(false);
+  // Initialize state to true so the site loads in Light Mode instantly
+  const [isLightMode, setIsLightMode] = useState(true); 
 
   return (
     <ThemeContext.Provider value={{ isLightMode, setIsLightMode }}>
