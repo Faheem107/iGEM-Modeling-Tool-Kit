@@ -4,16 +4,9 @@ import {
   Wind, 
   ShieldCheck, 
   Zap, 
-  Info, 
-  Play, 
-  RotateCcw, 
   Link2, 
-  TrendingUp, 
-  ShieldAlert, 
   Gauge, 
-  Activity, 
   Clock, 
-  Award,
   Flame
 } from 'lucide-react';
 
@@ -55,7 +48,6 @@ export default function AeolianWindTunnel({
   const rho_s = 2650;    // sand density (kg/m3)
   const rho_a = 1.225;   // air density (kg/m3)
   const g = 9.81;        // gravity (m/s2)
-  const C = 2.0;         // saltation constant
 
   // Conversions: freestream velocity U_inf (m/s) corresponds to friction force velocity u* with u* = 0.03 * U_inf
   const uStarToUinf = (uStar: number) => uStar / 0.03;
@@ -75,7 +67,6 @@ export default function AeolianWindTunnel({
   };
 
   // Bio-cohesion factor based on Active Shear Modulus
-  // Scales with sand shear stiffness to give matching cohesion
   const effectiveCohesion = useMemo(() => {
     return isLinked ? Math.min(0.009, activeGs * 0.000002) : params.biofilm_cohesion;
   }, [isLinked, activeGs, params.biofilm_cohesion]);
@@ -96,7 +87,6 @@ export default function AeolianWindTunnel({
     const appliedShearStress = rho_a * Math.pow(params.wind_velocity, 2);
 
     // Critical stress threshold for instantaneous crust structural shattering
-    // Higher Gs and thicker protective crust increase this capacity exponentially
     const shatterStressLimit = activeGs * 0.00035 * crustThickness;
     const isShattered = appliedShearStress > shatterStressLimit && currentFreestreamWind > 5;
 
@@ -117,25 +107,21 @@ export default function AeolianWindTunnel({
     const ut0 = physicsResult.uInf_t0;
     const ut = physicsResult.uInf_t;
 
-    // Control Group Failure time: reaches 100% loss rapidly under wind pressure above threshold
     let t_fail_control = 15.0;
     if (uInf > ut0) {
       t_fail_control = Math.max(1.2, 10.0 / Math.pow(uInf - ut0 + 1.2, 0.45));
     } else {
-      t_fail_control = 15.0; // stayed completely stable
+      t_fail_control = 15.0; 
     }
 
-    // Treated Group Failure time
-    let t_fail_treated = 15.0; // stable by default under threshold
+    let t_fail_treated = 15.0; 
     if (physicsResult.isShattered) {
-      // Instant crust shattering drops Treated sand's durability immediately
       t_fail_treated = t_fail_control * 1.05; 
     } else if (uInf > ut) {
-      // Steady micro-erosion over time above the cohesion threshold
       const safetyScale = 1.0 + (activeGs * crustThickness) / (180.0 * Math.max(1.0, uInf - ut));
       t_fail_treated = Math.min(180, t_fail_control * safetyScale);
     } else {
-      t_fail_treated = 999.0; // Infinite survival (no erosion)
+      t_fail_treated = 999.0; 
     }
 
     const lifespanMultiplier = t_fail_treated === 999.0 
@@ -202,7 +188,7 @@ export default function AeolianWindTunnel({
       }
       setLiveTreatedErosion(prev => [...prev, { x: currentTime, y: treatedPercent }]);
 
-    }, 45); // highly smooth and responsive ticker updates (ticks fast for rapid graphing)
+    }, 45); 
   };
 
   useEffect(() => {
@@ -247,10 +233,9 @@ export default function AeolianWindTunnel({
       jitter: number;
     }> = [];
 
-    // Initialize sand particles half untreated (left) and half treated (right)
     for (let i = 0; i < pCount; i++) {
       const isTreated = i >= pCount / 2;
-      const diameterMultiplier = params.sand_diameter * 1000; // scaling 
+      const diameterMultiplier = params.sand_diameter * 1000;
       const grainSize = Math.max(1.5, diameterMultiplier * 15 + Math.random() * 1.5);
 
       pList.push({
@@ -268,11 +253,9 @@ export default function AeolianWindTunnel({
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       clockTicks += 0.04;
 
-      // Dark vs Light Canvas frames
-      ctx.fillStyle = isLightMode ? '#fafafa' : '#030712';
+      ctx.fillStyle = isLightMode ? '#f8fafc' : '#030712';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Wireframe technical graph helper lines
       ctx.strokeStyle = isLightMode ? 'rgba(203, 213, 225, 0.45)' : 'rgba(30, 41, 59, 0.4)';
       ctx.lineWidth = 0.8;
       for (let x = 0; x < canvas.width; x += 40) {
@@ -282,7 +265,6 @@ export default function AeolianWindTunnel({
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
       }
 
-      // Wind Flow Vectors
       const activeSpeedPercent = currentFreestreamWind / 50.0;
       ctx.strokeStyle = isLightMode 
         ? `rgba(79, 70, 229, ${0.08 + activeSpeedPercent * 0.45})` 
@@ -292,7 +274,6 @@ export default function AeolianWindTunnel({
       const flowRows = 5;
       for (let r = 0; r < flowRows; r++) {
         const rowY = 35 + r * 30;
-        const offset = (clockTicks * currentFreestreamWind * 110) % canvas.width;
         ctx.beginPath();
         ctx.moveTo(0, rowY);
         for (let x = 0; x < canvas.width; x += 30) {
@@ -302,35 +283,30 @@ export default function AeolianWindTunnel({
         ctx.stroke();
       }
 
-      // Middle Boundary partition
       ctx.strokeStyle = isLightMode ? '#e2e8f0' : '#1e293b';
       ctx.lineWidth = 1.5;
       ctx.beginPath(); ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(canvas.width / 2, canvas.height); ctx.stroke();
 
-      // Side Labels in simulation grid
       ctx.font = 'bold 9px "JetBrains Mono", Courier, monospace';
       ctx.fillStyle = '#ef4444';
       ctx.fillText('UNTREATED COHESIONLESS SAND', 15, 20);
       ctx.fillStyle = isLightMode ? '#047857' : '#10b981';
       ctx.fillText(`iGEM γ-PGA COPIED CRUST (${crustThickness.toFixed(0)}mm)`, canvas.width / 2 + 15, 20);
 
-      // Particle physics models
       pList.forEach(p => {
         const matchingThreshold = p.isTreated ? physicsResult.uInf_t : physicsResult.uInf_t0;
         const liftTriggered = currentFreestreamWind > matchingThreshold;
 
         if (liftTriggered) {
-          // Erosion active and saltating
           p.vx += (currentFreestreamWind - matchingThreshold) * (0.012 + Math.random() * 0.05);
           if (p.y >= canvas.height - 15) {
             p.vy = -Math.random() * (currentFreestreamWind * 1.6);
           }
-          p.vy += 0.35; // simulated gravity pull
+          p.vy += 0.35; 
           p.x += p.vx;
           p.y += p.vy;
-          p.vx *= 0.95; // air drag
+          p.vx *= 0.95; 
         } else {
-          // Stable resting block
           p.vx *= 0.7;
           if (p.y < canvas.height - 15) {
             p.y += 1.5;
@@ -338,17 +314,14 @@ export default function AeolianWindTunnel({
             p.y = canvas.height - 15;
             p.vy = 0;
           }
-
-          // Ambient micro-shivering
           if (currentFreestreamWind > 2) {
             p.x += Math.sin(clockTicks * 8 + p.jitter) * (currentFreestreamWind * 0.06);
           }
         }
 
-        // Keep inside bounds
         if (p.y >= canvas.height - 15) {
           p.y = canvas.height - 15;
-          p.vy = -p.vy * 0.3; // rebound
+          p.vy = -p.vy * 0.3;
         }
 
         const leftMargin = p.isTreated ? canvas.width / 2 : 0;
@@ -361,7 +334,6 @@ export default function AeolianWindTunnel({
           p.vy = 0;
         }
 
-        // Draw particle node
         const radius = Math.max(1.0, p.size);
         const gradientRef = ctx.createRadialGradient(
           p.x - radius * 0.25, p.y - radius * 0.25, radius * 0.1,
@@ -370,17 +342,14 @@ export default function AeolianWindTunnel({
 
         if (p.isTreated) {
           if (physicsResult.isShattered) {
-            // Shattered state sand is brown/crumbled
             gradientRef.addColorStop(0, '#f97316');
             gradientRef.addColorStop(1, '#7c2d12');
           } else {
-            // Bio-coated emerald grains
             gradientRef.addColorStop(0, '#a7f3d0');
             gradientRef.addColorStop(0.35, '#10b981');
             gradientRef.addColorStop(1, '#064e3b');
           }
         } else {
-          // Dry sandy gold grains
           gradientRef.addColorStop(0, '#fef08a');
           gradientRef.addColorStop(0.4, '#f59e0b');
           gradientRef.addColorStop(1, '#78350f');
@@ -398,7 +367,6 @@ export default function AeolianWindTunnel({
         ctx.stroke();
       });
 
-      // Gel Mesh linking chains showing crust stability
       if (!physicsResult.isShattered && activeGs > 800) {
         ctx.strokeStyle = isLightMode 
           ? `rgba(5, 150, 105, ${Math.min(0.7, activeGs * 0.00003)})` 
@@ -430,44 +398,6 @@ export default function AeolianWindTunnel({
   return (
     <div className={`space-y-8`} id="aeolian-simulation-root">
       
-      {/* 1. SECTION BADGE HEADER */}
-      <div className={`p-4 rounded-2xl border transition-all duration-300 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 ${
-        isLightMode 
-          ? 'bg-gradient-to-r from-indigo-50/50 to-emerald-50/40 border-indigo-100 shadow-sm' 
-          : 'bg-gradient-to-r from-indigo-950/20 to-emerald-950/20 border-slate-900 shadow-md'
-      }`}>
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-indigo-600 rounded-xl text-white">
-            <Wind className="w-5 h-5 animate-pulse" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] tracking-widest uppercase font-mono font-bold px-2 py-0.5 rounded bg-indigo-100 dark:bg-indigo-950/85 text-indigo-850 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-900/60">
-                AEOLIAN STRESS CHAMBER
-              </span>
-              <span className="text-[10px] text-slate-500 font-mono flex items-center gap-1">
-                <Activity className="w-3 h-3 text-emerald-500" /> Active Physics Core
-              </span>
-            </div>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight mt-0.5">
-              Aeolian Geotechnical Wind Tunnel Chamber
-            </h2>
-          </div>
-        </div>
-
-        {/* Global Connection Badge */}
-        <div className="flex items-center gap-2">
-          <div className={`text-xs px-3.5 py-1.5 rounded-xl font-mono flex items-center gap-2 border font-bold ${
-            isLinked 
-              ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-450 border-emerald-200 dark:border-emerald-800/40' 
-              : 'bg-amber-50 dark:bg-amber-950/30 text-amber-805 dark:text-amber-440 border-amber-200 dark:border-amber-800/40'
-          }`}>
-            <span className={`w-2 h-2 rounded-full ${isLinked ? 'bg-emerald-500' : 'bg-amber-500'} animate-ping`} />
-            <span>MODEL LINKING: {isLinked ? "LINKED INTRINSICALLY" : "MANUAL SEPARATE VALUES"}</span>
-          </div>
-        </div>
-      </div>
-
       {/* 2. DUAL LAYOUT CHASSIS: SLIDERS & DIAGNOSTIC DETAILS (12 COLS) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
@@ -604,7 +534,7 @@ export default function AeolianWindTunnel({
           {/* DIAGNOSTIC FORMULA LABELS OVERVIEW */}
           <div className={`p-4 rounded-xl border font-mono text-xs space-y-2.5 ${
             isLightMode 
-              ? 'bg-slate-50 border-slate-150 text-slate-800' 
+              ? 'bg-slate-50 border-slate-200 text-slate-800' 
               : 'bg-slate-950 border-slate-900 text-slate-300'
           }`}>
             <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-900 pb-1 flex justify-between items-center">
@@ -651,11 +581,11 @@ export default function AeolianWindTunnel({
           {/* THE CHART VIEWPORTS */}
           <div className={`p-6 rounded-2xl border flex flex-col justify-between min-h-[340px] ${
             isLightMode 
-              ? 'bg-white text-slate-900 border-slate-205 shadow-sm' 
+              ? 'bg-white text-slate-900 border-slate-200 shadow-sm' 
               : 'bg-[#040813] text-slate-100 border-slate-850 shadow-xl'
           }`}>
             
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-slate-150 dark:border-slate-900 pb-3 mb-4">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-slate-200 dark:border-slate-900 pb-3 mb-4">
               <div>
                 <h4 className="text-xs font-bold font-mono uppercase tracking-wider text-slate-600 dark:text-slate-400">
                   Interactive Cumulative Erosion Tracker (0% - 100%)
@@ -681,42 +611,46 @@ export default function AeolianWindTunnel({
               </button>
             </div>
 
-            {/* HIGH FIDELITY GRAPH CANVAS SVG */}
-            <div className="h-44 w-full relative bg-[#010204] border border-slate-850 rounded-xl p-3 flex flex-col justify-between">
+            {/* HIGH FIDELITY GRAPH CANVAS SVG - THEMED FOR LIGHT/DARK MODE */}
+            <div className={`h-44 w-full relative border rounded-xl p-3 flex flex-col justify-between ${
+                isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-[#010204] border-slate-850'
+            }`}>
               
               {/* Plot Info Title Indicators */}
-              <div className="flex justify-center gap-4 text-[9px] font-mono z-15 select-none text-slate-400">
+              <div className="flex justify-center gap-4 text-[9px] font-mono z-15 select-none text-slate-500">
                 <span className="flex items-center gap-1">
                   <span className="w-2.5 h-0.5 bg-amber-500 inline-block" /> Control Group (Untreated Sand)
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="w-2.5 h-0.5 bg-emerald-505 inline-block" /> Bio-Crusted Group (NYUAD Tested)
+                  <span className="w-2.5 h-0.5 bg-emerald-500 inline-block" /> Bio-Crusted Group (NYUAD Tested)
                 </span>
               </div>
 
               <div className="flex-1 min-h-[110px] w-full relative mt-1">
                 {liveControlErosion.length === 0 ? (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-xs text-slate-500 font-mono gap-1 text-center select-none bg-slate-950/70 p-4 rounded border border-slate-900">
-                    <Wind className="w-6 h-6 text-slate-700 animate-pulse" />
+                  <div className={`absolute inset-0 flex flex-col items-center justify-center text-xs font-mono gap-1 text-center select-none p-4 rounded border ${
+                    isLightMode ? 'bg-slate-100/70 text-slate-500 border-slate-200' : 'bg-slate-950/70 text-slate-500 border-slate-900'
+                  }`}>
+                    <Wind className={`w-6 h-6 animate-pulse ${isLightMode ? 'text-slate-400' : 'text-slate-700'}`} />
                     <span>WIND CHAMBER CALIBRATED</span>
-                    <span className="text-[10px] text-slate-600">Press &quot;Initiate Wind Tunnel Test&quot; above to trace live soil failure curves.</span>
+                    <span className="text-[10px] opacity-80">Press &quot;Initiate Wind Tunnel Test&quot; above to trace live soil failure curves.</span>
                   </div>
                 ) : (
                   <svg viewBox="0 0 500 100" width="100%" height="100%" className="overflow-visible select-none">
                     
                     {/* Grid vectors */}
-                    <line x1="0" y1="90" x2="500" y2="90" stroke="#1e293b" strokeWidth="0.8" />
-                    <line x1="0" y1="10" x2="500" y2="10" stroke="#1e293b" strokeWidth="0.7" strokeDasharray="3,3" />
-                    <line x1="0" y1="50" x2="500" y2="50" stroke="#1e293b" strokeWidth="0.7" strokeDasharray="3,3" />
+                    <line x1="0" y1="90" x2="500" y2="90" stroke={isLightMode ? "#cbd5e1" : "#1e293b"} strokeWidth="0.8" />
+                    <line x1="0" y1="10" x2="500" y2="10" stroke={isLightMode ? "#e2e8f0" : "#1e293b"} strokeWidth="0.7" strokeDasharray="3,3" />
+                    <line x1="0" y1="50" x2="500" y2="50" stroke={isLightMode ? "#e2e8f0" : "#1e293b"} strokeWidth="0.7" strokeDasharray="3,3" />
 
                     {[125, 250, 375].map((gridX, gi) => (
-                      <line key={gi} x1={gridX} y1="0" x2={gridX} y2="100" stroke="#1e1b4b" strokeWidth="0.8" strokeDasharray="2,2" />
+                      <line key={gi} x1={gridX} y1="0" x2={gridX} y2="100" stroke={isLightMode ? "#e2e8f0" : "#1e1b4b"} strokeWidth="0.8" strokeDasharray="2,2" />
                     ))}
 
                     {/* Left side axis values */}
-                    <text x="-5" y="15" fill="#475569" fontSize="8" fontFamily="monospace" textAnchor="end">100%</text>
-                    <text x="-5" y="55" fill="#475569" fontSize="8" fontFamily="monospace" textAnchor="end">50%</text>
-                    <text x="-5" y="93" fill="#475569" fontSize="8" fontFamily="monospace" textAnchor="end">0%</text>
+                    <text x="-5" y="15" fill={isLightMode ? "#64748b" : "#475569"} fontSize="8" fontFamily="monospace" textAnchor="end">100%</text>
+                    <text x="-5" y="55" fill={isLightMode ? "#64748b" : "#475569"} fontSize="8" fontFamily="monospace" textAnchor="end">50%</text>
+                    <text x="-5" y="93" fill={isLightMode ? "#64748b" : "#475569"} fontSize="8" fontFamily="monospace" textAnchor="end">0%</text>
 
                     {/* CONTROL LAYER PLOTTED CURVE (BROWN/AMBER LINE) */}
                     {liveControlErosion.length > 1 && (
@@ -756,7 +690,7 @@ export default function AeolianWindTunnel({
               </div>
 
               {/* Chart floor axes numbers */}
-              <div className="flex justify-between items-center text-[8px] font-mono text-slate-550 px-1 mt-1 border-t border-slate-900 pt-1">
+              <div className="flex justify-between items-center text-[8px] font-mono text-slate-500 px-1 mt-1 border-t border-slate-200 dark:border-slate-900 pt-1">
                 <span>0.0s (Start Gale)</span>
                 <span>3.7s</span>
                 <span>7.5s (Middle Storm)</span>
@@ -803,7 +737,7 @@ export default function AeolianWindTunnel({
       {/* 3. COHESIVE RESULTS & WET LAB TRANSLATION (5 STAGE OUTLINE SCORECARD AT THE BOTTOM) */}
       <div className={`p-6 rounded-2xl border ${
         isLightMode 
-          ? 'bg-gradient-to-br from-white to-indigo-50/20 border-indigo-150/80 shadow-lg' 
+          ? 'bg-gradient-to-br from-white to-indigo-50/20 border-indigo-200 shadow-lg' 
           : 'bg-gradient-to-br from-slate-950 to-slate-950/80 border-slate-850 shadow-2xl'
       }`}>
         
@@ -828,7 +762,7 @@ export default function AeolianWindTunnel({
           
           {/* PANEL A: SIMULATION CRUST STOPWATCH DIGITAL TIMERS */}
           <div className={`p-4 rounded-xl border flex flex-col justify-between ${
-            isLightMode ? 'bg-[#f4f7fa] border-slate-205' : 'bg-[#030610] border-slate-900'
+            isLightMode ? 'bg-[#f8fafc] border-slate-200' : 'bg-[#030610] border-slate-900'
           }`}>
             <div className="space-y-1">
               <span className="text-[9.5px] uppercase font-mono font-black tracking-wider text-indigo-700 dark:text-indigo-400 block mb-1">
@@ -881,7 +815,7 @@ export default function AeolianWindTunnel({
 
           {/* PANEL B: WET LAB OPERATIONAL BLUEPRINT TRANSLATION */}
           <div className={`p-4 rounded-xl border flex flex-col justify-between ${
-            isLightMode ? 'bg-[#f4f7fa] border-slate-205' : 'bg-[#030610] border-slate-900'
+            isLightMode ? 'bg-[#f8fafc] border-slate-200' : 'bg-[#030610] border-slate-900'
           }`}>
             <div className="space-y-1">
               <span className="text-[9.5px] uppercase font-mono font-black tracking-wider text-emerald-700 dark:text-emerald-400 block mb-1">
@@ -930,7 +864,7 @@ export default function AeolianWindTunnel({
 
           {/* PANEL C: MACRO ECONOMICS FORECASTS */}
           <div className={`p-4 rounded-xl border flex flex-col justify-between ${
-            isLightMode ? 'bg-[#f4f7fa] border-slate-205' : 'bg-[#030610] border-slate-900'
+            isLightMode ? 'bg-[#f8fafc] border-slate-200' : 'bg-[#030610] border-slate-900'
           }`}>
             <div className="space-y-1">
               <span className="text-[9.5px] uppercase font-mono font-black tracking-wider text-indigo-700 dark:text-indigo-400 block mb-1">

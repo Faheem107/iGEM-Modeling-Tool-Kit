@@ -447,6 +447,15 @@ export default function App() {
           ? 'bg-transparent text-slate-900 selection:bg-amber-800 selection:text-white light-mode-active' 
           : 'bg-transparent text-slate-200 selection:bg-cyan-500 selection:text-black'
       }`}>
+        
+        {/* ADD THIS DYNAMIC BLUR OVERLAY */}
+        <div 
+          className={`fixed inset-0 z-[-1] pointer-events-none transition-all duration-700 ${
+            viewMode !== 'landing' 
+              ? (isLightMode ? 'backdrop-blur-[12px] bg-white/20' : 'backdrop-blur-[12px] bg-black/30')
+              : 'backdrop-blur-none bg-transparent'
+          }`}
+        />
       
       {/* Top Floating Theme Switcher Option */}
       <div className="fixed top-4 right-6 z-50 flex items-center gap-3">
