@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { BiophysicsParams } from '../types';
+import { solveCrossLink } from '../lib/physics';
 import { Layers, Thermometer, Sun, Moon, Sparkles, SlidersHorizontal, Info, Link2, HelpCircle } from 'lucide-react';
 
 interface CrossLinkingProps {
@@ -43,21 +44,17 @@ export default function CrossLinkingBiophysics({
     }
   };
 
-  // Base physics solver
+  // Base physics solver — Langmuir → affine network → G=νRT, via the shared physics core.
   const results = useMemo(() => {
-    const R = 8.314; // Ideal gas constant J/(mol*K)
-    
-    // Saturation theta: scaled down directly by the environmental viability modifier
-    const rawTheta = params.ion_conc / (params.Kd + params.ion_conc);
-    const theta = rawTheta * environmentalModifier;
-    
-    // Volumetric cross-link density nu
-    const factor = 1 - (2 * params.Mx) / params.Mn;
-    const nu = Math.max(0, effectiveRhoPolymer * theta * factor);
-    
-    // Shear modulus G (Pa) scaled down directly by environmental modifier to represent polymer breakdown
-    const G = nu * R * params.temperature * environmentalModifier;
-    
+    const { theta, nu, shearModulus: G } = solveCrossLink({
+      ionConcentration: params.ion_conc,
+      Kd: params.Kd,
+      rhoPolymer: effectiveRhoPolymer,
+      Mx: params.Mx,
+      Mn: params.Mn,
+      temperature: params.temperature,
+      viability: environmentalModifier,
+    });
     return { theta, nu, G };
   }, [params, effectiveRhoPolymer, environmentalModifier]);
 

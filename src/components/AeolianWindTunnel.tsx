@@ -17,6 +17,9 @@ interface AeolianProps {
   isLinked: boolean;
   setIsLinked: (val: boolean) => void;
   isLightMode: boolean;
+  /** When provided (multi-prong combinations), overrides the internal cohesion with the
+   *  composite interparticle cohesion γ [N/m] computed across all active prongs. */
+  externalCohesion?: number;
 }
 
 export default function AeolianWindTunnel({
@@ -26,6 +29,7 @@ export default function AeolianWindTunnel({
   isLinked,
   setIsLinked,
   isLightMode,
+  externalCohesion,
 }: AeolianProps) {
   // --- Upgraded State Parameters ---
   const [crustThickness, setCrustThickness] = useState<number>(12.0); // mm (1.0 to 25.0 mm)
@@ -66,10 +70,12 @@ export default function AeolianWindTunnel({
     }));
   };
 
-  // Bio-cohesion factor based on Active Shear Modulus
+  // Bio-cohesion factor. When a composite cohesion is supplied (multi-prong combinations),
+  // it overrides the single-prong shear-modulus estimate.
   const effectiveCohesion = useMemo(() => {
+    if (externalCohesion !== undefined) return externalCohesion;
     return isLinked ? Math.min(0.009, activeGs * 0.000002) : params.biofilm_cohesion;
-  }, [isLinked, activeGs, params.biofilm_cohesion]);
+  }, [externalCohesion, isLinked, activeGs, params.biofilm_cohesion]);
 
   // Physics Solvers
   const physicsResult = useMemo(() => {
