@@ -6,3 +6,9 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Next.js build output & caches
+.next/
+out/
+next-env.d.ts
+tsconfig.tsbuildinfo
