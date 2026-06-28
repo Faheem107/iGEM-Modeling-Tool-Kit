@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { MetabolicParams, SimulationStep } from '../types';
+import { simulateMetabolicODE, calibrateKcat } from '../lib/physics';
 import { Play, RotateCcw, Award, Dna, Database, ShieldAlert, Sparkles, Info } from 'lucide-react';
 
 interface MetabolicProps {
@@ -24,61 +25,8 @@ export default function MetabolicModel({
   isLightMode = false
 }: MetabolicProps) {
 
-  // Runge-Kutta 4th Order (RK4) ODE solver
-  const simulationData = useMemo(() => {
-    const data: SimulationStep[] = [];
-    let mRNA = 0.0;
-    let enzyme = 0.0;
-    let pga = 0.0;
-    
-    // 48 hours simulated, with steps of 0.25 hours (193 steps)
-    const dt = 0.25;
-    const finalTime = 48.0;
-    const steps = finalTime / dt;
-
-    // effective degradation rate based on knockouts
-    let effectiveKdeg = params.k_deg;
-    if (params.ggtKnockout) effectiveKdeg *= 0.1; // 90% reduction
-    if (params.pgcAKnockout) effectiveKdeg *= 0.2; // further reduction
-    if (params.ggtKnockout && params.pgcAKnockout) effectiveKdeg = 0.0; // fully zero
-
-    const f = (m: number, e: number, p: number) => {
-      // DNA complex is assumed normalized to 1.0 representation
-      const dm = params.alpha_m * 1.0 - params.beta_m * m;
-      const de = params.alpha_e * m - params.beta_e * e;
-      const dp = (params.k_cat * e * params.s_precursor) / (params.k_m + params.s_precursor) - effectiveKdeg * p;
-      return [dm, de, dp];
-    };
-
-    for (let i = 0; i <= steps; i++) {
-      const time = i * dt;
-      data.push({ time, mRNA, enzyme, pga });
-
-      // Runge-Kutta 4 algorithm
-      const [dm1, de1, dp1] = f(mRNA, enzyme, pga);
-      
-      const m2 = mRNA + 0.5 * dt * dm1;
-      const e2 = enzyme + 0.5 * dt * de1;
-      const p2 = pga + 0.5 * dt * dp1;
-      const [dm2, de2, dp2] = f(m2, e2, p2);
-
-      const m3 = mRNA + 0.5 * dt * dm2;
-      const e3 = enzyme + 0.5 * dt * de2;
-      const p3 = pga + 0.5 * dt * dp2;
-      const [dm3, de3, dp3] = f(m3, e3, p3);
-
-      const m4 = mRNA + dt * dm3;
-      const e4 = enzyme + dt * de3;
-      const p4 = pga + dt * dp3;
-      const [dm4, de4, dp4] = f(m4, e4, p4);
-
-      mRNA += (dt / 6) * (dm1 + 2 * dm2 + 2 * dm3 + dm4);
-      enzyme += (dt / 6) * (de1 + 2 * de2 + 2 * de3 + de4);
-      pga += (dt / 6) * (dp1 + 2 * dp2 + 2 * dp3 + dp4);
-    }
-
-    return data;
-  }, [params]);
+  // RK4 ODE integration — delegated to the shared physics core (single source of truth).
+  const simulationData: SimulationStep[] = useMemo(() => simulateMetabolicODE(params), [params]);
 
   // Bubble up calculated yield changes
   const finalPga = simulationData[simulationData.length - 1]?.pga || 0;
@@ -101,14 +49,10 @@ export default function MetabolicModel({
     return { mRNA: maxMRNA, enzyme: maxEnzyme, pga: maxPGA };
   }, [simulationData]);
 
-  // Handle Wet Lab Calibration estimation
+  // Wet-lab calibration: reverse-solve k_cat for a measured yield (shared physics core).
   const handleCalibrate = () => {
-    // Basic solver adjustment to find k_cat matches for target yield at 48h
-    // Since yield is roughly linear to k_cat during accumulation with knockouts,
-    // we can estimate: target_kcat = current_kcat * (targetYield / currentYieldAt48h)
-    const currentYield = simulationData[simulationData.length - 1].pga;
-    if (currentYield > 0) {
-      const estimatedKcat = params.k_cat * (targetYield / currentYield);
+    const estimatedKcat = calibrateKcat(params, targetYield);
+    if (Number.isFinite(estimatedKcat) && estimatedKcat > 0) {
       setCalibratedKcat(parseFloat(estimatedKcat.toFixed(4)));
       setParams(prev => ({ ...prev, k_cat: parseFloat(estimatedKcat.toFixed(2)) }));
     }

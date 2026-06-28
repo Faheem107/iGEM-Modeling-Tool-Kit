@@ -76,3 +76,35 @@ export interface ResidueInfo {
   sasa: string; // Solvent accessible surface area
   deltaH: string; // interaction enthalpy
 }
+
+// --- Prong-combination simulation types ------------------------------------
+
+/** Prong 2 — CaCO₃ precipitation controls (Carbonic Anhydrase / non-ureolytic). */
+export interface Caco3Params {
+  calcium: number;       // initial dissolved Ca²⁺ [mM]
+  dicMax: number;        // max attainable DIC when CA fully active [mM]
+  pH: number;            // solution pH (valid 8.5–10.5)
+  caEnhancement: number; // realized CA rate-enhancement fraction (0–1)
+}
+
+/** Prong 3 — Sodium alginate gel controls (applied commercial biopolymer). */
+export interface AlginateParams {
+  appliedPercent: number;    // applied alginate [%w/v]
+  calcium: number;           // Ca²⁺ crosslinker [mM]
+  temperature: number;       // K
+  relativeHumidity: number;  // 0–1
+  rainCycles: number;        // simulated wet/rain cycles for washout
+}
+
+/**
+ * Live binder outputs each prong module bubbles up so the composite + aeolian modules can
+ * combine them. Each prong reduces to an interparticle cohesion downstream.
+ */
+export interface SimulationVitals {
+  pgaYield: number;          // g/L   (Prong 1 metabolic ODE)
+  pgaShearModulus: number;   // Pa    (Prong 1 cross-linking)
+  caco3UCS: number;          // kPa   (Prong 2 biocement)
+  caco3CalcitePct: number;   // wt%   (Prong 2 calcite content)
+  co2Sequestered: number;    // g/L   (Prong 2 CO₂ capture)
+  alginateModulus: number;   // Pa    (Prong 3 egg-box gel)
+}

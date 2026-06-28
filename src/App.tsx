@@ -15,7 +15,8 @@ import EconomicScalabilityEngine from './components/EconomicScalabilityEngine';
 import HighFidelityProteinExplorer from './components/HighFidelityProteinExplorer';
 import WetLabSandbox2D from './components/WetLabSandbox2D';
 import GlossaryTerm, { GlossaryProvider } from './components/GlossaryTerm';
-import MultiscaleGuidedTour from './components/MultiscaleGuidedTour';
+import SimulationWorkspace from './components/simulation/SimulationWorkspace';
+import { ProngId } from './lib/prongs';
 
 import { 
   Dna, 
@@ -40,7 +41,7 @@ import {
 
 import { MetabolicParams, BiophysicsParams, AeolianParams, CAConfig } from './types';
 
-type ViewMode = 'landing' | 'pipeline' | 'wetlab-sandbox' | 'protein-suite' | 'guided-tour';
+type ViewMode = 'landing' | 'pipeline' | 'wetlab-sandbox' | 'protein-suite' | 'simulation';
 // ADDED 'thermal' to TabType
 type TabType = 'metabolic' | 'fba' | 'crosslink' | 'thermal' | 'aeolian' | 'ecological' | 'economic';
 
@@ -78,8 +79,7 @@ const PRONGS = [
 const PORTAL_CARDS = [
   { id: 'wetlab-sandbox', icon: <Bug className="w-6 h-6 text-amber-500" />, title: 'Wet Lab Sandbox', desc: 'Simulate physical lab assays and monitor biopolymer propagation.' },
   { id: 'pipeline', icon: <Workflow className="w-6 h-6 text-indigo-500" />, title: 'Physical Pipeline', desc: 'Analyze metabolic pathways, crosslinking biophysics, and wind resistance.' },
-  { id: 'protein-suite', icon: <Dna className="w-6 h-6 text-rose-500" />, title: '3D Protein Suite', desc: 'Explore structural molecular dynamics and thermal decay.' },
-  { id: 'guided-tour', icon: <Globe className="w-6 h-6 text-emerald-500" />, title: 'Interactive Tour', desc: 'A multiscale guided walkthrough of the entire toolkit.' }
+  { id: 'protein-suite', icon: <Dna className="w-6 h-6 text-rose-500" />, title: '3D Protein Suite', desc: 'Explore structural molecular dynamics and thermal decay.' }
 ];
 
 export default function App() {
@@ -118,6 +118,18 @@ export default function App() {
   const handlePortalSelect = (id: ViewMode) => {
     setShowPortalsModal(false);
     setViewMode(id);
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  };
+
+  // "Proceed to Model": carry the selected prong combination into the tailored simulation.
+  const handleProceedToModel = () => {
+    if (selectedProngs.length === 0) return;
+    setViewMode('simulation');
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  };
+
+  const handleBackToLanding = () => {
+    setViewMode('landing');
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   };
 
@@ -384,8 +396,8 @@ export default function App() {
                           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
                           className="mt-16 flex justify-center"
                         >
-                          <button 
-                            onClick={handleExitToPortals} 
+                          <button
+                            onClick={handleProceedToModel}
                             className="px-10 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-full uppercase tracking-widest transition-transform hover:scale-105 shadow-xl shadow-indigo-500/20 flex items-center gap-3"
                           >
                             Proceed to Model <ArrowRight className="w-5 h-5" />
@@ -502,18 +514,14 @@ export default function App() {
               </motion.div>
             )}
 
-            {/* VIEW 5: GUIDED TOUR */}
-            {viewMode === 'guided-tour' && (
-              <motion.div key="tour" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pt-24 pb-12 px-4 md:px-8 max-w-[1600px] mx-auto">
-                <button 
-                  onClick={handleExitToPortals}
-                  className={`mb-6 flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition ${
-                    isLightMode ? 'bg-stone-100 hover:bg-stone-200 text-stone-700' : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300'
-                  }`}
-                >
-                  <ArrowLeft className="w-4 h-4" /> Back to Portals
-                </button>
-                <MultiscaleGuidedTour isLightMode={isLightMode} onClose={handleExitToPortals} />
+            {/* VIEW 6: PRONG-TAILORED SIMULATION WORKSPACE */}
+            {viewMode === 'simulation' && (
+              <motion.div key="simulation" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                <SimulationWorkspace
+                  selectedProngs={selectedProngs as ProngId[]}
+                  isLightMode={isLightMode}
+                  onBack={handleBackToLanding}
+                />
               </motion.div>
             )}
 
