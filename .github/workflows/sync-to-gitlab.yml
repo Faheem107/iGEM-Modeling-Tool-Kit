@@ -1,0 +1,27 @@
+name: Sync to iGEM GitLab
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout GitHub repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 
+
+      - name: Push to GitLab
+        env:
+          
+          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+        run: |
+          
+          git remote add gitlab https://oauth2:${GITLAB_TOKEN}@gitlab.igem.org/2026/software/nyu-abu-dhabi/model.git
+          
+          # Ensure GitLab reflects exactly what GitHub has
+          git push gitlab main --force
+          git push gitlab --tags
