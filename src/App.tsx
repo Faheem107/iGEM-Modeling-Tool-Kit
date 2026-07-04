@@ -14,7 +14,8 @@ import EcologicalSpread from './components/EcologicalSpread';
 import EconomicScalabilityEngine from './components/EconomicScalabilityEngine';
 import HighFidelityProteinExplorer from './components/HighFidelityProteinExplorer';
 import WetLabSandbox2D from './components/WetLabSandbox2D';
-import GlossaryTerm, { GlossaryProvider } from './components/GlossaryTerm';
+import { GlossaryProvider, Term } from './components/GlossaryTerm';
+import ModuleErrorBoundary from './components/ErrorBoundary';
 import SimulationWorkspace from './components/simulation/SimulationWorkspace';
 import { ProngId } from './lib/prongs';
 
@@ -187,7 +188,7 @@ export default function App() {
   };
 
   return (
-    <GlossaryProvider>
+    <GlossaryProvider isLightMode={isLightMode}>
       <div className={`min-h-screen transition-all duration-350 font-sans relative ${
         isLightMode 
           ? 'bg-transparent text-slate-900 selection:bg-amber-800 selection:text-white light-mode-active' 
@@ -315,7 +316,7 @@ export default function App() {
                   <motion.div {...fadeAnimProps} className="text-center max-w-3xl mx-auto flex flex-col items-center">
                     <h2 className="text-2xl font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 mb-6">Project Overview</h2>
                     <p className="text-lg leading-relaxed opacity-80 text-center">
-                      This project tackles the environmental crisis of wind-driven desert sand erosion by engineering <i>Bacillus subtilis</i> to biologically stabilize sandy surfaces. We employ a three-pronged synthetic biology approach to maximize soil cohesion, utilize native desert resources, and ensure strict biosafety. By binding loose particulate matter into a durable crust, we aim to significantly reduce airborne dust and improve regional air quality.
+                      This project tackles the environmental crisis of wind-driven desert sand erosion by engineering <Term k="bacillus-subtilis"><i>Bacillus subtilis</i></Term> to biologically stabilize sandy surfaces. We employ a three-pronged synthetic biology approach to maximize soil cohesion, utilize native desert resources, and ensure strict <Term k="kill-switch">biosafety</Term>. By binding loose particulate matter into a durable <Term k="gamma-pga">γ-PGA</Term> crust, we aim to significantly reduce airborne dust and improve regional air quality.
                     </p>
                   </motion.div>
 
@@ -323,7 +324,7 @@ export default function App() {
                   <motion.div {...fadeAnimProps} className="text-center max-w-3xl mx-auto flex flex-col items-center">
                     <h2 className="text-2xl font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-6">How do these models help?</h2>
                     <p className="text-lg leading-relaxed opacity-80 text-center">
-                      These computational models bridge the gap between microscopic bacterial behaviors and macroscopic environmental impact. They allow researchers to simulate polymer cross-linking dynamics, optimize metabolic pathways for resource efficiency, and predict the real-world aeolian stress resistance of treated sand before committing to physical experiments.
+                      These computational models bridge the gap between microscopic bacterial behaviors and macroscopic environmental impact. They allow researchers to simulate polymer <Term k="cross-linking">cross-linking</Term> dynamics, optimize metabolic pathways with <Term k="flux-balance-analysis">flux balance analysis</Term> for resource efficiency, and predict the real-world <Term k="aeolian-transport">aeolian</Term> stress resistance of treated sand before committing to physical experiments.
                     </p>
                   </motion.div>
 
@@ -331,7 +332,7 @@ export default function App() {
                   <motion.div {...fadeAnimProps} className="text-center max-w-3xl mx-auto flex flex-col items-center">
                     <h2 className="text-2xl font-black uppercase tracking-widest text-amber-600 dark:text-amber-400 mb-6">How to use this toolkit in the lab</h2>
                     <p className="text-lg leading-relaxed opacity-80 text-center">
-                      Use this suite to fine-tune your wet lab parameters, such as incubation temperature, precursor concentrations, and inoculum volumes. The simulated outputs guide exact experimental setups, ensuring you achieve the optimal shear modulus and environmental durability in your physical assays.
+                      Use this suite to fine-tune your wet lab parameters, such as incubation temperature, <Term k="precursor">precursor</Term> concentrations, and <Term k="od600">inoculum</Term> volumes. The simulated outputs guide exact experimental setups, ensuring you achieve the optimal <Term k="shear-modulus">shear modulus</Term> and environmental durability in your physical assays.
                     </p>
                   </motion.div>
 
@@ -414,6 +415,7 @@ export default function App() {
             {/* VIEW 2: PIPELINE */}
             {viewMode === 'pipeline' && (
               <motion.div key="pipeline" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pt-24 pb-12 px-4 md:px-8 max-w-[1600px] mx-auto">
+                <ModuleErrorBoundary key={activeTab} isLightMode={isLightMode} label={navItems[activePortal]?.label}>
                 <div className="flex flex-col gap-8">
                   {activeTab === 'fba' && (
                     <AdvancedFbaPortal 
@@ -470,13 +472,14 @@ export default function App() {
                     />
                   )}
                   {activeTab === 'economic' && (
-                    <EconomicScalabilityEngine 
+                    <EconomicScalabilityEngine
                       polymerYield={pgaAccum}
                       requiredCrustThickness={12.0}
                       isLightMode={isLightMode}
                     />
                   )}
                 </div>
+                </ModuleErrorBoundary>
               </motion.div>
             )}
 

@@ -211,3 +211,36 @@ input[type="checkbox"] {
   accent-color: #06b6d4;
   cursor: pointer;
 }
+
+/* ---- Sandyx toolkit: smooth scrolling, hidden scrollbars, motion safety ---- */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Utility used by horizontal nav/steppers to hide the scrollbar while keeping scroll */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* An underlined glossary term should never break awkwardly across the whole page */
+.sandyx-term {
+  text-decoration-skip-ink: none;
+}
+
+/* Respect users who prefer reduced motion: disable smooth-scroll + heavy animation */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
