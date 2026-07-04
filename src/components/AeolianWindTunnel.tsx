@@ -5,9 +5,10 @@ import {
   ShieldCheck, 
   Zap, 
   Link2, 
-  Gauge, 
-  Clock, 
-  Flame
+  Gauge,
+  Clock,
+  Flame,
+  Coins
 } from 'lucide-react';
 
 interface AeolianProps {
@@ -763,8 +764,8 @@ export default function AeolianWindTunnel({
           </div>
         </div>
 
-        {/* THREE COLUMNS GRID BENTO STRUCTURE */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* TWO COLUMNS GRID BENTO STRUCTURE (economics live in the dedicated Economic module) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
           {/* PANEL A: SIMULATION CRUST STOPWATCH DIGITAL TIMERS */}
           <div className={`p-4 rounded-xl border flex flex-col justify-between ${
@@ -868,45 +869,19 @@ export default function AeolianWindTunnel({
             </div>
           </div>
 
-          {/* PANEL C: MACRO ECONOMICS FORECASTS */}
-          <div className={`p-4 rounded-xl border flex flex-col justify-between ${
-            isLightMode ? 'bg-[#f8fafc] border-slate-200' : 'bg-[#030610] border-slate-900'
-          }`}>
-            <div className="space-y-1">
-              <span className="text-[9.5px] uppercase font-mono font-black tracking-wider text-indigo-700 dark:text-indigo-400 block mb-1">
-                Panel C // Field Economics
-              </span>
-              <p className="text-[10px] text-slate-500 leading-normal mb-3">
-                Calculates macro project deployment volume estimates and costs mapped to a single standard hectare.
-              </p>
-            </div>
+        </div>
 
-            <div className="space-y-2.5 pt-3 border-t border-slate-200 dark:border-slate-850 font-mono text-xs">
-              
-              <div className="flex justify-between">
-                <span className="text-slate-550 dark:text-slate-450">Volume Required / Ha:</span>
-                <span className="font-extrabold text-slate-900 dark:text-white">
-                  {((250.0 + (crustThickness * 14.5)) * 10).toLocaleString(undefined, { maximumFractionDigits: 0 })} L
-                </span>
-              </div>
-
-              <div className="flex justify-between">
-                <span className="text-slate-550 dark:text-slate-450">PGA Cost Multiplier:</span>
-                <span className="font-extrabold text-blue-500">
-                  ${(0.12 * (activeGs / 3000.0) + 0.04).toFixed(3)} per Liter
-                </span>
-              </div>
-
-              <div className="flex justify-between">
-                <span className="text-slate-550 dark:text-slate-450">Est. Cost / Hectare:</span>
-                <span className="font-extrabold text-indigo-650 dark:text-indigo-400">
-                  ${(((250.0 + (crustThickness * 14.5)) * 10) * (0.12 * (activeGs / 3000.0) + 0.04)).toLocaleString(undefined, { maximumFractionDigits: 2 })} USD
-                </span>
-              </div>
-
-            </div>
-          </div>
-
+        {/* CROSS-REFERENCE: macro deployment cost & LCA are owned by the Economic module */}
+        <div className={`mt-5 p-3 rounded-xl border flex items-start gap-2.5 text-[11px] font-mono ${
+          isLightMode ? 'bg-amber-50/60 border-amber-200 text-stone-700' : 'bg-[#05111d] border-sky-950/50 text-sky-300'
+        }`}>
+          <Coins className="w-4 h-4 shrink-0 mt-0.5 text-amber-500" />
+          <span className="leading-relaxed">
+            <strong className="uppercase font-bold">Deployment economics moved.</strong>{' '}
+            Per-hectare biopolymer volume, fermentation CapEx and LCA carbon offsets are now computed in the
+            dedicated <span className="font-bold">Economic Scalability &amp; LCA Engine</span> module, which draws
+            directly from the live FBA yield feed for a single, consistent cost model.
+          </span>
         </div>
 
       </div>
