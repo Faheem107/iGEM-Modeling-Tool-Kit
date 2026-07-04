@@ -4,13 +4,14 @@
  * Prong-aware Simulation Workspace — the destination of "Proceed to Model".
  * Composes a meaningful, combination-specific set of modules (a single prong is a valid
  * combination), threads each prong's binder output into a composite cohesion that drives the
- * macro wind-erosion result, and offers an Explore (all modules) or Guided (stepper) view.
+ * macro wind-erosion result, and presents them as one scrollable path alongside the Sandyx
+ * companion rail (a mascot + a module "tree" that fills in as you scroll).
  */
 
 import React, { useState, useMemo, useCallback } from 'react';
 import { motion } from 'motion/react';
 import {
-  ArrowLeft, ArrowRight, Wind, LayoutGrid, Footprints, ShieldCheck, Gauge,
+  ArrowLeft, Wind, ShieldCheck, Gauge,
 } from 'lucide-react';
 
 import type { MetabolicParams, BiophysicsParams, AeolianParams, CAConfig } from '../../types';
@@ -35,6 +36,8 @@ import Caco3PrecipitationModule from './modules/Caco3PrecipitationModule';
 import AlginateGelModule from './modules/AlginateGelModule';
 import CaAnchoringModule from './modules/CaAnchoringModule';
 import CompositeSynthesisPanel from './CompositeSynthesisPanel';
+import SandyxCompanion from '../SandyxCompanion';
+import ModuleErrorBoundary from '../ErrorBoundary';
 
 interface Props {
   selectedProngs: ProngId[];
@@ -45,8 +48,7 @@ interface Props {
 export default function SimulationWorkspace({ selectedProngs, isLightMode, onBack }: Props) {
   const prongs = useMemo(() => [...selectedProngs].sort() as ProngId[], [selectedProngs]);
   const modules = useMemo(() => modulesForSelection(prongs), [prongs]);
-  const [mode, setMode] = useState<'explore' | 'guided'>('explore');
-  const [step, setStep] = useState(0);
+  const treeItems = useMemo(() => modules.map((m) => ({ id: `mod-${m.id}`, label: m.title })), [modules]);
 
   // --- Shared orchestration state (lifted; same defaults as the original pipeline) ---
   const [metabolicParams, setMetabolicParams] = useState<MetabolicParams>({
@@ -149,8 +151,6 @@ export default function SimulationWorkspace({ selectedProngs, isLightMode, onBac
     </div>
   );
 
-  const current = modules[Math.min(step, modules.length - 1)];
-
   return (
     <div className="pt-6 pb-24 px-4 md:px-8 max-w-[1600px] mx-auto">
       {/* Header / summary banner */}
@@ -175,18 +175,6 @@ export default function SimulationWorkspace({ selectedProngs, isLightMode, onBac
               <span className={`text-[11px] ml-1 ${isLightMode ? 'text-stone-400' : 'text-slate-500'}`}>· {modules.length} modules</span>
             </div>
           </div>
-
-          {/* Mode toggle */}
-          <div className={`flex gap-1 p-1 rounded-xl border ${isLightMode ? 'bg-stone-50 border-stone-200' : 'bg-slate-900 border-slate-800'}`}>
-            {(['explore', 'guided'] as const).map((md) => (
-              <button key={md} onClick={() => { setMode(md); setStep(0); }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold capitalize transition ${
-                  mode === md ? (isLightMode ? 'bg-indigo-600 text-white shadow' : 'bg-indigo-500 text-white shadow') : (isLightMode ? 'text-stone-600 hover:bg-stone-100' : 'text-slate-400 hover:bg-slate-800')
-                }`}>
-                {md === 'explore' ? <LayoutGrid className="w-3.5 h-3.5" /> : <Footprints className="w-3.5 h-3.5" />} {md}
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* Headline macro result */}
@@ -198,46 +186,22 @@ export default function SimulationWorkspace({ selectedProngs, isLightMode, onBac
         </div>
       </div>
 
-      {/* Module body */}
-      {mode === 'explore' ? (
-        <div className="space-y-10">
+      {/* Rail + stacked modules */}
+      <div className="lg:grid lg:grid-cols-[210px_minmax(0,1fr)] lg:gap-8">
+        <SandyxCompanion items={treeItems} isLightMode={isLightMode} />
+
+        <div className="space-y-10 min-w-0">
           {modules.map((m, i) => (
-            <motion.section key={m.id} id={`mod-${m.id}`}
+            <motion.section key={m.id} id={`mod-${m.id}`} className="scroll-mt-24"
               initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 0.5 }}>
               {sectionHeader(m, i)}
-              {renderModule(m.id)}
+              <ModuleErrorBoundary isLightMode={isLightMode} label={m.title}>
+                {renderModule(m.id)}
+              </ModuleErrorBoundary>
             </motion.section>
           ))}
         </div>
-      ) : (
-        <div>
-          {/* Stepper progress */}
-          <div className="flex items-center gap-2 mb-6 overflow-x-auto no-scrollbar">
-            {modules.map((m, i) => (
-              <button key={m.id} onClick={() => setStep(i)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap transition ${
-                  i === step ? (isLightMode ? 'bg-indigo-600 text-white' : 'bg-indigo-500 text-white') : i < step ? (isLightMode ? 'bg-emerald-50 text-emerald-700' : 'bg-emerald-950/30 text-emerald-400') : (isLightMode ? 'bg-stone-100 text-stone-500' : 'bg-slate-900 text-slate-500')
-                }`}>
-                <m.icon className="w-3.5 h-3.5" /> {i + 1}
-              </button>
-            ))}
-          </div>
-          <motion.section key={current.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3 }}>
-            {sectionHeader(current, step)}
-            {renderModule(current.id)}
-          </motion.section>
-          <div className="flex justify-between mt-8">
-            <button onClick={() => setStep((s) => Math.max(0, s - 1))} disabled={step === 0}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition disabled:opacity-40 ${isLightMode ? 'bg-stone-100 hover:bg-stone-200 text-stone-700' : 'bg-slate-900 hover:bg-slate-800 text-slate-300'}`}>
-              <ArrowLeft className="w-4 h-4" /> Previous
-            </button>
-            <button onClick={() => setStep((s) => Math.min(modules.length - 1, s + 1))} disabled={step >= modules.length - 1}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition disabled:opacity-40">
-              Next <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
