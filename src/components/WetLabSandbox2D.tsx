@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Wind, ShieldCheck, HelpCircle, Sliders, RefreshCw, Layers, ArrowLeft, Play, Pause, Thermometer, Droplet } from 'lucide-react';
+import { Wind, ShieldCheck, HelpCircle, Sliders, RefreshCw, Layers, ArrowLeft, Play, Pause, Thermometer, Droplet, Beaker } from 'lucide-react';
 import GlossaryTerm from './GlossaryTerm';
+import { ShowMathToggle } from './simulation/_shared';
 
 interface WetLabSandbox2DProps {
   onBack: () => void;
@@ -346,33 +347,23 @@ export default function WetLabSandbox2D({ onBack, universalVitals, isLightMode =
   }, [cellDensity, precursorFeed, salinityInput, windFriction, isSimulating, stormActive, u_star_critical, derivedShearModulus, refreshKey]);
 
   return (
-    <div className={`space-y-6 pb-24 animate-fadeIn ${isLightMode ? 'text-stone-800' : 'text-slate-200'}`}>
-
-      <div className={`p-6 md:p-8 rounded-2xl border transition-colors ${
-        isLightMode ? 'bg-[#fcfaf5] border-amber-900/10 shadow-sm' : 'bg-[#030508]/80 border-slate-850/60 shadow-xl'
-      }`}>
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-          <div className="max-w-3xl">
-            <div className="flex items-center gap-2 mb-1.5">
-              <span className={`font-mono text-[9px] uppercase tracking-widest font-black px-2.5 py-1 rounded transition-colors ${
-                isLightMode ? 'bg-emerald-100 border border-emerald-300 text-emerald-800' : 'bg-emerald-950 border border-emerald-500/80 text-emerald-400'
-              }`}>
-                NYUAD iGEM 2026 Wet-Lab Assay
-              </span>
-            </div>
-            <h1 className={`text-2xl md:text-3xl font-extrabold tracking-tight uppercase transition-colors ${
-              isLightMode ? 'text-stone-900' : 'text-white'
-            }`}>
-              Wet-Lab Parameter Simulation Sandbox
-            </h1>
-            <p className={`text-xs max-w-2xl mt-1 leading-relaxed transition-colors ${
-              isLightMode ? 'text-stone-600' : 'text-slate-400'
-            }`}>
-              Feed experimental laboratory values directly into our 2D birds-eye dune lattice. Monitor organic matrix propagation and see sands protected structurally during real-time Simulated Dust Gales.
-            </p>
-          </div>
+    <div className={`p-6 rounded-2xl border space-y-6 transition-colors duration-300 animate-fadeIn ${
+      isLightMode ? 'bg-gradient-to-br from-white to-emerald-50/40 border-emerald-200 shadow-lg text-stone-800' : 'bg-gradient-to-br from-[#06080d] to-emerald-950/20 border-slate-800 shadow-2xl text-slate-200'
+    }`}>
+      {/* Compact module header — matches the other workspace modules' card style. */}
+      <div className="flex items-center gap-3 border-b pb-4 border-slate-200/60 dark:border-slate-800">
+        <div className={`p-2.5 rounded-xl ${isLightMode ? 'bg-emerald-50 text-emerald-600' : 'bg-emerald-950/40 text-emerald-400'}`}>
+          <Beaker className="w-5 h-5" />
+        </div>
+        <div>
+          <h3 className={`text-sm font-black uppercase tracking-wider ${isLightMode ? 'text-slate-900' : 'text-white'}`}>Wet-Lab Parameter Sandbox</h3>
+          <p className={`text-[11px] ${isLightMode ? 'text-stone-500' : 'text-slate-400'}`}>
+            Feed real bench values — OD₆₀₀, glutamate, calcium salt, temperature — into the same erosion physics: a γ-PGA dune-crust assay.
+          </p>
         </div>
       </div>
+
+      <ShowMathToggle moduleId="wetlab" isLightMode={isLightMode} />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         <div className={`lg:col-span-5 space-y-6 p-5 rounded-xl border transition-all duration-300 ${
@@ -382,7 +373,7 @@ export default function WetLabSandbox2D({ onBack, universalVitals, isLightMode =
           <div>
             <div className="flex items-center gap-2 mb-4">
               <Thermometer className={`w-4 h-4 ${isLightMode ? 'text-rose-600' : 'text-rose-400'}`} />
-              <h3 className="font-bold text-sm uppercase tracking-wider font-mono">1. Lab Parameter Registry</h3>
+              <h3 className="font-bold text-sm uppercase tracking-wider font-mono">1. Lab Inputs</h3>
             </div>
             
             <div className="space-y-5 px-1">

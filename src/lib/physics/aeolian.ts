@@ -61,6 +61,19 @@ export function thresholdTreated(grainDiameter: number, cohesion: number): numbe
 }
 
 /**
+ * Inverse of Eq 8 — the interparticle cohesion γ [N/m] a crust needs so that its treated threshold
+ * friction velocity reaches `targetUStar`. Solving u*t = A·√(buoyancy + γ/(ρa·d)) for γ:
+ *   γ = ρa·d·[ (u*t/A)² − buoyancy ]        (clamped ≥ 0)
+ * Used by the curing/deployment timeline to express a design survival wind as a cohesion floor.
+ */
+export function cohesionForThreshold(grainDiameter: number, targetUStar: number): number {
+  const A = cval(AEOLIAN_CALIB.A);
+  const buoyancy = ((PHYS.RHO_SAND - PHYS.RHO_AIR) / PHYS.RHO_AIR) * PHYS.g * grainDiameter;
+  const needed = Math.pow(targetUStar / A, 2) - buoyancy;
+  return Math.max(0, needed * PHYS.RHO_AIR * grainDiameter);
+}
+
+/**
  * Eq 9 — Bagnold saltation mass flux.
  *   q = C·(ρa/g)·u*³·(1 − u*t²/u*²)   for u* > u*t,  else 0
  */

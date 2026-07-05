@@ -12,12 +12,12 @@ import {
   CartesianGrid, Tooltip, ReferenceDot, ReferenceLine,
 } from 'recharts';
 import { Droplets, ShieldCheck, CloudRain } from 'lucide-react';
+import GlossaryTerm from '../../GlossaryTerm';
 import type { AlginateParams } from '../../../types';
 import {
   solveAlginateGel, moistureRetention, washoutResidual, washoutHalfLifeCycles, modulusAfterWashout,
-  ALGINATE_CALIB, cval,
 } from '../../../lib/physics';
-import { ModuleShell, Panel, Slider, StatCard, MathDisclosure, chartColors, tooltipStyle, Themed } from '../_shared';
+import { ModuleShell, Panel, Slider, StatCard, ShowMathToggle, chartColors, tooltipStyle, Themed } from '../_shared';
 
 interface Props extends Themed {
   onUpdate?: (out: { modulus: number }) => void;
@@ -81,17 +81,13 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
         <StatCard isLightMode={isLightMode} label="Washout half-life" value={halfLife.toFixed(1)} unit="cycles" accent={isLightMode ? 'text-indigo-700' : 'text-indigo-400'} sub="durability limit" />
       </div>
 
-      <MathDisclosure isLightMode={isLightMode}>
-        <p>Egg-box gel: ν = ρ·θ·F_G·(1−2Mx/Mn), G = νRT</p>
-        <p className="mt-1">θ = [Ca²⁺]/(Kd+[Ca²⁺]),&nbsp; F_G = {cval(ALGINATE_CALIB.guluronateFraction)} (guluronate fraction)</p>
-        <p className="mt-1">Washout: residual = (1 − {cval(ALGINATE_CALIB.washoutRatePerCycle)})<sup>n</sup> per rain cycle</p>
-      </MathDisclosure>
+      <ShowMathToggle moduleId="alginate" isLightMode={isLightMode} />
     </>
   );
 
   return (
     <ModuleShell isLightMode={isLightMode} controls={controls}>
-      <Panel title="Egg-Box Gelation vs Ca²⁺" icon={ShieldCheck} isLightMode={isLightMode}>
+      <Panel title={<><GlossaryTerm term="egg-box">Egg-Box Gelation</GlossaryTerm> vs Ca²⁺</>} icon={ShieldCheck} isLightMode={isLightMode}>
         <ResponsiveContainer width="100%" height={150}>
           <LineChart data={gCurve} margin={{ top: 4, right: 10, left: -16, bottom: 0 }}>
             <CartesianGrid stroke={c.grid} strokeDasharray="3 3" />
@@ -105,7 +101,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
       </Panel>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
-        <Panel title="Rain Washout Durability" icon={CloudRain} isLightMode={isLightMode}>
+        <Panel title={<><GlossaryTerm term="rain-washout">Rain Washout Durability</GlossaryTerm></>} icon={CloudRain} isLightMode={isLightMode}>
           <ResponsiveContainer width="100%" height={150}>
             <LineChart data={washoutCurve} margin={{ top: 4, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid stroke={c.grid} strokeDasharray="3 3" />
@@ -118,7 +114,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
           </ResponsiveContainer>
         </Panel>
 
-        <Panel title="Moisture Retention vs Humidity" icon={Droplets} isLightMode={isLightMode}>
+        <Panel title={<><GlossaryTerm term="moisture-retention">Moisture Retention</GlossaryTerm> vs Humidity</>} icon={Droplets} isLightMode={isLightMode}>
           <ResponsiveContainer width="100%" height={150}>
             <AreaChart data={moistureCurve} margin={{ top: 4, right: 10, left: -16, bottom: 0 }}>
               <CartesianGrid stroke={c.grid} strokeDasharray="3 3" />

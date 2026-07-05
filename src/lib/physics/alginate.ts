@@ -14,8 +14,20 @@
  * cycles) but an excellent water-magnet (moisture retention keeps the crust damp).
  */
 
-import { ALGINATE_CALIB, cval } from './constants';
-import { saturation, shearModulus } from './crosslink';
+import { PHYS, ALGINATE_CALIB, cval } from './constants';
+
+/**
+ * Ca²⁺ saturation of guluronate binding sites (Langmuir). Alginate keeps its own copy of this
+ * isotherm — its junctions are egg-box G-block chelation, physically distinct from γ-PGA's
+ * carboxylate bridging even though both share the Langmuir form.
+ */
+export function eggBoxSaturation(calciumMillimolar: number, Kd: number): number {
+  if (calciumMillimolar <= 0) return 0;
+  return calciumMillimolar / (Kd + calciumMillimolar);
+}
+
+/** Egg-box gel shear modulus from junction density: G = ν R T. */
+export const gelModulus = (nu: number, temperature: number): number => nu * PHYS.R * temperature;
 
 export interface AlginateInputs {
   /** Applied alginate concentration [%w/v]. */
@@ -44,10 +56,10 @@ export function solveAlginateGel(inp: AlginateInputs): AlginateResult {
   const Fg = cval(ALGINATE_CALIB.guluronateFraction);
 
   const rhoPolymer = Math.max(0, inp.appliedPercent) * cval(ALGINATE_CALIB.concToRho);
-  const theta = saturation(inp.calciumMillimolar, cval(ALGINATE_CALIB.KdCa));
+  const theta = eggBoxSaturation(inp.calciumMillimolar, cval(ALGINATE_CALIB.KdCa));
   const endCorrection = Math.max(0, 1 - (2 * Mx) / Mn);
   const nu = rhoPolymer * theta * Fg * endCorrection;
-  const G = shearModulus(nu, inp.temperature);
+  const G = gelModulus(nu, inp.temperature);
 
   return { rhoPolymer, theta, nu, shearModulus: G };
 }

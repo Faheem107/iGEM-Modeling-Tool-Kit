@@ -1,15 +1,19 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { AeolianParams } from '../types';
-import { 
-  Wind, 
-  ShieldCheck, 
-  Zap, 
-  Link2, 
+import {
+  Wind,
+  ShieldCheck,
+  Zap,
+  Link2,
   Gauge,
   Clock,
   Flame,
   Coins
 } from 'lucide-react';
+import {
+  PHYS, AEOLIAN_CALIB, cval, uStarToFreestream, freestreamToUStar, cohesionFromShearModulus,
+} from '../lib/physics';
+import { ShowMathToggle } from './simulation/_shared';
 
 interface AeolianProps {
   params: AeolianParams;
@@ -21,6 +25,8 @@ interface AeolianProps {
   /** When provided (multi-prong combinations), overrides the internal cohesion with the
    *  composite interparticle cohesion γ [N/m] computed across all active prongs. */
   externalCohesion?: number;
+  /** Active prongs, so the crust is labelled by whatever binder(s) actually formed it. */
+  activeProngs?: (1 | 2 | 3)[];
 }
 
 export default function AeolianWindTunnel({
@@ -31,7 +37,28 @@ export default function AeolianWindTunnel({
   setIsLinked,
   isLightMode,
   externalCohesion,
+  activeProngs = [1],
 }: AeolianProps) {
+  // Every prong forms a wind-resistant crust — γ-PGA/alginate via shear modulus, CaCO₃ via UCS —
+  // so this tunnel applies to ANY combination; label the crust by whatever binder(s) formed it.
+  const crustLabel = (() => {
+    const parts: string[] = [];
+    if (activeProngs.includes(1)) parts.push('γ-PGA');
+    if (activeProngs.includes(2)) parts.push('CaCO₃');
+    if (activeProngs.includes(3)) parts.push('alginate');
+    return parts.length ? parts.join(' + ') : 'engineered';
+  })();
+
+  // Prong-specific crust palette + short label — the treated grains and the biocrust legend are
+  // coloured by whichever binder(s) actually formed the crust (γ-PGA gel, CaCO₃ cement, alginate coat).
+  const PRONG_CRUST: Record<1 | 2 | 3, { hi: string; mid: string; lo: string; name: string }> = {
+    1: { hi: '#fcd34d', mid: '#f59e0b', lo: '#b45309', name: 'γ-PGA gel' },
+    2: { hi: '#a7f3d0', mid: '#10b981', lo: '#065f46', name: 'CaCO₃ cement' },
+    3: { hi: '#fecdd3', mid: '#fb7185', lo: '#9f1239', name: 'alginate coat' },
+  };
+  const activeBinders = ([1, 2, 3] as const).filter((p) => activeProngs.includes(p));
+  const primaryBinder = activeBinders[0] ?? 2; // treated grains take the first active binder's colour
+  const prongKey = activeBinders.join('-');
   // --- Upgraded State Parameters ---
   const [crustThickness, setCrustThickness] = useState<number>(12.0); // mm (1.0 to 25.0 mm)
   const [localShearModulus, setLocalShearModulus] = useState<number>(3100); // Pa (used when unlinked)
@@ -48,15 +75,16 @@ export default function AeolianWindTunnel({
   // Active shear modulus to use in calculations
   const activeGs = isLinked ? Math.max(100, shearModulus) : localShearModulus;
 
-  // Constants for Bagnold threshold speed and saltation dynamics
-  const A = 0.11;        // empirical dimensionless constant
-  const rho_s = 2650;    // sand density (kg/m3)
-  const rho_a = 1.225;   // air density (kg/m3)
-  const g = 9.81;        // gravity (m/s2)
+  // Bagnold threshold + saltation constants — pulled from the physics core so this tunnel
+  // and the workspace headline stats never disagree.
+  const A = cval(AEOLIAN_CALIB.A);       // empirical dimensionless constant
+  const rho_s = PHYS.RHO_SAND;           // sand density (kg/m³)
+  const rho_a = PHYS.RHO_AIR;            // air density (kg/m³)
+  const g = PHYS.g;                      // gravity (m/s²)
 
-  // Conversions: freestream velocity U_inf (m/s) corresponds to friction force velocity u* with u* = 0.03 * U_inf
-  const uStarToUinf = (uStar: number) => uStar / 0.03;
-  const uInfToUStar = (uInf: number) => uInf * 0.03;
+  // Freestream U∞ ↔ friction velocity u* via the log-law surface coupling (AEOLIAN_CALIB.uStarRatio).
+  const uStarToUinf = (uStar: number) => uStarToFreestream(uStar);
+  const uInfToUStar = (uInf: number) => freestreamToUStar(uInf);
 
   const currentFreestreamWind = useMemo(() => {
     return Number(uStarToUinf(params.wind_velocity).toFixed(1));
@@ -75,7 +103,7 @@ export default function AeolianWindTunnel({
   // it overrides the single-prong shear-modulus estimate.
   const effectiveCohesion = useMemo(() => {
     if (externalCohesion !== undefined) return externalCohesion;
-    return isLinked ? Math.min(0.009, activeGs * 0.000002) : params.biofilm_cohesion;
+    return isLinked ? Math.min(0.009, cohesionFromShearModulus(activeGs)) : params.biofilm_cohesion;
   }, [externalCohesion, isLinked, activeGs, params.biofilm_cohesion]);
 
   // Physics Solvers
@@ -94,7 +122,7 @@ export default function AeolianWindTunnel({
     const appliedShearStress = rho_a * Math.pow(params.wind_velocity, 2);
 
     // Critical stress threshold for instantaneous crust structural shattering
-    const shatterStressLimit = activeGs * 0.00035 * crustThickness;
+    const shatterStressLimit = activeGs * cval(AEOLIAN_CALIB.shatterPerThickness) * crustThickness;
     const isShattered = appliedShearStress > shatterStressLimit && currentFreestreamWind > 5;
 
     return {
@@ -211,184 +239,199 @@ export default function AeolianWindTunnel({
 
   const triggerReset = () => {
     if (liveTestTimerRef.current) clearInterval(liveTestTimerRef.current);
-    setIsLiveTesting(false);
-    setLiveTestTime(0.0);
-    setLiveControlErosion([]);
-    setLiveTreatedErosion([]);
+    // Idempotent: when there is nothing to reset (idle, no live-test data) every setter bails, so
+    // this effect adds NO re-render. That matters because it fires on activeGs — which shifts as the
+    // upstream modules settle — and an unconditional reset here would amplify the settle cascade
+    // past React's update-depth guard.
+    setIsLiveTesting((v) => (v ? false : v));
+    setLiveTestTime((v) => (v !== 0 ? 0 : v));
+    setLiveControlErosion((prev) => (prev.length ? [] : prev));
+    setLiveTreatedErosion((prev) => (prev.length ? [] : prev));
   };
 
   // Particle Canvas simulation rendering loop logic
   const particleCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const viewportWrapRef = useRef<HTMLDivElement | null>(null);
+
+  // Live values the animation reads each frame — lets the canvas set up ONCE (no teardown on every
+  // slider tick) and stay perfectly sized to its container (fixing the old stretched look).
+  const drawRef = useRef({
+    wind: currentFreestreamWind,
+    uInf_t: physicsResult.uInf_t,
+    uInf_t0: physicsResult.uInf_t0,
+    isShattered: physicsResult.isShattered,
+    activeGs,
+    crustThickness,
+    isLightMode,
+    crustLabel,
+    sandDiameter: params.sand_diameter,
+    crust: PRONG_CRUST[primaryBinder],
+  });
+  drawRef.current = {
+    wind: currentFreestreamWind,
+    uInf_t: physicsResult.uInf_t,
+    uInf_t0: physicsResult.uInf_t0,
+    isShattered: physicsResult.isShattered,
+    activeGs,
+    crustThickness,
+    isLightMode,
+    crustLabel,
+    sandDiameter: params.sand_diameter,
+    crust: PRONG_CRUST[primaryBinder],
+  };
 
   useEffect(() => {
     const canvas = particleCanvasRef.current;
-    if (!canvas) return;
+    const wrap = viewportWrapRef.current;
+    if (!canvas || !wrap) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let animId: number;
+    const CSS_H = 200; // displayed height in CSS px
+    let W = 0, H = 0, dpr = 1, floorY = 0;
     let clockTicks = 0;
+    let animId = 0;
 
-    const pCount = 100;
-    const pList: Array<{
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      size: number;
-      isTreated: boolean;
-      jitter: number;
-    }> = [];
+    type P = { x: number; y: number; vx: number; vy: number; size: number; isTreated: boolean; jitter: number };
+    let pList: P[] = [];
 
-    for (let i = 0; i < pCount; i++) {
-      const isTreated = i >= pCount / 2;
-      const diameterMultiplier = params.sand_diameter * 1000;
-      const grainSize = Math.max(1.5, diameterMultiplier * 15 + Math.random() * 1.5);
+    const seed = () => {
+      const pCount = 110;
+      pList = [];
+      for (let i = 0; i < pCount; i++) {
+        const isTreated = i >= pCount / 2;
+        const grainSize = Math.max(1.6, drawRef.current.sandDiameter * 1000 * 15 * dpr + Math.random() * 1.6 * dpr);
+        pList.push({
+          x: (isTreated ? W / 2 : 0) + Math.random() * (W / 2 - 20 * dpr) + 10 * dpr,
+          y: floorY - Math.random() * 12 * dpr,
+          vx: 0, vy: 0, size: grainSize, isTreated, jitter: Math.random() * Math.PI * 2,
+        });
+      }
+    };
 
-      pList.push({
-        x: (isTreated ? canvas.width / 2 : 0) + Math.random() * (canvas.width / 2 - 20) + 10,
-        y: canvas.height - 15 - Math.random() * 12,
-        vx: 0,
-        vy: 0,
-        size: grainSize,
-        isTreated,
-        jitter: Math.random() * Math.PI * 2
-      });
-    }
+    const resize = () => {
+      dpr = Math.min(2, window.devicePixelRatio || 1);
+      const cssW = Math.max(280, wrap.clientWidth || 520);
+      W = Math.round(cssW * dpr);
+      H = Math.round(CSS_H * dpr);
+      floorY = H - 15 * dpr;
+      canvas.width = W;
+      canvas.height = H;
+      canvas.style.width = '100%';
+      canvas.style.height = `${CSS_H}px`;
+      seed();
+    };
+
+    resize();
+    const ro = new ResizeObserver(resize);
+    ro.observe(wrap);
 
     const renderLoop = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const d = drawRef.current;
+      const s = dpr; // size scale so strokes/fonts stay crisp at any DPR
       clockTicks += 0.04;
 
-      ctx.fillStyle = isLightMode ? '#f8fafc' : '#030712';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = d.isLightMode ? '#f8fafc' : '#030712';
+      ctx.fillRect(0, 0, W, H);
 
-      ctx.strokeStyle = isLightMode ? 'rgba(203, 213, 225, 0.45)' : 'rgba(30, 41, 59, 0.4)';
-      ctx.lineWidth = 0.8;
-      for (let x = 0; x < canvas.width; x += 40) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
-      }
-      for (let y = 0; y < canvas.height; y += 40) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
-      }
+      // faint reference grid
+      ctx.strokeStyle = d.isLightMode ? 'rgba(203, 213, 225, 0.45)' : 'rgba(30, 41, 59, 0.4)';
+      ctx.lineWidth = 0.8 * s;
+      for (let x = 0; x < W; x += 40 * s) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+      for (let y = 0; y < H; y += 40 * s) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
 
-      const activeSpeedPercent = currentFreestreamWind / 50.0;
-      ctx.strokeStyle = isLightMode 
-        ? `rgba(79, 70, 229, ${0.08 + activeSpeedPercent * 0.45})` 
+      // wind streamlines (density/amplitude scale with speed)
+      const activeSpeedPercent = d.wind / 50.0;
+      ctx.strokeStyle = d.isLightMode
+        ? `rgba(79, 70, 229, ${0.08 + activeSpeedPercent * 0.45})`
         : `rgba(129, 140, 248, ${0.05 + activeSpeedPercent * 0.35})`;
-      ctx.lineWidth = Math.max(0.5, 0.5 + activeSpeedPercent * 4.5);
-
-      const flowRows = 5;
-      for (let r = 0; r < flowRows; r++) {
-        const rowY = 35 + r * 30;
+      ctx.lineWidth = Math.max(0.5, 0.5 + activeSpeedPercent * 4.5) * s;
+      for (let r = 0; r < 5; r++) {
+        const rowY = (35 + r * 30) * s;
         ctx.beginPath();
         ctx.moveTo(0, rowY);
-        for (let x = 0; x < canvas.width; x += 30) {
-          const curveY = rowY + Math.sin((x / 40) + clockTicks * 4.5 + r) * (currentFreestreamWind * 0.45);
+        for (let x = 0; x < W; x += 30 * s) {
+          const curveY = rowY + Math.sin((x / (40 * s)) + clockTicks * 4.5 + r) * (d.wind * 0.45 * s);
           ctx.lineTo(x, curveY);
         }
         ctx.stroke();
       }
 
-      ctx.strokeStyle = isLightMode ? '#e2e8f0' : '#1e293b';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(canvas.width / 2, canvas.height); ctx.stroke();
+      // centre divider
+      ctx.strokeStyle = d.isLightMode ? '#e2e8f0' : '#1e293b';
+      ctx.lineWidth = 1.5 * s;
+      ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke();
 
-      ctx.font = 'bold 9px "JetBrains Mono", Courier, monospace';
+      // side labels
+      ctx.font = `bold ${9 * s}px "JetBrains Mono", Courier, monospace`;
       ctx.fillStyle = '#ef4444';
-      ctx.fillText('UNTREATED COHESIONLESS SAND', 15, 20);
-      ctx.fillStyle = isLightMode ? '#047857' : '#10b981';
-      ctx.fillText(`iGEM γ-PGA COPIED CRUST (${crustThickness.toFixed(0)}mm)`, canvas.width / 2 + 15, 20);
+      ctx.fillText('UNTREATED SAND', 12 * s, 20 * s);
+      ctx.fillStyle = d.isLightMode ? d.crust.lo : d.crust.mid;
+      ctx.fillText(`${d.crustLabel.toUpperCase()} CRUST · ${d.crustThickness.toFixed(0)}mm`, W / 2 + 12 * s, 20 * s);
 
       pList.forEach(p => {
-        const matchingThreshold = p.isTreated ? physicsResult.uInf_t : physicsResult.uInf_t0;
-        const liftTriggered = currentFreestreamWind > matchingThreshold;
+        const matchingThreshold = p.isTreated ? d.uInf_t : d.uInf_t0;
+        const liftTriggered = d.wind > matchingThreshold;
 
         if (liftTriggered) {
-          p.vx += (currentFreestreamWind - matchingThreshold) * (0.012 + Math.random() * 0.05);
-          if (p.y >= canvas.height - 15) {
-            p.vy = -Math.random() * (currentFreestreamWind * 1.6);
-          }
-          p.vy += 0.35; 
+          p.vx += (d.wind - matchingThreshold) * (0.012 + Math.random() * 0.05) * s;
+          if (p.y >= floorY) p.vy = -Math.random() * (d.wind * 1.6) * s;
+          p.vy += 0.35 * s;
           p.x += p.vx;
           p.y += p.vy;
-          p.vx *= 0.95; 
+          p.vx *= 0.95;
         } else {
           p.vx *= 0.7;
-          if (p.y < canvas.height - 15) {
-            p.y += 1.5;
-          } else {
-            p.y = canvas.height - 15;
-            p.vy = 0;
-          }
-          if (currentFreestreamWind > 2) {
-            p.x += Math.sin(clockTicks * 8 + p.jitter) * (currentFreestreamWind * 0.06);
-          }
+          if (p.y < floorY) p.y += 1.5 * s; else { p.y = floorY; p.vy = 0; }
+          if (d.wind > 2) p.x += Math.sin(clockTicks * 8 + p.jitter) * (d.wind * 0.06) * s;
         }
 
-        if (p.y >= canvas.height - 15) {
-          p.y = canvas.height - 15;
-          p.vy = -p.vy * 0.3;
-        }
+        if (p.y >= floorY) { p.y = floorY; p.vy = -p.vy * 0.3; }
 
-        const leftMargin = p.isTreated ? canvas.width / 2 : 0;
-        const rightMargin = p.isTreated ? canvas.width : canvas.width / 2;
-
+        const leftMargin = p.isTreated ? W / 2 : 0;
+        const rightMargin = p.isTreated ? W : W / 2;
         if (p.x > rightMargin) {
-          p.x = leftMargin - 4;
-          p.y = canvas.height - 15 - Math.random() * 5;
-          p.vx = 0.5 + Math.random() * 1.5;
+          p.x = leftMargin - 4 * s;
+          p.y = floorY - Math.random() * 5 * s;
+          p.vx = (0.5 + Math.random() * 1.5) * s;
           p.vy = 0;
         }
 
-        const radius = Math.max(1.0, p.size);
-        const gradientRef = ctx.createRadialGradient(
-          p.x - radius * 0.25, p.y - radius * 0.25, radius * 0.1,
-          p.x, p.y, radius
-        );
-
+        const radius = Math.max(1.0 * s, p.size);
+        const grad = ctx.createRadialGradient(p.x - radius * 0.25, p.y - radius * 0.25, radius * 0.1, p.x, p.y, radius);
         if (p.isTreated) {
-          if (physicsResult.isShattered) {
-            gradientRef.addColorStop(0, '#f97316');
-            gradientRef.addColorStop(1, '#7c2d12');
-          } else {
-            gradientRef.addColorStop(0, '#a7f3d0');
-            gradientRef.addColorStop(0.35, '#10b981');
-            gradientRef.addColorStop(1, '#064e3b');
-          }
+          if (d.isShattered) { grad.addColorStop(0, '#f97316'); grad.addColorStop(1, '#7c2d12'); }
+          else { grad.addColorStop(0, d.crust.hi); grad.addColorStop(0.35, d.crust.mid); grad.addColorStop(1, d.crust.lo); }
         } else {
-          gradientRef.addColorStop(0, '#fef08a');
-          gradientRef.addColorStop(0.4, '#f59e0b');
-          gradientRef.addColorStop(1, '#78350f');
+          grad.addColorStop(0, '#f5deb3'); grad.addColorStop(0.4, '#c9a267'); grad.addColorStop(1, '#7c5a2e');
         }
-
-        ctx.fillStyle = gradientRef;
+        ctx.fillStyle = grad;
         ctx.beginPath();
         ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
         ctx.fill();
-
-        ctx.strokeStyle = p.isTreated 
-          ? (physicsResult.isShattered ? 'rgba(124, 45, 18, 0.4)' : 'rgba(16, 185, 129, 0.4)') 
-          : 'rgba(217, 119, 6, 0.25)';
-        ctx.lineWidth = 0.5;
+        ctx.strokeStyle = p.isTreated
+          ? (d.isShattered ? 'rgba(124, 45, 18, 0.4)' : 'rgba(0,0,0,0.18)')
+          : 'rgba(124, 90, 46, 0.3)';
+        ctx.lineWidth = 0.5 * s;
         ctx.stroke();
       });
 
-      if (!physicsResult.isShattered && activeGs > 800) {
-        ctx.strokeStyle = isLightMode 
-          ? `rgba(5, 150, 105, ${Math.min(0.7, activeGs * 0.00003)})` 
-          : `rgba(16, 185, 129, ${Math.min(0.75, activeGs * 0.000035)})`;
-        ctx.lineWidth = 1.6;
+      // inter-grain cohesive bond mesh on the treated side (fades in with stiffness)
+      if (!d.isShattered && d.activeGs > 800) {
+        ctx.strokeStyle = d.isLightMode
+          ? `rgba(5, 150, 105, ${Math.min(0.7, d.activeGs * 0.00003)})`
+          : `rgba(16, 185, 129, ${Math.min(0.75, d.activeGs * 0.000035)})`;
+        ctx.lineWidth = 1.6 * s;
         ctx.beginPath();
         const halfStart = Math.floor(pList.length / 2);
         for (let j = 0; j < pList.length / 2 - 1; j++) {
           const p1 = pList[halfStart + j];
           const p2 = pList[halfStart + j + 1];
-          if (p1 && p2 && p1.y > canvas.height - 25 && p2.y > canvas.height - 25) {
+          if (p1 && p2 && p1.y > floorY - 10 * s && p2.y > floorY - 10 * s) {
             const distance = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-            if (distance < 38) {
+            if (distance < 38 * s) {
               ctx.moveTo(p1.x, p1.y);
-              ctx.quadraticCurveTo((p1.x + p2.x) / 2, (p1.y + p2.y) / 2 + 4, p2.x, p2.y);
+              ctx.quadraticCurveTo((p1.x + p2.x) / 2, (p1.y + p2.y) / 2 + 4 * s, p2.x, p2.y);
             }
           }
         }
@@ -399,13 +442,17 @@ export default function AeolianWindTunnel({
     };
 
     renderLoop();
-    return () => cancelAnimationFrame(animId);
-  }, [params.sand_diameter, currentFreestreamWind, physicsResult, activeGs, crustThickness, isLightMode]);
+    return () => { cancelAnimationFrame(animId); ro.disconnect(); };
+    // Set up once per binder change; all fast-changing values are read live from drawRef.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prongKey]);
 
   return (
     <div className={`space-y-8`} id="aeolian-simulation-root">
-      
-      {/* 2. DUAL LAYOUT CHASSIS: SLIDERS & DIAGNOSTIC DETAILS (12 COLS) */}
+
+      <ShowMathToggle moduleId="aeolian" isLightMode={isLightMode} />
+
+      {/* Sliders + diagnostics (12 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         {/* INPUT HARDWARE SLIDERS PANEL (5 Cols) */}
@@ -476,12 +523,12 @@ export default function AeolianWindTunnel({
                 </div>
               </div>
 
-              {/* SLIDER 3: POLYMER SHEAR MODULUS */}
+              {/* SLIDER 3: CRUST STIFFNESS (G-EQUIVALENT) */}
               <div className="space-y-1.5 pt-1.5 border-t border-slate-200 dark:border-slate-800">
                 <div className="flex justify-between items-center text-xs font-mono">
                   <span className="text-slate-650 dark:text-slate-400 font-bold flex items-center gap-1.5">
                     <Link2 className={`w-3.5 h-3.5 ${isLinked ? 'text-emerald-500 animate-spin' : 'text-slate-400'}`} />
-                    Polymer Shear Modulus (Gs):
+                    Crust Stiffness G-equiv ({crustLabel}):
                   </span>
                   <span className={`${
                     isLinked ? 'text-emerald-700 dark:text-emerald-450' : 'text-amber-700 dark:text-amber-400'
@@ -595,10 +642,10 @@ export default function AeolianWindTunnel({
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-slate-200 dark:border-slate-900 pb-3 mb-4">
               <div>
                 <h4 className="text-xs font-bold font-mono uppercase tracking-wider text-slate-600 dark:text-slate-400">
-                  Interactive Cumulative Erosion Tracker (0% - 100%)
+                  Erosion Over Time (% of grains lost)
                 </h4>
                 <p className="text-[10px] text-slate-500 mt-0.5">
-                  Plots micro scale grain dislodgements over a simulated 15.0 second storm force.
+                  Traces how fast grains are stripped away over a simulated 15-second gust.
                 </p>
               </div>
 
@@ -713,27 +760,34 @@ export default function AeolianWindTunnel({
 
           </div>
 
-          {/* SIMULATION PARTICLE BOX VIEWPORT (The virtual 2D visualizer) */}
+          {/* GRAIN-MOTION VIEWPORT (live side-by-side saltation of untreated vs bio-crusted sand) */}
           <div className={`p-4 rounded-xl border flex flex-col gap-2 shadow-inner overflow-hidden ${
             isLightMode ? 'bg-[#f8fafc] border-slate-200' : 'bg-[#02050b] border-slate-900'
           }`}>
-            <div className="flex justify-between items-center px-1">
+            <div className="flex justify-between items-center px-1 gap-2 flex-wrap">
               <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 flex items-center gap-1">
-                <Gauge className="w-3.5 h-3.5 text-[#10b981]" /> Particle Boundary Aerodynamics Viewport
+                <Gauge className="w-3.5 h-3.5 text-[#10b981]" /> Grain-Motion Viewport
               </span>
               <span className="text-[10px] text-indigo-700 dark:text-indigo-400 font-bold font-mono">
-                u_friction = {params.wind_velocity.toFixed(3)} m/s
+                friction velocity u* = {params.wind_velocity.toFixed(3)} m/s
               </span>
             </div>
 
-            {/* Canvas Block */}
-            <div className="relative rounded-lg overflow-hidden border border-slate-200 dark:border-slate-850">
-              <canvas 
-                ref={particleCanvasRef}
-                width={520}
-                height={160}
-                className="w-full display-block max-h-[160px]"
-              />
+            {/* Binder legend — the crust is coloured by whichever prong(s) actually formed it. */}
+            <div className="flex items-center gap-3 px-1 flex-wrap">
+              <span className="flex items-center gap-1 text-[9px] font-mono text-slate-500">
+                <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: '#c9a267' }} /> untreated sand
+              </span>
+              {activeBinders.map((p) => (
+                <span key={p} className="flex items-center gap-1 text-[9px] font-mono text-slate-500">
+                  <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: PRONG_CRUST[p].mid }} /> {PRONG_CRUST[p].name}
+                </span>
+              ))}
+            </div>
+
+            {/* Canvas Block — the wrapper is measured so the canvas is DPR-sized to its box (no stretch). */}
+            <div ref={viewportWrapRef} className="relative rounded-lg overflow-hidden border border-slate-200 dark:border-slate-850">
+              <canvas ref={particleCanvasRef} className="block w-full" />
             </div>
           </div>
 
@@ -755,12 +809,12 @@ export default function AeolianWindTunnel({
               FINAL REPORT
             </span>
             <h3 className="text-sm font-black uppercase text-slate-900 dark:text-white tracking-widest font-mono">
-              Structural Telemetry &amp; Wet Lab Protocols
+              Durability &amp; Wet-Lab Translation
             </h3>
           </div>
-          
+
           <div className="text-[11px] text-slate-550 dark:text-slate-400 font-mono">
-            Synced Local Calculations Core • <span className="text-emerald-500 font-bold">SUCCESSFUL CASCADE</span>
+            Computed live, in-browser • <span className="text-emerald-500 font-bold">up to date</span>
           </div>
         </div>
 

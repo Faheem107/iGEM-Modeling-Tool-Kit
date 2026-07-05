@@ -117,9 +117,22 @@ export const CACO3_CALIB = {
   caRateEnhancement: calib(1.0e6, 'fold', 'CA kcat≈10⁶ s⁻¹ vs kuncat≈0.04 s⁻¹', 'pNPA esterase assay or pH-drop (phenol red) on displayed-CA cells vs blank.', [1e3, 1e7]),
   /** Surface-reaction precipitation rate constant (TST): r = kPrecip·(Ω−1). */
   kPrecip: calib(0.12, 'mol·L⁻¹·h⁻¹ per (Ω−1)', 'TST surface-complexation (Lassin et al. 2018)', 'Fit calcite precipitation rate vs supersaturation Ω in stirred-cell titration.', [0.01, 0.6]),
-  /** ACC → calcite first-order transformation rate. */
-  kAccToCalcite: calib(0.05, 'h⁻¹', 'ACC ripening (Lassin et al. 2018)', 'Time-resolved XRD/Raman of ACC→calcite fraction; fit first-order k.', [0.005, 0.5]),
-  /** UCS power-law prefactor: UCS = kUcs · (calcite_wt%)^nUcs. */
+  /** ACC → crystalline carbonate first-order transformation rate. */
+  kAccToCalcite: calib(0.05, 'h⁻¹', 'ACC ripening (Lassin et al. 2018)', 'Time-resolved XRD/Raman of ACC→crystalline fraction; fit first-order k.', [0.005, 0.5]),
+  /**
+   * Fraction of the crystallising carbonate that first forms as METASTABLE VATERITE rather than
+   * calcite. Non-ureolytic carbonic-anhydrase MICP frequently yields vaterite (Research Table,
+   * Prong 2), unlike the pure calcite of classic urease systems.
+   */
+  vateriteFraction: calib(0.6, 'fraction', 'CA-MICP often yields vaterite (Research Table; Rodriguez-Blanco 2011)', 'Quantitative XRD (Rietveld) of the precipitate; vaterite:calcite ratio.', [0.2, 0.9]),
+  /** Solution-mediated vaterite → calcite transformation rate (Ostwald ripening; slow). */
+  kVateriteToCalcite: calib(0.02, 'h⁻¹', 'vaterite→calcite solution-mediated recrystallisation (Rodriguez-Blanco 2011)', 'Time-resolved XRD of the vaterite fraction; fit first-order decay.', [0.002, 0.1]),
+  /**
+   * Load-bearing strength of vaterite RELATIVE to calcite per unit mass. Vaterite is the softer,
+   * more soluble polymorph, so it cements less effectively until it recrystallises to calcite.
+   */
+  vateriteStrengthFactor: calib(0.55, 'fraction of calcite', 'vaterite softer/more soluble than calcite (Rodriguez-Blanco 2011)', 'Compare UCS of vaterite-rich vs calcite-rich cores at equal carbonate wt%.', [0.3, 0.8]),
+  /** UCS power-law prefactor: UCS = kUcs · (load-bearing carbonate wt%)^nUcs. */
   kUcs: calib(31.6, 'kPa per (wt%)^n', 'MICP UCS≈1 MPa @ ~10 wt% calcite', 'Unconfined compression of cores at several calcite contents; log-log fit → kUcs, nUcs.', [10, 80]),
   /** UCS power-law exponent. */
   nUcs: calib(1.5, 'dimensionless', 'MICP UCS∝calcite^(1–2)', 'Slope of log(UCS) vs log(calcite wt%).', [1.0, 2.2]),
@@ -139,12 +152,131 @@ export const ALGINATE_CALIB = {
   washoutRatePerCycle: calib(0.15, 'fraction·cycle⁻¹', 'soluble polymer leaching estimate', 'Rainfall-simulation: residual alginate vs number of wetting cycles.', [0.03, 0.4]),
 } as const;
 
+/**
+ * Grain-size-resolved crust performance (Study 4 — Xiao et al. 2024, MICP vs particle size;
+ * UAE dune-sand grain-size distribution). MICP cementation is NOT uniform across grain sizes:
+ * it peaks for fine–medium sand (~63–125 µm), where pores are small enough for calcite bridging
+ * yet permeable enough for bacteria to penetrate, and falls off for coarse sand (pores too large
+ * to bridge) and ultra-fine sand (too low-permeability for cells to colonise). γ-PGA and alginate
+ * cover the grain sizes MICP misses — the quantitative basis of the three-prong "cover all sizes"
+ * thesis.
+ */
+export const GRAINSIZE_CALIB = {
+  /** Peak MICP cementation grain diameter (geometric centre of the 63–125 µm sweet spot). */
+  micpPeakDiameter: calib(90, 'µm', 'Study 4: SP0063/SP0125 UCS≈3.1/2.9 MPa peak; SP0250≈1.6, SP0500≈0.7 MPa', 'UCS of MICP-treated cores sieved to several narrow size bands; locate the UCS-vs-d peak.', [63, 125]),
+  /** Log-normal width (in ln d) of the MICP efficiency curve; fit to the SP0063→SP0500 fall-off. */
+  micpLogWidth: calib(0.85, 'ln(µm) (dimensionless)', 'fit to Study 4 UCS(d): eff(250µm)≈0.52, eff(500µm)≈0.23 of peak', 'Regress ln(UCS/UCS_peak) on (ln d)²; slope sets the width.', [0.5, 1.4]),
+  /** Below this diameter, low permeability blocks bacterial colonisation → MICP penetration falls. */
+  micpPenetrationD50: calib(40, 'µm', 'Study 4: fine-size limit set by cells failing to penetrate low-permeability sand', 'Colonisation depth vs grain size (thin-section / CFU-with-depth) on sieved packs.', [20, 63]),
+  /** Steepness of the fine-side penetration roll-off (logistic). */
+  micpPenetrationSteep: calib(6, 'dimensionless', 'sharp permeability threshold for cell transport', 'Fit the fine-side UCS drop to a logistic in ln d.', [3, 12]),
+  /** γ-PGA pore-filling half-diameter — polymer bridges fine/medium pores, fails at coarse gaps. */
+  pgaCoverHalfD: calib(320, 'µm', 'γ-PGA gel bridges grain contacts up to coarse-sand pore scale', 'Aggregate-stability (wet-sieving) of γ-PGA-treated bands vs grain size.', [150, 600]),
+  pgaCoverSteep: calib(2.5, 'dimensionless', 'gradual loss of gel bridging with pore size', 'Slope of coverage vs ln d.', [1.5, 5]),
+  /** Alginate broad-spectrum coating floor (effective at every grain size by surface coating). */
+  alginateCoverFloor: calib(0.45, 'fraction', 'Study 4: alginate coats grains & seeds nucleation "regardless of grain size"', 'Cohesion of alginate-only bands across the full size range.', [0.2, 0.7]),
+  /** Extra alginate coverage at the coarse end (partial pore-filling of large voids). */
+  alginateCoarseBoost: calib(0.35, 'fraction', 'alginate partially fills the large pores MICP cannot bridge', 'Coarse-band cohesion gain from alginate vs untreated.', [0.1, 0.6]),
+  alginateCoarseHalfD: calib(300, 'µm', 'onset of the large-pore regime alginate helps fill', 'Locate where alginate contribution rises with grain size.', [200, 450]),
+  // --- UAE deployment-site dune-sand grain-size distribution (log-normal) ---
+  /** Median grain diameter D50 of UAE aeolian dune sand. */
+  uaeD50: calib(200, 'µm', 'UAE dune sand 100–300 µm, D50≈0.15–0.3 mm (Research Table)', 'Sieve/laser-diffraction PSD of the actual deployment-site sand; read D50.', [120, 280]),
+  /** Geometric standard deviation of the (well-sorted, aeolian) size distribution. */
+  uaeSizeSigma: calib(1.35, 'dimensionless (geometric)', 'well-sorted aeolian dune sand (narrow PSD)', 'σg = √(D84/D16) from the site PSD.', [1.2, 1.8]),
+} as const;
+
+/**
+ * Curing & deployment timeline (Study 5 — NYUAD Research Table field protocol).
+ * The engineered crust is not instant and it is not permanent. It CURES over the first ~32 h
+ * (sprayed at 0/8/16/24/32 h to keep the biofilm hydrated and the MICP substrate replenished),
+ * then slowly WEATHERS over months until it must be re-applied (every ~6 months in the protocol).
+ * Each binder has its own maturation speed and its own field durability:
+ *   • CaCO₃ (MICP)  — matures slowly (calcite ripening needs the full 32 h) but is the most durable.
+ *   • γ-PGA          — sets on an intermediate timescale; biodegradable, months-scale field life.
+ *   • Alginate       — gels almost instantly but is soluble and washes out fastest.
+ * This is the mechanism behind the multi-prong advantage: a fast-setting polymer buys early-age
+ * strength while the durable calcite floor extends the re-application interval.
+ */
+export const CURING_CALIB = {
+  /** Protocol spray times over the maturation window [h] (Study 5). */
+  sprayScheduleHours: calib(32, 'h (last spray / full maturation)', 'Study 5: spray at 0/8/16/24/32 h; biofilm fully mature at 32 h', 'Wind-tunnel/UCS of cores cured for 0/8/16/24/32 h; locate the maturation plateau.', [16, 48]),
+  /** γ-PGA cross-link maturation time constant [h] (gel sets on an intermediate timescale). */
+  tauMaturePGA: calib(4, 'h', 'ionic gelation sets within hours', 'UCS/rheometry of γ-PGA crust vs cure time; fit τ.', [1, 12]),
+  /** CaCO₃ (MICP) maturation time constant [h] — slow calcite ripening over the full 32 h protocol. */
+  tauMatureCaCO3: calib(11, 'h', 'Study 5: MICP crust matures over the 32 h protocol (~95% by 32 h)', 'UCS of MICP cores vs cure time; fit τ to reach plateau by 32 h.', [6, 20]),
+  /** Alginate maturation time constant [h] — near-instant Ca²⁺ egg-box gelation. */
+  tauMatureAlginate: calib(0.5, 'h', 'alginate gels on contact with Ca²⁺ (seconds–minutes)', 'Time-to-gel of the applied alginate; effectively immediate.', [0.1, 3]),
+  /** γ-PGA field-life half-life [months] — biodegradable polyanion under UV/desiccation/microbial loss. */
+  halfLifePGAMonths: calib(5, 'months', 'biodegradable γ-PGA weathers over months', 'Residual crust cohesion vs field exposure time for a γ-PGA-only plot.', [2, 12]),
+  /** CaCO₃ field-life half-life [months] — calcite is the durable, weather-resistant load-bearer. */
+  halfLifeCaCO3Months: calib(30, 'months', 'calcite cement is durable; slow abrasion/dissolution only', 'Residual UCS of an MICP crust vs field exposure over 1–2 years.', [12, 60]),
+  /** Alginate field-life half-life [months] — soluble, rain-washout limited (shortest). */
+  halfLifeAlginateMonths: calib(3, 'months', 'soluble alginate leaches under wetting cycles (see washoutRatePerCycle)', 'Residual alginate/cohesion vs number of rain events converted to months.', [1, 8]),
+  /** Design survival wind speed the crust must keep withstanding between re-applications [m/s]. */
+  designWindMs: calib(30, 'm/s', 'Study 3: optimised calcite crust survives ~30 m/s (UAE winds 16–20 m/s)', 'Wind-tunnel survival speed of the cured crust; set the design threshold below it.', [15, 40]),
+  /** Protocol re-application interval [months] (the field cadence the timeline is checked against). */
+  reapplyIntervalMonths: calib(6, 'months', 'Study 5: repeat the spray cycle every 6 months', 'Confirm crust still exceeds the survival threshold at the chosen cadence.', [3, 12]),
+} as const;
+
 /** Composite — multi-prong strength combination (rule of mixtures + synergy). */
 export const COMPOSITE_CALIB = {
-  /** Pairwise synergy/interference η_ij in γ_total = Σγᵢ + Σ η_ij·√(γᵢγⱼ). */
-  eta_PGA_CaCO3: calib(0.2, 'dimensionless', 'PGA templates/toughens calcite (synergy)', 'Direct-shear cohesion of 1+2 cores vs sum of singles → η.', [-0.3, 0.6]),
-  eta_PGA_Alginate: calib(-0.1, 'dimensionless', 'shared Ca²⁺ → mild competition', 'Cohesion of 1+3 vs sum of singles → η.', [-0.4, 0.3]),
-  eta_CaCO3_Alginate: calib(0.1, 'dimensionless', 'alginate retains moisture aiding calcite', 'Cohesion of 2+3 vs sum of singles → η.', [-0.3, 0.4]),
+  /**
+   * Pairwise PHYSICOCHEMICAL synergy η_ij in γ_total = Σγᵢ + Σ η_ij·√(γᵢγⱼ).
+   * These now capture ONLY the constructive chemistry (nucleation templating, moisture support);
+   * the antagonistic shared-Ca²⁺ competition is modelled explicitly in interactions.ts and applied
+   * to the contributions before this synergy term, so it is no longer folded into a negative η.
+   */
+  eta_PGA_CaCO3: calib(0.2, 'dimensionless', 'γ-PGA carboxylates template/toughen calcite (Wei 2015; acidic-polymer CaCO₃ nucleation)', 'Direct-shear cohesion of 1+2 cores vs sum of singles → η.', [0, 0.6]),
+  eta_PGA_Alginate: calib(0.05, 'dimensionless', 'both polyanions co-hold moisture (weak synergy); Ca²⁺ competition handled separately', 'Cohesion of 1+3 vs sum of singles → η (with Ca competition removed).', [0, 0.3]),
+  eta_CaCO3_Alginate: calib(0.1, 'dimensionless', 'alginate hydrogel keeps microhabitat damp, sustaining CA precipitation', 'Cohesion of 2+3 vs sum of singles → η.', [0, 0.4]),
+} as const;
+
+/** Inter-prong interactions — shared-resource competition + co-expression burden. */
+export const INTERACTION_CALIB = {
+  /**
+   * Relative Ca²⁺ demand weight of each prong (all three sequester divalent calcium):
+   * γ-PGA carboxylate chelation, calcite precipitation (stoichiometric Ca lock-up), alginate egg-box.
+   */
+  caDemandPGA: calib(1.0, 'mM sites', 'γ-PGA carboxylate–Ca²⁺ chelation demand', 'Ca²⁺-ISE: Ca bound per g γ-PGA.', [0.5, 2]),
+  caDemandCaCO3: calib(2.0, 'mM sites', 'calcite locks 1 mol Ca per mol CaCO₃ (highest sink)', 'Ca²⁺ consumed per unit calcite formed.', [1, 3]),
+  caDemandAlginate: calib(1.2, 'mM sites', 'alginate G-block egg-box Ca²⁺ demand', 'Ca²⁺-ISE: Ca bound per g alginate.', [0.6, 2.5]),
+  /**
+   * Shared soil Ca²⁺ supply [mM] the active prongs partition. Interpreted as a total-Ca pool in the
+   * competitive-binding model (interactions.ts): free + Σ bound. Competition bites when Σ demand ≳ supply.
+   */
+  caSupplyCapacity: calib(2.6, 'mM total Ca²⁺', 'plant-available soil Ca²⁺ + dosed CaCl₂ pool', 'Titrate available Ca²⁺ in treated desert soil.', [1.5, 5]),
+  /**
+   * Effective Ca²⁺ dissociation constants [mM] used to partition the shared pool by affinity
+   * (competitive Langmuir). Calcite is an irreversible sink → modelled as very high affinity, so it
+   * out-competes the reversible polyelectrolyte binders for calcium.
+   */
+  KdCalcite: calib(0.05, 'mM', 'calcite precipitation is an irreversible high-affinity Ca²⁺ sink', 'Effective — set far below the polymer Kd values; not directly titratable.', [0.01, 0.3]),
+  /**
+   * Fraction of each product's single-strain yield retained when γ-PGA synthase AND carbonic
+   * anhydrase are co-expressed in the same B. subtilis (shared carbon/ATP/amino-acid budget).
+   */
+  coexpressionBurden: calib(0.78, 'fraction retained', 'metabolic burden of dual heterologous expression (Ceroni 2015; Borkowski 2016)', 'Compare γ-PGA & CA titres in single vs dual-expression strains.', [0.5, 0.95]),
+} as const;
+
+/** Economic scalability — per-prong deployment cost bases (field-scale). */
+export const ECONOMIC_CALIB = {
+  // --- Prong 1: γ-PGA fermentation ---
+  glucoseCostPerKg: calib(0.40, 'USD·kg⁻¹', 'bulk dextrose feedstock', 'Quote from feedstock supplier at project scale.', [0.2, 1.0]),
+  mediaSaltsCostPerL: calib(0.08, 'USD·L⁻¹', 'nitrogen/mineral salts per L broth', 'Cost the defined medium recipe per litre.', [0.02, 0.25]),
+  utilitiesCostPerL: calib(0.04, 'USD·L⁻¹', 'water + aeration + power per L', 'Meter reactor utilities per batch.', [0.01, 0.15]),
+  glucoseMassFractionInMedia: calib(0.03, 'fraction', '~3 %w/v glucose fermentation', 'Set by the actual medium formulation.', [0.01, 0.08]),
+  // --- Prong 2: CaCO₃ (MICP via carbonic anhydrase) ---
+  calciumSourceCostPerKg: calib(0.15, 'USD·kg⁻¹ CaCl₂', 'bulk calcium chloride', 'Quote calcium feedstock; CaCl₂ vs Ca(OH)₂.', [0.08, 0.5]),
+  caReagentCostPerHa: calib(650, 'USD·ha⁻¹', 'enzyme induction + Ca dosing per hectare', 'Cost calcium + inducer dosing for one treated hectare.', [200, 1500]),
+  co2CreditPerKg: calib(0.05, 'USD·kg⁻¹ CO₂', 'voluntary carbon market (low)', 'Use the applicable carbon-credit price.', [0.0, 0.2]),
+  // --- Prong 3: sodium alginate (purchased commodity) ---
+  alginateCostPerKg: calib(9.0, 'USD·kg⁻¹', 'food/technical-grade sodium alginate', 'Quote alginate + CaCl₂ crosslinker per kg applied.', [4, 20]),
+  alginateDoseKgPerHa: calib(400, 'kg·ha⁻¹', '2 %w/v over a thin applied layer', 'Set by applied %w/v and layer depth.', [100, 1200]),
+  // --- Shared field operations & conventional baselines ---
+  bacterialSetupCapex: calib(25000, 'USD', 'pilot fermentation / enzyme-production setup', 'Estimate the one-time bioprocess infrastructure cost at deployment scale.', [5000, 100000]),
+  fieldApplicationCostPerHa: calib(180, 'USD·ha⁻¹', 'spray rig + labour per hectare', 'Cost the spray application pass per hectare.', [80, 400]),
+  chemicalSprayCostPerHa: calib(2800, 'USD·ha⁻¹', 'petrochemical dust-suppressant', 'Vendor quote for conventional chemical stabiliser.', [1500, 4000]),
+  concreteBlanketCostPerHa: calib(18500, 'USD·ha⁻¹', 'hard-engineering blanket', 'Contractor quote for concrete/aggregate matting.', [10000, 30000]),
 } as const;
 
 /** Convenience: every calibration group, for UI provenance panels and audits. */
@@ -154,7 +286,11 @@ export const CALIBRATION = {
   AEOLIAN: AEOLIAN_CALIB,
   CACO3: CACO3_CALIB,
   ALGINATE: ALGINATE_CALIB,
+  GRAINSIZE: GRAINSIZE_CALIB,
+  CURING: CURING_CALIB,
   COMPOSITE: COMPOSITE_CALIB,
+  INTERACTION: INTERACTION_CALIB,
+  ECONOMIC: ECONOMIC_CALIB,
 } as const;
 
 /** Helper: pull just the numeric value of a calibration entry. */

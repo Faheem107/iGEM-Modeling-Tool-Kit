@@ -9,8 +9,9 @@ import {
   Trash2, 
   Palette, 
   Eye, 
-  Info 
+  Info
 } from 'lucide-react';
+import { ShowMathToggle } from './simulation/_shared';
 
 // Vector 3D math utility interfaces and helpers
 interface Vector3 {
@@ -973,6 +974,7 @@ export default function HighFidelityProteinExplorer({ isLightMode = false }: { i
 
   return (
     <div className={isLightMode ? 'bg-white p-6 rounded-xl border border-slate-200 text-slate-900 shadow-xl relative' : 'bg-[#0b1324] p-6 rounded-xl border border-slate-900 text-slate-100 shadow-2xl relative'} id="hifi-protein-sandbox">
+      <div className="mb-5"><ShowMathToggle moduleId="protein-3d" isLightMode={isLightMode} /></div>
           {/* Dynamic Header */}
       <div className={`flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b ${isLightMode ? 'border-slate-200' : 'border-slate-800'}`}>
         <div>
@@ -1047,7 +1049,7 @@ export default function HighFidelityProteinExplorer({ isLightMode = false }: { i
               {/* Watermark sign */}
               <div className={`absolute bottom-3 right-3 p-2 py-1.5 rounded border text-[10px] font-mono flex items-center gap-1.5 pointer-events-none shadow ${isLightMode ? 'bg-white/95 border-slate-200 text-indigo-700 shadow-sm font-semibold' : 'bg-[#0a0f18]/90 border-slate-800/80 text-indigo-400'}`}>
                 <Sparkles className="w-3.5 h-3.5 text-indigo-455 animate-pulse" />
-                <span>3D Spline Ribbon Engine</span>
+                <span>3D Ribbon View</span>
               </div>
             </div>
 

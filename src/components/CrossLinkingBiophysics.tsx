@@ -1,7 +1,9 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { BiophysicsParams } from '../types';
 import { solveCrossLink } from '../lib/physics';
+import { ShowMathToggle } from './simulation/_shared';
 import { Layers, Thermometer, Sun, Moon, Sparkles, SlidersHorizontal, Info, Link2, HelpCircle } from 'lucide-react';
+import GlossaryTerm from './GlossaryTerm';
 
 interface CrossLinkingProps {
   params: BiophysicsParams;
@@ -328,7 +330,9 @@ export default function CrossLinkingBiophysics({
         ? 'bg-[#fdfaf3] border-amber-900/10 shadow-[0_4px_24px_rgba(139,94,26,0.06)]' 
         : 'bg-[#06080d] border-slate-800 shadow-xl'
     }`} id="crosslinking-biophysics-panel">
-      
+
+      <div className="lg:col-span-12"><ShowMathToggle moduleId="crosslink" isLightMode={isLightMode} /></div>
+
       {/* Parameter Controls Panel */}
       <div className={`lg:col-span-12 xl:col-span-5 p-5 rounded-xl border transition-colors duration-300 ${isLightMode ? 'bg-white border-amber-900/10' : 'bg-[#0a0f18] border-slate-800/80'} space-y-5 flex flex-col justify-between`}>
         
@@ -337,7 +341,7 @@ export default function CrossLinkingBiophysics({
           <div className={`flex justify-between items-center pb-3 border-b ${isLightMode ? 'border-amber-905_10' : 'border-slate-800'}`}>
             <h3 className={`text-xs font-black uppercase tracking-wider flex items-center gap-2 font-mono ${isLightMode ? 'text-amber-950' : 'text-slate-100'}`}>
               <Layers className={`w-5 h-5 ${isLightMode ? 'text-cyan-600' : 'text-cyan-400'}`} />
-              Bio-cementation Cross-Link Settings
+              Bio-cementation <GlossaryTerm term="cross-linking">Cross-Link</GlossaryTerm> Settings
             </h3>
             <div className={`flex gap-1.5 p-1 rounded border ${isLightMode ? 'bg-amber-50/50 border-amber-900/10' : 'bg-[#06080d] border-slate-800'}`}>
               <button 
@@ -538,7 +542,7 @@ export default function CrossLinkingBiophysics({
               isLightMode ? 'bg-[#fcfaf4] border border-amber-900/10' : 'bg-[#05070c] border border-slate-850 shadow'
             }`}>
               <div>
-                <span className={`text-[9px] font-black tracking-wider block uppercase mb-3 ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>Lattice Telemetry</span>
+                <span className={`text-[9px] font-black tracking-wider block uppercase mb-3 ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>Live Gel Readout</span>
                 
                 <div className="space-y-4">
                   <div>
