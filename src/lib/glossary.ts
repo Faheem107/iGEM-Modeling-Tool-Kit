@@ -352,6 +352,24 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
       'Locking carbon dioxide into solid mineral (calcium carbonate) so it is captured rather than released — a climate co-benefit of the cementing pathway.',
     category: 'Sustainability',
   },
+  'maze-mazf': {
+    title: 'MazE/MazF Kill-Switch',
+    plain:
+      'A toxin–antitoxin safety system. MazF is a toxin that shreds the cell’s RNA; MazE is the short-lived antitoxin that neutralises it. While the engineered bacteria stay in place they keep making antitoxin, but as the plasmid dilutes out over generations (or conditions change), the toxin wins and the cells self-limit — stopping overspread and gene transfer to wild microbes.',
+    category: 'Biosafety',
+  },
+  'prong-interaction': {
+    title: 'Inter-Prong Interaction',
+    plain:
+      'The prongs are not independent. Combined, they interact: all three compete for the same soil calcium, γ-PGA and carbonic anhydrase compete for the same cell’s energy budget when co-expressed, and some pairs help each other (γ-PGA seeds calcite; alginate keeps things damp). The model accounts for both the competition and the cooperation.',
+    category: 'Systems',
+  },
+  'chemical-spray': {
+    title: 'Chemical Dust Suppressant',
+    plain:
+      'The conventional way to hold down dust: spraying petrochemical polymers or salts over the ground. It works, but it is costly per hectare, needs re-applying, and is not biodegradable — the baseline our biological approach is measured against.',
+    category: 'Economics',
+  },
   dic: {
     title: 'Dissolved Inorganic Carbon (DIC)',
     plain:
@@ -424,6 +442,124 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
       'Adding the starter bacterial culture to the sand or medium. The pattern (center, corners, random) sets where growth begins in the spread simulation.',
     category: 'Wet Lab',
   },
+  anaplerosis: {
+    title: 'Anaplerosis',
+    plain:
+      'The cell\'s "top-up" reactions (like pyruvate carboxylase) that refill central metabolism when γ-PGA production siphons off building blocks — so the engine doesn\'t stall while making product.',
+    category: 'Metabolic Modeling',
+  },
+  oxaloacetate: {
+    title: 'Oxaloacetate',
+    plain:
+      'A hub molecule of the TCA cycle. Making γ-PGA drains it, so the model adds a top-up (anaplerotic) reaction to keep it from running dry.',
+    category: 'Metabolic Modeling',
+  },
+  gdcw: {
+    title: 'gDCW (grams dry cell weight)',
+    plain:
+      'How much bacteria you have once the water is removed. Metabolic rates are quoted "per gram dry cell weight per hour" so they don\'t depend on culture volume.',
+    category: 'Metabolic Modeling',
+  },
+  aerobiosis: {
+    title: 'Aerobiosis',
+    plain:
+      'Growing with oxygen. The oxygen-uptake ceiling sets how much the cell can respire; starve it of O₂ and it switches to less-efficient fermentation.',
+    category: 'Metabolic Modeling',
+  },
+  fermentation: {
+    title: 'Fermentation',
+    plain:
+      'Energy metabolism without enough oxygen. It wastes carbon by dumping overflow by-products like acetate instead of routing it to growth or product.',
+    category: 'Metabolic Modeling',
+  },
+  'stoichiometric-matrix': {
+    title: 'Stoichiometric Matrix (S)',
+    plain:
+      'The table of how every reaction consumes and produces each metabolite. FBA enforces S·v = 0 (mass balance), so at steady state nothing piles up inside the cell.',
+    category: 'Metabolic Modeling',
+  },
+  'constraint-based': {
+    title: 'Constraint-Based Modelling',
+    plain:
+      'Predicting cell behaviour without knowing every reaction speed — you just set bounds on each reaction and find the best flux pattern allowed. FBA is the classic example.',
+    category: 'Metabolic Modeling',
+  },
+  'tca-cycle': {
+    title: 'TCA Cycle',
+    plain:
+      'The tricarboxylic-acid (Krebs) cycle — central metabolism\'s hub that burns carbon for energy and hands out building blocks for growth and products.',
+    category: 'Metabolic Modeling',
+  },
+  chemostat: {
+    title: 'Chemostat',
+    plain:
+      'A continuous culture kept at steady state by constant feed and outflow. Running it at several feed rates lets the lab measure constants like maintenance energy.',
+    category: 'Wet Lab',
+  },
+  simplex: {
+    title: 'Simplex Method',
+    plain:
+      'The classic algorithm for solving linear programs exactly. The FBA here uses a two-phase primal simplex to find the optimal flux vector.',
+    category: 'Metabolic Modeling',
+  },
+  vaterite: {
+    title: 'Vaterite',
+    plain:
+      'A less-stable crystal form of calcium carbonate that often precipitates first in microbial systems before slowly converting to calcite. Desert MICP frequently makes vaterite.',
+    category: 'Material Science',
+  },
+  guluronate: {
+    title: 'Guluronate (G-blocks)',
+    plain:
+      'One of the two sugar blocks in alginate. Long stretches of G-blocks are what grab calcium and zip the chains into the rigid "egg-box" gel.',
+    category: 'Material Science',
+  },
+  supersaturation: {
+    title: 'Supersaturation (Ω)',
+    plain:
+      'When water holds more dissolved mineral than it can keep in solution (Ω > 1), crystals start to form. It is the driving force for CaCO₃ precipitation.',
+    category: 'Material Science',
+  },
+  langmuir: {
+    title: 'Langmuir Binding',
+    plain:
+      'A simple saturating-binding model: sites fill up as you add more of something, then level off. Used here for calcium binding to γ-PGA and alginate.',
+    category: 'Material Science',
+  },
+  'grain-size-distribution': {
+    title: 'Grain-Size Distribution',
+    plain:
+      'Sand is a mix of grain sizes, not one. UAE dune sand is mostly 100–300 µm (median ≈ 200 µm). This matters because no single binder grips every size — calcite cements fine-medium grains best, so we track how much of the whole size distribution is actually held.',
+    category: 'Aeolian Physics',
+    module: 'Grain-Size Coverage',
+  },
+  'grain-size-coverage': {
+    title: 'Grain-Size Coverage',
+    plain:
+      'The fraction of the sand\'s mass that is actually bound once you account for every grain size. MICP (CaCO₃) works best at 63–125 µm; γ-PGA and alginate close the coarse and fine gaps it misses, so together the three prongs cover far more of the size range than any one alone.',
+    category: 'Aeolian Physics',
+    module: 'Grain-Size Coverage',
+  },
+  curing: {
+    title: 'Curing (Maturation)',
+    plain:
+      'The time the sprayed crust needs to reach full strength. The protocol sprays at 0, 8, 16, 24 and 32 hours to keep the biofilm hydrated; it is "fully mature" at 32 h. Alginate gels instantly, γ-PGA sets within hours, and the calcite cement ripens slowly over the whole 32 h.',
+    category: 'Deployment',
+    module: 'Curing & Deployment Timeline',
+  },
+  reapplication: {
+    title: 'Re-application',
+    plain:
+      'The crust slowly weathers, so the spray cycle is repeated about every 6 months. In the model, re-application is "due" when the surviving cohesion drops below the level needed to withstand the design wind. A durable calcite floor stretches this interval.',
+    category: 'Deployment',
+    module: 'Curing & Deployment Timeline',
+  },
+  'ostwald-ripening': {
+    title: 'Ostwald Ripening',
+    plain:
+      'When a less-stable crystal (like vaterite) slowly re-dissolves and re-grows as the more stable form (calcite). It is why a vaterite-rich crust stiffens over time as the vaterite converts to stronger calcite.',
+    category: 'Material Science',
+  },
 };
 
 /** Alternate spellings / keys used in code, routed to a canonical GLOSSARY key. */
@@ -450,6 +586,18 @@ export const ALIASES: Record<string, string> = {
   'u*t': 'threshold-velocity',
   'δpta': 'acetate-overflow',
   pta: 'acetate-overflow',
+  'overflow metabolism': 'acetate-overflow',
+  'acetate overflow': 'acetate-overflow',
+  tca: 'tca-cycle',
+  'tca cycle': 'tca-cycle',
+  'krebs cycle': 'tca-cycle',
+  'g-blocks': 'guluronate',
+  'g blocks': 'guluronate',
+  'egg-box': 'egg-box',
+  'dry cell weight': 'gdcw',
+  'constraint based': 'constraint-based',
+  'stoichiometric matrix': 'stoichiometric-matrix',
+  'primal simplex': 'simplex',
 };
 
 /** Normalize a lookup key: lowercase, collapse whitespace, trim symbols we route on. */
@@ -468,4 +616,28 @@ export function lookupTerm(key: string): { id: string; entry: GlossaryEntry } | 
   const aliased = ALIASES[n] || ALIASES[slug];
   if (aliased && GLOSSARY[aliased]) return { id: aliased, entry: GLOSSARY[aliased] };
   return undefined;
+}
+
+/**
+ * Linkable phrases for auto-underlining dense prose (see <GlossaryText>). Drawn from aliases,
+ * entry titles, and slugs; each maps to its canonical id, sorted longest-first so multi-word
+ * phrases win over their substrings.
+ */
+export function glossaryPhrases(): { phrase: string; key: string }[] {
+  const seen = new Map<string, { phrase: string; key: string }>();
+  const add = (phrase: string, key: string) => {
+    const p = phrase.trim();
+    const l = p.toLowerCase();
+    // ≥3 chars so we don't linkify noise; keep first (there may be dup phrases).
+    if (p.length >= 3 && !seen.has(l)) seen.set(l, { phrase: p, key });
+  };
+  for (const [alias, canon] of Object.entries(ALIASES)) add(alias, canon);
+  for (const [id, entry] of Object.entries(GLOSSARY)) {
+    add(id.replace(/-/g, ' '), id);
+    const title = entry.title.replace(/\s*\([^)]*\)\s*/g, ' ').trim();
+    add(title, id);
+    const paren = entry.title.match(/\(([^)]+)\)/);
+    if (paren) add(paren[1], id);
+  }
+  return [...seen.values()].sort((a, b) => b.phrase.length - a.phrase.length);
 }

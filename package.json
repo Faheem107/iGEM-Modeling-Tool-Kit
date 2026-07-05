@@ -48,6 +48,7 @@
     "embla-carousel-react": "8.5.1",
     "geist": "latest",
     "input-otp": "1.4.1",
+    "katex": "^0.16.47",
     "lucide-react": "^0.546.0",
     "motion": "^12.23.24",
     "next": "15.5.18",
@@ -66,6 +67,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.9",
+    "@types/katex": "^0.16.8",
     "@types/node": "^22.14.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

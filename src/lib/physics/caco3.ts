@@ -90,6 +90,7 @@ export interface PrecipitationStep {
   caMolar: number;       // mol/L dissolved Ca²⁺
   co3Molar: number;      // mol/L carbonate ion
   accMolar: number;      // mol/L amorphous CaCO₃
+  vateriteMolar: number; // mol/L metastable vaterite
   calciteMolar: number;  // mol/L crystalline calcite
   SIcalcite: number;     // saturation index wrt calcite
   omegaACC: number;      // saturation ratio wrt ACC
@@ -99,8 +100,18 @@ export interface PrecipitationResult {
   series: PrecipitationStep[];
   /** Final calcite [mol/L]. */
   calciteMolar: number;
+  /** Final metastable vaterite [mol/L]. */
+  vateriteMolar: number;
   /** Final calcite content [wt% of sand]. */
   calciteWtPercent: number;
+  /** Final vaterite content [wt% of sand]. */
+  vateriteWtPercent: number;
+  /** Total crystalline + amorphous carbonate content [wt% of sand]. */
+  carbonateWtPercent: number;
+  /** Strength-weighted "effective calcite" wt% that drives UCS (vaterite counts at a reduced factor). */
+  loadBearingWtPercent: number;
+  /** Vaterite as a fraction of total crystalline carbonate (0–1) — the polymorph purity readout. */
+  vateriteFraction: number;
   /** Unconfined compressive strength [kPa]. */
   ucsKpa: number;
   /** CO₂ sequestered [g per litre solution]. */
@@ -108,8 +119,12 @@ export interface PrecipitationResult {
 }
 
 /**
- * Two-step ACC→calcite precipitation kinetics (TST surface reaction + first-order ripening),
- * integrated explicitly. CA activity raises the quasi-equilibrium DIC, hence [CO₃²⁻] and Ω.
+ * Three-phase ACC → vaterite → calcite precipitation kinetics, integrated explicitly.
+ * Non-ureolytic carbonic-anhydrase MICP is dominated by CO₂ hydration and typically crystallises
+ * a large fraction of METASTABLE VATERITE (Research Table, Prong 2) that only slowly recrystallises
+ * to calcite (solution-mediated Ostwald ripening). Vaterite is softer and more soluble, so the crust
+ * is weaker while vaterite-rich and stiffens as it converts. CA activity raises the quasi-equilibrium
+ * DIC, hence [CO₃²⁻] and Ω.
  */
 export function simulatePrecipitation(inp: PrecipitationInputs): PrecipitationResult {
   const hours = inp.hours ?? 48;
@@ -121,6 +136,9 @@ export function simulatePrecipitation(inp: PrecipitationInputs): PrecipitationRe
   const pKspACC = cval(CACO3_CALIB.pKspACC);
   const kPrecip = cval(CACO3_CALIB.kPrecip);
   const kRipen = cval(CACO3_CALIB.kAccToCalcite);
+  const fVaterite = cval(CACO3_CALIB.vateriteFraction);         // ACC ripens mostly to vaterite in CA-MICP
+  const kVatToCal = cval(CACO3_CALIB.kVateriteToCalcite);       // slow vaterite → calcite recrystallisation
+  const vatStrength = cval(CACO3_CALIB.vateriteStrengthFactor); // vaterite load-bearing vs calcite
 
   const pH = Math.max(8.5, Math.min(10.5, inp.pH));
   const { alpha2 } = carbonateSpeciation(pH);
@@ -132,6 +150,7 @@ export function simulatePrecipitation(inp: PrecipitationInputs): PrecipitationRe
   let ca = inp.calciumMillimolar / 1000; // mol/L
   let dic = 0;
   let acc = 0;
+  let vaterite = 0;
   let calcite = 0;
 
   const series: PrecipitationStep[] = [];
@@ -142,7 +161,7 @@ export function simulatePrecipitation(inp: PrecipitationInputs): PrecipitationRe
     const omegaACC = saturationRatio(ca, co3, pKspACC);
     const SIcalcite = omegaCal > 0 ? Math.log10(omegaCal) : -Infinity;
 
-    series.push({ time: i * dt, caMolar: ca, co3Molar: co3, accMolar: acc, calciteMolar: calcite, SIcalcite, omegaACC });
+    series.push({ time: i * dt, caMolar: ca, co3Molar: co3, accMolar: acc, vateriteMolar: vaterite, calciteMolar: calcite, SIcalcite, omegaACC });
 
     // CA-driven DIC supply (first-order relaxation to the activity-set target).
     const dDic = kDic * (dicTargetM - dic);
@@ -150,24 +169,37 @@ export function simulatePrecipitation(inp: PrecipitationInputs): PrecipitationRe
     // ACC precipitation when supersaturated wrt the amorphous phase (TST: rate ∝ Ω−1).
     const accDrive = Math.max(0, omegaACC - 1);
     const rAccPrecip = Math.min(kPrecip * accDrive, ca / dt, dic / dt); // can't exceed available ions
-    // ACC ripens to calcite (first order); ripening conserves Ca/DIC already in the solid.
+    // ACC ripens (first order); in CA-MICP it splits into mostly vaterite + some direct calcite.
     const rRipen = kRipen * acc;
+    // Metastable vaterite slowly recrystallises to calcite (solution-mediated, first order).
+    const rVatToCal = kVatToCal * vaterite;
 
     ca = Math.max(0, ca - rAccPrecip * dt);
     dic = Math.max(0, dic + (dDic - rAccPrecip) * dt);
     acc = Math.max(0, acc + (rAccPrecip - rRipen) * dt);
-    calcite = Math.max(0, calcite + rRipen * dt);
+    vaterite = Math.max(0, vaterite + (rRipen * fVaterite - rVatToCal) * dt);
+    calcite = Math.max(0, calcite + (rRipen * (1 - fVaterite) + rVatToCal) * dt);
   }
 
-  const calciteMassGPerL = calcite * MOLAR_MASS.CaCO3; // g/L
-  const calciteWtPercent = (calciteMassGPerL / sandMass) * 100;
-  const ucsKpa = calciteToUCS(calciteWtPercent);
-  const co2SequesteredGPerL = (calcite + acc) * MOLAR_MASS.CO2; // 1 mol CaCO₃ fixes 1 mol CO₂
+  const gPerL = (mol: number) => mol * MOLAR_MASS.CaCO3;
+  const calciteWtPercent = (gPerL(calcite) / sandMass) * 100;
+  const vateriteWtPercent = (gPerL(vaterite) / sandMass) * 100;
+  const carbonateWtPercent = (gPerL(calcite + vaterite + acc) / sandMass) * 100;
+  // Vaterite bears load at a reduced factor until it converts — this is what drives UCS.
+  const loadBearingWtPercent = calciteWtPercent + vatStrength * vateriteWtPercent;
+  const crystalline = calcite + vaterite;
+  const vateriteFraction = crystalline > 0 ? vaterite / crystalline : 0;
+  const ucsKpa = calciteToUCS(loadBearingWtPercent);
+  const co2SequesteredGPerL = (calcite + vaterite + acc) * MOLAR_MASS.CO2; // 1 mol CaCO₃ fixes 1 mol CO₂
 
-  return { series, calciteMolar: calcite, calciteWtPercent, ucsKpa, co2SequesteredGPerL };
+  return {
+    series, calciteMolar: calcite, vateriteMolar: vaterite,
+    calciteWtPercent, vateriteWtPercent, carbonateWtPercent, loadBearingWtPercent, vateriteFraction,
+    ucsKpa, co2SequesteredGPerL,
+  };
 }
 
-/** Empirical biocement strength curve: UCS = kUcs · (calcite wt%)^nUcs  [kPa]. */
+/** Empirical biocement strength curve: UCS = kUcs · (load-bearing carbonate wt%)^nUcs  [kPa]. */
 export function calciteToUCS(calciteWtPercent: number): number {
   if (calciteWtPercent <= 0) return 0;
   return cval(CACO3_CALIB.kUcs) * Math.pow(calciteWtPercent, cval(CACO3_CALIB.nUcs));

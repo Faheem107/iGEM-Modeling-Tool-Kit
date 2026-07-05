@@ -10,7 +10,7 @@
 import type { LucideIcon } from 'lucide-react';
 import {
   Sparkles, Layers, ShieldCheck, Workflow, Dna, FlaskConical, Atom, Wind, Bug,
-  Coins, Thermometer, Globe, Combine, Droplets, Beaker,
+  Coins, Thermometer, Globe, Combine, Droplets, Beaker, Ruler, CalendarClock,
 } from 'lucide-react';
 import type { ProngId } from './physics';
 
@@ -38,9 +38,9 @@ export const PRONGS: Record<ProngId, ProngMeta> = {
 export const ALL_PRONGS: ProngId[] = [1, 2, 3];
 
 /** Module scales, ordered micro → macro → synthesis. */
-export type ModuleScale = 'genetic' | 'molecular' | 'protein' | 'material' | 'ecology' | 'macro' | 'synthesis' | 'economic';
+export type ModuleScale = 'genetic' | 'molecular' | 'protein' | 'material' | 'ecology' | 'macro' | 'synthesis' | 'deployment' | 'economic';
 const SCALE_ORDER: Record<ModuleScale, number> = {
-  genetic: 1, molecular: 2, protein: 3, material: 4, ecology: 5, macro: 6, synthesis: 7, economic: 8,
+  genetic: 1, molecular: 2, protein: 3, material: 4, ecology: 5, macro: 6, synthesis: 7, deployment: 8, economic: 9,
 };
 
 export type ModuleId =
@@ -48,7 +48,7 @@ export type ModuleId =
   | 'caco3' | 'ca-anchoring'
   | 'alginate'
   | 'thermal' | 'protein-3d'
-  | 'ecological' | 'aeolian' | 'wetlab' | 'composite' | 'economic';
+  | 'ecological' | 'aeolian' | 'wetlab' | 'grainsize' | 'composite' | 'curing' | 'economic';
 
 export interface ModuleMeta {
   id: ModuleId;
@@ -79,10 +79,19 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
   { id: 'alginate', title: 'Alginate Egg-Box Gel', blurb: 'Ca²⁺ egg-box gelation, moisture retention, and rain washout durability.', scale: 'material', icon: Droplets, appliesTo: (s) => has(s, 3) },
   { id: 'thermal', title: 'Protein Thermal Stability', blurb: 'Two-state folding thermodynamics gating enzyme/scaffold viability.', scale: 'protein', icon: Thermometer, appliesTo: anyBacterial },
   { id: 'protein-3d', title: '3D Protein Explorer', blurb: 'Structural view of PgsBCA (Prong 1) or Carbonic Anhydrase (Prong 2).', scale: 'protein', icon: Globe, appliesTo: anyBacterial },
-  { id: 'ecological', title: 'Ecological Spread & Kill Switch', blurb: 'Reaction-diffusion colony growth with biocontainment.', scale: 'ecology', icon: Bug, appliesTo: anyBacterial },
-  { id: 'aeolian', title: 'Aeolian Wind Tunnel', blurb: 'Bagnold threshold + saltation flux driven by the combined cohesion.', scale: 'macro', icon: Wind, appliesTo: (s) => s.length > 0 },
-  { id: 'wetlab', title: 'Wet-Lab Sandbox', blurb: 'Feed real lab parameters (OD600, glutamate, salinity) into a 2D dune-erosion assay.', scale: 'macro', icon: Beaker, appliesTo: anyBacterial },
+  { id: 'ecological', title: 'Ecological Spread & Kill Switch', blurb: 'Reaction-diffusion colony growth with MazE/MazF biocontainment — any engineered B. subtilis prong.', scale: 'ecology', icon: Bug, appliesTo: anyBacterial },
+  { id: 'aeolian', title: 'Aeolian Wind Tunnel', blurb: 'Bagnold threshold + saltation flux driven by the combined crust cohesion (all prongs).', scale: 'macro', icon: Wind, appliesTo: (s) => s.length > 0 },
+  // The bench assay is glutamate substrate → γ-PGA yield → dune crust — a Prong-1 protocol.
+  { id: 'wetlab', title: 'Wet-Lab Sandbox (γ-PGA)', blurb: 'Feed real γ-PGA lab parameters (OD600, glutamate, salinity) into a 2D dune-erosion assay.', scale: 'macro', icon: Beaker, appliesTo: (s) => has(s, 1) },
+  // Grain-size coverage: how the active binder(s) hold the UAE dune-sand size distribution.
+  // Useful for a single prong (shows its grain-size gap) and decisive for combinations (the prongs
+  // are grain-size complementary — the "cover all sizes" thesis).
+  { id: 'grainsize', title: 'Grain-Size Coverage', blurb: 'How the binders cover the UAE dune-sand grain-size distribution — MICP\'s 63–125 µm sweet spot vs the coarse/fine gaps γ-PGA and alginate close.', scale: 'macro', icon: Ruler, appliesTo: (s) => s.length > 0 },
   { id: 'composite', title: 'Composite Strength Synthesis', blurb: 'Multi-prong cohesion combination + failure-mode robustness.', scale: 'synthesis', icon: Combine, appliesTo: (s) => s.length >= 2 },
+  // Curing/deployment timeline: how the crust matures over the 0/8/16/24/32 h spray protocol and
+  // weathers until re-application. Universal (a single prong shows its own life), but the multi-prong
+  // early-strength + durability trade-off is the point.
+  { id: 'curing', title: 'Curing & Deployment Timeline', blurb: 'Maturation over the 32 h spray protocol → months-scale weathering → re-application cadence. Fast-setting polymers buy early strength; the calcite floor buys longevity.', scale: 'deployment', icon: CalendarClock, appliesTo: (s) => s.length > 0 },
   { id: 'economic', title: 'Economic Scalability', blurb: 'Per-prong cost basis and break-even vs conventional stabilizers.', scale: 'economic', icon: Coins, appliesTo: (s) => s.length > 0 },
 ];
 

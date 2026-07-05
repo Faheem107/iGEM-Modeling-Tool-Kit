@@ -11,24 +11,29 @@ import {
   CartesianGrid, Tooltip, ReferenceLine, ReferenceDot, Legend,
 } from 'recharts';
 import { Atom, Layers, Wind as WindIcon, Leaf } from 'lucide-react';
+import GlossaryTerm from '../../GlossaryTerm';
 import type { Caco3Params } from '../../../types';
 import {
   carbonateSpeciation, simulatePrecipitation, caActivityFraction, calciteToUCS, saturationIndex,
   CACO3_CALIB, cval,
 } from '../../../lib/physics';
-import { ModuleShell, Panel, Slider, StatCard, MathDisclosure, chartColors, tooltipStyle, Themed } from '../_shared';
+import { ModuleShell, Panel, Slider, StatCard, ShowMathToggle, chartColors, tooltipStyle, Themed } from '../_shared';
 
 interface Props extends Themed {
   onUpdate?: (out: { ucs: number; calcitePct: number; co2: number }) => void;
+  /** Fraction of functional CA actually displayed on the cell wall (from the anchoring module). */
+  displayEfficiency?: number;
 }
 
 const DEFAULTS: Caco3Params = { calcium: 25, dicMax: 30, pH: 9.5, caEnhancement: 0.6 };
 
-export default function Caco3PrecipitationModule({ isLightMode, onUpdate }: Props) {
+export default function Caco3PrecipitationModule({ isLightMode, onUpdate, displayEfficiency = 1 }: Props) {
   const [p, setP] = useState<Caco3Params>(DEFAULTS);
   const c = chartColors(isLightMode);
 
-  const caActivity = useMemo(() => caActivityFraction(p.caEnhancement), [p.caEnhancement]);
+  // Realised activity = intrinsic CO₂-hydration enhancement × the fraction of enzyme actually
+  // displayed on the surface (fed from the anchoring module when both are active).
+  const caActivity = useMemo(() => caActivityFraction(p.caEnhancement) * Math.max(0, Math.min(1, displayEfficiency)), [p.caEnhancement, displayEfficiency]);
 
   const result = useMemo(() => simulatePrecipitation({
     calciumMillimolar: p.calcium, dicMaxMillimolar: p.dicMax, pH: p.pH, caActivity, hours: 48, dt: 0.5,
@@ -50,7 +55,7 @@ export default function Caco3PrecipitationModule({ isLightMode, onUpdate }: Prop
 
   const kinetics = useMemo(() => result.series
     .filter((_, i) => i % 2 === 0)
-    .map((s) => ({ t: +s.time.toFixed(1), Ca: +(s.caMolar * 1000).toFixed(2), ACC: +(s.accMolar * 1000).toFixed(2), Calcite: +(s.calciteMolar * 1000).toFixed(2) })),
+    .map((s) => ({ t: +s.time.toFixed(1), Ca: +(s.caMolar * 1000).toFixed(2), ACC: +(s.accMolar * 1000).toFixed(2), Vaterite: +(s.vateriteMolar * 1000).toFixed(2), Calcite: +(s.calciteMolar * 1000).toFixed(2) })),
   [result.series]);
 
   const ucsCurve = useMemo(() => {
@@ -83,24 +88,19 @@ export default function Caco3PrecipitationModule({ isLightMode, onUpdate }: Prop
       </Panel>
 
       <div className="grid grid-cols-2 gap-3">
-        <StatCard isLightMode={isLightMode} label="Calcite content" value={result.calciteWtPercent.toFixed(2)} unit="wt%" accent={isLightMode ? 'text-emerald-700' : 'text-emerald-400'} />
+        <StatCard isLightMode={isLightMode} label="Carbonate content" value={result.carbonateWtPercent.toFixed(2)} unit="wt%" accent={isLightMode ? 'text-emerald-700' : 'text-emerald-400'} sub={`${(result.vateriteFraction * 100).toFixed(0)}% vaterite → calcite`} />
         <StatCard isLightMode={isLightMode} label="Saturation index" value={finalSI <= -99 ? '—' : finalSI.toFixed(2)} unit="SI" accent={finalSI > 0 ? (isLightMode ? 'text-emerald-700' : 'text-emerald-400') : (isLightMode ? 'text-rose-600' : 'text-rose-400')} sub={finalSI > 0 ? 'supersaturated → precipitates' : 'undersaturated'} />
-        <StatCard isLightMode={isLightMode} label="Unconfined Compressive Strength" value={(result.ucsKpa / 1000).toFixed(2)} unit="MPa" emphasize accent={isLightMode ? 'text-amber-700' : 'text-amber-400'} sub={`${result.ucsKpa.toFixed(0)} kPa biocement`} />
-        <StatCard isLightMode={isLightMode} label="CO₂ sequestered" value={result.co2SequesteredGPerL.toFixed(2)} unit="g/L" accent={isLightMode ? 'text-teal-700' : 'text-teal-400'} sub="net-negative, no ammonia" />
+        <StatCard isLightMode={isLightMode} label={<GlossaryTerm term="ucs">Unconfined Compressive Strength</GlossaryTerm>} value={(result.ucsKpa / 1000).toFixed(2)} unit="MPa" emphasize accent={isLightMode ? 'text-amber-700' : 'text-amber-400'} sub={`${result.ucsKpa.toFixed(0)} kPa biocement`} />
+        <StatCard isLightMode={isLightMode} label={<GlossaryTerm term="co2-sequestration">CO₂ sequestered</GlossaryTerm>} value={result.co2SequesteredGPerL.toFixed(2)} unit="g/L" accent={isLightMode ? 'text-teal-700' : 'text-teal-400'} sub="net-negative, no ammonia" />
       </div>
 
-      <MathDisclosure isLightMode={isLightMode}>
-        <p>Speciation: α₂ = K₁K₂ / (H² + K₁H + K₁K₂), [CO₃²⁻] = α₂·DIC</p>
-        <p className="mt-1">Ω = [Ca²⁺][CO₃²⁻]/Ksp ,&nbsp; SI = log₁₀Ω</p>
-        <p className="mt-1">aqueous → <b>ACC</b> (TST: r = kₚ·(Ω−1)) → <b>calcite</b> (ripening k = {cval(CACO3_CALIB.kAccToCalcite)} h⁻¹)</p>
-        <p className="mt-1">UCS = {cval(CACO3_CALIB.kUcs)}·(calcite wt%)<sup>{cval(CACO3_CALIB.nUcs)}</sup> kPa &nbsp;·&nbsp; 1 mol CaCO₃ ⇒ 1 mol CO₂</p>
-      </MathDisclosure>
+      <ShowMathToggle moduleId="caco3" isLightMode={isLightMode} />
     </>
   );
 
   return (
     <ModuleShell isLightMode={isLightMode} controls={controls}>
-      <Panel title="Carbonate Speciation (Bjerrum)" icon={Layers} isLightMode={isLightMode}
+      <Panel title={<><GlossaryTerm term="carbonate-speciation">Carbonate Speciation</GlossaryTerm> (Bjerrum)</>} icon={Layers} isLightMode={isLightMode}
         right={<span className={`text-[10px] font-mono ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>operating pH {p.pH.toFixed(1)}</span>}>
         <ResponsiveContainer width="100%" height={150}>
           <AreaChart data={speciation} margin={{ top: 4, right: 8, left: -18, bottom: 0 }}>
@@ -127,6 +127,7 @@ export default function Caco3PrecipitationModule({ isLightMode, onUpdate }: Prop
               <Legend wrapperStyle={{ fontSize: 9 }} />
               <Line type="monotone" dataKey="Ca" stroke="#38bdf8" dot={false} strokeWidth={2} name="Ca²⁺ mM" />
               <Line type="monotone" dataKey="ACC" stroke="#a855f7" dot={false} strokeWidth={2} name="ACC mM" />
+              <Line type="monotone" dataKey="Vaterite" stroke="#f59e0b" dot={false} strokeWidth={2} name="Vaterite mM" />
               <Line type="monotone" dataKey="Calcite" stroke="#10b981" dot={false} strokeWidth={2.5} name="Calcite mM" />
             </LineChart>
           </ResponsiveContainer>

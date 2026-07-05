@@ -12,22 +12,25 @@ import {
   ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, Tooltip,
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell,
 } from 'recharts';
-import { Combine, ShieldAlert, TrendingUp } from 'lucide-react';
+import { Combine, ShieldAlert, TrendingUp, GitCompareArrows, ArrowDownRight, ArrowUpRight, Activity } from 'lucide-react';
+import { ShowMathToggle } from './_shared';
+import GlossaryTerm from '../GlossaryTerm';
 import {
   compositeCohesion, robustnessMatrix, limitingScenario, PRONG_LABEL, SCENARIOS,
-  type ProngContribution, type ProngId,
+  type ProngContribution, type ProngId, type InteractionEffect,
 } from '../../lib/physics';
 import { Panel, StatCard, chartColors, tooltipStyle, Themed } from './_shared';
 
 interface Props extends Themed {
   prongs: ProngId[];
   contributions: ProngContribution[];
+  interactions?: InteractionEffect[];
 }
 
 const PRONG_COLOR: Record<ProngId, string> = { 1: '#f59e0b', 2: '#10b981', 3: '#f43f5e' };
 const toMilli = (n: number) => n * 1000; // N/m → mN/m
 
-export default function CompositeSynthesisPanel({ isLightMode, prongs, contributions }: Props) {
+export default function CompositeSynthesisPanel({ isLightMode, prongs, contributions, interactions = [] }: Props) {
   const c = chartColors(isLightMode);
   const comp = useMemo(() => compositeCohesion(contributions), [contributions]);
   const robustness = useMemo(() => robustnessMatrix(prongs), [prongs]);
@@ -60,15 +63,50 @@ export default function CompositeSynthesisPanel({ isLightMode, prongs, contribut
         </div>
       </div>
 
+      <ShowMathToggle moduleId="composite" isLightMode={isLightMode} />
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard isLightMode={isLightMode} label="Additive cohesion" value={toMilli(comp.additiveCohesion).toFixed(1)} unit="mN/m" accent={isLightMode ? 'text-slate-700' : 'text-slate-300'} sub="Σ individual" />
         <StatCard isLightMode={isLightMode} label="Interaction term" value={`${comp.interactionCohesion >= 0 ? '+' : ''}${toMilli(comp.interactionCohesion).toFixed(1)}`} unit="mN/m" accent={comp.interactionCohesion >= 0 ? (isLightMode ? 'text-emerald-700' : 'text-emerald-400') : (isLightMode ? 'text-rose-600' : 'text-rose-400')} sub={comp.interactionCohesion >= 0 ? 'synergistic' : 'competitive'} />
         <StatCard isLightMode={isLightMode} label="Composite cohesion" value={toMilli(comp.totalCohesion).toFixed(1)} unit="mN/m" emphasize accent={isLightMode ? 'text-indigo-700' : 'text-indigo-400'} sub="→ feeds wind threshold" />
-        <StatCard isLightMode={isLightMode} label="Synergy" value={`${synergyPct >= 0 ? '+' : ''}${synergyPct.toFixed(0)}`} unit="%" accent={synergyPct >= 0 ? (isLightMode ? 'text-emerald-700' : 'text-emerald-400') : (isLightMode ? 'text-rose-600' : 'text-rose-400')} sub="vs simple sum" />
+        <StatCard isLightMode={isLightMode} label={<GlossaryTerm term="synergy">Synergy</GlossaryTerm>} value={`${synergyPct >= 0 ? '+' : ''}${synergyPct.toFixed(0)}`} unit="%" accent={synergyPct >= 0 ? (isLightMode ? 'text-emerald-700' : 'text-emerald-400') : (isLightMode ? 'text-rose-600' : 'text-rose-400')} sub="vs simple sum" />
       </div>
 
+      <Panel title={<><GlossaryTerm term="prong-interaction">Inter-Prong Interactions</GlossaryTerm> — what happens when they share a chassis & soil</>} icon={GitCompareArrows} isLightMode={isLightMode}>
+        {interactions.length === 0 ? (
+          <p className={`text-[11px] ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>No cross-prong interactions for this combination.</p>
+        ) : (
+          <div className="space-y-2.5">
+            {interactions.map((e, i) => {
+              const neg = e.percent < 0;
+              const Icon = e.kind === 'synergy' ? ArrowUpRight : e.kind === 'burden' ? Activity : ArrowDownRight;
+              const tone = e.kind === 'synergy'
+                ? (isLightMode ? 'text-emerald-700 bg-emerald-50 border-emerald-200' : 'text-emerald-300 bg-emerald-950/20 border-emerald-900/40')
+                : e.kind === 'burden'
+                ? (isLightMode ? 'text-amber-700 bg-amber-50 border-amber-200' : 'text-amber-300 bg-amber-950/20 border-amber-900/40')
+                : (isLightMode ? 'text-rose-700 bg-rose-50 border-rose-200' : 'text-rose-300 bg-rose-950/20 border-rose-900/40');
+              return (
+                <div key={i} className={`p-3 rounded-xl border ${tone}`}>
+                  <div className="flex items-center justify-between gap-3 mb-1">
+                    <span className="flex items-center gap-1.5 text-[11px] font-bold">
+                      <Icon className="w-3.5 h-3.5" />
+                      {e.prongs.map((p) => PRONG_LABEL[p]).join(' ↔ ')} · {e.mechanism}
+                    </span>
+                    <span className="font-mono font-black text-xs shrink-0">{neg ? '' : '+'}{e.percent.toFixed(0)}%</span>
+                  </div>
+                  <p className={`text-[10px] leading-relaxed ${isLightMode ? 'text-stone-600' : 'text-slate-400'}`}>{e.description}</p>
+                </div>
+              );
+            })}
+            <p className={`text-[10px] leading-relaxed pt-1 ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>
+              Competition (Ca²⁺) and metabolic burden are applied to each prong's cohesion <b>before</b> the synergy term above, so the composite total already reflects them.
+            </p>
+          </div>
+        )}
+      </Panel>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <Panel title="Failure-Mode Robustness" icon={ShieldAlert} isLightMode={isLightMode}>
+        <Panel title={<GlossaryTerm term="failure-mode">Failure-Mode Robustness</GlossaryTerm>} icon={ShieldAlert} isLightMode={isLightMode}>
           <ResponsiveContainer width="100%" height={260}>
             <RadarChart data={radarData} outerRadius="72%">
               <PolarGrid stroke={c.grid} />

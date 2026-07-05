@@ -14,7 +14,8 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell } from 'recharts';
 import { FlaskConical, Anchor, Link2, CheckCircle2 } from 'lucide-react';
-import { ModuleShell, Panel, Slider, StatCard, MathDisclosure, chartColors, tooltipStyle, Themed } from '../_shared';
+import GlossaryTerm from '../../GlossaryTerm';
+import { ModuleShell, Panel, Slider, StatCard, ShowMathToggle, chartColors, tooltipStyle, Themed } from '../_shared';
 
 interface Props extends Themed {
   onUpdate?: (out: { displayEfficiency: number }) => void;
@@ -68,17 +69,13 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
         </div>
       </div>
 
-      <MathDisclosure isLightMode={isLightMode}>
-        <p>Display = Export × Dimerization × Anchoring (each independent step must succeed).</p>
-        <p className="mt-1">Sortase: {(exportEff * 100).toFixed(0)}% × {(dimerEff * 100).toFixed(0)}% × {(sortaseEff * 100).toFixed(0)}% = <b>{(sortaseDisplay * 100).toFixed(1)}%</b></p>
-        <p className="mt-1">Motif: {(exportEff * 100).toFixed(0)}% × {(dimerEff * 100).toFixed(0)}% × {(motifEff * 100).toFixed(0)}% = <b>{(motifDisplay * 100).toFixed(1)}%</b></p>
-      </MathDisclosure>
+      <ShowMathToggle moduleId="ca-anchoring" isLightMode={isLightMode} />
     </>
   );
 
   return (
     <ModuleShell isLightMode={isLightMode} controls={controls}>
-      <Panel title="Route Comparison — Sortase vs Binding Motif" icon={Anchor} isLightMode={isLightMode}>
+      <Panel title={<>Route Comparison — <GlossaryTerm term="sortase">Sortase</GlossaryTerm> vs <GlossaryTerm term="cwbd-binding">Binding Motif</GlossaryTerm></>} icon={Anchor} isLightMode={isLightMode}>
         <ResponsiveContainer width="100%" height={240}>
           <BarChart data={data} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
             <CartesianGrid stroke={c.grid} strokeDasharray="3 3" vertical={false} />

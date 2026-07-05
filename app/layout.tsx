@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
+import "katex/dist/katex.min.css";
 import { ThemeProvider } from "@/components/theme-context";
 import { GradientBackground } from "@/components/gradient-background";
 

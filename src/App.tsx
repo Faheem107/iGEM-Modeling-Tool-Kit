@@ -16,6 +16,7 @@ import HighFidelityProteinExplorer from './components/HighFidelityProteinExplore
 import WetLabSandbox2D from './components/WetLabSandbox2D';
 import { GlossaryProvider, Term } from './components/GlossaryTerm';
 import ModuleErrorBoundary from './components/ErrorBoundary';
+import GlobalSandyx from './components/GlobalSandyx';
 import SimulationWorkspace from './components/simulation/SimulationWorkspace';
 import { ProngId } from './lib/prongs';
 
@@ -97,10 +98,20 @@ export default function App() {
   const [viewingProng, setViewingProng] = useState<number | null>(null);
   const [showPortalsModal, setShowPortalsModal] = useState(false);
   
-  // Track scrolling for the "Back to Top" button
-  const [scrollY, setScrollY] = useState(0);
+  // Track scrolling for the "Back to Top" button. Store only the boolean the UI needs
+  // (past 400px) and update it inside a rAF so we don't re-render the whole tree on every
+  // scroll tick — the previous raw-pixel state did, which tripped React's update-depth guard.
+  const [showTop, setShowTop] = useState(false);
   useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
+    let ticking = false;
+    const handleScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        setShowTop(window.scrollY > 400);
+        ticking = false;
+      });
+    };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -183,7 +194,7 @@ export default function App() {
   const fadeAnimProps = {
     initial: { opacity: 0, y: 50, scale: 0.98 },
     whileInView: { opacity: 1, y: 0, scale: 1 },
-    viewport: { once: false, amount: 0.3 }, 
+    viewport: { once: true, amount: 0.3 },
     transition: { duration: 0.7, ease: "easeOut" as const }
   };
 
@@ -218,9 +229,9 @@ export default function App() {
           </button>
         </div>
 
-        {/* Seamless Scroll To Top Arrow (Top Left) */}
+        {/* Scroll To Top Arrow (Top Left) */}
         <AnimatePresence>
-          {viewMode === 'landing' && scrollY > 400 && (
+          {viewMode === 'landing' && showTop && (
             <motion.button
               initial={{ opacity: 0 }} 
               animate={{ opacity: 1 }} 
@@ -273,10 +284,17 @@ export default function App() {
           )}
         </AnimatePresence>
 
+        {/* Site-wide draggable Sandyx (reveals on scroll past the hero on landing) */}
+        <GlobalSandyx
+          isLanding={viewMode === 'landing'}
+          hideOnDesktop={viewMode === 'simulation'}
+          isLightMode={isLightMode}
+        />
+
         <main className="relative min-h-screen">
           <AnimatePresence mode="wait">
             
-            {/* VIEW 1: CINEMATIC LANDING PAGE */}
+            {/* VIEW 1: LANDING PAGE */}
             {viewMode === 'landing' && (
               <motion.div 
                 key="landing"

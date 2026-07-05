@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import GlossaryTerm from './GlossaryTerm';
+import { solveDetailedFBA, OBJECTIVE_PGA, OBJECTIVE_BIOMASS } from '../lib/physics/fbaDetailed';
 
 // -------------------------------------------------------------
 // METABOLIC MODEL DEFINITION FOR BACILLUS SUBTILIS CENTRAL METABOLISM
@@ -460,412 +461,52 @@ const REACTIONS: Reaction[] = [
 ];
 
 // -------------------------------------------------------------
-// LINEAR PROGRAMMING SIMPLEX MATHEMATICS SOLVER ENGINE
+// FBA SOLVE — delegated to the shared, mass-balanced physics core
 // -------------------------------------------------------------
-
-class PrimalSimplexSolver {
-  /**
-   * Solves: Maximize c^T * x
-   * Subject to: A * x <= b
-   *             x_lb <= x <= x_ub
-   * 
-   * For standard metabolic networks, we convert raw reactions to positive variables.
-   * To handle lower bounds (lb) and upper bounds (ub) we add explicit constraints:
-   *   x_i <= ub      => slack_ub
-   *   -x_i <= -lb    => slack_lb (if lb > 0, we use dual phase or shift, or dual simplex)
-   *   S * x = 0      => converted to S*x <= eps and -S*x <= eps
-   */
-  static solve(
-    objectiveCoeffs: number[], // c
-    M_matrix: number[][],      // constraint matrix rows
-    q_bounds: number[],        // RHS values
-    varNames: string[]
-  ): { x: number[]; obj: number; shadowPrices: number[]; iterations: number; status: string } {
-    const numConstraints = M_matrix.length;
-    const numVars = objectiveCoeffs.length;
-
-    // We build a Simplex Tableau:
-    // Rows: [0 to numConstraints-1] represent constraints, Row [numConstraints] represents objective
-    // Columns: [0 to numVars-1] variables, [numVars to numVars+numConstraints-1] slack variables, Column [numVars+numConstraints] is RHS
-    const numCols = numVars + numConstraints + 1;
-    const numRows = numConstraints + 1;
-
-    const tableau: number[][] = Array(numRows).fill(0).map(() => Array(numCols).fill(0));
-
-    // Fill constraints
-    for (let r = 0; r < numConstraints; r++) {
-      for (let c = 0; c < numVars; c++) {
-        tableau[r][c] = M_matrix[r][c];
-      }
-      tableau[r][numVars + r] = 1; // Slack variable
-      tableau[r][numCols - 1] = q_bounds[r];
-    }
-
-    // Fill objective row (we want to Maximize c^T * x, which is Minimize -c^T * x in standard tableau)
-    for (let c = 0; c < numVars; c++) {
-      tableau[numConstraints][c] = -objectiveCoeffs[c];
-    }
-    tableau[numConstraints][numCols - 1] = 0; // Initial obj value
-
-    // List of basic variables corresponding to each row (initially slack variables)
-    const basicVars: number[] = Array(numConstraints);
-    for (let r = 0; r < numConstraints; r++) {
-      basicVars[r] = numVars + r;
-    }
-
-    // -----------------------------------------------------------------
-    // DUAL FEASIBILITY / PHASE 1 PHASE-IN FOR NEGATIVE BOUNDS
-    // -----------------------------------------------------------------
-    // If any RHS q_bounds[r] < 0, our starting slack basis is basic-infeasible (slacks < 0).
-    // We execute a quick Dual Simplex pivot sequence to achieve primal feasibility.
-    let iter = 0;
-    const maxIter = 400;
-    let status = 'Feasible';
-
-    while (iter < maxIter) {
-      // Find row with most negative RHS
-      let pivotRow = -1;
-      let worstRHS = -1e-6;
-      for (let r = 0; r < numConstraints; r++) {
-        const rhs = tableau[r][numCols - 1];
-        if (rhs < worstRHS) {
-          worstRHS = rhs;
-          pivotRow = r;
-        }
-      }
-
-      if (pivotRow === -1) {
-        break; // Achieved primal feasibility!
-      }
-
-      // Dual Simplex pivot selection: find entering column in entry row with negative coefficient
-      // we choose column matching min ratio: objective_coeff / tableau[pivotRow][col] for negative elements
-      let pivotCol = -1;
-      let minRatio = Infinity;
-      for (let c = 0; c < numVars + numConstraints; c++) {
-        const val = tableau[pivotRow][c];
-        if (val < -1e-8) {
-          const ratio = Math.abs(tableau[numConstraints][c] / val);
-          if (ratio < minRatio) {
-            minRatio = ratio;
-            pivotCol = c;
-          }
-        }
-      }
-
-      if (pivotCol === -1) {
-        status = 'Infeasible';
-        break; // No negative pivot element found, dual unbounded -> primal infeasible
-      }
-
-      // Perform Pivot on (pivotRow, pivotCol)
-      const pivotVal = tableau[pivotRow][pivotCol];
-      for (let c = 0; c < numCols; c++) {
-        tableau[pivotRow][c] /= pivotVal;
-      }
-
-      for (let r = 0; r <= numConstraints; r++) {
-        if (r !== pivotRow) {
-          const factor = tableau[r][pivotCol];
-          for (let c = 0; c < numCols; c++) {
-            tableau[r][c] -= factor * tableau[pivotRow][c];
-          }
-        }
-      }
-
-      basicVars[pivotRow] = pivotCol;
-      iter++;
-    }
-
-    // -----------------------------------------------------------------
-    // PRIMAL SIMPLEX MAXIMIZATION STAGE
-    // -----------------------------------------------------------------
-    if (status !== 'Infeasible') {
-      while (iter < maxIter) {
-        // Find entering variable (most negative value in objective row representing potential gain)
-        let enterCol = -1;
-        let mostNegativeVal = -1e-6;
-        for (let c = 0; c < numVars + numConstraints; c++) {
-          const val = tableau[numConstraints][c];
-          if (val < mostNegativeVal) {
-            mostNegativeVal = val;
-            enterCol = c;
-          }
-        }
-
-        if (enterCol === -1) {
-          break; // No entering variable improves objective. Optimal basis found!
-        }
-
-        // Find leaving variable (Primal Minimum ratio test)
-        let leaveRow = -1;
-        let minRatio = Infinity;
-        for (let r = 0; r < numConstraints; r++) {
-          const coeff = tableau[r][enterCol];
-          if (coeff > 1e-8) {
-            const ratio = tableau[r][numCols - 1] / coeff;
-            if (ratio < minRatio) {
-              minRatio = ratio;
-              leaveRow = r;
-            }
-          }
-        }
-
-        if (leaveRow === -1) {
-          status = 'Unbounded';
-          break; // Objective can go to infinity
-        }
-
-        // Pivot on (leaveRow, enterCol)
-        const pivotVal = tableau[leaveRow][enterCol];
-        for (let c = 0; c < numCols; c++) {
-          tableau[leaveRow][c] /= pivotVal;
-        }
-
-        for (let r = 0; r <= numConstraints; r++) {
-          if (r !== leaveRow) {
-            const factor = tableau[r][enterCol];
-            for (let c = 0; c < numCols; c++) {
-              tableau[r][c] -= factor * tableau[leaveRow][c];
-            }
-          }
-        }
-
-        basicVars[leaveRow] = enterCol;
-        iter++;
-      }
-    }
-
-    // Extract Solution Values
-    const fluxes = Array(numVars).fill(0);
-    for (let r = 0; r < numConstraints; r++) {
-      const variableIdx = basicVars[r];
-      if (variableIdx < numVars) {
-        fluxes[variableIdx] = Math.max(0, tableau[r][numCols - 1]);
-      }
-    }
-
-    // Shadow prices: extracted from the objective row coefficients corresponding to slack positions
-    // Reduced price indicates how relaxing a constraint bounds improves the objective value
-    const shadowPrices = Array(numConstraints).fill(0);
-    for (let r = 0; r < numConstraints; r++) {
-      shadowPrices[r] = tableau[numConstraints][numVars + r];
-    }
-
-    const finalObjVal = tableau[numConstraints][numCols - 1];
-
-    return {
-      x: fluxes,
-      obj: finalObjVal,
-      shadowPrices,
-      iterations: iter,
-      status: status === 'Infeasible' ? 'Infeasible Model' : status
-    };
-  }
-}
-
-// A Pure deterministic mathematical FBA Solver engine calculating central carbon metabolic routing
+// Genuine Flux Balance Analysis: the portal solves the detailed B. subtilis network with the
+// two-phase simplex in src/lib/physics (fba.ts + fbaDetailed.ts) — the single source of truth
+// shared with the simulation workspace. The old hand-coded flux cascade and the duplicate
+// in-file simplex have been removed.
 export function calculateFluxes(
   glucose: number,
   oxygen: number,
   knockouts: { [gene: string]: boolean },
   objective: string
 ) {
-  const v: { [rxnId: string]: number } = {};
+  const objRxn =
+    objective === 'Biomass' || objective === 'R_Biomass' ? OBJECTIVE_BIOMASS : OBJECTIVE_PGA;
+  const res = solveDetailedFBA({ glucose, oxygen, knockouts }, objRxn);
 
-  // Initialize all reactions to 0
-  const rxnIds = [
-    'R_GLCpts', 'R_PGI', 'R_PFK', 'R_FBA', 'R_TPI', 'R_GAPDH_PGK', 'R_PYK',
-    'R_G6PDH', 'R_GND', 'R_PPP_to_Glyc', 'R_PDH', 'R_CS', 'R_ACONT', 'R_ICDH',
-    'R_AKGDH', 'R_SUCOAS', 'R_SDH_FUM_MDH', 'R_PTA_ACK', 'R_LDH', 'R_GLUsyn',
-    'R_PGAsyn', 'R_RESP', 'R_ATPM', 'R_Biomass', 'EX_glc', 'EX_o2', 'EX_nh3',
-    'EX_ac', 'EX_pga', 'EX_biomass'
-  ];
-  rxnIds.forEach(id => { v[id] = 0; });
+  const isBiomass = objRxn === OBJECTIVE_BIOMASS;
+  const rawObjective = isBiomass ? res.fluxMap['R_Biomass'] || 0 : res.fluxMap['R_PGAsyn'] || 0;
 
-  // 1. Glucose Transport (PTS)
-  let glc_uptake_cap = glucose;
-  if (knockouts['ptsG']) {
-    glc_uptake_cap = 0;
-  }
-  v['EX_glc'] = -glc_uptake_cap; // exchange enters, negative of uptake
-  v['R_GLCpts'] = glc_uptake_cap;
-
-  // 2. Phosphoglucose Isomerase bifurcation: checked by 'pgi' or 'zwf'
-  let pgi_knocked = knockouts['pgi'];
-  let zwf_knocked = knockouts['zwf'];
-
-  let frac_glycolysis = 0.70;
-  if (pgi_knocked && zwf_knocked) {
-    frac_glycolysis = 0;
-  } else if (pgi_knocked) {
-    frac_glycolysis = 0;
-  } else if (zwf_knocked) {
-    frac_glycolysis = 1.0;
-  }
-
-  v['R_PGI'] = v['R_GLCpts'] * frac_glycolysis;
-  v['R_G6PDH'] = v['R_GLCpts'] * (1.0 - frac_glycolysis);
-  v['R_GND'] = v['R_G6PDH'];
-  v['R_PPP_to_Glyc'] = v['R_GND'] / 3.0; // transketolase recycling
-
-  // 3. Glycolysis Commitment - Phosphofructokinase (pfkA)
-  if (knockouts['pfkA']) {
-    v['R_PFK'] = 0;
-  } else {
-    v['R_PFK'] = v['R_PGI'] + v['R_PPP_to_Glyc'] * 2.0;
-  }
-
-  v['R_FBA'] = v['R_PFK'];
-  v['R_TPI'] = v['R_FBA'];
-  v['R_GAPDH_PGK'] = v['R_PFK'] * 2.0;
-
-  // Pyruvate synthesis from PEP converting energy
-  v['R_PYK'] = Math.max(0, v['R_GAPDH_PGK'] - v['R_GLCpts']);
-
-  // 4. Pyruvate Dehydrogenase checking pdhA
-  let pdh_knocked = knockouts['pdhA'];
-  if (pdh_knocked) {
-    v['R_PDH'] = 0;
-    v['R_LDH'] = v['R_PYK']; // shunt entirely to lactate
-  } else {
-    // anaerobiosis restricts PDH
-    let isAnaerobic = oxygen <= 1.0; 
-    if (isAnaerobic) {
-      v['R_PDH'] = v['R_PYK'] * 0.20;
-      v['R_LDH'] = v['R_PYK'] * 0.80;
-    } else {
-      v['R_PDH'] = v['R_PYK'] * 0.95;
-      v['R_LDH'] = v['R_PYK'] * 0.05;
-    }
-  }
-
-  // 5. Overflow Metabolism check: Acetyl-CoA splits to Citrate Synthase (gltA) vs Acetate Overflow (pta)
-  let pta_knocked = knockouts['pta'];
-  let glt_knocked = knockouts['gltA'];
-
-  let active_accoa = v['R_PDH'];
-  if (glt_knocked && pta_knocked) {
-    v['R_CS'] = 0;
-    v['R_PTA_ACK'] = 0;
-  } else if (glt_knocked) {
-    v['R_CS'] = 0;
-    v['R_PTA_ACK'] = active_accoa;
-  } else if (pta_knocked) {
-    v['R_PTA_ACK'] = 0;
-    v['R_CS'] = active_accoa; // Perfect Redistribution of carbon from PTA-ACK knockout directly to TCA citric loop!
-  } else {
-    // Normal routing: siphons split
-    // High glucose uptake triggers high acetate excretion overflow
-    let overflow_ratio = Math.min(0.40, (glucose / 20.0) * 0.40);
-    v['R_PTA_ACK'] = active_accoa * overflow_ratio;
-    v['R_CS'] = active_accoa - v['R_PTA_ACK'];
-  }
-
-  v['EX_ac'] = v['R_PTA_ACK'];
-
-  // 6. TCA Cycle and Poly-y-PGA bifurcation
-  v['R_ACONT'] = v['R_CS'];
-  v['R_ICDH'] = v['R_ACONT'];
-
-  // Identify objective weightings cleanly
-  let isBiomassObj = objective === 'Biomass' || objective === 'R_Biomass';
-  let isPgaObj = objective === 'Poly-y-PGA Yield' || objective === 'R_PGAsyn';
-
-  let frac_akg_to_glutamate = 0.15;
-  if (isPgaObj) {
-    // Deep carbon routing siphon to glutamate
-    frac_akg_to_glutamate = knockouts['sucC'] ? 0.92 : 0.82;
-  } else if (isBiomassObj) {
-    frac_akg_to_glutamate = 0.00; // Zero out PGA pathways
-  }
-
-  // If citrate synthase is deleted, route becomes zero
-  if (knockouts['gltA']) {
-    v['R_ICDH'] = 0;
-  }
-
-  let final_glu = v['R_ICDH'] * frac_akg_to_glutamate;
-  if (knockouts['pgas']) {
-    v['R_GLUsyn'] = 0;
-    v['R_PGAsyn'] = 0;
-  } else {
-    v['R_GLUsyn'] = final_glu;
-    v['R_PGAsyn'] = isBiomassObj ? 0.0 : v['R_GLUsyn'] * 0.98;
-  }
-
-  v['EX_pga'] = v['R_PGAsyn'];
-
-  // TCA Cycle continuation
-  let downstream_akg = v['R_ICDH'] - v['R_GLUsyn'];
-  v['R_AKGDH'] = downstream_akg;
-
-  if (knockouts['sucC']) {
-    v['R_SUCOAS'] = 0;
-    v['R_SDH_FUM_MDH'] = 0;
-  } else {
-    v['R_SUCOAS'] = v['R_AKGDH'];
-    v['R_SDH_FUM_MDH'] = v['R_SUCOAS'];
-  }
-
-  // 7. ATP maintenance and growth calculation (v['R_Biomass'])
-  v['R_ATPM'] = 1.0; // Maintenance base load
-
-  // Electron transport chain consuming oxygen & NADH to yield ATP
-  let nadh_yield = v['R_GAPDH_PGK'] + v['R_PDH'] + v['R_AKGDH'] + v['R_SDH_FUM_MDH'] * 2.0;
-  let o2_uptake_cap = oxygen;
-  v['EX_o2'] = -o2_uptake_cap;
-
-  let active_resp = Math.min(nadh_yield, o2_uptake_cap * 2.0);
-  v['R_RESP'] = active_resp;
-
-  // Let's compute growth rate mathematically based on carbon and ATP availability
-  if (isBiomassObj) {
-    // Maximize growth rate
-    // Biomass synthesis depends on glycolysis intermediates, TCA intermediates and energy
-    let carbon_weight = (v['R_PYK'] * 0.25 + v['R_SDH_FUM_MDH'] * 0.25);
-    // Knockouts of primary enzymes should collapse growth rate accordingly
-    if (knockouts['ptsG']) carbon_weight = 0;
-    v['R_Biomass'] = Math.max(0, carbon_weight * (pdh_knocked ? 0.15 : 1.0) * (glt_knocked ? 0.30 : 1.0));
-  } else {
-    // If PGA Yield is the objective, cell growth is restricted as carbon is actively in-drawn and siphoned to PGA
-    v['R_Biomass'] = Math.max(0, (v['R_PYK'] * 0.04 + v['R_SDH_FUM_MDH'] * 0.04));
-  }
-
-  v['EX_biomass'] = v['R_Biomass'];
-
-  // Compute actual mathematical objective value returned to simplex tracker
-  let rawObjectiveValue = isBiomassObj ? v['R_Biomass'] : v['R_PGAsyn'];
-
-  // Let's determine shadow price impact vectors based on network bottlenecks for real UI feedback!
-  const shadowPriceImpacts: { label: string; price: number; bottleneckScore: number }[] = [];
-  
-  if (glc_uptake_cap > 0.1) {
-    let p_glc = isBiomassObj ? 0.15 : 0.42;
-    if (pta_knocked) p_glc *= 1.25;
-    if (knockouts['sucC']) p_glc *= 1.15;
-    shadowPriceImpacts.push({
+  const bottlenecks: { label: string; price: number; bottleneckScore: number }[] = [];
+  if (glucose > 0.1)
+    bottlenecks.push({
       label: 'Glucose Substrate Availability Limit',
-      price: p_glc,
-      bottleneckScore: Math.min(100, p_glc * 180)
+      price: res.glucoseShadowPrice,
+      bottleneckScore: Math.min(100, res.glucoseShadowPrice * 60),
     });
-  }
-
-  if (o2_uptake_cap > 0.1) {
-    let p_o2 = isBiomassObj ? 0.25 : 0.10;
-    shadowPriceImpacts.push({
+  if (oxygen > 0.1)
+    bottlenecks.push({
       label: 'Oxygen Dissolution Coefficient',
-      price: p_o2,
-      bottleneckScore: Math.min(100, p_o2 * 150)
+      price: res.oxygenShadowPrice,
+      bottleneckScore: Math.min(100, res.oxygenShadowPrice * 60),
     });
-  }
+
+  const activeReactions = Object.values(res.fluxMap).filter((v) => Math.abs(v) > 1e-6).length;
 
   return {
-    fluxMap: v,
-    rawObjective: rawObjectiveValue,
-    status: 'Optimal (Reactive)',
-    bottlenecks: shadowPriceImpacts,
-    iterations: knockouts['pta'] || knockouts['sucC'] ? 18 : 12
+    fluxMap: res.fluxMap,
+    rawObjective,
+    status:
+      res.status === 'optimal'
+        ? 'Optimal (FBA)'
+        : res.status === 'infeasible'
+        ? 'Infeasible Model'
+        : 'Unbounded',
+    bottlenecks,
+    iterations: activeReactions,
   };
 }
 

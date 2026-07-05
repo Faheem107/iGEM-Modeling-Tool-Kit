@@ -20,7 +20,7 @@ import {
 } from '../../lib/prongs';
 import {
   cohesionFromShearModulus, cohesionFromUCS, compositeCohesion, solveAeolian,
-  uStarToFreestream, type ProngContribution,
+  uStarToFreestream, prongYieldFactors, prongInteractions, type ProngContribution,
 } from '../../lib/physics';
 
 import MetabolicModel from '../MetabolicModel';
@@ -36,8 +36,11 @@ import Caco3PrecipitationModule from './modules/Caco3PrecipitationModule';
 import AlginateGelModule from './modules/AlginateGelModule';
 import CaAnchoringModule from './modules/CaAnchoringModule';
 import CompositeSynthesisPanel from './CompositeSynthesisPanel';
+import GrainSizeCoveragePanel from './GrainSizeCoveragePanel';
+import CuringTimelinePanel from './CuringTimelinePanel';
 import SandyxCompanion from '../SandyxCompanion';
 import ModuleErrorBoundary from '../ErrorBoundary';
+import { GlossaryText } from '../GlossaryTerm';
 
 interface Props {
   selectedProngs: ProngId[];
@@ -74,21 +77,45 @@ export default function SimulationWorkspace({ selectedProngs, isLightMode, onBac
   // New-prong binder outputs (bubbled up from their modules).
   const [caco3Out, setCaco3Out] = useState({ ucs: 0, calcitePct: 0, co2: 0 });
   const [alginateOut, setAlginateOut] = useState({ modulus: 0 });
+  const [caDisplayEff, setCaDisplayEff] = useState(1);
 
-  const handleCaco3 = useCallback((o: { ucs: number; calcitePct: number; co2: number }) => setCaco3Out(o), []);
-  const handleAlginate = useCallback((o: { modulus: number }) => setAlginateOut(o), []);
-  const handlePga = useCallback((v: number) => setPgaAccum(v), []);
-  const handleShear = useCallback((g: number) => setShearModulus(g), []);
-  const handleEnv = useCallback((m: number) => setEnvModifier(m), []);
+  // All module→workspace reporters are idempotent: they no-op when the value is unchanged, so the
+  // cross-module coupling (e.g. CA display → CaCO₃ → composite) always settles and can't loop.
+  const near = (a: number, b: number) => Math.abs(a - b) < 1e-9;
+  const handleCaco3 = useCallback((o: { ucs: number; calcitePct: number; co2: number }) =>
+    setCaco3Out((p) => (near(p.ucs, o.ucs) && near(p.calcitePct, o.calcitePct) && near(p.co2, o.co2) ? p : o)), []);
+  const handleAlginate = useCallback((o: { modulus: number }) =>
+    setAlginateOut((p) => (near(p.modulus, o.modulus) ? p : o)), []);
+  const handleCaDisplay = useCallback((o: { displayEfficiency: number }) =>
+    setCaDisplayEff((p) => (near(p, o.displayEfficiency) ? p : o.displayEfficiency)), []);
+  const handlePga = useCallback((v: number) => setPgaAccum((p) => (near(p, v) ? p : v)), []);
+  const handleShear = useCallback((g: number) => setShearModulus((p) => (near(p, g) ? p : g)), []);
+  const handleEnv = useCallback((m: number) => setEnvModifier((p) => (near(p, m) ? p : m)), []);
+  // Stable + guarded: the FBA precursor feed used to be an inline arrow, so it changed identity
+  // every render, re-fired the module's effect, and set a fresh metabolicParams object each time —
+  // an infinite update loop. A memoised, value-guarded callback breaks it.
+  const handlePrecursorFlux = useCallback((v: number) => {
+    const clean = Number(Math.max(0, v).toFixed(4));
+    setMetabolicParams((p) => (near(p.s_precursor, clean) ? p : { ...p, s_precursor: clean }));
+  }, []);
+
+  // The bacterial prongs present (γ-PGA and/or CaCO₃) — drives the shared cell-level modules.
+  const bacterialProngs = useMemo(() => prongs.filter((p) => p === 1 || p === 2) as ProngId[], [prongs]);
 
   // --- Composite cohesion across active prongs (the unifying macro driver) ---
+  // Each prong's standalone cohesion is first knocked down by the inter-prong interactions
+  // (shared-Ca²⁺ competition + co-expression metabolic burden), THEN combined with the
+  // physicochemical synergy term — so the macro result reflects genuine competition.
+  const interactions = useMemo(() => prongInteractions(prongs), [prongs]);
+  const yieldFactors = useMemo(() => prongYieldFactors(prongs), [prongs]);
   const contributions = useMemo<ProngContribution[]>(() => {
-    const out: ProngContribution[] = [];
-    if (prongs.includes(1)) out.push({ prong: 1, cohesion: cohesionFromShearModulus(shearModulus) });
-    if (prongs.includes(2)) out.push({ prong: 2, cohesion: cohesionFromUCS(caco3Out.ucs) });
-    if (prongs.includes(3)) out.push({ prong: 3, cohesion: cohesionFromShearModulus(alginateOut.modulus) });
-    return out;
-  }, [prongs, shearModulus, caco3Out.ucs, alginateOut.modulus]);
+    const standalone: Record<number, number> = {
+      1: cohesionFromShearModulus(shearModulus),
+      2: cohesionFromUCS(caco3Out.ucs),
+      3: cohesionFromShearModulus(alginateOut.modulus),
+    };
+    return prongs.map((p) => ({ prong: p, cohesion: standalone[p] * (yieldFactors[p] ?? 1) }));
+  }, [prongs, shearModulus, caco3Out.ucs, alginateOut.modulus, yieldFactors]);
 
   const composite = useMemo(() => compositeCohesion(contributions), [contributions]);
 
@@ -101,18 +128,26 @@ export default function SimulationWorkspace({ selectedProngs, isLightMode, onBac
 
   const gEquivalent = composite.totalCohesion / 2.0e-6; // composite cohesion → equivalent stiffness for legacy panels
 
+  // Effective vitals so Prong-2/3-only combinations never run on stale γ-PGA defaults:
+  //  - stiffness falls back to the composite-equivalent when Prong 1 isn't present,
+  //  - the "bacterial drive" for colony spread / wet-lab uses γ-PGA when present, else the
+  //    realised CaCO₃ output (a genuine Prong-2 productivity signal).
+  const has1 = prongs.includes(1);
+  const effectiveShear = has1 ? shearModulus : gEquivalent;
+  const bacterialDrive = has1 ? pgaAccum : Math.min(220, 30 + caco3Out.calcitePct * 25);
+
   const renderModule = useCallback((id: ModuleId) => {
     switch (id) {
       case 'fba':
-        return <FbaOptimizationModule isLightMode={isLightMode} onUpdatePrecursorFlux={(v) => setMetabolicParams((p) => ({ ...p, s_precursor: Number(Math.max(0, v).toFixed(4)) }))} />;
+        return <FbaOptimizationModule isLightMode={isLightMode} prongs={bacterialProngs} onUpdatePrecursorFlux={handlePrecursorFlux} />;
       case 'metabolic':
         return <MetabolicModel params={metabolicParams} setParams={setMetabolicParams} onUpdatePgaAccum={handlePga} targetYield={targetYield} setTargetYield={setTargetYield} calibratedKcat={calibratedKcat} setCalibratedKcat={setCalibratedKcat} isLightMode={isLightMode} />;
       case 'crosslink':
         return <CrossLinkingBiophysics params={crosslinkParams} setParams={setCrosslinkParams} pgaAccum={pgaAccum} isLinked={isLinked} setIsLinked={setIsLinked} shearModulus={shearModulus} onUpdateShearModulus={handleShear} environmentalModifier={envModifier} isLightMode={isLightMode} />;
       case 'caco3':
-        return <Caco3PrecipitationModule isLightMode={isLightMode} onUpdate={handleCaco3} />;
+        return <Caco3PrecipitationModule isLightMode={isLightMode} onUpdate={handleCaco3} displayEfficiency={caDisplayEff} />;
       case 'ca-anchoring':
-        return <CaAnchoringModule isLightMode={isLightMode} />;
+        return <CaAnchoringModule isLightMode={isLightMode} onUpdate={handleCaDisplay} />;
       case 'alginate':
         return <AlginateGelModule isLightMode={isLightMode} onUpdate={handleAlginate} />;
       case 'thermal':
@@ -120,21 +155,26 @@ export default function SimulationWorkspace({ selectedProngs, isLightMode, onBac
       case 'protein-3d':
         return <HighFidelityProteinExplorer isLightMode={isLightMode} />;
       case 'ecological':
-        return <EcologicalSpread config={ecologicalConfig} setConfig={setEcologicalConfig} pgaAccum={pgaAccum} isLinked={isLinked} setIsLinked={setIsLinked} isLightMode={isLightMode} />;
+        return <EcologicalSpread config={ecologicalConfig} setConfig={setEcologicalConfig} pgaAccum={bacterialDrive} isLinked={isLinked} setIsLinked={setIsLinked} isLightMode={isLightMode} activeProngs={bacterialProngs} />;
       case 'aeolian':
-        return <AeolianWindTunnel params={aeolianParams} setParams={setAeolianParams} shearModulus={prongs.length > 1 ? gEquivalent : shearModulus} isLinked={isLinked} setIsLinked={setIsLinked} isLightMode={isLightMode} externalCohesion={composite.totalCohesion} />;
+        return <AeolianWindTunnel params={aeolianParams} setParams={setAeolianParams} shearModulus={prongs.length > 1 ? gEquivalent : shearModulus} isLinked={isLinked} setIsLinked={setIsLinked} isLightMode={isLightMode} externalCohesion={composite.totalCohesion} activeProngs={prongs} />;
       case 'wetlab':
-        return <WetLabSandbox2D onBack={onBack} universalVitals={{ pgaAccum, shearModulus }} isLightMode={isLightMode} />;
+        return <WetLabSandbox2D onBack={onBack} universalVitals={{ pgaAccum: bacterialDrive, shearModulus: effectiveShear }} isLightMode={isLightMode} />;
+      case 'grainsize':
+        return <GrainSizeCoveragePanel isLightMode={isLightMode} prongs={prongs} yieldFactors={yieldFactors} />;
       case 'composite':
-        return <CompositeSynthesisPanel isLightMode={isLightMode} prongs={prongs} contributions={contributions} />;
+        return <CompositeSynthesisPanel isLightMode={isLightMode} prongs={prongs} contributions={contributions} interactions={interactions} />;
+      case 'curing':
+        return <CuringTimelinePanel isLightMode={isLightMode} prongs={prongs} contributions={contributions} grainDiameter={aeolianParams.sand_diameter} />;
       case 'economic':
-        return <EconomicScalabilityEngine isLightMode={isLightMode} polymerYield={pgaAccum} requiredCrustThickness={12.0} />;
+        return <EconomicScalabilityEngine isLightMode={isLightMode} prongs={prongs} contributions={contributions} polymerYield={pgaAccum} alginateModulus={alginateOut.modulus} caco3={caco3Out} requiredCrustThickness={12.0} />;
       default:
         return null;
     }
   }, [isLightMode, metabolicParams, crosslinkParams, aeolianParams, ecologicalConfig, targetYield, calibratedKcat,
       pgaAccum, shearModulus, isLinked, envModifier, prongs, contributions, composite.totalCohesion, gEquivalent,
-      onBack, handleCaco3, handleAlginate, handlePga, handleShear, handleEnv]);
+      bacterialProngs, bacterialDrive, effectiveShear, caDisplayEff, caco3Out, alginateOut.modulus,
+      interactions, yieldFactors, onBack, handleCaco3, handleAlginate, handleCaDisplay, handlePga, handleShear, handleEnv, handlePrecursorFlux]);
 
   const sectionHeader = (m: ModuleMeta, index: number) => (
     <div className="flex items-center gap-3 mb-3">
@@ -145,7 +185,7 @@ export default function SimulationWorkspace({ selectedProngs, isLightMode, onBac
         <h2 className={`text-sm font-black uppercase tracking-wide truncate ${isLightMode ? 'text-slate-900' : 'text-white'}`}>
           <span className="opacity-40 mr-1.5">{String(index + 1).padStart(2, '0')}</span>{m.title}
         </h2>
-        <p className={`text-[11px] truncate ${isLightMode ? 'text-stone-500' : 'text-slate-400'}`}>{m.blurb}</p>
+        <p className={`text-[11px] ${isLightMode ? 'text-stone-500' : 'text-slate-400'}`}><GlossaryText max={4}>{m.blurb}</GlossaryText></p>
       </div>
       <span className={`ml-auto text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border ${isLightMode ? 'border-stone-200 text-stone-500' : 'border-slate-700 text-slate-400'}`}>{m.scale}</span>
     </div>

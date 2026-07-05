@@ -13,6 +13,7 @@ import {
   Info 
 } from 'lucide-react';
 import GlossaryTerm from './GlossaryTerm';
+import { ShowMathToggle } from './simulation/_shared';
 
 interface ProteinThermalDecayProps {
   isLightMode: boolean;
@@ -133,8 +134,10 @@ export default function ProteinThermalDecay({
         </div>
       </div>
 
+      <div className="mb-5"><ShowMathToggle moduleId="thermal" isLightMode={isLightMode} /></div>
+
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-        
+
         {/* Sliders Control Panel */}
         <div className="md:col-span-5 space-y-4">
           <div className={`p-4 rounded-lg border space-y-4 ${
@@ -233,7 +236,7 @@ export default function ProteinThermalDecay({
             isLightMode ? 'bg-[#fbf9f4] border-amber-900/5' : 'bg-[#020408]/90 border-slate-900'
           }`}>
             <div className="flex justify-between items-center mb-2 text-[10px] font-mono uppercase text-slate-500">
-              <span className="flex items-center gap-1"><Activity className="w-3.5 h-3.5 text-rose-500" /> Operative Folding Curve</span>
+              <span className="flex items-center gap-1"><Activity className="w-3.5 h-3.5 text-rose-500" /> <GlossaryTerm term="folding-curve">Operative Folding Curve</GlossaryTerm></span>
               <span>T_melting midpoint = {operativeT_melting.toFixed(1)}°C</span>
             </div>
 

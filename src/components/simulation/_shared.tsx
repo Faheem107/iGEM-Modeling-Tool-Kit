@@ -9,6 +9,8 @@
 import React, { useState } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import { ChevronDown, Sigma } from 'lucide-react';
+import { useGlossary, GlossaryText } from '../GlossaryTerm';
+import type { ModuleId } from '../../lib/prongs';
 
 export interface Themed {
   isLightMode: boolean;
@@ -34,7 +36,7 @@ export const tooltipStyle = (light: boolean) => ({
 
 export function Panel({
   title, icon: Icon, isLightMode, children, className = '', right,
-}: Themed & { title: string; icon?: LucideIcon; children: React.ReactNode; className?: string; right?: React.ReactNode }) {
+}: Themed & { title: React.ReactNode; icon?: LucideIcon; children: React.ReactNode; className?: string; right?: React.ReactNode }) {
   return (
     <div className={`p-5 rounded-2xl border transition-colors duration-300 ${
       isLightMode ? 'bg-white border-amber-900/10 shadow-sm' : 'bg-[#0a0f18] border-slate-800/80 shadow-xl'
@@ -70,14 +72,14 @@ export function Slider({
         onChange={(e) => onChange(parseFloat(e.target.value))}
         className={`w-full h-1.5 rounded cursor-ew-resize ${accent} ${isLightMode ? 'bg-stone-200' : 'bg-slate-800'}`}
       />
-      {hint && <span className={`text-[9px] block mt-1 ${isLightMode ? 'text-stone-400' : 'text-slate-500'}`}>{hint}</span>}
+      {hint && <span className={`text-[9px] block mt-1 ${isLightMode ? 'text-stone-400' : 'text-slate-500'}`}><GlossaryText max={3}>{hint}</GlossaryText></span>}
     </div>
   );
 }
 
 export function StatCard({
   label, value, unit, accent, isLightMode, sub, emphasize,
-}: Themed & { label: string; value: string; unit?: string; accent: string; sub?: string; emphasize?: boolean }) {
+}: Themed & { label: React.ReactNode; value: string; unit?: string; accent: string; sub?: string; emphasize?: boolean }) {
   return (
     <div className={`p-3 rounded-xl border ${
       isLightMode ? 'bg-[#fcfaf4] border-amber-900/10' : 'bg-[#05070c] border-slate-850'
@@ -114,6 +116,34 @@ export function MathDisclosure({ isLightMode, children, label = 'Show the math' 
         </div>
       )}
     </div>
+  );
+}
+
+/**
+ * "Show the Math" toggle — the standard control on every module. Click it, OR drop Sandyx on it
+ * (it is a `data-sandyx-math` drop target), to open the LaTeX math window for this module.
+ * Highlights while Sandyx hovers over it.
+ */
+export function ShowMathToggle({ moduleId, isLightMode, className = '' }: Themed & { moduleId: ModuleId; className?: string }) {
+  const { openMath, hoverId } = useGlossary();
+  const isHovered = hoverId === moduleId;
+  return (
+    <button
+      type="button"
+      data-sandyx-math={moduleId}
+      onClick={() => openMath(moduleId)}
+      title="Show the math — click, or drop Sandyx here"
+      className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl border text-[10px] font-mono font-bold uppercase tracking-wider transition-colors ${
+        isLightMode
+          ? 'border-amber-900/10 bg-[#fcfaf5] text-stone-600 hover:bg-stone-100'
+          : 'border-slate-850 bg-[#06090f] text-slate-400 hover:bg-slate-900/50'
+      } ${isHovered ? (isLightMode ? 'ring-2 ring-indigo-400/60 bg-indigo-50' : 'ring-2 ring-indigo-400/50 bg-indigo-500/10') : ''} ${className}`}
+    >
+      <span className="flex items-center gap-1.5"><Sigma className="w-3.5 h-3.5" /> Show the Math</span>
+      <span className={`text-[9px] normal-case font-semibold ${isLightMode ? 'text-stone-400' : 'text-slate-500'}`}>
+        tap or drop Sandyx
+      </span>
+    </button>
   );
 }
 

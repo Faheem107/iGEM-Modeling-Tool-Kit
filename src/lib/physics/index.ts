@@ -14,4 +14,8 @@ export * from './crosslink';
 export * from './caco3';
 export * from './alginate';
 export * from './aeolian';
+export * from './grainsize';
+export * from './curing';
 export * from './composite';
+export * from './interactions';
+export * from './economic';
