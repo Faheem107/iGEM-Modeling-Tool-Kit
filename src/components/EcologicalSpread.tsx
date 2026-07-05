@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { CAConfig } from '../types';
 import { Bug, Sparkles, RefreshCw, Layers, ShieldHalf, TrendingUp, HelpCircle, Info, Link2 } from 'lucide-react';
 import GlossaryTerm from './GlossaryTerm';
-import { ShowMathToggle } from './simulation/_shared';
+import { ModuleActions } from './simulation/_shared';
 
 interface EcologicalProps {
   config: CAConfig;
@@ -352,7 +352,7 @@ export default function EcologicalSpread({
           Biosafety & Spread Controls
         </h3>
 
-        <div className="mb-4"><ShowMathToggle moduleId="ecological" isLightMode={isLightMode} /></div>
+        <div className="mb-4"><ModuleActions moduleId="ecological" isLightMode={isLightMode} /></div>
 
         <div className="space-y-4">
           {/* Universal Linkage switch */}

@@ -11,7 +11,7 @@ import {
   Eye, 
   Info
 } from 'lucide-react';
-import { ShowMathToggle } from './simulation/_shared';
+import { ModuleActions } from './simulation/_shared';
 
 // Vector 3D math utility interfaces and helpers
 interface Vector3 {
@@ -974,7 +974,7 @@ export default function HighFidelityProteinExplorer({ isLightMode = false }: { i
 
   return (
     <div className={isLightMode ? 'bg-white p-6 rounded-xl border border-slate-200 text-slate-900 shadow-xl relative' : 'bg-[#0b1324] p-6 rounded-xl border border-slate-900 text-slate-100 shadow-2xl relative'} id="hifi-protein-sandbox">
-      <div className="mb-5"><ShowMathToggle moduleId="protein-3d" isLightMode={isLightMode} /></div>
+      <div className="mb-5"><ModuleActions moduleId="protein-3d" isLightMode={isLightMode} /></div>
           {/* Dynamic Header */}
       <div className={`flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b ${isLightMode ? 'border-slate-200' : 'border-slate-800'}`}>
         <div>

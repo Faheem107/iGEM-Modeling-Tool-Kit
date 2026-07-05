@@ -15,7 +15,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell } from 'recharts';
 import { FlaskConical, Anchor, Link2, CheckCircle2 } from 'lucide-react';
 import GlossaryTerm from '../../GlossaryTerm';
-import { ModuleShell, Panel, Slider, StatCard, ShowMathToggle, chartColors, tooltipStyle, Themed } from '../_shared';
+import { ModuleShell, Panel, Slider, StatCard, ModuleActions, chartColors, tooltipStyle, Themed } from '../_shared';
 
 interface Props extends Themed {
   onUpdate?: (out: { displayEfficiency: number }) => void;
@@ -69,7 +69,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
         </div>
       </div>
 
-      <ShowMathToggle moduleId="ca-anchoring" isLightMode={isLightMode} />
+      <ModuleActions moduleId="ca-anchoring" isLightMode={isLightMode} />
     </>
   );
 

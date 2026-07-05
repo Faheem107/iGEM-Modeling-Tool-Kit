@@ -8,7 +8,7 @@
 
 import React, { useState } from 'react';
 import type { LucideIcon } from 'lucide-react';
-import { ChevronDown, Sigma } from 'lucide-react';
+import { ChevronDown, Sigma, PlayCircle, BookText } from 'lucide-react';
 import { useGlossary, GlossaryText } from '../GlossaryTerm';
 import type { ModuleId } from '../../lib/prongs';
 
@@ -120,30 +120,110 @@ export function MathDisclosure({ isLightMode, children, label = 'Show the math' 
 }
 
 /**
- * "Show the Math" toggle — the standard control on every module. Click it, OR drop Sandyx on it
- * (it is a `data-sandyx-math` drop target), to open the LaTeX math window for this module.
- * Highlights while Sandyx hovers over it.
+ * Shared base for the three module toolbar controls (Show the Math / Video Explanation / Sources).
+ * Each is a Sandyx drop target (it carries the given `data-*` attribute) and highlights while the
+ * mascot hovers over it. Click it, or drop Sandyx on it, to open the matching window.
  */
-export function ShowMathToggle({ moduleId, isLightMode, className = '' }: Themed & { moduleId: ModuleId; className?: string }) {
-  const { openMath, hoverId } = useGlossary();
-  const isHovered = hoverId === moduleId;
+function ModuleToggle({
+  isLightMode, moduleId, dropAttr, icon: Icon, label, onOpen, ringLight, ringDark, hovered, className = '',
+}: Themed & {
+  moduleId: ModuleId;
+  dropAttr: 'data-sandyx-math' | 'data-sandyx-video' | 'data-sandyx-sources';
+  icon: LucideIcon;
+  label: string;
+  onOpen: () => void;
+  ringLight: string;
+  ringDark: string;
+  hovered: boolean;
+  className?: string;
+}) {
+  const attrs = { [dropAttr]: moduleId } as Record<string, string>;
   return (
     <button
       type="button"
-      data-sandyx-math={moduleId}
-      onClick={() => openMath(moduleId)}
-      title="Show the math — click, or drop Sandyx here"
-      className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl border text-[10px] font-mono font-bold uppercase tracking-wider transition-colors ${
+      {...attrs}
+      onClick={onOpen}
+      title={`${label} — click, or drop Sandyx here`}
+      className={`w-full min-w-0 flex flex-col items-center justify-center gap-1.5 px-2 py-3.5 rounded-xl border text-[11px] font-mono font-bold uppercase tracking-wider transition-colors ${
         isLightMode
           ? 'border-amber-900/10 bg-[#fcfaf5] text-stone-600 hover:bg-stone-100'
           : 'border-slate-850 bg-[#06090f] text-slate-400 hover:bg-slate-900/50'
-      } ${isHovered ? (isLightMode ? 'ring-2 ring-indigo-400/60 bg-indigo-50' : 'ring-2 ring-indigo-400/50 bg-indigo-500/10') : ''} ${className}`}
+      } ${hovered ? (isLightMode ? `ring-2 ${ringLight}` : `ring-2 ${ringDark}`) : ''} ${className}`}
     >
-      <span className="flex items-center gap-1.5"><Sigma className="w-3.5 h-3.5" /> Show the Math</span>
-      <span className={`text-[9px] normal-case font-semibold ${isLightMode ? 'text-stone-400' : 'text-slate-500'}`}>
-        tap or drop Sandyx
-      </span>
+      <Icon className="w-4 h-4 shrink-0" />
+      <span className="text-center leading-tight whitespace-normal break-words">{label}</span>
     </button>
+  );
+}
+
+/**
+ * "Show the Math" toggle — opens the LaTeX math window. Click it, OR drop Sandyx on it
+ * (it is a `data-sandyx-math` drop target). Highlights while Sandyx hovers over it.
+ */
+export function ShowMathToggle({ moduleId, isLightMode, className = '' }: Themed & { moduleId: ModuleId; className?: string }) {
+  const { openMath, hoverId } = useGlossary();
+  return (
+    <ModuleToggle
+      isLightMode={isLightMode} moduleId={moduleId} dropAttr="data-sandyx-math"
+      icon={Sigma} label="Show the Math" onOpen={() => openMath(moduleId)}
+      ringLight="ring-indigo-400/60 bg-indigo-50" ringDark="ring-indigo-400/50 bg-indigo-500/10"
+      hovered={hoverId === moduleId} className={className}
+    />
+  );
+}
+
+/**
+ * "Video Explanation" toggle — opens the narrated Manim animation window. Click it, OR drop
+ * Sandyx on it (`data-sandyx-video` drop target).
+ */
+export function VideoExplanationToggle({ moduleId, isLightMode, className = '' }: Themed & { moduleId: ModuleId; className?: string }) {
+  const { openVideo, hoverId } = useGlossary();
+  return (
+    <ModuleToggle
+      isLightMode={isLightMode} moduleId={moduleId} dropAttr="data-sandyx-video"
+      icon={PlayCircle} label="Video Explanation" onOpen={() => openVideo(moduleId)}
+      ringLight="ring-fuchsia-400/60 bg-fuchsia-50" ringDark="ring-fuchsia-400/50 bg-fuchsia-500/10"
+      hovered={hoverId === moduleId} className={className}
+    />
+  );
+}
+
+/**
+ * "Sources" toggle — opens the model's grounding references. Sits farthest right in the toolbar.
+ * Click it, OR drop Sandyx on it (`data-sandyx-sources` drop target).
+ */
+export function SourcesToggle({ moduleId, isLightMode, className = '' }: Themed & { moduleId: ModuleId; className?: string }) {
+  const { openSources, hoverId } = useGlossary();
+  return (
+    <ModuleToggle
+      isLightMode={isLightMode} moduleId={moduleId} dropAttr="data-sandyx-sources"
+      icon={BookText} label="Sources" onOpen={() => openSources(moduleId)}
+      ringLight="ring-amber-400/60 bg-amber-50" ringDark="ring-amber-400/50 bg-amber-500/10"
+      hovered={hoverId === moduleId} className={className}
+    />
+  );
+}
+
+/**
+ * The standard module toolbar: [ Show the Math | Video Explanation | Sources ] in one responsive
+ * row. Replaces the bare <ShowMathToggle> at the foot of every module. All three are Sandyx drop
+ * targets. On narrow screens the row wraps.
+ */
+export function ModuleActions({ moduleId, isLightMode, className = '' }: Themed & { moduleId: ModuleId; className?: string }) {
+  return (
+    <div className={className}>
+      <p className={`mb-1.5 flex items-center gap-1.5 text-[10px] font-semibold ${
+        isLightMode ? 'text-stone-500' : 'text-slate-500'
+      }`}>
+        <img src="/sandyx.png" alt="" aria-hidden className="w-4 h-4 object-contain shrink-0" draggable={false} />
+        Drop Sandyx or click any of the 3 below!
+      </p>
+      <div className="grid grid-cols-3 items-stretch gap-2">
+        <ShowMathToggle moduleId={moduleId} isLightMode={isLightMode} />
+        <VideoExplanationToggle moduleId={moduleId} isLightMode={isLightMode} />
+        <SourcesToggle moduleId={moduleId} isLightMode={isLightMode} />
+      </div>
+    </div>
   );
 }
 

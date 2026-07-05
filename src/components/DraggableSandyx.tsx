@@ -24,10 +24,12 @@ function clientPoint(e: MouseEvent | TouchEvent | PointerEvent): { x: number; y:
   return t ? { x: t.clientX, y: t.clientY } : null;
 }
 
-/** A drop target under the pointer — either an underlined <Term> or a module "Show the Math" toggle. */
+/** A drop target under the pointer — an underlined <Term> or one of the three module toggles. */
 type DropTarget =
   | { kind: 'term'; id: string }
-  | { kind: 'math'; id: ModuleId };
+  | { kind: 'math'; id: ModuleId }
+  | { kind: 'video'; id: ModuleId }
+  | { kind: 'sources'; id: ModuleId };
 
 /** Radius (px) of the forgiving drop zone sampled around the pointer. */
 const DROP_RADIUS = 42;
@@ -39,6 +41,10 @@ function targetInStack(stack: Element[]): DropTarget | null {
     if (term) return { kind: 'term', id: term };
     const math = node.getAttribute?.('data-sandyx-math');
     if (math) return { kind: 'math', id: math as ModuleId };
+    const video = node.getAttribute?.('data-sandyx-video');
+    if (video) return { kind: 'video', id: video as ModuleId };
+    const sources = node.getAttribute?.('data-sandyx-sources');
+    if (sources) return { kind: 'sources', id: sources as ModuleId };
   }
   return null;
 }
@@ -69,7 +75,7 @@ interface Props {
 }
 
 export default function DraggableSandyx({ size, className }: Props) {
-  const { open, openMath, setDragging, setHoverId, dragging } = useGlossary();
+  const { open, openMath, openVideo, openSources, setDragging, setHoverId, dragging } = useGlossary();
   const hoverRef = React.useRef<DropTarget | null>(null);
   const hoverIdRef = React.useRef<string | null>(null);
   const rafRef = React.useRef<number | null>(null);
@@ -110,6 +116,8 @@ export default function DraggableSandyx({ size, className }: Props) {
     pendingPoint.current = null;
     if (dropped?.kind === 'term') open(dropped.id);
     else if (dropped?.kind === 'math') openMath(dropped.id);
+    else if (dropped?.kind === 'video') openVideo(dropped.id);
+    else if (dropped?.kind === 'sources') openSources(dropped.id);
   };
 
   React.useEffect(() => () => {

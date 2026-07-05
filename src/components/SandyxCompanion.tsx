@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
+import { ArrowUp } from 'lucide-react';
 import DraggableSandyx from './DraggableSandyx';
 
 /**
@@ -29,6 +30,27 @@ interface Props {
 
 export default function SandyxCompanion({ items, isLightMode }: Props) {
   const [activeId, setActiveId] = React.useState<string | null>(items[0]?.id ?? null);
+
+  // "Back to Top" visibility — appears once the reader has scrolled past the first fold, and
+  // fades away again near the top. Updated inside a rAF so we never thrash React on every tick.
+  const [showTop, setShowTop] = React.useState(false);
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        setShowTop(window.scrollY > 400);
+        ticking = false;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
   // --- Scroll-spy: highlight whichever section is nearest the top of the viewport ---
   React.useEffect(() => {
@@ -136,6 +158,28 @@ export default function SandyxCompanion({ items, isLightMode }: Props) {
               })}
             </ul>
           </div>
+
+          {/* Back to Top — pops up smoothly once scrolled, sits right below the module tree */}
+          <AnimatePresence>
+            {showTop && (
+              <motion.button
+                key="companion-back-to-top"
+                onClick={scrollToTop}
+                initial={{ opacity: 0, y: -8, height: 0, marginTop: 0 }}
+                animate={{ opacity: 1, y: 0, height: 'auto', marginTop: 16 }}
+                exit={{ opacity: 0, y: -8, height: 0, marginTop: 0 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+                className={`ml-4 flex items-center justify-center gap-1.5 rounded-xl border py-2 text-[11px] font-bold transition-colors ${
+                  isLightMode
+                    ? 'bg-white/80 border-teal-200 text-teal-700 hover:bg-teal-50'
+                    : 'bg-slate-900/70 border-teal-500/25 text-teal-300 hover:bg-teal-500/10'
+                }`}
+                style={{ backdropFilter: 'blur(8px)' }}
+              >
+                <ArrowUp className="w-3.5 h-3.5" /> Back to top
+              </motion.button>
+            )}
+          </AnimatePresence>
         </div>
       </aside>
 

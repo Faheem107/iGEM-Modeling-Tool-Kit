@@ -13,7 +13,7 @@ import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine,
 } from 'recharts';
 import { Timer, Sprout, CalendarClock, Wind, TriangleAlert } from 'lucide-react';
-import { Panel, StatCard, Slider, ShowMathToggle, chartColors, tooltipStyle, Themed } from './_shared';
+import { Panel, StatCard, Slider, ModuleActions, chartColors, tooltipStyle, Themed } from './_shared';
 import GlossaryTerm, { GlossaryText } from '../GlossaryTerm';
 import { curingTimeline, PRONG_LABEL, type ProngId, type ProngContribution } from '../../lib/physics';
 
@@ -72,7 +72,7 @@ export default function CuringTimelinePanel({ isLightMode, prongs, contributions
         </div>
       </div>
 
-      <ShowMathToggle moduleId="curing" isLightMode={isLightMode} />
+      <ModuleActions moduleId="curing" isLightMode={isLightMode} />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard isLightMode={isLightMode} label="Time to mature" value={timeline.hoursToMature.toFixed(0)} unit="h" accent={isLightMode ? 'text-sky-700' : 'text-sky-400'} sub="to 95% of full strength" />

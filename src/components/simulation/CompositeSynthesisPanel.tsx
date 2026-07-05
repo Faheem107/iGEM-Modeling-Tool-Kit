@@ -13,7 +13,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell,
 } from 'recharts';
 import { Combine, ShieldAlert, TrendingUp, GitCompareArrows, ArrowDownRight, ArrowUpRight, Activity } from 'lucide-react';
-import { ShowMathToggle } from './_shared';
+import { ModuleActions } from './_shared';
 import GlossaryTerm from '../GlossaryTerm';
 import {
   compositeCohesion, robustnessMatrix, limitingScenario, PRONG_LABEL, SCENARIOS,
@@ -63,7 +63,7 @@ export default function CompositeSynthesisPanel({ isLightMode, prongs, contribut
         </div>
       </div>
 
-      <ShowMathToggle moduleId="composite" isLightMode={isLightMode} />
+      <ModuleActions moduleId="composite" isLightMode={isLightMode} />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard isLightMode={isLightMode} label="Additive cohesion" value={toMilli(comp.additiveCohesion).toFixed(1)} unit="mN/m" accent={isLightMode ? 'text-slate-700' : 'text-slate-300'} sub="Σ individual" />

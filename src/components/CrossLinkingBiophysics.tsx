@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { BiophysicsParams } from '../types';
 import { solveCrossLink } from '../lib/physics';
-import { ShowMathToggle } from './simulation/_shared';
+import { ModuleActions } from './simulation/_shared';
 import { Layers, Thermometer, Sun, Moon, Sparkles, SlidersHorizontal, Info, Link2, HelpCircle } from 'lucide-react';
 import GlossaryTerm from './GlossaryTerm';
 
@@ -331,7 +331,7 @@ export default function CrossLinkingBiophysics({
         : 'bg-[#06080d] border-slate-800 shadow-xl'
     }`} id="crosslinking-biophysics-panel">
 
-      <div className="lg:col-span-12"><ShowMathToggle moduleId="crosslink" isLightMode={isLightMode} /></div>
+      <div className="lg:col-span-12"><ModuleActions moduleId="crosslink" isLightMode={isLightMode} /></div>
 
       {/* Parameter Controls Panel */}
       <div className={`lg:col-span-12 xl:col-span-5 p-5 rounded-xl border transition-colors duration-300 ${isLightMode ? 'bg-white border-amber-900/10' : 'bg-[#0a0f18] border-slate-800/80'} space-y-5 flex flex-col justify-between`}>

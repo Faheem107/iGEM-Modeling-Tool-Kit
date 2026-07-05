@@ -13,7 +13,7 @@ import {
 import {
   PHYS, AEOLIAN_CALIB, cval, uStarToFreestream, freestreamToUStar, cohesionFromShearModulus,
 } from '../lib/physics';
-import { ShowMathToggle } from './simulation/_shared';
+import { ModuleActions } from './simulation/_shared';
 
 interface AeolianProps {
   params: AeolianParams;
@@ -450,7 +450,7 @@ export default function AeolianWindTunnel({
   return (
     <div className={`space-y-8`} id="aeolian-simulation-root">
 
-      <ShowMathToggle moduleId="aeolian" isLightMode={isLightMode} />
+      <ModuleActions moduleId="aeolian" isLightMode={isLightMode} />
 
       {/* Sliders + diagnostics (12 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

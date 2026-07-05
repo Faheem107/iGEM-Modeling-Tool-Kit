@@ -3,7 +3,7 @@ import { MetabolicParams, SimulationStep } from '../types';
 import { simulateMetabolicODE, calibrateKcat } from '../lib/physics';
 import { Play, RotateCcw, Award, Dna, Database, ShieldAlert, Sparkles, Info } from 'lucide-react';
 import GlossaryTerm from './GlossaryTerm';
-import { ShowMathToggle } from './simulation/_shared';
+import { ModuleActions } from './simulation/_shared';
 
 interface MetabolicProps {
   params: MetabolicParams;
@@ -118,7 +118,7 @@ export default function MetabolicModel({
         ? 'bg-[#fdfaf3] border-amber-900/10 shadow-[0_4px_24px_rgba(139,94,26,0.06)]' 
         : 'bg-[#06080d] border-slate-800 shadow-xl'
     }`} id="metabolic-module-panel">
-      <div className="lg:col-span-12"><ShowMathToggle moduleId="metabolic" isLightMode={isLightMode} /></div>
+      <div className="lg:col-span-12"><ModuleActions moduleId="metabolic" isLightMode={isLightMode} /></div>
       {/* Parameters Panel */}
       <div className={`lg:col-span-12 xl:col-span-5 p-5 rounded border transition-colors duration-300 ${isLightMode ? 'bg-white border-amber-900/10' : 'bg-[#0a0f18] border-slate-800/80'}`}>
         <h3 className={`text-xs font-extrabold uppercase tracking-wider flex items-center gap-2 mb-4 font-sans ${isLightMode ? 'text-amber-950' : 'text-slate-100'}`}>

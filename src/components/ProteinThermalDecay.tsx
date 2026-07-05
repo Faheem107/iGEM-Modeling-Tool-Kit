@@ -13,7 +13,7 @@ import {
   Info 
 } from 'lucide-react';
 import GlossaryTerm from './GlossaryTerm';
-import { ShowMathToggle } from './simulation/_shared';
+import { ModuleActions } from './simulation/_shared';
 
 interface ProteinThermalDecayProps {
   isLightMode: boolean;
@@ -134,7 +134,7 @@ export default function ProteinThermalDecay({
         </div>
       </div>
 
-      <div className="mb-5"><ShowMathToggle moduleId="thermal" isLightMode={isLightMode} /></div>
+      <div className="mb-5"><ModuleActions moduleId="thermal" isLightMode={isLightMode} /></div>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
 

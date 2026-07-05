@@ -15,3 +15,10 @@ tsconfig.tsbuildinfo
 
 # Local-only project notes (kept off GitHub)
 CLAUDE.md
+
+# Manim render artifacts (source scenes are kept; rendered media is regenerated)
+manim_videos/media/
+manim_videos/pdb/
+
+# Python bytecode
+manim_videos/__pycache__/
