@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Wind, ShieldCheck, HelpCircle, Sliders, RefreshCw, Layers, ArrowLeft, Play, Pause, Thermometer, Droplet, Beaker } from 'lucide-react';
 import GlossaryTerm from './GlossaryTerm';
-import { ShowMathToggle } from './simulation/_shared';
+import { ModuleActions } from './simulation/_shared';
 
 interface WetLabSandbox2DProps {
   onBack: () => void;
@@ -363,7 +363,7 @@ export default function WetLabSandbox2D({ onBack, universalVitals, isLightMode =
         </div>
       </div>
 
-      <ShowMathToggle moduleId="wetlab" isLightMode={isLightMode} />
+      <ModuleActions moduleId="wetlab" isLightMode={isLightMode} />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         <div className={`lg:col-span-5 space-y-6 p-5 rounded-xl border transition-all duration-300 ${

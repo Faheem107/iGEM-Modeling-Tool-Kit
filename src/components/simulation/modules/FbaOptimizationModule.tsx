@@ -22,7 +22,7 @@ import {
   FBA_CALIB, cval,
 } from '../../../lib/physics';
 import type { ProngId } from '../../../lib/prongs';
-import { ModuleShell, Panel, Slider, StatCard, ShowMathToggle, chartColors, tooltipStyle, Themed } from '../_shared';
+import { ModuleShell, Panel, Slider, StatCard, ModuleActions, chartColors, tooltipStyle, Themed } from '../_shared';
 import { GlossaryText } from '../../GlossaryTerm';
 
 interface Props extends Themed {
@@ -132,7 +132,7 @@ export default function FbaOptimizationModule({ isLightMode, prongs = [1], onUpd
         <StatCard isLightMode={isLightMode} label={<>Acetate <GlossaryTerm term="acetate-overflow">overflow</GlossaryTerm></>} value={analysis.acetate.toFixed(2)} unit="mmol/gDCW/h" accent={isLightMode ? 'text-stone-700' : 'text-slate-300'} sub="carbon wasted" />
       </div>
 
-      <ShowMathToggle moduleId="fba" isLightMode={isLightMode} />
+      <ModuleActions moduleId="fba" isLightMode={isLightMode} />
     </>
   );
 

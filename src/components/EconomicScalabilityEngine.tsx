@@ -18,7 +18,7 @@ import {
 } from '../lib/physics';
 import { combinationLabel, type ProngId } from '../lib/prongs';
 import type { ProngContribution } from '../lib/physics';
-import { Panel, Slider, StatCard, ShowMathToggle, chartColors, tooltipStyle } from './simulation/_shared';
+import { Panel, Slider, StatCard, ModuleActions, chartColors, tooltipStyle } from './simulation/_shared';
 
 interface Props {
   isLightMode: boolean;
@@ -98,7 +98,7 @@ export default function EconomicScalabilityEngine({
         <StatCard isLightMode={isLightMode} label={<GlossaryTerm term="co2-sequestration">Net CO₂</GlossaryTerm>} value={`${(cost.co2Total / 1000).toFixed(1)}`} unit="t" accent={cost.co2Total <= 0 ? (isLightMode ? 'text-teal-700' : 'text-teal-400') : (isLightMode ? 'text-stone-600' : 'text-slate-400')} sub={cost.co2Total < 0 ? 'sequestered' : 'neutral'} />
       </div>
 
-      <ShowMathToggle moduleId="economic" isLightMode={isLightMode} />
+      <ModuleActions moduleId="economic" isLightMode={isLightMode} />
     </>
   );
 

@@ -14,7 +14,7 @@ import {
 import { Ruler, ScanLine, TriangleAlert } from 'lucide-react';
 import { Panel, StatCard, chartColors, tooltipStyle, Themed } from './_shared';
 import GlossaryTerm, { GlossaryText } from '../GlossaryTerm';
-import { ShowMathToggle } from './_shared';
+import { ModuleActions } from './_shared';
 import { grainSizeProfile, PRONG_LABEL, type ProngId } from '../../lib/physics';
 
 interface Props extends Themed {
@@ -58,7 +58,7 @@ export default function GrainSizeCoveragePanel({ isLightMode, prongs, yieldFacto
         </div>
       </div>
 
-      <ShowMathToggle moduleId="grainsize" isLightMode={isLightMode} />
+      <ModuleActions moduleId="grainsize" isLightMode={isLightMode} />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard isLightMode={isLightMode} label="Bound sand mass" value={(profile.boundMassFraction * 100).toFixed(0)} unit="%" emphasize accent={isLightMode ? 'text-teal-700' : 'text-teal-400'} sub="of site PSD held" />

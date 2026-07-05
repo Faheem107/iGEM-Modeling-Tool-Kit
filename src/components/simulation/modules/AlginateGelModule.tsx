@@ -17,7 +17,7 @@ import type { AlginateParams } from '../../../types';
 import {
   solveAlginateGel, moistureRetention, washoutResidual, washoutHalfLifeCycles, modulusAfterWashout,
 } from '../../../lib/physics';
-import { ModuleShell, Panel, Slider, StatCard, ShowMathToggle, chartColors, tooltipStyle, Themed } from '../_shared';
+import { ModuleShell, Panel, Slider, StatCard, ModuleActions, chartColors, tooltipStyle, Themed } from '../_shared';
 
 interface Props extends Themed {
   onUpdate?: (out: { modulus: number }) => void;
@@ -81,7 +81,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
         <StatCard isLightMode={isLightMode} label="Washout half-life" value={halfLife.toFixed(1)} unit="cycles" accent={isLightMode ? 'text-indigo-700' : 'text-indigo-400'} sub="durability limit" />
       </div>
 
-      <ShowMathToggle moduleId="alginate" isLightMode={isLightMode} />
+      <ModuleActions moduleId="alginate" isLightMode={isLightMode} />
     </>
   );
 

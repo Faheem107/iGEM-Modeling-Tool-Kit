@@ -17,7 +17,7 @@ import {
   carbonateSpeciation, simulatePrecipitation, caActivityFraction, calciteToUCS, saturationIndex,
   CACO3_CALIB, cval,
 } from '../../../lib/physics';
-import { ModuleShell, Panel, Slider, StatCard, ShowMathToggle, chartColors, tooltipStyle, Themed } from '../_shared';
+import { ModuleShell, Panel, Slider, StatCard, ModuleActions, chartColors, tooltipStyle, Themed } from '../_shared';
 
 interface Props extends Themed {
   onUpdate?: (out: { ucs: number; calcitePct: number; co2: number }) => void;
@@ -94,7 +94,7 @@ export default function Caco3PrecipitationModule({ isLightMode, onUpdate, displa
         <StatCard isLightMode={isLightMode} label={<GlossaryTerm term="co2-sequestration">CO₂ sequestered</GlossaryTerm>} value={result.co2SequesteredGPerL.toFixed(2)} unit="g/L" accent={isLightMode ? 'text-teal-700' : 'text-teal-400'} sub="net-negative, no ammonia" />
       </div>
 
-      <ShowMathToggle moduleId="caco3" isLightMode={isLightMode} />
+      <ModuleActions moduleId="caco3" isLightMode={isLightMode} />
     </>
   );
 
