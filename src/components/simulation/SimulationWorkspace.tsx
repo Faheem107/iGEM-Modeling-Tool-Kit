@@ -153,7 +153,7 @@ export default function SimulationWorkspace({ selectedProngs, isLightMode, onBac
       case 'thermal':
         return <ProteinThermalDecay isLightMode={isLightMode} onUpdateEnvironmentalModifier={handleEnv} />;
       case 'protein-3d':
-        return <HighFidelityProteinExplorer isLightMode={isLightMode} />;
+        return <HighFidelityProteinExplorer isLightMode={isLightMode} prongs={bacterialProngs as (1 | 2 | 3)[]} />;
       case 'ecological':
         return <EcologicalSpread config={ecologicalConfig} setConfig={setEcologicalConfig} pgaAccum={bacterialDrive} isLinked={isLinked} setIsLinked={setIsLinked} isLightMode={isLightMode} activeProngs={bacterialProngs} />;
       case 'aeolian':

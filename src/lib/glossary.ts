@@ -252,6 +252,12 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
       'An engineered safety circuit: when moisture drops below a safe threshold, the bacteria lose viability and stop growing. This keeps the engineered strain from spreading beyond the treated area.',
     category: 'Biocontainment',
   },
+  'fisher-kpp': {
+    title: 'Fisher–KPP Front Speed',
+    plain:
+      'The speed at which a growing bacterial colony pushes its edge outward. When cells both grow (rate µ) and spread (diffusivity D), the front travels at c = 2·√(D·µ) — the classic Fisher–Kolmogorov travelling wave. Dosing calcium lowers D (it disables the surfactin-driven sliding), so the colony spreads more slowly.',
+    category: 'Ecology',
+  },
   'moisture-spread': {
     title: 'Moisture Spread Probability',
     plain:

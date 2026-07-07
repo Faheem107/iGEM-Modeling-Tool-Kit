@@ -14,7 +14,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell } from 'recharts';
 import { FlaskConical, Anchor, Link2, CheckCircle2 } from 'lucide-react';
-import GlossaryTerm from '../../GlossaryTerm';
+import GlossaryTerm, { GlossaryText } from '../../GlossaryTerm';
 import { ModuleShell, Panel, Slider, StatCard, ModuleActions, chartColors, tooltipStyle, Themed } from '../_shared';
 
 interface Props extends Themed {
@@ -97,8 +97,9 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
         <StatCard isLightMode={isLightMode} label="Sortase overall" value={(sortaseDisplay * 100).toFixed(1)} unit="%" accent={isLightMode ? 'text-emerald-700' : 'text-emerald-400'} emphasize={sortaseDisplay >= motifDisplay} />
         <StatCard isLightMode={isLightMode} label="Binding motif overall" value={(motifDisplay * 100).toFixed(1)} unit="%" accent={isLightMode ? 'text-amber-700' : 'text-amber-400'} emphasize={motifDisplay > sortaseDisplay} />
       </div>
-      <p className={`text-[10px] flex items-center gap-1.5 ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>
-        <Link2 className="w-3.5 h-3.5 text-cyan-500" /> The winning route's display efficiency sets the realized Carbonic Anhydrase activity feeding the CaCO₃ precipitation model.
+      <p className={`text-[10px] flex items-start gap-1.5 ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>
+        <Link2 className="w-3.5 h-3.5 text-cyan-500 mt-0.5 shrink-0" />
+        <GlossaryText>Display efficiency is the product of three independent steps, export times dimerization times anchoring, so the chain is only as strong as its weakest link and can never exceed any single stage. The winning route sets the realized carbonic anhydrase activity feeding the precipitation model; every stage is a separate wet-lab assay.</GlossaryText>
       </p>
     </ModuleShell>
   );

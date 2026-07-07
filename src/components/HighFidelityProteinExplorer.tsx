@@ -347,14 +347,36 @@ const generateSyntheticProtein = (): ParsedPDBData => {
   return { backbone, ligands };
 };
 
-export default function HighFidelityProteinExplorer({ isLightMode = false }: { isLightMode?: boolean }) {
+/**
+ * Bundled, prong-relevant real structures (served from /public/pdb). Prong 1 shows the actual
+ * B. subtilis γ-PGA synthase complex (CapB/CapC/CapA = pgsBCA, AlphaFold); Prong 2 shows the
+ * carbonic-anhydrase fold that drives the MICP prong (experimental crystal structure 1CA2).
+ */
+interface StructurePreset {
+  id: string; label: string; sublabel: string; file: string; prong: 1 | 2;
+}
+const STRUCTURE_PRESETS: StructurePreset[] = [
+  { id: 'capB', label: 'CapB (PgsB)', sublabel: 'γ-PGA synthase · UniProt P96736 · AlphaFold', file: '/pdb/AF-P96736.pdb', prong: 1 },
+  { id: 'capC', label: 'CapC (PgsC)', sublabel: 'γ-PGA biosynthesis · UniProt P96737 · AlphaFold', file: '/pdb/AF-P96737.pdb', prong: 1 },
+  { id: 'capA', label: 'CapA (PgsA)', sublabel: 'γ-PGA biosynthesis · UniProt P96738 · AlphaFold', file: '/pdb/AF-P96738.pdb', prong: 1 },
+  { id: 'ca2', label: 'Carbonic Anhydrase II', sublabel: 'CA fold (MICP) · PDB 1CA2 · X-ray 2.0 Å', file: '/pdb/1CA2.pdb', prong: 2 },
+];
+
+export default function HighFidelityProteinExplorer({ isLightMode = false, prongs }: { isLightMode?: boolean; prongs?: (1 | 2 | 3)[] }) {
   const [selectedResidue, setSelectedResidue] = useState<string | null>(null);
-  
+
+  // Structures relevant to the active bacterial prong(s); default to showing both families.
+  const activeProngs = (prongs && prongs.length ? prongs : [1, 2]).filter((p): p is 1 | 2 => p === 1 || p === 2);
+  const availablePresets = STRUCTURE_PRESETS.filter((p) => activeProngs.includes(p.prong));
+
   // Custom uploaded state
   const [pdbData, setPdbData] = useState<ParsedPDBData | null>(null);
   const [pdbFileName, setPdbFileName] = useState<string | null>(null);
   const [isDraggingFile, setIsDraggingFile] = useState<boolean>(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  // Which bundled structure is showing (null = a user-uploaded custom file).
+  const [activePresetId, setActivePresetId] = useState<string | null>(availablePresets[0]?.id ?? null);
+  const [presetLoading, setPresetLoading] = useState<boolean>(false);
 
   // Modern viewer visualization options
   const [colorTheme, setColorTheme] = useState<'rainbow' | 'structure' | 'fluctuation'>('rainbow');
@@ -447,6 +469,34 @@ export default function HighFidelityProteinExplorer({ isLightMode = false }: { i
     setSelectedResidue(layerId === selectedResidue ? null : layerId);
   };
 
+  // Fetch + parse one of the bundled prong-relevant structures from /public/pdb.
+  const loadPreset = React.useCallback((id: string) => {
+    const preset = STRUCTURE_PRESETS.find((p) => p.id === id);
+    if (!preset) return;
+    setActivePresetId(id);
+    setPresetLoading(true);
+    fetch(preset.file)
+      .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.text(); })
+      .then((text) => {
+        const parsed = parsePDB(text);
+        if (parsed.backbone.length === 0) { setUploadError('Bundled structure contained no backbone atoms.'); return; }
+        setPdbData(parsed);
+        setPdbFileName(`${preset.label} — ${preset.sublabel}`);
+        setSelectedResidue(null);
+        setUploadError(null);
+      })
+      .catch(() => setUploadError('Could not load the bundled structure file.'))
+      .finally(() => setPresetLoading(false));
+  }, []);
+
+  // On mount (and whenever the relevant prong set changes) show the first prong-appropriate
+  // structure instead of a synthetic placeholder.
+  const firstPresetId = availablePresets[0]?.id ?? null;
+  useEffect(() => {
+    if (firstPresetId) loadPreset(firstPresetId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [firstPresetId]);
+
   // Safe manual file upload
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -476,6 +526,7 @@ export default function HighFidelityProteinExplorer({ isLightMode = false }: { i
 
         setPdbData(parsed);
         setPdbFileName(file.name);
+        setActivePresetId(null); // custom upload — leave the preset track
         setSelectedResidue(null);
         setUploadError(null);
       } catch (err) {
@@ -507,10 +558,10 @@ export default function HighFidelityProteinExplorer({ isLightMode = false }: { i
   };
 
   const handleResetToDefault = () => {
-    setPdbData(null);
-    setPdbFileName(null);
     setSelectedResidue(null);
     setUploadError(null);
+    if (firstPresetId) loadPreset(firstPresetId);
+    else { setPdbData(null); setPdbFileName(null); setActivePresetId(null); }
   };
 
   // Core Render loop inside dynamic Canvas
@@ -975,6 +1026,38 @@ export default function HighFidelityProteinExplorer({ isLightMode = false }: { i
   return (
     <div className={isLightMode ? 'bg-white p-6 rounded-xl border border-slate-200 text-slate-900 shadow-xl relative' : 'bg-[#0b1324] p-6 rounded-xl border border-slate-900 text-slate-100 shadow-2xl relative'} id="hifi-protein-sandbox">
       <div className="mb-5"><ModuleActions moduleId="protein-3d" isLightMode={isLightMode} /></div>
+
+      {/* Prong-relevant structure library — real experimental / AlphaFold models */}
+      {availablePresets.length > 0 && (
+        <div className={`mb-5 flex flex-wrap items-center gap-2 p-2.5 rounded-lg border ${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-[#06080d] border-slate-800'}`}>
+          <span className={`text-[10px] font-black uppercase tracking-wider font-mono pr-1 ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>Structure Library</span>
+          {availablePresets.map((p) => {
+            const active = activePresetId === p.id;
+            const accent = p.prong === 1
+              ? (isLightMode ? 'text-amber-700 border-amber-300 bg-amber-50' : 'text-amber-300 border-amber-900/50 bg-amber-950/20')
+              : (isLightMode ? 'text-emerald-700 border-emerald-300 bg-emerald-50' : 'text-emerald-300 border-emerald-900/50 bg-emerald-950/20');
+            return (
+              <button
+                key={p.id}
+                onClick={() => loadPreset(p.id)}
+                title={p.sublabel}
+                className={`px-2.5 py-1.5 rounded-md border text-[10px] font-mono font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                  active ? accent + ' ring-2 ' + (p.prong === 1 ? 'ring-amber-400/40' : 'ring-emerald-400/40')
+                  : (isLightMode ? 'text-slate-600 border-slate-200 bg-white hover:border-slate-300' : 'text-slate-400 border-slate-800 bg-[#0a0f18] hover:border-slate-700')
+                }`}
+              >
+                <span className={`w-1.5 h-1.5 rounded-full ${p.prong === 1 ? 'bg-amber-500' : 'bg-emerald-500'}`} />
+                {p.label}
+                <span className="opacity-50 font-normal">· P{p.prong}</span>
+              </button>
+            );
+          })}
+          {presetLoading && <span className={`text-[10px] font-mono ${isLightMode ? 'text-indigo-600' : 'text-indigo-400'}`}>loading…</span>}
+          {activePresetId === null && pdbFileName && (
+            <span className={`text-[10px] font-mono px-2 py-1 rounded ${isLightMode ? 'text-slate-500 bg-slate-100' : 'text-slate-400 bg-slate-800/50'}`}>custom upload</span>
+          )}
+        </div>
+      )}
           {/* Dynamic Header */}
       <div className={`flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b ${isLightMode ? 'border-slate-200' : 'border-slate-800'}`}>
         <div>
@@ -994,7 +1077,7 @@ export default function HighFidelityProteinExplorer({ isLightMode = false }: { i
         <div className={`flex flex-wrap p-1 rounded border text-[10px] font-bold font-mono gap-1.5 items-center ${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-[#06080d] border-slate-800'}`}>
           <label className={`px-2.5 py-1.5 rounded cursor-pointer transition flex items-center gap-1.5 border ${isLightMode ? 'text-indigo-700 hover:bg-indigo-100/50 border-indigo-200 bg-indigo-50/50' : 'text-indigo-305 hover:bg-indigo-950/30 border-indigo-900/20 bg-indigo-950/10 hover:text-indigo-200'}`}>
             <UploadCloud className="w-3.5 h-3.5 text-indigo-400" />
-            <span>Load PDB File</span>
+            <span>Load PDB  File</span>
             <input 
               type="file" 
               accept=".pdb,.txt" 
