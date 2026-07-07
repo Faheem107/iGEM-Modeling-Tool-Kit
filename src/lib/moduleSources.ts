@@ -129,7 +129,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
   grainsize: {
     intro: 'Grain-size-resolved coverage: no single binder holds every grain size; the three prongs are complementary.',
     sources: [
-      { label: 'Study 4 — Xiao et al. (2024), MICP vs particle size', detail: 'MICP UCS-vs-diameter sweet spot (~63–125 µm) and the coarse/fine fall-off (GRAINSIZE_CALIB).', kind: 'literature' },
+      { label: 'Study 4 — Erdmann et al. (2024), Discover Materials, MICP vs particle size', detail: 'MICP UCS-vs-diameter sweet spot (~63–125 µm) and the coarse/fine fall-off; doi:10.1007/s43939-024-00108-3 (GRAINSIZE_CALIB).', kind: 'literature' },
       { label: 'UAE dune-sand grain-size distribution (D₅₀ ≈ 200 µm, well-sorted)', detail: 'The log-normal PSD coverage is integrated over (Research Table).', kind: 'internal' },
       RESEARCH_TABLE,
     ],

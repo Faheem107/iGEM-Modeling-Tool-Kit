@@ -14,9 +14,10 @@ import EcologicalSpread from './components/EcologicalSpread';
 import EconomicScalabilityEngine from './components/EconomicScalabilityEngine';
 import HighFidelityProteinExplorer from './components/HighFidelityProteinExplorer';
 import WetLabSandbox2D from './components/WetLabSandbox2D';
-import { GlossaryProvider, Term } from './components/GlossaryTerm';
+import { GlossaryProvider } from './components/GlossaryTerm';
 import ModuleErrorBoundary from './components/ErrorBoundary';
 import GlobalSandyx from './components/GlobalSandyx';
+import LandingCinematic, { BranchConnector } from './components/LandingCinematic';
 import SimulationWorkspace from './components/simulation/SimulationWorkspace';
 import { ProngId } from './lib/prongs';
 
@@ -97,7 +98,22 @@ export default function App() {
   const [selectedProngs, setSelectedProngs] = useState<number[]>([]);
   const [viewingProng, setViewingProng] = useState<number | null>(null);
   const [showPortalsModal, setShowPortalsModal] = useState(false);
-  
+
+  // Hero "peek-a-boo": Sandyx rises from behind the eyebrow a beat after the page settles.
+  const [heroPeek, setHeroPeek] = useState(false);
+  useEffect(() => {
+    if (viewMode !== 'landing') { setHeroPeek(false); return; }
+    const t = setTimeout(() => setHeroPeek(true), 1000);
+    return () => clearTimeout(t);
+  }, [viewMode]);
+
+  // Clicking hero Sandyx dives the reader smoothly into the sandstorm cinematic.
+  const diveToCinematic = () => {
+    const el = document.getElementById('cinematic');
+    const top = el ? el.getBoundingClientRect().top + window.scrollY + 4 : window.innerHeight;
+    window.scrollTo({ top, behavior: 'smooth' });
+  };
+
   // Track scrolling for the "Back to Top" button. Store only the boolean the UI needs
   // (past 400px) and update it inside a rAF so we don't re-render the whole tree on every
   // scroll tick — the previous raw-pixel state did, which tripped React's update-depth guard.
@@ -304,9 +320,43 @@ export default function App() {
                 {/* --- HERO SECTION --- */}
                 <motion.div {...fadeAnimProps} className="h-screen flex flex-col items-center justify-center text-center relative px-4 w-full">
                   <div className="max-w-[1100px] mx-auto w-full flex flex-col items-center justify-center mt-[-8vh]">
-                    <span className="text-sm md:text-base font-bold font-mono tracking-[0.2em] uppercase mb-6 block text-amber-500">
-                      NYUAD iGEM 2026
-                    </span>
+                    {/* Peek-a-boo Sandyx: rises from behind the eyebrow and invites the reader in */}
+                    <div className="relative flex flex-col items-center">
+                      <AnimatePresence>
+                        {heroPeek && (
+                          <motion.button
+                            type="button"
+                            onClick={diveToCinematic}
+                            initial={{ y: 120, opacity: 0, scale: 0.7 }}
+                            animate={{ y: 0, opacity: 1, scale: 1 }}
+                            exit={{ y: 120, opacity: 0 }}
+                            transition={{ type: 'spring', stiffness: 240, damping: 17 }}
+                            className="absolute -top-[58px] left-1/2 -translate-x-1/2 z-0 flex flex-col items-center cursor-pointer group"
+                            aria-label="Click Sandyx to dive into the sandstorm cinematic"
+                          >
+                            <motion.span
+                              initial={{ opacity: 0, y: 6 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: 0.55 }}
+                              className="absolute -top-9 z-20 px-3 py-1.5 rounded-full bg-amber-500 text-white text-[10px] md:text-[11px] font-black uppercase tracking-wider shadow-lg whitespace-nowrap flex items-center gap-1.5"
+                            >
+                              <Flame className="w-3.5 h-3.5" /> Click me to fight the sandstorm!
+                            </motion.span>
+                            <motion.img
+                              src="/sandyx.png"
+                              alt="Sandyx"
+                              draggable={false}
+                              className="w-24 md:w-28 object-contain drop-shadow-xl transition-transform duration-300 group-hover:scale-110"
+                              animate={{ rotate: [0, -4, 4, 0] }}
+                              transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
+                            />
+                          </motion.button>
+                        )}
+                      </AnimatePresence>
+                      <span className="relative z-10 text-sm md:text-base font-bold font-mono tracking-[0.2em] uppercase mb-6 block text-amber-500">
+                        NYUAD iGEM 2026
+                      </span>
+                    </div>
                     <h1 className={`text-2xl md:text-4xl lg:text-5xl font-extrabold tracking-tight uppercase leading-[1.1] mb-4 font-sans ${isLightMode ? 'text-amber-950' : 'text-white'}`}>
                       iGEM Modeling Toolkit To<br/>Study Sand Stabilization
                     </h1>
@@ -327,41 +377,20 @@ export default function App() {
                   </motion.div>
                 </motion.div>
 
+                {/* --- CINEMATIC STORY (desert → dusty city → lab) --- */}
+                <LandingCinematic isLightMode={isLightMode} />
+
                 {/* --- CONTENT SECTIONS --- */}
-                <div className="max-w-4xl mx-auto space-y-[25vh] px-4 sm:px-8 pt-[10vh]">
-                  
-                  {/* Scroll 1: Project Overview */}
-                  <motion.div {...fadeAnimProps} className="text-center max-w-3xl mx-auto flex flex-col items-center">
-                    <h2 className="text-2xl font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 mb-6">Project Overview</h2>
-                    <p className="text-lg leading-relaxed opacity-80 text-center">
-                      This project tackles the environmental crisis of wind-driven desert sand erosion by engineering <Term k="bacillus-subtilis"><i>Bacillus subtilis</i></Term> to biologically stabilize sandy surfaces. We employ a three-pronged synthetic biology approach to maximize soil cohesion, utilize native desert resources, and ensure strict <Term k="kill-switch">biosafety</Term>. By binding loose particulate matter into a durable <Term k="gamma-pga">γ-PGA</Term> crust, we aim to significantly reduce airborne dust and improve regional air quality.
-                    </p>
-                  </motion.div>
+                <div className="max-w-5xl mx-auto px-4 sm:px-8 pt-[4vh]">
 
-                  {/* Scroll 2: How Models Help */}
-                  <motion.div {...fadeAnimProps} className="text-center max-w-3xl mx-auto flex flex-col items-center">
-                    <h2 className="text-2xl font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 mb-6">How do these models help?</h2>
-                    <p className="text-lg leading-relaxed opacity-80 text-center">
-                      These computational models bridge the gap between microscopic bacterial behaviors and macroscopic environmental impact. They allow researchers to simulate polymer <Term k="cross-linking">cross-linking</Term> dynamics, optimize metabolic pathways with <Term k="flux-balance-analysis">flux balance analysis</Term> for resource efficiency, and predict the real-world <Term k="aeolian-transport">aeolian</Term> stress resistance of treated sand before committing to physical experiments.
-                    </p>
-                  </motion.div>
-
-                  {/* Scroll 3: Lab Toolkit Usage */}
-                  <motion.div {...fadeAnimProps} className="text-center max-w-3xl mx-auto flex flex-col items-center">
-                    <h2 className="text-2xl font-black uppercase tracking-widest text-amber-600 dark:text-amber-400 mb-6">How to use this toolkit in the lab</h2>
-                    <p className="text-lg leading-relaxed opacity-80 text-center">
-                      Use this suite to fine-tune your wet lab parameters, such as incubation temperature, <Term k="precursor">precursor</Term> concentrations, and <Term k="od600">inoculum</Term> volumes. The simulated outputs guide exact experimental setups, ensuring you achieve the optimal <Term k="shear-modulus">shear modulus</Term> and environmental durability in your physical assays.
-                    </p>
-                  </motion.div>
-
-                  {/* Scroll 4: The 3 Prongs */}
+                  {/* The 3 Prongs */}
                   <motion.div {...fadeAnimProps} className="max-w-5xl mx-auto">
-                    <div className="flex flex-col md:flex-row justify-between items-center mb-10 border-b border-slate-200 dark:border-slate-800 pb-4">
+                    <div className="flex flex-col md:flex-row justify-between items-center mb-6 border-b border-slate-200 dark:border-slate-800 pb-4">
                       <h2 className="text-3xl font-black uppercase tracking-widest">The Three Prongs</h2>
-                      
+
                       <div className="flex items-center gap-4 mt-6 md:mt-0">
                         <span className="text-xs font-black uppercase tracking-widest opacity-60">Select Combination</span>
-                        <button 
+                        <button
                           onClick={() => { setIsComboMode(!isComboMode); setSelectedProngs([]); }}
                           className={`w-14 h-7 rounded-full relative transition-colors duration-300 ${isComboMode ? 'bg-indigo-500' : 'bg-slate-300 dark:bg-slate-700'}`}
                         >
@@ -369,6 +398,9 @@ export default function App() {
                         </button>
                       </div>
                     </div>
+
+                    {/* Branch-split from the story into the three prong cards */}
+                    <BranchConnector isLightMode={isLightMode} />
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       {PRONGS.map(prong => {
