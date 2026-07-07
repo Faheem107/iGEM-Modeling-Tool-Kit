@@ -11,7 +11,7 @@ import {
   CartesianGrid, Tooltip, ReferenceLine, ReferenceDot, Legend,
 } from 'recharts';
 import { Atom, Layers, Wind as WindIcon, Leaf } from 'lucide-react';
-import GlossaryTerm from '../../GlossaryTerm';
+import GlossaryTerm, { GlossaryText } from '../../GlossaryTerm';
 import type { Caco3Params } from '../../../types';
 import {
   carbonateSpeciation, simulatePrecipitation, caActivityFraction, calciteToUCS, saturationIndex,
@@ -117,7 +117,7 @@ export default function Caco3PrecipitationModule({ isLightMode, onUpdate, displa
       </Panel>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
-        <Panel title="Precipitation Kinetics (48 h)" icon={Atom} isLightMode={isLightMode}>
+        <Panel title={<>Precipitation Kinetics (48 h) — <GlossaryTerm term="ostwald-ripening">Ostwald ripening</GlossaryTerm></>} icon={Atom} isLightMode={isLightMode}>
           <ResponsiveContainer width="100%" height={150}>
             <LineChart data={kinetics} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
               <CartesianGrid stroke={c.grid} strokeDasharray="3 3" />
@@ -131,6 +131,9 @@ export default function Caco3PrecipitationModule({ isLightMode, onUpdate, displa
               <Line type="monotone" dataKey="Calcite" stroke="#10b981" dot={false} strokeWidth={2.5} name="Calcite mM" />
             </LineChart>
           </ResponsiveContainer>
+          <p className={`mt-2 text-[10px] ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>
+            <GlossaryText>Once the solution is supersaturated the pathway is not direct: dissolved calcium first drops into amorphous calcium carbonate, which crystallises to metastable vaterite, then ripens into stable calcite. The crust therefore keeps hardening for hours after spraying.</GlossaryText>
+          </p>
         </Panel>
 
         <Panel title="Biocement Strength Curve" icon={WindIcon} isLightMode={isLightMode}>
@@ -146,8 +149,9 @@ export default function Caco3PrecipitationModule({ isLightMode, onUpdate, displa
               )}
             </LineChart>
           </ResponsiveContainer>
-          <p className={`mt-2 text-[10px] flex items-center gap-1 ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>
-            <Leaf className="w-3 h-3 text-emerald-500" /> Red marker = current operating point; curve calibrated by UCS-vs-calcite% wet-lab regression.
+          <p className={`mt-2 text-[10px] flex items-start gap-1 ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>
+            <Leaf className="w-3 h-3 text-emerald-500 mt-0.5 shrink-0" />
+            <GlossaryText>Red marker = current operating point. The power law UCS = kUcs x (calcite wt%)^nUcs is fixed by the wet-lab unconfined compression versus calcite regression, so both the exponent and the intercept are calibration targets, not guesses.</GlossaryText>
           </p>
         </Panel>
       </div>

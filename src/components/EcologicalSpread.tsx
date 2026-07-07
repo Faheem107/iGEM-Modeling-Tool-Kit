@@ -1,8 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CAConfig } from '../types';
-import { Bug, Sparkles, RefreshCw, Layers, ShieldHalf, TrendingUp, HelpCircle, Info, Link2 } from 'lucide-react';
+import { Bug, Sparkles, RefreshCw, Layers, ShieldHalf, TrendingUp, HelpCircle, Info, Link2, Droplet, ShieldCheck, ShieldAlert, Gauge } from 'lucide-react';
 import GlossaryTerm from './GlossaryTerm';
 import { ModuleActions } from './simulation/_shared';
+import {
+  ECOLOGY_CALIB, cval,
+  frontKinematics, latticeInvasionProb,
+  combinedEscapeFrequency, deployedPopulation, escapeStatistics,
+} from '../lib/physics';
 
 interface EcologicalProps {
   config: CAConfig;
@@ -41,8 +46,40 @@ export default function EcologicalSpread({
   const [gelCoverage, setGelCoverage] = useState<number>(0);
   const [killSwitchTriggered, setKillSwitchTriggered] = useState<boolean>(false);
 
-  // Derive propagation speed dynamically when bound
-  const effectiveSpreadProb = isLinked ? Math.min(0.95, 0.2 + (pgaAccum / 220) * 0.7) : config.spreadProb;
+  // --- Physical spread & biocontainment levers (module-local; not part of the shared CAConfig) ---
+  // Ca²⁺ dosed for cross-linking / MICP also SUPPRESSES colony sliding (surfactin complexation,
+  // Kubota & Kobayashi 2017) — a real spread-limiting synergy of the chemistry the prongs deploy.
+  const [caConc, setCaConc] = useState<number>(1.0); // mM Ca²⁺
+  // MazE/MazF kill-switch escape frequency exponent: escape = 10^(−escapeExp) per cell·generation.
+  const [escapeExp, setEscapeExp] = useState<number>(8); // 8 → 10⁻⁸ (NIH target)
+  const [redundantSwitch, setRedundantSwitch] = useState<boolean>(true); // orthogonal 2nd switch
+
+  // Colony vitality (0–1) sets the Fisher–KPP reaction term µ: when linked it is driven by the
+  // γ-PGA secretion vigour; otherwise the manual "growth vigour" slider (config.spreadProb).
+  const vitality = isLinked
+    ? Math.max(0.15, Math.min(1, 0.2 + pgaAccum / 250))
+    : config.spreadProb;
+  const kin = frontKinematics(vitality, caConc);
+  // The colony map is a time-accelerated schematic; its per-step invasion probability is a monotone
+  // function of the same drivers (↑ with vitality, ↓ with Ca²⁺). The rigorous physical front speed
+  // is reported in mm·day⁻¹ from c = 2√(Dµ).
+  const effectiveSpreadProb = isLinked ? latticeInvasionProb(kin, vitality) : config.spreadProb;
+
+  // Biocontainment: independent orthogonal switches MULTIPLY their escape frequencies. The deployed
+  // population is taken at hectare field scale (the number actually released), so N·p is the honest
+  // expected-escapee count regardless of the toy lattice's current step.
+  const perSwitchEscape = Math.pow(10, -escapeExp);
+  const pEscape = combinedEscapeFrequency(perSwitchEscape, redundantSwitch ? 2 : 1);
+  const HECTARE_SPAN_MM = 1e5; // 1 ha = 100 m × 100 m
+  const escape = escapeStatistics(pEscape, deployedPopulation(HECTARE_SPAN_MM, 1));
+  const nihThreshold = cval(ECOLOGY_CALIB.nihEscapeThreshold);
+  // Compact scientific-notation formatter for the tiny probabilities.
+  const sci = (x: number) => {
+    if (x <= 0) return '0';
+    const e = Math.floor(Math.log10(x));
+    const m = x / Math.pow(10, e);
+    return `${m.toFixed(1)}×10${e.toString().split('').map(d => '⁻⁰¹²³⁴⁵⁶⁷⁸⁹'['-0123456789'.indexOf(d)]).join('')}`;
+  };
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasWrapRef = useRef<HTMLDivElement | null>(null);
@@ -416,6 +453,37 @@ export default function EcologicalSpread({
                 className={`w-full accent-indigo-500 cursor-ew-resize ${isLightMode ? 'bg-stone-200 h-1.5 rounded' : ''}`}
               />
             )}
+            {/* Rigorous physical front speed (Fisher–KPP), reported alongside the schematic map. */}
+            <div className={`mt-2 p-2.5 rounded text-[10px] font-mono border leading-relaxed ${isLightMode ? 'bg-cyan-50/50 border-cyan-200 text-stone-700' : 'bg-cyan-950/15 border-cyan-900/30 text-slate-300'}`}>
+              <div className="flex items-center gap-1 mb-1 font-bold not-italic">
+                <Gauge className={`w-3.5 h-3.5 ${isLightMode ? 'text-cyan-700' : 'text-cyan-400'}`} />
+                <GlossaryTerm term="fisher-kpp">Fisher–KPP</GlossaryTerm> colony front
+              </div>
+              <div className="flex justify-between"><span>c = 2√(D·µ)</span><span className={isLightMode ? 'text-cyan-800 font-bold' : 'text-cyan-300'}>{kin.speed_mm_day.toFixed(1)} mm·day⁻¹</span></div>
+              <div className="flex justify-between"><span>doubling t_d = ln2/µ</span><span>{kin.doubling_h.toFixed(1)} h</span></div>
+              <div className="flex justify-between"><span>Ca²⁺ sliding retained</span><span className={kin.caRetainedFraction < 0.6 ? (isLightMode ? 'text-emerald-700 font-bold' : 'text-emerald-400') : ''}>{(kin.caRetainedFraction * 100).toFixed(0)}%</span></div>
+            </div>
+          </div>
+
+          {/* Ca²⁺ dosing — suppresses sliding motility (a spread-limiting lever we already control). */}
+          <div>
+            <div className={`flex justify-between text-[11px] mb-1 ${isLightMode ? 'text-stone-701' : 'text-slate-400'}`}>
+              <div className="group relative flex items-center gap-1 cursor-help">
+                <Droplet className={`w-3.5 h-3.5 ${isLightMode ? 'text-sky-600' : 'text-sky-400'}`} />
+                <span className={`underline decoration-dotted underline-offset-2 ${isLightMode ? 'decoration-stone-300' : 'decoration-slate-600'}`}>Ca²⁺ Dose (sliding suppression)</span>
+                <Info className="w-3.5 h-3.5 text-slate-500 hover:text-cyan-455 transition" />
+                <div className={`absolute left-0 bottom-full mb-1.5 hidden group-hover:block w-64 p-2 text-[10px] rounded border shadow-xl z-25 font-sans leading-relaxed ${isLightMode ? 'bg-white text-stone-800 border-amber-900/15' : 'bg-slate-950 text-slate-300 border border-slate-800'}`}>
+                  The same Ca²⁺ dosed for γ-PGA cross-linking / MICP complexes surfactin and disables flagellum-independent sliding, lowering the colony diffusivity D (Kubota &amp; Kobayashi 2017). Higher Ca²⁺ → slower spread.
+                </div>
+              </div>
+              <span className={`font-mono px-1 py-0.5 rounded text-[10px] border ${isLightMode ? 'bg-sky-50 border-sky-200 text-sky-800 font-bold' : 'bg-sky-950/40 text-sky-400 border border-sky-900/30'}`}>{caConc.toFixed(1)} mM</span>
+            </div>
+            <input
+              type="range" min="0" max="10" step="0.5"
+              value={caConc}
+              onChange={(e) => setCaConc(parseFloat(e.target.value))}
+              className={`w-full accent-sky-500 cursor-ew-resize ${isLightMode ? 'bg-stone-200 h-1.5 rounded' : ''}`}
+            />
           </div>
 
           <div>
@@ -464,6 +532,53 @@ export default function EcologicalSpread({
           <p className={`text-[10px] leading-normal mb-3 ${isLightMode ? 'text-stone-605 font-medium' : 'text-slate-500'}`}>
             A <GlossaryTerm term="maze-mazf">MazE/MazF</GlossaryTerm> toxin–antitoxin <GlossaryTerm term="kill-switch">kill-switch</GlossaryTerm> contains the engineered <i>B. subtilis</i> ({binderLabel}): the plasmid dilutes out over ~8–20 generations and the switch also fires if surface moisture falls below ~5%, blocking overspread and horizontal gene transfer to wild strains.
           </p>
+
+          {/* Quantitative escape-frequency biosafety calculator — the real "spread probability". */}
+          <div className={`mb-3 p-3 rounded border font-mono ${isLightMode ? 'bg-white border-amber-900/12' : 'bg-[#06080d] border-slate-800'}`}>
+            <div className={`flex justify-between text-[10px] mb-1.5 font-sans ${isLightMode ? 'text-stone-701' : 'text-slate-400'}`}>
+              <span className="font-bold uppercase tracking-wider">Kill-switch escape frequency</span>
+              <span className={`px-1 py-0.5 rounded text-[10px] border font-mono ${escape.meetsNIH ? (isLightMode ? 'bg-emerald-50 border-emerald-200 text-emerald-800 font-bold' : 'bg-emerald-950/40 text-emerald-400 border-emerald-900/40') : (isLightMode ? 'bg-rose-50 border-rose-200 text-rose-800 font-bold' : 'bg-rose-950/40 text-rose-400 border-rose-900/40')}`}>{sci(pEscape)} cell⁻¹</span>
+            </div>
+            <input
+              type="range" min="6" max="9" step="0.5"
+              value={escapeExp}
+              onChange={(e) => setEscapeExp(parseFloat(e.target.value))}
+              className={`w-full accent-emerald-500 cursor-ew-resize ${isLightMode ? 'bg-stone-200 h-1.5 rounded' : ''}`}
+            />
+            <div className={`flex justify-between text-[9px] mt-0.5 font-sans ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>
+              <span>leaky 10⁻⁶</span><span>per switch: 10<sup>−{escapeExp}</sup></span><span>tight 10⁻⁹</span>
+            </div>
+
+            <label className={`flex items-center justify-between mt-2.5 cursor-pointer text-[10px] font-sans ${isLightMode ? 'text-stone-700' : 'text-slate-300'}`}>
+              <span className="flex items-center gap-1.5 font-bold">
+                <ShieldCheck className={`w-3.5 h-3.5 ${isLightMode ? 'text-emerald-600' : 'text-emerald-400'}`} />
+                Redundant orthogonal switch (×)
+              </span>
+              <input type="checkbox" checked={redundantSwitch} onChange={(e) => setRedundantSwitch(e.target.checked)} className="rounded accent-emerald-500" />
+            </label>
+            <p className={`text-[9px] mt-1 leading-normal font-sans ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>
+              Two independent switches multiply their escape frequencies — the design route to beating the NIH 10⁻⁸ line.
+            </p>
+
+            {/* Field-scale consequence: expected escapees over a treated hectare. */}
+            <div className={`mt-3 pt-2.5 border-t space-y-1 ${isLightMode ? 'border-amber-900/10' : 'border-slate-800'}`}>
+              <div className={`flex justify-between text-[10px] ${isLightMode ? 'text-stone-600' : 'text-slate-400'}`}>
+                <span>Deployed cells (per ha)</span><span>{sci(escape.population)}</span>
+              </div>
+              <div className={`flex justify-between text-[10px] ${isLightMode ? 'text-stone-600' : 'text-slate-400'}`}>
+                <span>Expected escapees (N·p)</span>
+                <span className={escape.containedAtScale ? (isLightMode ? 'text-emerald-700 font-bold' : 'text-emerald-400') : (isLightMode ? 'text-rose-700 font-bold' : 'text-rose-400')}>{sci(escape.expectedEscapees)}</span>
+              </div>
+              <div className={`flex justify-between text-[10px] ${isLightMode ? 'text-stone-600' : 'text-slate-400'}`}>
+                <span>P(≥1 escapee / ha)</span><span>{escape.pAtLeastOne < 1e-4 ? sci(escape.pAtLeastOne) : `${(escape.pAtLeastOne * 100).toFixed(1)}%`}</span>
+              </div>
+              <div className={`mt-1.5 flex items-center gap-1.5 p-1.5 rounded text-[9px] font-sans font-bold border ${escape.containedAtScale ? (isLightMode ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-emerald-950/30 text-emerald-400 border-emerald-900/40') : (isLightMode ? 'bg-rose-50 text-rose-800 border-rose-200' : 'bg-rose-950/30 text-rose-400 border-rose-900/40')}`}>
+                {escape.containedAtScale
+                  ? <><ShieldCheck className="w-3.5 h-3.5" /> Contained at hectare scale — fewer than one escapee expected (vs NIH 10⁻⁸ single-cell target: {escape.meetsNIH ? 'met' : 'not met'}).</>
+                  : <><ShieldAlert className="w-3.5 h-3.5" /> {escape.expectedEscapees.toExponential(1)} escapees expected per ha — enable the redundant switch or tighten the design.</>}
+              </div>
+            </div>
+          </div>
 
           <div className="space-y-2 font-mono">
             <div className={`flex items-center justify-between p-2.5 rounded text-[11px] border ${isLightMode ? 'bg-amber-50/20 border-amber-900/10' : 'bg-[#06080d] border-slate-800'}`}>

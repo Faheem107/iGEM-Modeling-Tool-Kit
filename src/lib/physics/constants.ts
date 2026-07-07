@@ -218,6 +218,55 @@ export const CURING_CALIB = {
   reapplyIntervalMonths: calib(6, 'months', 'Study 5: repeat the spray cycle every 6 months', 'Confirm crust still exceeds the survival threshold at the chosen cadence.', [3, 12]),
 } as const;
 
+/**
+ * Ecology — engineered-colony spread (Fisher–KPP) + MazE/MazF biocontainment.
+ * ==========================================================================
+ * Two distinct, literature-anchored quantities the previous model lumped into one raw
+ * "spread probability" knob:
+ *
+ *   1. COLONY FRONT SPEED  — how fast the living colony physically expands across the treated
+ *      patch. Bacterial range expansion is the textbook Fisher–Kolmogorov (KPP) travelling wave:
+ *          c = 2·√(D·µ)
+ *      with µ the edge specific-growth-rate [h⁻¹] and D an effective sliding/expansion
+ *      diffusivity [mm²·h⁻¹]. Ca²⁺ (which prongs 1–2 dose for cross-linking / MICP) *lowers* D by
+ *      complexing surfactin and disabling flagellum-independent sliding (Kubota/Kobayashi 2017,
+ *      PMC5374384) — a genuine spread-limiting synergy of the chemistry we already deploy.
+ *
+ *   2. BIOCONTAINMENT ESCAPE FREQUENCY — the probability a cell evades the MazE/MazF kill-switch
+ *      per generation. This is the real biosafety "spread probability": it multiplies by the huge
+ *      deployed cell count to give the expected number of escapees. NIH/NIST-style guidance sets a
+ *      < 10⁻⁸ escapees·cell⁻¹·gen⁻¹ target (Chan et al. 2016 Nat Chem Biol; Stirling et al. 2017
+ *      Mol Cell "Deadman/Passcode"; Rottinghaus et al. 2022 layered switches). Independent switches
+ *      MULTIPLY: two orthogonal switches at 10⁻⁴ each reach the 10⁻⁸ floor.
+ */
+export const ECOLOGY_CALIB = {
+  /** Edge specific growth rate µ of the expanding colony [h⁻¹] (sets the KPP reaction term). */
+  muMax: calib(1.0, 'h⁻¹', 'B. subtilis exponential growth, doubling ≈40 min (µ=ln2/t_d)', 'OD600 growth curve on the deployment medium/temperature; µ = slope of ln(OD) vs t.', [0.3, 2.0]),
+  /**
+   * Effective colony-expansion (sliding-motility) diffusivity D₀ [mm²·h⁻¹] at zero Ca²⁺.
+   * Calibrated so the Fisher speed c=2√(Dµ) lands at the few-mm·day⁻¹ sliding-expansion rate of
+   * B. subtilis biofilms on soft agar (Grau et al. 2015; van Gestel et al. 2015).
+   */
+  motilityD0: calib(0.012, 'mm²·h⁻¹', 'B. subtilis sliding-expansion → c≈5 mm·day⁻¹ via c=2√(Dµ)', 'Track colony-edge radius vs time on the deployment substrate; D=(c/2)²/µ.', [0.002, 0.08]),
+  /**
+   * Ca²⁺ concentration that halves sliding expansion (surfactin-complexation suppression):
+   * D(Ca) = D₀ / (1 + [Ca²⁺]/K). Kubota & Kobayashi 2017 saw restriction already at 1 mM Ca²⁺,
+   * deepening at 10–100 mM.
+   */
+  caSuppressHalf: calib(1.0, 'mM Ca²⁺', 'Ca²⁺ lowers B. subtilis colony expansion, half-effect ~1 mM (PMC5374384)', 'Colony diameter vs [Ca²⁺] (0/1/10/100 mM); fit the half-suppression constant.', [0.3, 10]),
+  /** Physical edge length of the simulated deployment patch [mm] — sets the grid cell size Δx. */
+  patchSpanMm: calib(100, 'mm', 'simulated overhead patch = 10 cm treated square', 'Set to the plot size the colony map represents; Δx = span/gridSize.', [20, 500]),
+  /**
+   * Kill-switch escape frequency [escapees·cell⁻¹·generation⁻¹] — a cell mutationally inactivating
+   * MazF / retaining the antitoxin. Default at the NIH < 10⁻⁸ biocontainment target.
+   */
+  escapeFreqPerGen: calib(1.0e-8, 'cell⁻¹·gen⁻¹', 'engineered T-A / MazEF escape 10⁻⁶–10⁻⁸ (Chan 2016; Stirling 2017; Rottinghaus 2022)', 'Plate a saturated culture on inducing medium; escapees/CFU = escape frequency.', [1e-9, 1e-5]),
+  /** NIH-style biocontainment benchmark the design is judged against (fixed reference line). */
+  nihEscapeThreshold: calib(1.0e-8, 'cell⁻¹·gen⁻¹', 'NIH/community biocontainment target (Chan et al. 2016)', 'Fixed reference; the design should meet or beat it.', [1e-8, 1e-8]),
+  /** Viable engineered cells laid down per cm² of treated crust (sets the deployed population). */
+  fieldViableDensity: calib(1.0e7, 'cells·cm⁻²', 'B. subtilis spray inoculation ~10⁷–10⁹ CFU·cm⁻²', 'CFU per cm² of freshly sprayed crust by plate count.', [1e5, 1e9]),
+} as const;
+
 /** Composite — multi-prong strength combination (rule of mixtures + synergy). */
 export const COMPOSITE_CALIB = {
   /**
@@ -288,6 +337,7 @@ export const CALIBRATION = {
   ALGINATE: ALGINATE_CALIB,
   GRAINSIZE: GRAINSIZE_CALIB,
   CURING: CURING_CALIB,
+  ECOLOGY: ECOLOGY_CALIB,
   COMPOSITE: COMPOSITE_CALIB,
   INTERACTION: INTERACTION_CALIB,
   ECONOMIC: ECONOMIC_CALIB,

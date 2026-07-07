@@ -19,3 +19,4 @@ export * from './curing';
 export * from './composite';
 export * from './interactions';
 export * from './economic';
+export * from './ecology';

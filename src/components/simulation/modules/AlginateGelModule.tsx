@@ -12,7 +12,7 @@ import {
   CartesianGrid, Tooltip, ReferenceDot, ReferenceLine,
 } from 'recharts';
 import { Droplets, ShieldCheck, CloudRain } from 'lucide-react';
-import GlossaryTerm from '../../GlossaryTerm';
+import GlossaryTerm, { GlossaryText } from '../../GlossaryTerm';
 import type { AlginateParams } from '../../../types';
 import {
   solveAlginateGel, moistureRetention, washoutResidual, washoutHalfLifeCycles, modulusAfterWashout,
@@ -98,6 +98,9 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
             <ReferenceDot x={+p.calcium.toFixed(1)} y={+gel.shearModulus.toFixed(0)} r={5} fill="#06b6d4" stroke={isLightMode ? '#fff' : '#000'} />
           </LineChart>
         </ResponsiveContainer>
+        <p className={`mt-2 text-[10px] ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>
+          <GlossaryText>Calcium binds the buckled G-blocks into egg-box junctions; the junction density sets the shear modulus through rubber-elasticity, G = network density x R x T. The curve rises then saturates as the G-blocks run out of free binding sites.</GlossaryText>
+        </p>
       </Panel>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
@@ -112,6 +115,9 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
               <ReferenceLine x={p.rainCycles} stroke="#ef4444" strokeDasharray="4 2" />
             </LineChart>
           </ResponsiveContainer>
+          <p className={`mt-2 text-[10px] ${isLightMode ? 'text-stone-500' : 'text-slate-500'}`}>
+            <GlossaryText>The honest limit: alginate is soluble, so each wet cycle removes a fixed fraction and residual strength falls as (1 - washout rate)^cycles. That decay rate is a rainfall-simulation calibration target, and it is why alginate is one prong of three, not the whole answer.</GlossaryText>
+          </p>
         </Panel>
 
         <Panel title={<><GlossaryTerm term="moisture-retention">Moisture Retention</GlossaryTerm> vs Humidity</>} icon={Droplets} isLightMode={isLightMode}>
