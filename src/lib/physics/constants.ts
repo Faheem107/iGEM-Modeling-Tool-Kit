@@ -153,7 +153,8 @@ export const ALGINATE_CALIB = {
 } as const;
 
 /**
- * Grain-size-resolved crust performance (Study 4 — Xiao et al. 2024, MICP vs particle size;
+ * Grain-size-resolved crust performance (Study 4 — Erdmann et al. 2024, Discover Materials,
+ * doi:10.1007/s43939-024-00108-3, MICP vs particle size;
  * UAE dune-sand grain-size distribution). MICP cementation is NOT uniform across grain sizes:
  * it peaks for fine–medium sand (~63–125 µm), where pores are small enough for calcite bridging
  * yet permeable enough for bacteria to penetrate, and falls off for coarse sand (pores too large
