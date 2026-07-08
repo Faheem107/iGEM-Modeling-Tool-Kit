@@ -372,16 +372,16 @@ export default function App() {
                             animate={{ y: 0, opacity: 1, scale: 1 }}
                             exit={{ y: 120, opacity: 0 }}
                             transition={{ type: 'spring', stiffness: 240, damping: 17 }}
-                            className="absolute -top-[58px] left-1/2 -translate-x-1/2 z-0 flex flex-col items-center cursor-pointer group"
+                            className="absolute -top-[74px] left-1/2 -translate-x-1/2 z-30 flex flex-col items-center cursor-pointer group"
                             aria-label="Click Sandyx to play the interactive story and fight the sandstorm"
                           >
                             <motion.span
                               initial={{ opacity: 0, y: 6 }}
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ delay: 0.55 }}
-                              className="absolute -top-9 z-20 px-3 py-1.5 rounded-full bg-amber-500 text-white text-[10px] md:text-[11px] font-black uppercase tracking-wider shadow-lg whitespace-nowrap flex items-center gap-1.5"
+                              className="absolute -top-9 z-20 px-3 py-1.5 rounded-full bg-amber-500 text-white text-[10px] md:text-[11px] font-black uppercase tracking-wider shadow-lg whitespace-nowrap"
                             >
-                              <Flame className="w-3.5 h-3.5" /> Click me to fight sandstorms!
+                              Click me to fight sandstorms!
                             </motion.span>
                             <motion.img
                               src="/sandyx.png"
@@ -716,7 +716,7 @@ export default function App() {
                             <p className="text-sm sm:text-base opacity-70 leading-relaxed max-w-md mb-7">{card.desc}</p>
                             <button
                               onClick={() => handlePortalSelect(card.id as ViewMode)}
-                              className="px-8 py-3 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold uppercase tracking-widest text-sm transition-transform hover:scale-105 shadow-lg shadow-indigo-500/20 flex items-center gap-2"
+                              className="btn-colored px-8 py-3 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold uppercase tracking-widest text-sm transition-transform hover:scale-105 shadow-lg shadow-indigo-500/20 flex items-center gap-2"
                             >
                               Enter Portal <ArrowRight className="w-4 h-4" />
                             </button>

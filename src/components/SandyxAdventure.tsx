@@ -41,6 +41,8 @@ const C = {
   purple: '#9b6bff',
   sand: '#e7c98a',
   sandDeep: '#c79b52',
+  // Warm light khaki/beige used for Sandyx's dialogue text on dark boxes.
+  speech: '#f2ddb0',
 };
 
 type Phase =
@@ -84,7 +86,7 @@ function RetroButton({
   return (
     <button
       onClick={onClick}
-      className={`font-retro text-[11px] sm:text-[13px] px-5 py-4 border-[3px] transition-colors duration-150 active:translate-y-[2px] ${tones[tone]} ${className}`}
+      className={`btn-colored font-retro text-[11px] sm:text-[13px] px-5 py-4 border-[3px] transition-colors duration-150 active:translate-y-[2px] ${tones[tone]} ${className}`}
       style={{ boxShadow: '5px 5px 0 rgba(0,0,0,0.5)' }}
     >
       {children}
@@ -174,15 +176,15 @@ function SpeechBubble({
           boxShadow: `0 0 22px ${accent}55, 8px 8px 0 rgba(0,0,0,0.55)`,
         }}
       >
-        <p
+        <div
           className="font-retro text-[13px] sm:text-[16px] leading-[1.95]"
-          style={{ color: '#ffffff' }}
+          style={{ color: C.speech }}
         >
           {shown}
           <span className="retro-blink" style={{ color: accent }}>
             ▌
           </span>
-        </p>
+        </div>
         {/* tail */}
         <div
           className="absolute -bottom-3 left-12 w-5 h-5 rotate-45 border-b-4 border-r-4"
@@ -538,7 +540,7 @@ function DesertScene({ onFinish }: { onFinish: () => void }) {
       {/* Click-to-continue */}
       <button
         onClick={advance}
-        className="absolute bottom-6 right-6 z-30 font-retro text-[11px] px-4 py-3 border-[3px]"
+        className="btn-colored absolute bottom-6 right-6 z-30 font-retro text-[11px] px-4 py-3 border-[3px]"
         style={{ borderColor: '#ffffff', color: '#ffffff', background: 'rgba(0,0,0,0.4)' }}
       >
         NEXT ▶
@@ -558,23 +560,74 @@ function DesertScene({ onFinish }: { onFinish: () => void }) {
 const WORLD = { w: 640, h: 400 };
 
 type LabIcon = 'incubator' | 'tube' | 'flask' | 'cylinder' | 'droplet';
-interface Station {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  color: string;
-  label: string;
-  icon: LabIcon;
-}
-// Ordered to match the objectives below.
-const STATIONS: Station[] = [
-  { x: 60, y: 70, w: 96, h: 66, color: C.teal, label: 'INCUBATOR', icon: 'incubator' },
-  { x: 270, y: 56, w: 100, h: 60, color: C.green, label: 'GLUTAMATE', icon: 'tube' },
-  { x: 486, y: 78, w: 96, h: 66, color: C.amber, label: 'FERMENTER', icon: 'flask' },
-  { x: 500, y: 250, w: 100, h: 70, color: C.purple, label: 'CO₂ / CA', icon: 'cylinder' },
-  { x: 70, y: 250, w: 104, h: 70, color: C.magenta, label: 'Ca²⁺ BATH', icon: 'droplet' },
+// --- Pac-Man-style maze -----------------------------------------------------
+const MAZE = [
+  '###############',
+  '#......#......#',
+  '#.###.#.#.###.#',
+  '#...#.....#...#',
+  '#.#.#.###.#.#.#',
+  '#.............#',
+  '#.#.#.###.#.#.#',
+  '#...#.....#...#',
+  '#.###.#.#.###.#',
+  '#.....#.#.....#',
+  '###############',
 ];
+const MCOLS = 15;
+const MROWS = 11;
+const CW = WORLD.w / MCOLS;
+const CH = WORLD.h / MROWS;
+const isWallCell = (c: number, r: number) =>
+  c < 0 || r < 0 || c >= MCOLS || r >= MROWS || MAZE[r][c] === '#';
+const cellCenter = (c: number, r: number): [number, number] => [(c + 0.5) * CW, (r + 0.5) * CH];
+
+interface MazeStation {
+  col: number;
+  row: number;
+  color: string;
+  icon: LabIcon;
+  label: string;
+}
+// Ordered to match the objectives below; spread across the maze.
+const STATIONS: MazeStation[] = [
+  { col: 1, row: 1, color: C.teal, icon: 'incubator', label: 'INCUBATOR' },
+  { col: 13, row: 1, color: C.green, icon: 'tube', label: 'GLUTAMATE' },
+  { col: 7, row: 3, color: C.amber, icon: 'flask', label: 'FERMENTER' },
+  { col: 1, row: 9, color: C.purple, icon: 'cylinder', label: 'CO₂/CA' },
+  { col: 13, row: 9, color: C.magenta, icon: 'droplet', label: 'Ca²⁺' },
+];
+const PLAYER_START: [number, number] = [6, 5];
+const GHOST_START: [number, number] = [7, 7];
+
+// BFS one step from (sc,sr) toward (gc,gr) through the maze — powers the sand chaser.
+function bfsNextStep(sc: number, sr: number, gc: number, gr: number): [number, number] | null {
+  if (sc === gc && sr === gr) return null;
+  const prev = new Map<number, number>();
+  prev.set(sr * MCOLS + sc, -1);
+  const q: [number, number][] = [[sc, sr]];
+  let found = false;
+  while (q.length) {
+    const [c, r] = q.shift()!;
+    if (c === gc && r === gr) { found = true; break; }
+    for (const [dc, dr] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+      const nc = c + dc, nr = r + dr;
+      if (isWallCell(nc, nr)) continue;
+      const key = nr * MCOLS + nc;
+      if (prev.has(key)) continue;
+      prev.set(key, r * MCOLS + c);
+      q.push([nc, nr]);
+    }
+  }
+  if (!found) return null;
+  let key = gr * MCOLS + gc;
+  const path: number[] = [];
+  while (key !== -1) { path.push(key); key = prev.get(key)!; }
+  path.reverse();
+  if (path.length < 2) return null;
+  const next = path[1];
+  return [next % MCOLS, Math.floor(next / MCOLS)];
+}
 
 // --- Canvas icon painters (no emoji) --------------------------------------
 function drawLabIcon(ctx: CanvasRenderingContext2D, icon: LabIcon, cx: number, cy: number) {
@@ -620,44 +673,46 @@ function drawLabIcon(ctx: CanvasRenderingContext2D, icon: LabIcon, cx: number, c
   ctx.restore();
 }
 
-// Small steel-gray equipment props that dress the lab benches (drawn, no emoji).
-function drawProp(ctx: CanvasRenderingContext2D, kind: string, cx: number, cy: number) {
+// The "sand particle" chaser — a Pac-Man-style ghost made of drifting sand.
+function drawSand(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, t: number, lookX: number, lookY: number) {
   ctx.save();
-  ctx.strokeStyle = '#2b3150';
-  ctx.fillStyle = '#3c456e';
-  ctx.lineWidth = 2;
-  ctx.lineJoin = 'round';
-  if (kind === 'microscope') {
-    ctx.fillRect(cx - 8, cy + 6, 16, 3);            // base
-    ctx.beginPath(); ctx.moveTo(cx - 3, cy + 6); ctx.lineTo(cx - 3, cy - 6); ctx.lineTo(cx + 6, cy - 9); ctx.stroke(); // arm
-    ctx.fillRect(cx + 4, cy - 11, 4, 8);            // eyepiece
-    ctx.fillRect(cx - 5, cy + 1, 6, 3);             // stage
-  } else if (kind === 'monitor') {
-    ctx.fillRect(cx - 10, cy - 8, 20, 13);          // screen
-    ctx.fillStyle = '#5be0c8'; ctx.fillRect(cx - 8, cy - 6, 16, 9);
-    ctx.fillStyle = '#3c456e'; ctx.fillRect(cx - 3, cy + 5, 6, 3); // stand
-  } else if (kind === 'bottles') {
-    for (let i = 0; i < 3; i++) {
-      ctx.fillRect(cx - 12 + i * 9, cy - 6, 6, 12);
-      ctx.fillRect(cx - 11 + i * 9, cy - 9, 4, 3);
-    }
-  } else if (kind === 'centrifuge') {
-    ctx.beginPath(); ctx.arc(cx, cy, 10, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = '#20264a'; ctx.beginPath(); ctx.arc(cx, cy, 10, 0, Math.PI * 2); ctx.stroke();
-    ctx.strokeStyle = '#20264a'; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + 7, cy - 5); ctx.stroke();
-  } else if (kind === 'clipboard') {
-    ctx.fillStyle = '#c7cbe0'; ctx.fillRect(cx - 7, cy - 9, 14, 18);
-    ctx.fillStyle = '#3c456e'; ctx.fillRect(cx - 3, cy - 11, 6, 3);
-    ctx.strokeStyle = '#8b93c2'; for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.moveTo(cx - 4, cy - 4 + i * 4); ctx.lineTo(cx + 4, cy - 4 + i * 4); ctx.stroke(); }
-  } else if (kind === 'extinguisher') {
-    ctx.fillStyle = '#c0392b'; ctx.fillRect(cx - 5, cy - 6, 10, 14);
-    ctx.fillStyle = '#20264a'; ctx.fillRect(cx - 3, cy - 10, 6, 4);
-  } else if (kind === 'flasks') {
-    ctx.beginPath(); ctx.moveTo(cx - 3, cy - 8); ctx.lineTo(cx - 8, cy + 8); ctx.lineTo(cx + 8, cy + 8); ctx.lineTo(cx + 3, cy - 8); ctx.stroke();
-    ctx.fillStyle = '#5be0c8'; ctx.fillRect(cx - 6, cy + 2, 12, 6);
-  } else if (kind === 'scale') {
-    ctx.fillStyle = '#3c456e'; ctx.fillRect(cx - 9, cy + 2, 18, 6);
-    ctx.fillStyle = '#c7cbe0'; ctx.fillRect(cx - 7, cy - 3, 14, 4);
+  // trailing sand sparkle
+  for (let i = 0; i < 4; i++) {
+    const a = t / 300 + i;
+    ctx.fillStyle = `rgba(199,155,82,${0.25 - i * 0.05})`;
+    ctx.beginPath();
+    ctx.arc(x - Math.cos(a) * (r + 4 + i * 3), y - Math.sin(a) * (r + 4 + i * 3), 2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // body (dome + wavy skirt)
+  ctx.beginPath();
+  ctx.arc(x, y - 2, r, Math.PI, 0);
+  ctx.lineTo(x + r, y + r - 2);
+  const humps = 3;
+  for (let i = 0; i < humps; i++) {
+    const seg = (r * 2) / humps;
+    const bx = x + r - seg * (i + 0.5);
+    const dir = i % 2 === 0 ? 1 : -1;
+    ctx.quadraticCurveTo(bx, y + r - 2 + 5 * dir, x + r - seg * (i + 1), y + r - 2);
+  }
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(x, y - r, x, y + r);
+  grad.addColorStop(0, '#efd9a6');
+  grad.addColorStop(1, '#c79b52');
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(122,84,30,0.6)';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  // eyes looking toward the player
+  const dx = lookX - x, dy = lookY - y;
+  const m = Math.hypot(dx, dy) || 1;
+  const ex = (dx / m) * 1.6, ey = (dy / m) * 1.6;
+  for (const sx of [-1, 1]) {
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.arc(x + sx * r * 0.4, y - 2, r * 0.28, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#2a1e00';
+    ctx.beginPath(); ctx.arc(x + sx * r * 0.4 + ex, y - 2 + ey, r * 0.14, 0, Math.PI * 2); ctx.fill();
   }
   ctx.restore();
 }
@@ -678,22 +733,37 @@ function LabGame({ onSolved }: { onSolved: () => void }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const keys = useRef<Record<string, boolean>>({});
-  const pos = useRef({ x: 320, y: 350, bob: 0, face: 1 });
+  const pos = useRef({ x: cellCenter(...PLAYER_START)[0], y: cellCenter(...PLAYER_START)[1], bob: 0, face: 1 });
+  const ghost = useRef({ x: cellCenter(...GHOST_START)[0], y: cellCenter(...GHOST_START)[1], tc: -1, tr: -1, retime: 0 });
   const objRef = useRef(0);
   const progRef = useRef(0);
   const spriteRef = useRef<HTMLImageElement | null>(null);
   const flashRef = useRef(0);
+  const hurtRef = useRef(0);
+  const pellets = useRef<Set<number>>(new Set());
 
   const [objIndex, setObjIndex] = useState(0);
   const [moved, setMoved] = useState(false);
   const [solved, setSolved] = useState(false);
+  const [pelletsLeft, setPelletsLeft] = useState(0);
   const movedRef = useRef(false);
 
-  // Load Sandyx sprite once.
+  // Load Sandyx sprite + seed the pellets (every corridor cell except stations/start).
   useEffect(() => {
     const img = new Image();
     img.src = '/sandyx.png';
     img.onload = () => (spriteRef.current = img);
+
+    const occupied = new Set<number>([PLAYER_START[1] * MCOLS + PLAYER_START[0]]);
+    STATIONS.forEach((s) => occupied.add(s.row * MCOLS + s.col));
+    const set = new Set<number>();
+    for (let r = 0; r < MROWS; r++) {
+      for (let c = 0; c < MCOLS; c++) {
+        if (MAZE[r][c] === '.' && !occupied.has(r * MCOLS + c)) set.add(r * MCOLS + c);
+      }
+    }
+    pellets.current = set;
+    setPelletsLeft(set.size);
   }, []);
 
   // Keyboard
@@ -739,53 +809,92 @@ function LabGame({ onSolved }: { onSolved: () => void }) {
     resize();
     window.addEventListener('resize', resize);
 
+    const R = Math.min(CW, CH) * 0.3;
+    const blocked = (cx: number, cy: number) =>
+      isWallCell(Math.floor((cx - R) / CW), Math.floor(cy / CH)) ||
+      isWallCell(Math.floor((cx + R) / CW), Math.floor(cy / CH)) ||
+      isWallCell(Math.floor(cx / CW), Math.floor((cy - R) / CH)) ||
+      isWallCell(Math.floor(cx / CW), Math.floor((cy + R) / CH));
+
     const step = (t: number) => {
       const dt = Math.min((t - last) / 1000, 0.05);
       last = t;
       const p = pos.current;
-      const spd = 165;
-      let vx = 0;
-      let vy = 0;
+      const g = ghost.current;
+
+      // --- player movement (maze collision, axis-separated) ---
+      let vx = 0, vy = 0;
       if (keys.current['a'] || keys.current['arrowleft']) vx -= 1;
       if (keys.current['d'] || keys.current['arrowright']) vx += 1;
       if (keys.current['w'] || keys.current['arrowup']) vy -= 1;
       if (keys.current['s'] || keys.current['arrowdown']) vy += 1;
+      const spd = 128;
       if (vx || vy) {
         const m = Math.hypot(vx, vy) || 1;
-        p.x += (vx / m) * spd * dt;
-        p.y += (vy / m) * spd * dt;
+        const nx = p.x + (vx / m) * spd * dt;
+        if (!blocked(nx, p.y)) p.x = nx;
+        const ny = p.y + (vy / m) * spd * dt;
+        if (!blocked(p.x, ny)) p.y = ny;
         p.bob += dt * 10;
         if (vx !== 0) p.face = vx > 0 ? 1 : -1;
       }
-      // clamp inside walls
-      p.x = Math.max(30, Math.min(WORLD.w - 30, p.x));
-      p.y = Math.max(30, Math.min(WORLD.h - 30, p.y));
 
-      // interaction with the active station
-      if (!solved && objRef.current < OBJECTIVES.length) {
+      // --- eat pellets ---
+      const pc = Math.floor(p.x / CW), pr = Math.floor(p.y / CH);
+      const pkey = pr * MCOLS + pc;
+      if (pellets.current.has(pkey)) {
+        pellets.current.delete(pkey);
+        setPelletsLeft(pellets.current.size);
+      }
+
+      // --- interaction with the active station ---
+      if (!solved && objRef.current < STATIONS.length) {
         const s = STATIONS[objRef.current];
-        const cx = s.x + s.w / 2;
-        const cy = s.y + s.h / 2;
-        const near = Math.abs(p.x - cx) < s.w / 2 + 26 && Math.abs(p.y - cy) < s.h / 2 + 26;
+        const [scx, scy] = cellCenter(s.col, s.row);
+        const near = Math.hypot(p.x - scx, p.y - scy) < CW * 0.6;
         if (near) {
-          progRef.current = Math.min(1, progRef.current + dt / 1.1);
+          progRef.current = Math.min(1, progRef.current + dt / 0.7);
           if (progRef.current >= 1) {
             progRef.current = 0;
             flashRef.current = 1;
             const next = objRef.current + 1;
             objRef.current = next;
             setObjIndex(next);
-            if (next >= OBJECTIVES.length) {
-              setSolved(true);
-            }
+            if (next >= STATIONS.length) setSolved(true);
           }
         } else {
-          progRef.current = Math.max(0, progRef.current - dt / 0.6);
+          progRef.current = Math.max(0, progRef.current - dt / 0.5);
         }
       }
       if (flashRef.current > 0) flashRef.current = Math.max(0, flashRef.current - dt / 0.6);
+      if (hurtRef.current > 0) hurtRef.current = Math.max(0, hurtRef.current - dt / 0.8);
 
-      draw(ctx, canvas, p);
+      // --- sand chaser: BFS toward the player, step cell-by-cell ---
+      if (!solved) {
+        const gc = Math.floor(g.x / CW), gr = Math.floor(g.y / CH);
+        if ((g.tc < 0 || (Math.abs(g.x - (g.tc + 0.5) * CW) < 2 && Math.abs(g.y - (g.tr + 0.5) * CH) < 2)) || t - g.retime > 500) {
+          const nextStep = bfsNextStep(gc, gr, Math.floor(p.x / CW), Math.floor(p.y / CH));
+          if (nextStep) { g.tc = nextStep[0]; g.tr = nextStep[1]; }
+          g.retime = t;
+        }
+        if (g.tc >= 0) {
+          const [tx, ty] = cellCenter(g.tc, g.tr);
+          const gd = Math.hypot(tx - g.x, ty - g.y) || 1;
+          const gspd = 82;
+          g.x += ((tx - g.x) / gd) * Math.min(gspd * dt, gd);
+          g.y += ((ty - g.y) / gd) * Math.min(gspd * dt, gd);
+        }
+        // caught → respawn at start (keep progress)
+        if (Math.hypot(p.x - g.x, p.y - g.y) < R * 1.5) {
+          const [px, py] = cellCenter(...PLAYER_START);
+          p.x = px; p.y = py;
+          const [ggx, ggy] = cellCenter(...GHOST_START);
+          g.x = ggx; g.y = ggy; g.tc = -1;
+          hurtRef.current = 1;
+        }
+      }
+
+      draw(ctx, canvas, p, g, t);
       raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
@@ -796,178 +905,117 @@ function LabGame({ onSolved }: { onSolved: () => void }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [solved]);
 
-  const draw = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, p: { x: number; y: number; bob: number; face: number }) => {
+  const draw = (
+    ctx: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    p: { x: number; y: number; bob: number; face: number },
+    g: { x: number; y: number },
+    t: number,
+  ) => {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const cw = canvas.width / dpr;
     const ch = canvas.height / dpr;
-    // fit WORLD into canvas (contain)
     const scale = Math.min(cw / WORLD.w, ch / WORLD.h);
     const ox = (cw - WORLD.w * scale) / 2;
     const oy = (ch - WORLD.h * scale) / 2;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.imageSmoothingEnabled = false;
-
-    // letterbox
     ctx.fillStyle = '#05060f';
     ctx.fillRect(0, 0, cw, ch);
     ctx.save();
     ctx.translate(ox, oy);
     ctx.scale(scale, scale);
 
-    // floor tiles (light lab vinyl with grid lines)
-    for (let y = 0; y < WORLD.h; y += 32) {
-      for (let x = 0; x < WORLD.w; x += 32) {
-        const dark = ((x / 32 + y / 32) % 2) === 0;
-        ctx.fillStyle = dark ? '#20264a' : '#252c56';
-        ctx.fillRect(x, y, 32, 32);
+    // maze floor
+    ctx.fillStyle = '#0a0e24';
+    ctx.fillRect(0, 0, WORLD.w, WORLD.h);
+
+    // walls (Pac-Man neon blue)
+    for (let r = 0; r < MROWS; r++) {
+      for (let c = 0; c < MCOLS; c++) {
+        if (MAZE[r][c] !== '#') continue;
+        const x = c * CW, y = r * CH;
+        ctx.fillStyle = '#141a52';
+        ctx.fillRect(x, y, CW + 0.6, CH + 0.6);
+        ctx.fillStyle = '#26319e';
+        ctx.fillRect(x + 4, y + 4, CW - 8, CH - 8);
+        ctx.strokeStyle = '#5a6be0';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x + 4, y + 4, CW - 8, CH - 8);
       }
     }
-    ctx.strokeStyle = 'rgba(120,140,220,0.12)';
-    ctx.lineWidth = 1;
-    for (let x = 0; x <= WORLD.w; x += 32) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, WORLD.h); ctx.stroke(); }
-    for (let y = 0; y <= WORLD.h; y += 32) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(WORLD.w, y); ctx.stroke(); }
 
-    // faint floor lab logo
-    ctx.font = '16px "Press Start 2P", monospace';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillStyle = 'rgba(120,140,220,0.10)';
-    ctx.fillText('BSL-1', WORLD.w / 2, WORLD.h / 2 + 10);
-
-    // ---- perimeter lab counters (benchtops) ----
-    const CI = 12, CT = 26; // counter inset / thickness
-    const drawCounter = (x: number, y: number, w: number, h: number) => {
-      ctx.fillStyle = '#8b93c2';
-      ctx.fillRect(x, y, w, h);
-      ctx.fillStyle = 'rgba(255,255,255,0.18)';
-      ctx.fillRect(x, y, w, 4);
-      ctx.fillStyle = 'rgba(0,0,0,0.28)';
-      ctx.fillRect(x, y + h - 4, w, 4);
-    };
-    drawCounter(CI, CI, WORLD.w - CI * 2, CT);                 // top
-    drawCounter(CI, CI, CT, WORLD.h - CI * 2);                 // left
-    drawCounter(WORLD.w - CI - CT, CI, CT, WORLD.h - CI * 2);  // right
-    // bottom counter with a door gap in the middle
-    drawCounter(CI, WORLD.h - CI - CT, WORLD.w / 2 - 46 - CI, CT);
-    drawCounter(WORLD.w / 2 + 46, WORLD.h - CI - CT, WORLD.w / 2 - 46 - CI, CT);
-
-    // ---- decorative lab equipment sitting on the counters (drawn, no emoji) ----
-    // top bench props (in the gaps between top stations)
-    drawProp(ctx, 'microscope', 212, CI + 13);
-    drawProp(ctx, 'bottles', 420, CI + 13);
-    // left bench
-    drawProp(ctx, 'centrifuge', CI + 13, 190);
-    drawProp(ctx, 'extinguisher', CI + 13, 340);
-    // right bench
-    drawProp(ctx, 'monitor', WORLD.w - CI - 13, 190);
-    drawProp(ctx, 'flasks', WORLD.w - CI - 13, 340);
-    // bottom benches
-    drawProp(ctx, 'scale', 120, WORLD.h - CI - 13);
-    drawProp(ctx, 'clipboard', 200, WORLD.h - CI - 13);
-    drawProp(ctx, 'bottles', WORLD.w - 130, WORLD.h - CI - 13);
-    drawProp(ctx, 'microscope', WORLD.w - 210, WORLD.h - CI - 13);
-
-    // door (lab entrance) at bottom-center
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillStyle = '#3a2f26';
-    ctx.fillRect(WORLD.w / 2 - 44, WORLD.h - 16, 88, 14);
-    ctx.fillStyle = '#c98a4d';
-    ctx.fillRect(WORLD.w / 2 - 40, WORLD.h - 14, 80, 10);
-    ctx.font = '7px "Press Start 2P", monospace';
-    ctx.fillStyle = '#1a1200';
-    ctx.fillText('ENTRANCE', WORLD.w / 2, WORLD.h - 9);
-
-    // hazard stripe trim just inside the top wall
-    for (let x = CI; x < WORLD.w - CI; x += 28) {
-      ctx.fillStyle = (x / 28) % 2 === 0 ? '#ffcf4d' : '#2b2733';
-      ctx.fillRect(x, CI + CT, 28, 4);
-    }
-
-    // wall border
-    ctx.lineWidth = 8;
-    ctx.strokeStyle = '#39406f';
-    ctx.strokeRect(4, 4, WORLD.w - 8, WORLD.h - 8);
+    // pellets
+    ctx.fillStyle = '#ffe08a';
+    pellets.current.forEach((key) => {
+      const c = key % MCOLS, r = Math.floor(key / MCOLS);
+      ctx.beginPath();
+      ctx.arc((c + 0.5) * CW, (r + 0.5) * CH, 2.6, 0, Math.PI * 2);
+      ctx.fill();
+    });
 
     // stations
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
     STATIONS.forEach((s, i) => {
       const active = i === objRef.current;
       const done = i < objRef.current;
-      ctx.fillStyle = '#0c1024';
-      ctx.fillRect(s.x - 3, s.y - 3, s.w + 6, s.h + 6);
-      ctx.fillStyle = done ? '#2c7d5a' : s.color;
-      ctx.globalAlpha = done ? 0.5 : 1;
-      ctx.fillRect(s.x, s.y, s.w, s.h);
-      ctx.globalAlpha = 1;
-      // outline
-      ctx.lineWidth = active ? 4 : 2;
-      ctx.strokeStyle = active ? '#ffffff' : 'rgba(0,0,0,0.4)';
-      ctx.strokeRect(s.x, s.y, s.w, s.h);
-      // drawn icon (no emoji)
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      drawLabIcon(ctx, s.icon, s.x + s.w / 2, s.y + s.h / 2 - 5);
-      // label
-      ctx.font = '8px "Press Start 2P", monospace';
-      ctx.fillStyle = '#0a0d1c';
-      ctx.fillText(s.label, s.x + s.w / 2, s.y + s.h - 9);
-      if (done) {
-        // drawn checkmark badge
-        ctx.strokeStyle = '#eafff0';
+      const [cx, cy] = cellCenter(s.col, s.row);
+      const rad = Math.min(CW, CH) * 0.46;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rad, 0, Math.PI * 2);
+      ctx.fillStyle = done ? 'rgba(44,125,90,0.55)' : s.color;
+      ctx.fill();
+      if (active && !solved) {
         ctx.lineWidth = 3;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
+        ctx.strokeStyle = '#ffffff';
         ctx.beginPath();
-        ctx.moveTo(s.x + s.w - 20, s.y + 11);
-        ctx.lineTo(s.x + s.w - 15, s.y + 16);
-        ctx.lineTo(s.x + s.w - 7, s.y + 6);
+        ctx.arc(cx, cy, rad + 3 + Math.sin(t / 200) * 1.6, 0, Math.PI * 2);
         ctx.stroke();
       }
-      // active marker arrow
-      if (active && !solved) {
-        const by = s.y - 16 + Math.sin(performance.now() / 200) * 3;
-        ctx.fillStyle = '#ffcf4d';
+      drawLabIcon(ctx, s.icon, cx, cy - 1);
+      if (done) {
+        ctx.strokeStyle = '#eafff0'; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
         ctx.beginPath();
-        ctx.moveTo(s.x + s.w / 2, by + 8);
-        ctx.lineTo(s.x + s.w / 2 - 7, by);
-        ctx.lineTo(s.x + s.w / 2 + 7, by);
-        ctx.closePath();
-        ctx.fill();
+        ctx.moveTo(cx - 6, cy); ctx.lineTo(cx - 1, cy + 5); ctx.lineTo(cx + 7, cy - 5);
+        ctx.stroke();
       }
+      ctx.font = '6px "Press Start 2P", monospace';
+      ctx.fillStyle = active ? '#ffffff' : 'rgba(255,255,255,0.7)';
+      ctx.fillText(s.label, cx, cy + rad + 6);
     });
 
-    // interaction progress ring above player
+    // interaction progress ring
     if (progRef.current > 0) {
       ctx.beginPath();
-      ctx.arc(p.x, p.y - 34, 12, -Math.PI / 2, -Math.PI / 2 + progRef.current * Math.PI * 2);
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = '#7cff6b';
-      ctx.stroke();
+      ctx.arc(p.x, p.y - CH * 0.55, 10, -Math.PI / 2, -Math.PI / 2 + progRef.current * Math.PI * 2);
+      ctx.lineWidth = 4; ctx.strokeStyle = '#7cff6b'; ctx.stroke();
     }
 
-    // player (sandyx sprite), with shadow + bob
-    const bob = Math.sin(p.bob) * 3;
+    // player sprite
+    const bob = Math.sin(p.bob) * 2.5;
     ctx.fillStyle = 'rgba(0,0,0,0.35)';
-    ctx.beginPath();
-    ctx.ellipse(p.x, p.y + 16, 16, 6, 0, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.beginPath(); ctx.ellipse(p.x, p.y + 12, 11, 5, 0, 0, Math.PI * 2); ctx.fill();
     const img = spriteRef.current;
     if (img) {
-      const w = 46;
-      const h = (img.height / img.width) * w;
+      const w = 30; const h = (img.height / img.width) * w;
       ctx.save();
+      if (hurtRef.current > 0) ctx.globalAlpha = 0.35 + Math.abs(Math.sin(t / 40)) * 0.5;
       ctx.translate(p.x, p.y + bob);
       ctx.scale(p.face, 1);
-      ctx.drawImage(img, -w / 2, -h + 18, w, h);
+      ctx.drawImage(img, -w / 2, -h + 12, w, h);
       ctx.restore();
     } else {
       ctx.fillStyle = C.amber;
-      ctx.fillRect(p.x - 10, p.y - 20, 20, 30);
+      ctx.fillRect(p.x - 8, p.y - 14, 16, 22);
     }
+
+    // the sand chaser
+    drawSand(ctx, g.x, g.y, Math.min(CW, CH) * 0.34, t, p.x, p.y);
 
     // completion flash
     if (flashRef.current > 0) {
-      ctx.fillStyle = `rgba(124,255,107,${flashRef.current * 0.25})`;
+      ctx.fillStyle = `rgba(124,255,107,${flashRef.current * 0.22})`;
       ctx.fillRect(0, 0, WORLD.w, WORLD.h);
     }
     ctx.restore();
@@ -992,7 +1040,7 @@ function LabGame({ onSolved }: { onSolved: () => void }) {
               <div className="font-retro text-[10px] mb-2" style={{ color: C.amber }}>
                 OBJECTIVE {objIndex + 1}/{OBJECTIVES.length}
               </div>
-              <div className="font-retro text-[12px] sm:text-[15px]" style={{ color: '#ffffff' }}>
+              <div className="font-retro text-[12px] sm:text-[15px]" style={{ color: C.speech }}>
                 {OBJECTIVES[objIndex]?.title}
               </div>
               <div className="font-retro text-[9px] sm:text-[11px] mt-3 leading-[1.9]" style={{ color: '#c7d0ff' }}>
@@ -1024,13 +1072,19 @@ function LabGame({ onSolved }: { onSolved: () => void }) {
             style={{ borderColor: C.teal, background: 'rgba(9,13,32,0.94)', boxShadow: '0 0 16px rgba(91,224,200,0.4), 5px 5px 0 rgba(0,0,0,0.55)' }}
           >
             <div className="font-retro text-[10px] leading-[2.1]" style={{ color: C.teal }}>
-              USE ARROW KEYS
+              ARROW KEYS / WASD TO MOVE
               <br />
-              OR WASD TO MOVE!
+              <span style={{ color: C.sand }}>DODGE THE SAND!</span>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Pellet counter (bottom-left) */}
+      <div className="absolute bottom-4 left-4 border-2 px-3 py-2 flex items-center gap-2" style={{ borderColor: C.amber, background: 'rgba(9,13,32,0.85)' }}>
+        <span className="inline-block w-2.5 h-2.5 rounded-full" style={{ background: '#ffe08a' }} />
+        <span className="font-retro text-[9px]" style={{ color: C.speech }}>{pelletsLeft} LEFT</span>
+      </div>
 
       {/* Solution splash */}
       <AnimatePresence>
@@ -1051,7 +1105,7 @@ function LabGame({ onSolved }: { onSolved: () => void }) {
               <div className="font-retro-glow text-[16px] mb-6 retro-blink" style={{ color: C.green }}>
                 ★ SOLUTION READY ★
               </div>
-              <div className="font-retro text-[12px] leading-[2.1]" style={{ color: '#ffffff' }}>
+              <div className="font-retro text-[12px] leading-[2.1]" style={{ color: C.speech }}>
                 BioCrust: engineered <span style={{ color: C.amber }}>B. subtilis</span> secreting
                 <span style={{ color: C.amber }}> γ-PGA</span> +
                 <span style={{ color: C.teal }}> CaCO₃ biocement</span>, Ca²⁺ cross-linked into a
@@ -1459,7 +1513,7 @@ export default function SandyxAdventure({ open, onClose, onSeeModel, onProceedTo
                 {isStory && (
                   <button
                     onClick={() => setPhase('lab')}
-                    className="font-retro text-[9px] sm:text-[10px] px-3 py-2.5 border-2 flex items-center gap-1.5"
+                    className="btn-colored font-retro text-[9px] sm:text-[10px] px-3 py-2.5 border-2 flex items-center gap-1.5"
                     style={{ borderColor: C.ink, color: C.ink, background: 'rgba(0,0,0,0.45)' }}
                   >
                     <SkipForward className="w-3.5 h-3.5" /> SKIP STORY
@@ -1468,7 +1522,7 @@ export default function SandyxAdventure({ open, onClose, onSeeModel, onProceedTo
                 <button
                   onClick={onClose}
                   aria-label="Close"
-                  className="font-retro text-[9px] px-3 py-2.5 border-2 flex items-center gap-1.5"
+                  className="btn-colored font-retro text-[9px] px-3 py-2.5 border-2 flex items-center gap-1.5"
                   style={{ borderColor: C.red, color: C.red, background: 'rgba(0,0,0,0.45)' }}
                 >
                   <X className="w-3.5 h-3.5" />
@@ -1553,7 +1607,7 @@ export default function SandyxAdventure({ open, onClose, onSeeModel, onProceedTo
                   style={{ background: 'rgba(5,6,15,0.82)' }}
                 >
                   <RetroModal title="MISSION CONTROL" accent={C.amber}>
-                    <div className="font-retro text-[14px] mb-8 leading-[2] text-center" style={{ color: '#ffffff' }}>
+                    <div className="font-retro text-[14px] mb-8 leading-[2] text-center" style={{ color: C.speech }}>
                       PROCEED TO DEPLOYMENT?
                     </div>
                     <div className="flex gap-3 justify-center">
@@ -1576,7 +1630,7 @@ export default function SandyxAdventure({ open, onClose, onSeeModel, onProceedTo
                   style={{ background: 'rgba(5,6,15,0.82)' }}
                 >
                   <RetroModal title="SANDYX ASKS" accent={C.teal}>
-                    <div className="font-retro text-[13px] mb-8 leading-[2] text-center" style={{ color: '#ffffff' }}>
+                    <div className="font-retro text-[13px] mb-8 leading-[2] text-center" style={{ color: C.speech }}>
                       WOULD YOU LIKE TO SEE HOW WE ACTUALLY MODEL THIS?
                     </div>
                     <div className="flex gap-3 justify-center">
