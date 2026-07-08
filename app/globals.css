@@ -244,3 +244,50 @@ html {
     transition-duration: 0.001ms !important;
   }
 }
+
+/* ---------------------------------------------------------------------------
+ * Sandyx Adventure — retro 80s arcade game overlay
+ * ------------------------------------------------------------------------- */
+.font-retro {
+  font-family: var(--font-press-start), ui-monospace, "Courier New", monospace;
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+}
+.font-retro-glow {
+  font-family: var(--font-press-start), ui-monospace, "Courier New", monospace;
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+  /* soft neon halo only — no hard offset shadow */
+  text-shadow: 0 0 12px currentColor;
+}
+.pixelated {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+/* CRT scanline veil for the arcade scenes */
+.crt-scanlines::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.16) 0px,
+    rgba(0, 0, 0, 0.16) 1px,
+    transparent 2px,
+    transparent 4px
+  );
+  mix-blend-mode: multiply;
+  z-index: 5;
+}
+@keyframes retro-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.retro-blink { animation: retro-blink 1s steps(1) infinite; }
+@keyframes retro-pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.06); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.retro-pop { animation: retro-pop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
