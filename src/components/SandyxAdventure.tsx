@@ -1,0 +1,1603 @@
+'use client';
+
+/**
+ * SandyxAdventure — full-screen interactive story + retro arcade
+ * =============================================================
+ * Launched when the reader clicks the Sandyx mascot beside "NYUAD iGEM 2026".
+ * A near-fullscreen overlay runs a smooth, skippable flow:
+ *
+ *   intro (Sandyx driving through the city)  ─▶ sandstorm transition
+ *   desert (the stakes: WMO/WHO/World-Bank facts, presented by Sandyx)
+ *   lab    (80s top-down "Among Us"-style game: walk Sandyx around a lab with
+ *           WASD/arrows and complete 5 experiments drawn from Prong 1 & 2)
+ *   ─▶ "Proceed to Deployment?"  Yes ─▶ drone deployment game (spray the crust)
+ *                                 No  ─▶ tune concentrations, then deploy
+ *   drone  ─▶ after ~15s: "Would you like to see how we actually model this?"
+ *              Yes ─▶ close + scroll to the Project Overview
+ *              No  ─▶ keep flying, with "Proceed to the Model" / "Back to the lab"
+ *
+ * Everything is code-drawn (framer-motion + canvas). The only art assets are the
+ * mascot (`/sandyx.png`) and the top-down car (`/sandyx-car.png`).
+ */
+
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { X, SkipForward, Volume2 } from 'lucide-react';
+import { Cursor } from '@/components/motion-primitives/cursor';
+
+// ---------------------------------------------------------------------------
+// Retro palette
+// ---------------------------------------------------------------------------
+const C = {
+  bg0: '#0b1026',
+  bg1: '#161b3d',
+  ink: '#e8ecff',
+  amber: '#ffcf4d',
+  amberDeep: '#ff9d1c',
+  teal: '#5be0c8',
+  magenta: '#ff5ea8',
+  green: '#7cff6b',
+  red: '#ff5566',
+  purple: '#9b6bff',
+  sand: '#e7c98a',
+  sandDeep: '#c79b52',
+};
+
+type Phase =
+  | 'intro'
+  | 'storm'
+  | 'desert'
+  | 'lab'
+  | 'deploy-prompt'
+  | 'lab-tune'
+  | 'drone';
+
+export interface SandyxAdventureProps {
+  open: boolean;
+  onClose: () => void;
+  /** "See how we actually model this" → close overlay and scroll to Project Overview. */
+  onSeeModel: () => void;
+  /** "Proceed to the Model" → jump into the prong-tailored simulation workspace. */
+  onProceedToModel: () => void;
+}
+
+// ===========================================================================
+// Shared retro UI atoms
+// ===========================================================================
+function RetroButton({
+  children,
+  onClick,
+  tone = 'amber',
+  className = '',
+}: {
+  children: React.ReactNode;
+  onClick?: () => void;
+  tone?: 'amber' | 'teal' | 'magenta' | 'ghost';
+  className?: string;
+}) {
+  const tones: Record<string, string> = {
+    amber: 'bg-[#ffcf4d] text-[#2a1e00] border-[#7a5b00] hover:bg-[#ffe08a]',
+    teal: 'bg-[#5be0c8] text-[#053029] border-[#12655a] hover:bg-[#8ff0e0]',
+    magenta: 'bg-[#ff5ea8] text-[#3a0020] border-[#7a1247] hover:bg-[#ff8bc2]',
+    ghost: 'bg-transparent text-[#e8ecff] border-[#4a5290] hover:bg-white/10',
+  };
+  return (
+    <button
+      onClick={onClick}
+      className={`font-retro text-[11px] sm:text-[13px] px-5 py-4 border-[3px] transition-colors duration-150 active:translate-y-[2px] ${tones[tone]} ${className}`}
+      style={{ boxShadow: '5px 5px 0 rgba(0,0,0,0.5)' }}
+    >
+      {children}
+    </button>
+  );
+}
+
+/** 80s pop-up window with a title bar. */
+function RetroModal({
+  title,
+  children,
+  accent = C.amber,
+}: {
+  title: string;
+  children: React.ReactNode;
+  accent?: string;
+}) {
+  return (
+    <motion.div
+      initial={{ scale: 0.7, opacity: 0, y: 20 }}
+      animate={{ scale: 1, opacity: 1, y: 0 }}
+      exit={{ scale: 0.7, opacity: 0, y: 20 }}
+      transition={{ type: 'spring', stiffness: 320, damping: 22 }}
+      className="w-full max-w-lg"
+      style={{ boxShadow: '12px 12px 0 rgba(0,0,0,0.55)' }}
+    >
+      <div
+        className="border-4"
+        style={{ borderColor: accent, background: C.bg1 }}
+      >
+        <div
+          className="font-retro text-[12px] px-4 py-3 flex items-center gap-2"
+          style={{ background: accent, color: '#1a1200', textShadow: 'none' }}
+        >
+          <span
+            className="inline-block w-2.5 h-2.5"
+            style={{ background: '#1a1200' }}
+          />
+          {title}
+        </div>
+        <div className="p-8">{children}</div>
+      </div>
+    </motion.div>
+  );
+}
+
+/** Typewriter speech bubble anchored near Sandyx. */
+function SpeechBubble({
+  text,
+  onDone,
+  accent = C.amber,
+  className = '',
+}: {
+  text: string;
+  onDone?: () => void;
+  accent?: string;
+  className?: string;
+}) {
+  const [shown, setShown] = useState('');
+  useEffect(() => {
+    setShown('');
+    let i = 0;
+    const id = setInterval(() => {
+      i++;
+      setShown(text.slice(0, i));
+      if (i >= text.length) {
+        clearInterval(id);
+        onDone?.();
+      }
+    }, 22);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [text]);
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.85, y: 14 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.85, y: -10 }}
+      transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+      className={`relative w-full max-w-2xl ${className}`}
+    >
+      <div
+        className="relative border-4 px-6 py-6 sm:px-8 sm:py-7"
+        style={{
+          borderColor: accent,
+          background: 'rgba(9,13,32,0.95)',
+          boxShadow: `0 0 22px ${accent}55, 8px 8px 0 rgba(0,0,0,0.55)`,
+        }}
+      >
+        <p
+          className="font-retro text-[13px] sm:text-[16px] leading-[1.95]"
+          style={{ color: '#ffffff' }}
+        >
+          {shown}
+          <span className="retro-blink" style={{ color: accent }}>
+            ▌
+          </span>
+        </p>
+        {/* tail */}
+        <div
+          className="absolute -bottom-3 left-12 w-5 h-5 rotate-45 border-b-4 border-r-4"
+          style={{ borderColor: accent, background: 'rgba(9,13,32,0.95)' }}
+        />
+      </div>
+    </motion.div>
+  );
+}
+
+// ===========================================================================
+// SCENE 1 — Intro: Sandyx drives UP a road, city blocks scroll past on both sides
+// ===========================================================================
+
+// A single top-down city block: a building, a park, or a plaza.
+function CityTile({ type, tint }: { type: 'bldg' | 'park' | 'plaza'; tint: string }) {
+  if (type === 'park') {
+    return (
+      <div style={{ height: 150 }} className="relative w-full" >
+        <div className="absolute inset-0" style={{ background: '#3f6b34' }} />
+        {/* footpath */}
+        <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0" style={{ width: 14, background: '#c9b98a' }} />
+        {/* trees */}
+        {[[18, 24], [70, 60], [30, 108], [78, 128], [50, 20]].map(([l, t], i) => (
+          <div key={i} className="absolute rounded-full" style={{ left: `${l}%`, top: t, width: 26, height: 26, background: '#2f5326', boxShadow: 'inset -3px -3px 0 rgba(0,0,0,0.25)' }} />
+        ))}
+      </div>
+    );
+  }
+  if (type === 'plaza') {
+    return (
+      <div style={{ height: 150 }} className="relative w-full">
+        <div className="absolute inset-0" style={{ background: '#6b6580' }} />
+        <div className="absolute inset-3 border-2" style={{ borderColor: 'rgba(255,255,255,0.25)' }} />
+        {/* parked cars */}
+        {[20, 55, 90].map((t, i) => (
+          <div key={i} className="absolute rounded-sm" style={{ right: 12, top: t, width: 22, height: 34, background: ['#c85a5a', '#5a8fc8', '#e0c24d'][i] }} />
+        ))}
+      </div>
+    );
+  }
+  // building (top-down roof)
+  return (
+    <div style={{ height: 150 }} className="relative w-full">
+      <div className="absolute inset-0" style={{ background: '#4a4560' }} />
+      <div className="absolute inset-x-3 inset-y-3 rounded-sm" style={{ background: tint, boxShadow: 'inset 0 0 0 3px rgba(0,0,0,0.2)' }}>
+        {/* rooftop detail: vents + AC + a skylight */}
+        <div className="absolute inset-3 grid grid-cols-3 grid-rows-3 gap-1.5 opacity-80">
+          {Array.from({ length: 9 }).map((_, i) => (
+            <span key={i} style={{ background: i % 2 === 0 ? 'rgba(0,0,0,0.18)' : 'rgba(255,255,255,0.14)' }} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// A vertical strip of city blocks that scrolls downward (car appears to drive up).
+function CityColumn({ side, dur }: { side: 'l' | 'r'; dur: number }) {
+  const tiles: ('bldg' | 'park' | 'plaza')[] =
+    side === 'l'
+      ? ['bldg', 'park', 'bldg', 'plaza', 'bldg', 'park']
+      : ['park', 'bldg', 'plaza', 'bldg', 'park', 'bldg'];
+  const tints = ['#8a6d9c', '#6d7fa0', '#9c7d6d', '#7a8f6d', '#a06d84', '#6d95a0'];
+  const Copy = () => (
+    <div className="flex flex-col">
+      {tiles.map((t, i) => (
+        <CityTile key={i} type={t} tint={tints[(i + (side === 'r' ? 3 : 0)) % tints.length]} />
+      ))}
+    </div>
+  );
+  return (
+    <div className="absolute top-0 bottom-0 overflow-hidden" style={side === 'l' ? { left: 0, width: '31%' } : { right: 0, width: '31%' }}>
+      <motion.div
+        className="absolute inset-x-0 top-0"
+        animate={{ y: ['-50%', '0%'] }}
+        transition={{ duration: dur, repeat: Infinity, ease: 'linear' }}
+      >
+        <Copy />
+        <Copy />
+      </motion.div>
+    </div>
+  );
+}
+
+function IntroScene({ onFinish }: { onFinish: () => void }) {
+  const [stage, setStage] = useState<'drive' | 'storm'>('drive');
+  const [moved, setMoved] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const carRef = useRef<HTMLImageElement>(null);
+  const keys = useRef<Record<string, boolean>>({});
+  const off = useRef({ x: 0, y: 0 });
+  const movedRef = useRef(false);
+
+  useEffect(() => {
+    // Let the reader drive for a bit, then the storm rolls in from the top and hands off.
+    const toStorm = setTimeout(() => setStage('storm'), 6000);
+    const toDesert = setTimeout(onFinish, 9000);
+    return () => {
+      clearTimeout(toStorm);
+      clearTimeout(toDesert);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Keyboard control for the car.
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      const k = e.key.toLowerCase();
+      if (MOVE_KEYS.includes(k)) {
+        e.preventDefault();
+        keys.current[k] = true;
+        if (!movedRef.current) { movedRef.current = true; setMoved(true); }
+      }
+    };
+    const up = (e: KeyboardEvent) => { keys.current[e.key.toLowerCase()] = false; };
+    window.addEventListener('keydown', down, { passive: false });
+    window.addEventListener('keyup', up);
+    return () => {
+      window.removeEventListener('keydown', down);
+      window.removeEventListener('keyup', up);
+    };
+  }, []);
+
+  // Drive loop — WASD/arrows nudge the car; it idles with a gentle bob otherwise.
+  useEffect(() => {
+    let raf = 0;
+    let last = performance.now();
+    const step = (t: number) => {
+      const dt = Math.min((t - last) / 1000, 0.05);
+      last = t;
+      let vx = 0, vy = 0;
+      if (keys.current['a'] || keys.current['arrowleft']) vx -= 1;
+      if (keys.current['d'] || keys.current['arrowright']) vx += 1;
+      if (keys.current['w'] || keys.current['arrowup']) vy -= 1;
+      if (keys.current['s'] || keys.current['arrowdown']) vy += 1;
+      const spd = 300;
+      if (vx || vy) {
+        const m = Math.hypot(vx, vy) || 1;
+        off.current.x += (vx / m) * spd * dt;
+        off.current.y += (vy / m) * spd * dt;
+      }
+      const w = wrapRef.current?.clientWidth || 1000;
+      const h = wrapRef.current?.clientHeight || 600;
+      const maxX = w * 0.44, maxY = h * 0.4;
+      off.current.x = Math.max(-maxX, Math.min(maxX, off.current.x));
+      off.current.y = Math.max(-maxY, Math.min(maxY, off.current.y));
+      const bob = Math.sin(t / 300) * 3;
+      if (carRef.current) {
+        carRef.current.style.transform = `translate(-50%,-50%) translate(${off.current.x}px, ${off.current.y + bob}px) rotate(${vx * 3}deg)`;
+      }
+      raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  return (
+    <div ref={wrapRef} className="absolute inset-0 overflow-hidden" style={{ background: '#3a3550' }}>
+      {/* City blocks scrolling down the left & right */}
+      <CityColumn side="l" dur={5.5} />
+      <CityColumn side="r" dur={5.5} />
+
+      {/* Central ROAD */}
+      <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2" style={{ width: '38%', background: '#2b2733', boxShadow: 'inset 0 0 40px rgba(0,0,0,0.5)' }}>
+        {/* sidewalk edges */}
+        <div className="absolute top-0 bottom-0 left-0 w-2" style={{ background: '#5b5668' }} />
+        <div className="absolute top-0 bottom-0 right-0 w-2" style={{ background: '#5b5668' }} />
+        {/* center dashed line scrolling downward */}
+        <motion.div
+          className="absolute left-1/2 -translate-x-1/2 top-0 flex flex-col items-center gap-8"
+          style={{ height: '200%' }}
+          animate={{ y: ['-50%', '0%'] }}
+          transition={{ duration: 0.5, repeat: Infinity, ease: 'linear' }}
+        >
+          {Array.from({ length: 32 }).map((_, i) => (
+            <span key={i} style={{ width: 8, height: 44, background: '#ffcf4d', borderRadius: 2 }} />
+          ))}
+        </motion.div>
+      </div>
+
+      {/* The car — player-driven with WASD / arrows */}
+      <img
+        ref={carRef}
+        src="/sandyx-car.png"
+        alt="Sandyx driving"
+        draggable={false}
+        className="absolute pixelated z-10"
+        style={{ width: 128, left: '50%', top: '48%', transform: 'translate(-50%,-50%)', filter: 'drop-shadow(0 14px 18px rgba(0,0,0,0.55))', willChange: 'transform' }}
+      />
+
+      {/* Speech */}
+      <AnimatePresence>
+        {stage === 'drive' && (
+          <div className="absolute left-1/2 -translate-x-1/2 top-[7%] w-[92%] max-w-2xl flex justify-center z-20">
+            <SpeechBubble text="Hey! I'm Sandyx, from the NYU Abu Dhabi iGEM team!" accent={C.teal} />
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Drive hint — disappears after the first key press */}
+      <AnimatePresence>
+        {!moved && stage === 'drive' && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.85 }}
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 border-[3px] px-5 py-3"
+            style={{ borderColor: C.amber, background: 'rgba(9,13,32,0.92)', boxShadow: '5px 5px 0 rgba(0,0,0,0.5)' }}
+          >
+            <div className="font-retro text-[10px]" style={{ color: C.amber }}>
+              USE WASD / ARROW KEYS TO DRIVE!
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Sandstorm — rolls DOWN from the top of the screen */}
+      <AnimatePresence>
+        {stage === 'storm' && (
+          <motion.div className="absolute inset-0 z-30" initial={{ opacity: 1 }} animate={{ opacity: 1 }}>
+            {/* descending dust wall */}
+            <motion.div
+              className="absolute left-0 right-0 top-0"
+              style={{
+                height: '160%',
+                background: 'linear-gradient(180deg, rgba(150,120,74,0.98) 0%, rgba(190,156,102,0.9) 45%, rgba(214,182,120,0.6) 78%, transparent 100%)',
+              }}
+              initial={{ y: '-160%' }}
+              animate={{ y: '0%' }}
+              transition={{ duration: 2.8, ease: 'easeIn' }}
+            />
+            {/* rolling dust clouds falling down */}
+            {[0, 1, 2, 3, 4].map((i) => (
+              <motion.div
+                key={i}
+                className="absolute left-0 right-0"
+                style={{
+                  top: `${-20 + i * 6}%`,
+                  height: 120,
+                  filter: `blur(${16 + i * 6}px)`,
+                  background: `radial-gradient(ellipse 55% 80% at ${15 + i * 20}% 50%, rgba(224,196,140,${0.75 - i * 0.08}), transparent 72%)`,
+                }}
+                initial={{ y: '-140%' }}
+                animate={{ y: '600%' }}
+                transition={{ duration: 3 + i * 0.5, repeat: Infinity, ease: 'linear', delay: i * 0.2 }}
+              />
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// ===========================================================================
+// SCENE 2 — Desert: the stakes, presented by Sandyx
+// ===========================================================================
+const DESERT_LINES = [
+  'The World Meteorological Association and the WHO state that 3.8 billion people — nearly half the world\'s population — are exposed to dust levels that vastly exceed safe thresholds.',
+  'In the Middle East alone, particulate pollution is responsible for nearly 118,000 premature deaths. The World Bank estimates the MENA region loses around $13 billion each year to sand and dust storms affecting health, infrastructure, and agriculture.',
+  'This loss of life is the cost of severe sand and dust storms. Our project hopes to make the sky clearer for all those that see a future as bright.',
+  'A project designed for where the wind meets the soil.',
+];
+
+function DesertScene({ onFinish }: { onFinish: () => void }) {
+  const [i, setI] = useState(0);
+  const [typed, setTyped] = useState(false);
+
+  const advance = useCallback(() => {
+    setTyped(false);
+    if (i < DESERT_LINES.length - 1) setI((v) => v + 1);
+    else onFinish();
+  }, [i, onFinish]);
+
+  // Auto-advance a beat after each line finishes typing (longer for the dense stats).
+  useEffect(() => {
+    if (!typed) return;
+    const id = setTimeout(advance, 5200);
+    return () => clearTimeout(id);
+  }, [typed, advance]);
+
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      {/* Sky gradient */}
+      <div
+        className="absolute inset-0"
+        style={{ background: 'linear-gradient(180deg, #ffdca0 0%, #ffb469 42%, #f0a24e 62%, #e7c98a 62.1%)' }}
+      />
+      {/* Sun */}
+      <motion.div
+        className="absolute rounded-full"
+        style={{
+          width: 150,
+          height: 150,
+          top: '10%',
+          left: '12%',
+          background: 'radial-gradient(circle, #fff6d0 0%, #ffd24d 55%, transparent 74%)',
+        }}
+        animate={{ scale: [1, 1.06, 1] }}
+        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      {/* Dunes */}
+      <svg className="absolute bottom-0 left-0 w-full" viewBox="0 0 1000 300" preserveAspectRatio="none" style={{ height: '55%' }}>
+        <path d="M0 120 Q250 40 500 110 T1000 90 V300 H0 Z" fill="#e7c98a" />
+        <path d="M0 180 Q300 110 600 175 T1000 160 V300 H0 Z" fill="#d8b56f" />
+        <path d="M0 240 Q250 200 550 235 T1000 220 V300 H0 Z" fill="#c79b52" />
+      </svg>
+      {/* Cacti */}
+      {[{ l: '72%', s: 1 }, { l: '86%', s: 0.7 }, { l: '20%', s: 0.55 }].map((c, k) => (
+        <div key={k} className="absolute" style={{ left: c.l, bottom: '16%', transform: `scale(${c.s})`, transformOrigin: 'bottom' }}>
+          <div style={{ width: 18, height: 90, background: '#4f7a3a', borderRadius: 8 }} />
+          <div className="absolute" style={{ left: -14, top: 24, width: 14, height: 34, background: '#4f7a3a', borderRadius: 8 }} />
+          <div className="absolute" style={{ left: -14, top: 24, width: 14, height: 14, background: '#4f7a3a', borderRadius: 8, transform: 'translateY(-14px)' }} />
+          <div className="absolute" style={{ right: -14, top: 12, width: 14, height: 40, background: '#4f7a3a', borderRadius: 8 }} />
+          <div className="absolute" style={{ right: -14, top: 12, width: 14, height: 14, background: '#4f7a3a', borderRadius: 8, transform: 'translateY(-14px)' }} />
+        </div>
+      ))}
+      {/* Drifting dust */}
+      {[0, 1, 2].map((k) => (
+        <motion.div
+          key={k}
+          className="absolute"
+          style={{ top: `${30 + k * 10}%`, width: '50%', height: 60, filter: 'blur(24px)', background: 'radial-gradient(ellipse, rgba(231,201,138,0.5), transparent 70%)' }}
+          animate={{ x: ['-30%', '130%'] }}
+          transition={{ duration: 10 + k * 4, repeat: Infinity, ease: 'linear' }}
+        />
+      ))}
+
+      {/* Sandyx presenting, bottom-left */}
+      <motion.img
+        src="/sandyx.png"
+        alt="Sandyx"
+        draggable={false}
+        className="absolute z-10 left-[4%] bottom-[10%] w-28 sm:w-44 object-contain"
+        style={{ filter: 'drop-shadow(0 14px 20px rgba(0,0,0,0.4))' }}
+        animate={{ y: [0, -8, 0] }}
+        transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
+      />
+
+      {/* Speech near Sandyx */}
+      <div className="absolute z-20 left-[4%] sm:left-[18%] bottom-[34%] right-[4%] sm:right-[10%] flex">
+        <AnimatePresence mode="wait">
+          <SpeechBubble
+            key={i}
+            text={DESERT_LINES[i]}
+            accent={i === DESERT_LINES.length - 1 ? C.teal : C.amber}
+            onDone={() => setTyped(true)}
+          />
+        </AnimatePresence>
+      </div>
+
+      {/* Click-to-continue */}
+      <button
+        onClick={advance}
+        className="absolute bottom-6 right-6 z-30 font-retro text-[11px] px-4 py-3 border-[3px]"
+        style={{ borderColor: '#ffffff', color: '#ffffff', background: 'rgba(0,0,0,0.4)' }}
+      >
+        NEXT ▶
+      </button>
+      <div className="absolute bottom-7 left-6 z-30 flex gap-2.5">
+        {DESERT_LINES.map((_, k) => (
+          <span key={k} className="w-4 h-4 border" style={{ background: k <= i ? C.amber : 'rgba(255,255,255,0.15)', borderColor: 'rgba(0,0,0,0.4)' }} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ===========================================================================
+// SCENE 3 — Lab: top-down 80s arcade (WASD/arrows), 5 Prong-1 & 2 experiments
+// ===========================================================================
+const WORLD = { w: 640, h: 400 };
+
+type LabIcon = 'incubator' | 'tube' | 'flask' | 'cylinder' | 'droplet';
+interface Station {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  color: string;
+  label: string;
+  icon: LabIcon;
+}
+// Ordered to match the objectives below.
+const STATIONS: Station[] = [
+  { x: 60, y: 70, w: 96, h: 66, color: C.teal, label: 'INCUBATOR', icon: 'incubator' },
+  { x: 270, y: 56, w: 100, h: 60, color: C.green, label: 'GLUTAMATE', icon: 'tube' },
+  { x: 486, y: 78, w: 96, h: 66, color: C.amber, label: 'FERMENTER', icon: 'flask' },
+  { x: 500, y: 250, w: 100, h: 70, color: C.purple, label: 'CO₂ / CA', icon: 'cylinder' },
+  { x: 70, y: 250, w: 104, h: 70, color: C.magenta, label: 'Ca²⁺ BATH', icon: 'droplet' },
+];
+
+// --- Canvas icon painters (no emoji) --------------------------------------
+function drawLabIcon(ctx: CanvasRenderingContext2D, icon: LabIcon, cx: number, cy: number) {
+  ctx.save();
+  ctx.strokeStyle = '#0a0d1c';
+  ctx.fillStyle = '#0a0d1c';
+  ctx.lineWidth = 2.5;
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+  if (icon === 'incubator') {
+    ctx.strokeRect(cx - 14, cy - 14, 28, 26);
+    ctx.beginPath(); ctx.moveTo(cx - 2, cy - 14); ctx.lineTo(cx - 2, cy + 12); ctx.stroke(); // door split
+    ctx.beginPath(); ctx.arc(cx + 6, cy - 8, 2, 0, Math.PI * 2); ctx.fill(); // indicator
+    ctx.strokeRect(cx - 11, cy - 10, 6, 6); // window
+  } else if (icon === 'tube') {
+    ctx.beginPath();
+    ctx.moveTo(cx - 6, cy - 15); ctx.lineTo(cx - 6, cy + 8);
+    ctx.arc(cx, cy + 8, 6, Math.PI, 0, true); ctx.lineTo(cx + 6, cy - 15);
+    ctx.stroke();
+    ctx.fillRect(cx - 5, cy + 2, 10, 8); // liquid
+    ctx.beginPath(); ctx.moveTo(cx - 8, cy - 15); ctx.lineTo(cx + 8, cy - 15); ctx.stroke();
+  } else if (icon === 'flask') {
+    ctx.beginPath();
+    ctx.moveTo(cx - 4, cy - 15); ctx.lineTo(cx - 4, cy - 4);
+    ctx.lineTo(cx - 14, cy + 12); ctx.lineTo(cx + 14, cy + 12);
+    ctx.lineTo(cx + 4, cy - 4); ctx.lineTo(cx + 4, cy - 15);
+    ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx - 7, cy - 15); ctx.lineTo(cx + 7, cy - 15); ctx.stroke();
+    ctx.fillRect(cx - 10, cy + 4, 20, 8); // liquid
+  } else if (icon === 'cylinder') {
+    ctx.beginPath();
+    ctx.moveTo(cx - 9, cy + 14); ctx.lineTo(cx - 9, cy - 8);
+    ctx.arc(cx, cy - 8, 9, Math.PI, 0); ctx.lineTo(cx + 9, cy + 14); ctx.closePath();
+    ctx.stroke();
+    ctx.fillRect(cx - 3, cy - 17, 6, 5); // valve
+  } else if (icon === 'droplet') {
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - 16);
+    ctx.bezierCurveTo(cx + 13, cy - 2, cx + 9, cy + 14, cx, cy + 14);
+    ctx.bezierCurveTo(cx - 9, cy + 14, cx - 13, cy - 2, cx, cy - 16);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// Small steel-gray equipment props that dress the lab benches (drawn, no emoji).
+function drawProp(ctx: CanvasRenderingContext2D, kind: string, cx: number, cy: number) {
+  ctx.save();
+  ctx.strokeStyle = '#2b3150';
+  ctx.fillStyle = '#3c456e';
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  if (kind === 'microscope') {
+    ctx.fillRect(cx - 8, cy + 6, 16, 3);            // base
+    ctx.beginPath(); ctx.moveTo(cx - 3, cy + 6); ctx.lineTo(cx - 3, cy - 6); ctx.lineTo(cx + 6, cy - 9); ctx.stroke(); // arm
+    ctx.fillRect(cx + 4, cy - 11, 4, 8);            // eyepiece
+    ctx.fillRect(cx - 5, cy + 1, 6, 3);             // stage
+  } else if (kind === 'monitor') {
+    ctx.fillRect(cx - 10, cy - 8, 20, 13);          // screen
+    ctx.fillStyle = '#5be0c8'; ctx.fillRect(cx - 8, cy - 6, 16, 9);
+    ctx.fillStyle = '#3c456e'; ctx.fillRect(cx - 3, cy + 5, 6, 3); // stand
+  } else if (kind === 'bottles') {
+    for (let i = 0; i < 3; i++) {
+      ctx.fillRect(cx - 12 + i * 9, cy - 6, 6, 12);
+      ctx.fillRect(cx - 11 + i * 9, cy - 9, 4, 3);
+    }
+  } else if (kind === 'centrifuge') {
+    ctx.beginPath(); ctx.arc(cx, cy, 10, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#20264a'; ctx.beginPath(); ctx.arc(cx, cy, 10, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = '#20264a'; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + 7, cy - 5); ctx.stroke();
+  } else if (kind === 'clipboard') {
+    ctx.fillStyle = '#c7cbe0'; ctx.fillRect(cx - 7, cy - 9, 14, 18);
+    ctx.fillStyle = '#3c456e'; ctx.fillRect(cx - 3, cy - 11, 6, 3);
+    ctx.strokeStyle = '#8b93c2'; for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.moveTo(cx - 4, cy - 4 + i * 4); ctx.lineTo(cx + 4, cy - 4 + i * 4); ctx.stroke(); }
+  } else if (kind === 'extinguisher') {
+    ctx.fillStyle = '#c0392b'; ctx.fillRect(cx - 5, cy - 6, 10, 14);
+    ctx.fillStyle = '#20264a'; ctx.fillRect(cx - 3, cy - 10, 6, 4);
+  } else if (kind === 'flasks') {
+    ctx.beginPath(); ctx.moveTo(cx - 3, cy - 8); ctx.lineTo(cx - 8, cy + 8); ctx.lineTo(cx + 8, cy + 8); ctx.lineTo(cx + 3, cy - 8); ctx.stroke();
+    ctx.fillStyle = '#5be0c8'; ctx.fillRect(cx - 6, cy + 2, 12, 6);
+  } else if (kind === 'scale') {
+    ctx.fillStyle = '#3c456e'; ctx.fillRect(cx - 9, cy + 2, 18, 6);
+    ctx.fillStyle = '#c7cbe0'; ctx.fillRect(cx - 7, cy - 3, 14, 4);
+  }
+  ctx.restore();
+}
+
+interface Objective {
+  title: string;
+  hint: string;
+}
+const OBJECTIVES: Objective[] = [
+  { title: 'INOCULATE B. SUBTILIS', hint: 'Drive Sandyx to the INCUBATOR and grab the starter culture (OD600).' },
+  { title: 'FEED GLUTAMATE PRECURSOR', hint: 'Take the culture to the GLUTAMATE bench — the substrate for γ-PGA.' },
+  { title: 'EXPRESS γ-PGA (pgsBCA)', hint: 'Run the FERMENTER to over-express the poly-γ-glutamic-acid operon.' },
+  { title: 'SECRETE CARBONIC ANHYDRASE', hint: 'At CO₂/CA, anchor CA via Sortase to turn CO₂ into CaCO₃ biocement.' },
+  { title: 'CROSS-LINK WITH Ca²⁺', hint: 'Finish at the Ca²⁺ BATH to lock the crust into a tough gel.' },
+];
+
+function LabGame({ onSolved }: { onSolved: () => void }) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const keys = useRef<Record<string, boolean>>({});
+  const pos = useRef({ x: 320, y: 350, bob: 0, face: 1 });
+  const objRef = useRef(0);
+  const progRef = useRef(0);
+  const spriteRef = useRef<HTMLImageElement | null>(null);
+  const flashRef = useRef(0);
+
+  const [objIndex, setObjIndex] = useState(0);
+  const [moved, setMoved] = useState(false);
+  const [solved, setSolved] = useState(false);
+  const movedRef = useRef(false);
+
+  // Load Sandyx sprite once.
+  useEffect(() => {
+    const img = new Image();
+    img.src = '/sandyx.png';
+    img.onload = () => (spriteRef.current = img);
+  }, []);
+
+  // Keyboard
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      const k = e.key.toLowerCase();
+      if (MOVE_KEYS.includes(k)) {
+        e.preventDefault();
+        keys.current[k] = true;
+        if (!movedRef.current) {
+          movedRef.current = true;
+          setMoved(true);
+        }
+      }
+    };
+    const up = (e: KeyboardEvent) => {
+      keys.current[e.key.toLowerCase()] = false;
+    };
+    window.addEventListener('keydown', down, { passive: false });
+    window.addEventListener('keyup', up);
+    return () => {
+      window.removeEventListener('keydown', down);
+      window.removeEventListener('keyup', up);
+    };
+  }, []);
+
+  // Main loop
+  useEffect(() => {
+    const canvas = canvasRef.current!;
+    const ctx = canvas.getContext('2d')!;
+    let raf = 0;
+    let last = performance.now();
+
+    const resize = () => {
+      const wrap = wrapRef.current!;
+      const rect = wrap.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      canvas.style.width = rect.width + 'px';
+      canvas.style.height = rect.height + 'px';
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    const step = (t: number) => {
+      const dt = Math.min((t - last) / 1000, 0.05);
+      last = t;
+      const p = pos.current;
+      const spd = 165;
+      let vx = 0;
+      let vy = 0;
+      if (keys.current['a'] || keys.current['arrowleft']) vx -= 1;
+      if (keys.current['d'] || keys.current['arrowright']) vx += 1;
+      if (keys.current['w'] || keys.current['arrowup']) vy -= 1;
+      if (keys.current['s'] || keys.current['arrowdown']) vy += 1;
+      if (vx || vy) {
+        const m = Math.hypot(vx, vy) || 1;
+        p.x += (vx / m) * spd * dt;
+        p.y += (vy / m) * spd * dt;
+        p.bob += dt * 10;
+        if (vx !== 0) p.face = vx > 0 ? 1 : -1;
+      }
+      // clamp inside walls
+      p.x = Math.max(30, Math.min(WORLD.w - 30, p.x));
+      p.y = Math.max(30, Math.min(WORLD.h - 30, p.y));
+
+      // interaction with the active station
+      if (!solved && objRef.current < OBJECTIVES.length) {
+        const s = STATIONS[objRef.current];
+        const cx = s.x + s.w / 2;
+        const cy = s.y + s.h / 2;
+        const near = Math.abs(p.x - cx) < s.w / 2 + 26 && Math.abs(p.y - cy) < s.h / 2 + 26;
+        if (near) {
+          progRef.current = Math.min(1, progRef.current + dt / 1.1);
+          if (progRef.current >= 1) {
+            progRef.current = 0;
+            flashRef.current = 1;
+            const next = objRef.current + 1;
+            objRef.current = next;
+            setObjIndex(next);
+            if (next >= OBJECTIVES.length) {
+              setSolved(true);
+            }
+          }
+        } else {
+          progRef.current = Math.max(0, progRef.current - dt / 0.6);
+        }
+      }
+      if (flashRef.current > 0) flashRef.current = Math.max(0, flashRef.current - dt / 0.6);
+
+      draw(ctx, canvas, p);
+      raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', resize);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [solved]);
+
+  const draw = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, p: { x: number; y: number; bob: number; face: number }) => {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const cw = canvas.width / dpr;
+    const ch = canvas.height / dpr;
+    // fit WORLD into canvas (contain)
+    const scale = Math.min(cw / WORLD.w, ch / WORLD.h);
+    const ox = (cw - WORLD.w * scale) / 2;
+    const oy = (ch - WORLD.h * scale) / 2;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = false;
+
+    // letterbox
+    ctx.fillStyle = '#05060f';
+    ctx.fillRect(0, 0, cw, ch);
+    ctx.save();
+    ctx.translate(ox, oy);
+    ctx.scale(scale, scale);
+
+    // floor tiles (light lab vinyl with grid lines)
+    for (let y = 0; y < WORLD.h; y += 32) {
+      for (let x = 0; x < WORLD.w; x += 32) {
+        const dark = ((x / 32 + y / 32) % 2) === 0;
+        ctx.fillStyle = dark ? '#20264a' : '#252c56';
+        ctx.fillRect(x, y, 32, 32);
+      }
+    }
+    ctx.strokeStyle = 'rgba(120,140,220,0.12)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= WORLD.w; x += 32) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, WORLD.h); ctx.stroke(); }
+    for (let y = 0; y <= WORLD.h; y += 32) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(WORLD.w, y); ctx.stroke(); }
+
+    // faint floor lab logo
+    ctx.font = '16px "Press Start 2P", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(120,140,220,0.10)';
+    ctx.fillText('BSL-1', WORLD.w / 2, WORLD.h / 2 + 10);
+
+    // ---- perimeter lab counters (benchtops) ----
+    const CI = 12, CT = 26; // counter inset / thickness
+    const drawCounter = (x: number, y: number, w: number, h: number) => {
+      ctx.fillStyle = '#8b93c2';
+      ctx.fillRect(x, y, w, h);
+      ctx.fillStyle = 'rgba(255,255,255,0.18)';
+      ctx.fillRect(x, y, w, 4);
+      ctx.fillStyle = 'rgba(0,0,0,0.28)';
+      ctx.fillRect(x, y + h - 4, w, 4);
+    };
+    drawCounter(CI, CI, WORLD.w - CI * 2, CT);                 // top
+    drawCounter(CI, CI, CT, WORLD.h - CI * 2);                 // left
+    drawCounter(WORLD.w - CI - CT, CI, CT, WORLD.h - CI * 2);  // right
+    // bottom counter with a door gap in the middle
+    drawCounter(CI, WORLD.h - CI - CT, WORLD.w / 2 - 46 - CI, CT);
+    drawCounter(WORLD.w / 2 + 46, WORLD.h - CI - CT, WORLD.w / 2 - 46 - CI, CT);
+
+    // ---- decorative lab equipment sitting on the counters (drawn, no emoji) ----
+    // top bench props (in the gaps between top stations)
+    drawProp(ctx, 'microscope', 212, CI + 13);
+    drawProp(ctx, 'bottles', 420, CI + 13);
+    // left bench
+    drawProp(ctx, 'centrifuge', CI + 13, 190);
+    drawProp(ctx, 'extinguisher', CI + 13, 340);
+    // right bench
+    drawProp(ctx, 'monitor', WORLD.w - CI - 13, 190);
+    drawProp(ctx, 'flasks', WORLD.w - CI - 13, 340);
+    // bottom benches
+    drawProp(ctx, 'scale', 120, WORLD.h - CI - 13);
+    drawProp(ctx, 'clipboard', 200, WORLD.h - CI - 13);
+    drawProp(ctx, 'bottles', WORLD.w - 130, WORLD.h - CI - 13);
+    drawProp(ctx, 'microscope', WORLD.w - 210, WORLD.h - CI - 13);
+
+    // door (lab entrance) at bottom-center
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#3a2f26';
+    ctx.fillRect(WORLD.w / 2 - 44, WORLD.h - 16, 88, 14);
+    ctx.fillStyle = '#c98a4d';
+    ctx.fillRect(WORLD.w / 2 - 40, WORLD.h - 14, 80, 10);
+    ctx.font = '7px "Press Start 2P", monospace';
+    ctx.fillStyle = '#1a1200';
+    ctx.fillText('ENTRANCE', WORLD.w / 2, WORLD.h - 9);
+
+    // hazard stripe trim just inside the top wall
+    for (let x = CI; x < WORLD.w - CI; x += 28) {
+      ctx.fillStyle = (x / 28) % 2 === 0 ? '#ffcf4d' : '#2b2733';
+      ctx.fillRect(x, CI + CT, 28, 4);
+    }
+
+    // wall border
+    ctx.lineWidth = 8;
+    ctx.strokeStyle = '#39406f';
+    ctx.strokeRect(4, 4, WORLD.w - 8, WORLD.h - 8);
+
+    // stations
+    STATIONS.forEach((s, i) => {
+      const active = i === objRef.current;
+      const done = i < objRef.current;
+      ctx.fillStyle = '#0c1024';
+      ctx.fillRect(s.x - 3, s.y - 3, s.w + 6, s.h + 6);
+      ctx.fillStyle = done ? '#2c7d5a' : s.color;
+      ctx.globalAlpha = done ? 0.5 : 1;
+      ctx.fillRect(s.x, s.y, s.w, s.h);
+      ctx.globalAlpha = 1;
+      // outline
+      ctx.lineWidth = active ? 4 : 2;
+      ctx.strokeStyle = active ? '#ffffff' : 'rgba(0,0,0,0.4)';
+      ctx.strokeRect(s.x, s.y, s.w, s.h);
+      // drawn icon (no emoji)
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      drawLabIcon(ctx, s.icon, s.x + s.w / 2, s.y + s.h / 2 - 5);
+      // label
+      ctx.font = '8px "Press Start 2P", monospace';
+      ctx.fillStyle = '#0a0d1c';
+      ctx.fillText(s.label, s.x + s.w / 2, s.y + s.h - 9);
+      if (done) {
+        // drawn checkmark badge
+        ctx.strokeStyle = '#eafff0';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(s.x + s.w - 20, s.y + 11);
+        ctx.lineTo(s.x + s.w - 15, s.y + 16);
+        ctx.lineTo(s.x + s.w - 7, s.y + 6);
+        ctx.stroke();
+      }
+      // active marker arrow
+      if (active && !solved) {
+        const by = s.y - 16 + Math.sin(performance.now() / 200) * 3;
+        ctx.fillStyle = '#ffcf4d';
+        ctx.beginPath();
+        ctx.moveTo(s.x + s.w / 2, by + 8);
+        ctx.lineTo(s.x + s.w / 2 - 7, by);
+        ctx.lineTo(s.x + s.w / 2 + 7, by);
+        ctx.closePath();
+        ctx.fill();
+      }
+    });
+
+    // interaction progress ring above player
+    if (progRef.current > 0) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y - 34, 12, -Math.PI / 2, -Math.PI / 2 + progRef.current * Math.PI * 2);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = '#7cff6b';
+      ctx.stroke();
+    }
+
+    // player (sandyx sprite), with shadow + bob
+    const bob = Math.sin(p.bob) * 3;
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.beginPath();
+    ctx.ellipse(p.x, p.y + 16, 16, 6, 0, 0, Math.PI * 2);
+    ctx.fill();
+    const img = spriteRef.current;
+    if (img) {
+      const w = 46;
+      const h = (img.height / img.width) * w;
+      ctx.save();
+      ctx.translate(p.x, p.y + bob);
+      ctx.scale(p.face, 1);
+      ctx.drawImage(img, -w / 2, -h + 18, w, h);
+      ctx.restore();
+    } else {
+      ctx.fillStyle = C.amber;
+      ctx.fillRect(p.x - 10, p.y - 20, 20, 30);
+    }
+
+    // completion flash
+    if (flashRef.current > 0) {
+      ctx.fillStyle = `rgba(124,255,107,${flashRef.current * 0.25})`;
+      ctx.fillRect(0, 0, WORLD.w, WORLD.h);
+    }
+    ctx.restore();
+  };
+
+  return (
+    <div ref={wrapRef} className="absolute inset-0 crt-scanlines" style={{ background: C.bg0 }}>
+      <canvas ref={canvasRef} className="block w-full h-full" />
+
+      {/* Objective banner */}
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[94%] max-w-2xl">
+        <AnimatePresence mode="wait">
+          {!solved && (
+            <motion.div
+              key={objIndex}
+              initial={{ y: -30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -30, opacity: 0 }}
+              className="border-[3px] px-5 py-4 text-center"
+              style={{ borderColor: C.amber, background: 'rgba(9,13,32,0.94)', boxShadow: '0 0 18px rgba(255,207,77,0.35), 5px 5px 0 rgba(0,0,0,0.55)' }}
+            >
+              <div className="font-retro text-[10px] mb-2" style={{ color: C.amber }}>
+                OBJECTIVE {objIndex + 1}/{OBJECTIVES.length}
+              </div>
+              <div className="font-retro text-[12px] sm:text-[15px]" style={{ color: '#ffffff' }}>
+                {OBJECTIVES[objIndex]?.title}
+              </div>
+              <div className="font-retro text-[9px] sm:text-[11px] mt-3 leading-[1.9]" style={{ color: '#c7d0ff' }}>
+                {OBJECTIVES[objIndex]?.hint}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Objective checklist (left) */}
+      <div className="absolute top-24 sm:top-28 left-4 hidden sm:block border-2 p-3" style={{ borderColor: 'rgba(120,140,220,0.4)', background: 'rgba(9,13,32,0.82)' }}>
+        {OBJECTIVES.map((o, k) => (
+          <div key={k} className="font-retro text-[9px] mb-3 last:mb-0 flex items-center gap-2" style={{ color: k < objIndex ? C.green : k === objIndex ? C.amber : 'rgba(232,236,255,0.6)' }}>
+            <span>{k < objIndex ? '✔' : k === objIndex ? '▶' : '○'}</span>
+            <span>{o.title}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Controls hint (top-right), disappears after first move */}
+      <AnimatePresence>
+        {!moved && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="absolute top-16 right-4 border-[3px] px-4 py-4"
+            style={{ borderColor: C.teal, background: 'rgba(9,13,32,0.94)', boxShadow: '0 0 16px rgba(91,224,200,0.4), 5px 5px 0 rgba(0,0,0,0.55)' }}
+          >
+            <div className="font-retro text-[10px] leading-[2.1]" style={{ color: C.teal }}>
+              USE ARROW KEYS
+              <br />
+              OR WASD TO MOVE!
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Solution splash */}
+      <AnimatePresence>
+        {solved && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="absolute inset-0 z-20 flex items-center justify-center p-4"
+            style={{ background: 'rgba(5,6,15,0.86)' }}
+          >
+            <motion.div
+              initial={{ scale: 0.6, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: 'spring', stiffness: 260, damping: 18 }}
+              className="text-center max-w-2xl border-4 p-10"
+              style={{ borderColor: C.green, background: C.bg1, boxShadow: '0 0 30px rgba(124,255,107,0.4), 12px 12px 0 rgba(0,0,0,0.55)' }}
+            >
+              <div className="font-retro-glow text-[16px] mb-6 retro-blink" style={{ color: C.green }}>
+                ★ SOLUTION READY ★
+              </div>
+              <div className="font-retro text-[12px] leading-[2.1]" style={{ color: '#ffffff' }}>
+                BioCrust: engineered <span style={{ color: C.amber }}>B. subtilis</span> secreting
+                <span style={{ color: C.amber }}> γ-PGA</span> +
+                <span style={{ color: C.teal }}> CaCO₃ biocement</span>, Ca²⁺ cross-linked into a
+                wind-proof living crust that locks the sand down.
+              </div>
+              <div className="mt-6 flex justify-center">
+                <RetroButton tone="teal" onClick={onSolved}>
+                  PROCEED ▶
+                </RetroButton>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// module-scope constant referenced inside the keyboard handler
+const MOVE_KEYS = ['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'];
+
+// ===========================================================================
+// SCENE 4 — Drone deployment: fly a drone, spray the crust, watch it hold
+// ===========================================================================
+const GRID_COLS = 40;
+const GRID_ROWS = 26;
+
+function DroneGame({
+  binder,
+  onFifteen,
+}: {
+  binder: number; // 0.4..1.6 strength multiplier from tuning
+  onFifteen: () => void;
+}) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const keys = useRef<Record<string, boolean>>({});
+  const drone = useRef({ x: WORLD.w / 2, y: WORLD.h / 2 });
+  const grid = useRef<number[]>(new Array(GRID_COLS * GRID_ROWS).fill(0));
+  const scoreRef = useRef(0);
+  const firedRef = useRef(false);
+  const startRef = useRef(0);
+
+  const [hud, setHud] = useState({ coverage: 0, score: 0, cohesion: 0 });
+
+  useEffect(() => {
+    const MOVE = [...MOVE_KEYS, ' '];
+    const down = (e: KeyboardEvent) => {
+      const k = e.key.toLowerCase();
+      if (MOVE.includes(k)) {
+        e.preventDefault();
+        keys.current[k === ' ' ? 'space' : k] = true;
+      }
+    };
+    const up = (e: KeyboardEvent) => {
+      const k = e.key.toLowerCase();
+      keys.current[k === ' ' ? 'space' : k] = false;
+    };
+    window.addEventListener('keydown', down, { passive: false });
+    window.addEventListener('keyup', up);
+    return () => {
+      window.removeEventListener('keydown', down);
+      window.removeEventListener('keyup', up);
+    };
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current!;
+    const ctx = canvas.getContext('2d')!;
+    let raf = 0;
+    let last = performance.now();
+    startRef.current = last;
+    let hudTick = 0;
+
+    const resize = () => {
+      const rect = wrapRef.current!.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      canvas.style.width = rect.width + 'px';
+      canvas.style.height = rect.height + 'px';
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    const cellW = WORLD.w / GRID_COLS;
+    const cellH = WORLD.h / GRID_ROWS;
+
+    const step = (t: number) => {
+      const dt = Math.min((t - last) / 1000, 0.05);
+      last = t;
+      const d = drone.current;
+      const spd = 190;
+      let vx = 0;
+      let vy = 0;
+      if (keys.current['a'] || keys.current['arrowleft']) vx -= 1;
+      if (keys.current['d'] || keys.current['arrowright']) vx += 1;
+      if (keys.current['w'] || keys.current['arrowup']) vy -= 1;
+      if (keys.current['s'] || keys.current['arrowdown']) vy += 1;
+      if (vx || vy) {
+        const m = Math.hypot(vx, vy) || 1;
+        d.x += (vx / m) * spd * dt;
+        d.y += (vy / m) * spd * dt;
+      }
+      d.x = Math.max(16, Math.min(WORLD.w - 16, d.x));
+      d.y = Math.max(16, Math.min(WORLD.h - 16, d.y));
+
+      // spraying (space held, or always-on gentle mist to keep it moving)
+      const spraying = keys.current['space'];
+      if (spraying) {
+        firedRef.current = true;
+        const cc = Math.floor(d.x / cellW);
+        const cr = Math.floor(d.y / cellH);
+        const R = 2;
+        for (let r = -R; r <= R; r++) {
+          for (let c = -R; c <= R; c++) {
+            const gx = cc + c;
+            const gy = cr + r;
+            if (gx < 0 || gy < 0 || gx >= GRID_COLS || gy >= GRID_ROWS) continue;
+            if (Math.hypot(c, r) > R) continue;
+            const idx = gy * GRID_COLS + gx;
+            const before = grid.current[idx];
+            grid.current[idx] = Math.min(1, before + binder * dt * 1.6);
+            scoreRef.current += (grid.current[idx] - before) * 100;
+          }
+        }
+      }
+
+      // draw
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const cw = canvas.width / dpr;
+      const ch = canvas.height / dpr;
+      const scale = Math.min(cw / WORLD.w, ch / WORLD.h);
+      const oxx = (cw - WORLD.w * scale) / 2;
+      const oyy = (ch - WORLD.h * scale) / 2;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.imageSmoothingEnabled = false;
+      ctx.fillStyle = '#05060f';
+      ctx.fillRect(0, 0, cw, ch);
+      ctx.save();
+      ctx.translate(oxx, oyy);
+      ctx.scale(scale, scale);
+
+      // sand base
+      ctx.fillStyle = C.sand;
+      ctx.fillRect(0, 0, WORLD.w, WORLD.h);
+      // dune shading bands
+      for (let y = 0; y < WORLD.h; y += 40) {
+        ctx.fillStyle = (y / 40) % 2 === 0 ? 'rgba(199,155,82,0.25)' : 'rgba(231,201,138,0.15)';
+        ctx.fillRect(0, y, WORLD.w, 20);
+      }
+
+      // stabilized crust cells
+      let covered = 0;
+      for (let i = 0; i < grid.current.length; i++) {
+        const v = grid.current[i];
+        if (v <= 0) continue;
+        covered += v;
+        const gx = (i % GRID_COLS) * cellW;
+        const gy = Math.floor(i / GRID_COLS) * cellH;
+        // crust color: darker/greener as it hardens
+        const g = Math.floor(120 + v * 80);
+        ctx.fillStyle = `rgba(${90 - v * 30},${g},${110 + v * 40},${0.35 + v * 0.5})`;
+        ctx.fillRect(gx, gy, cellW + 0.5, cellH + 0.5);
+      }
+      const coverage = covered / grid.current.length;
+
+      // spray cone
+      if (spraying) {
+        ctx.fillStyle = 'rgba(124,255,107,0.18)';
+        ctx.beginPath();
+        ctx.arc(drone.current.x, drone.current.y, 42, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // drone (pixel quadcopter)
+      const dx = drone.current.x;
+      const dy = drone.current.y;
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
+      ctx.beginPath();
+      ctx.ellipse(dx, dy + 22, 18, 6, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#2b3350';
+      ctx.fillRect(dx - 4, dy - 22, 8, 44);
+      ctx.fillRect(dx - 22, dy - 4, 44, 8);
+      const rotor = (t / 40) % 2 < 1 ? '#9fb3ff' : '#6b7fd8';
+      [[-22, -22], [22, -22], [-22, 22], [22, 22]].forEach(([ex, ey]) => {
+        ctx.fillStyle = rotor;
+        ctx.beginPath();
+        ctx.arc(dx + ex / 1.0 * 0 + (ex < 0 ? -18 : 18), dy + (ey < 0 ? -18 : 18), 9, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.fillStyle = C.magenta;
+      ctx.fillRect(dx - 8, dy - 8, 16, 16);
+      ctx.fillStyle = C.teal;
+      ctx.fillRect(dx - 4, dy - 4, 8, 8);
+
+      ctx.restore();
+
+      // throttle HUD updates
+      hudTick += dt;
+      if (hudTick > 0.15) {
+        hudTick = 0;
+        setHud({
+          coverage,
+          score: Math.floor(scoreRef.current),
+          cohesion: Math.min(1, binder * (0.4 + coverage * 0.9)),
+        });
+      }
+
+      // 15s milestone
+      if (!firedOnce && (t - startRef.current) / 1000 >= 15) {
+        firedOnce = true;
+        onFifteen();
+      }
+
+      raf = requestAnimationFrame(step);
+    };
+    let firedOnce = false;
+    raf = requestAnimationFrame(step);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', resize);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [binder]);
+
+  const bar = (label: string, val: number, color: string, unit = '%') => (
+    <div className="mb-3">
+      <div className="flex justify-between font-retro text-[9px] mb-1.5" style={{ color: '#ffffff' }}>
+        <span>{label}</span>
+        <span style={{ color }}>{unit === '%' ? Math.round(val * 100) + '%' : Math.round(val)}</span>
+      </div>
+      <div className="h-4 border-2" style={{ borderColor: color, background: 'rgba(0,0,0,0.4)' }}>
+        <div className="h-full transition-[width] duration-150" style={{ width: `${Math.min(100, unit === '%' ? val * 100 : val)}%`, background: color }} />
+      </div>
+    </div>
+  );
+
+  return (
+    <div ref={wrapRef} className="absolute inset-0 crt-scanlines" style={{ background: C.bg0 }}>
+      <canvas ref={canvasRef} className="block w-full h-full" />
+
+      {/* Stat panel */}
+      <div className="absolute top-16 left-4 border-[3px] p-4 w-60" style={{ borderColor: C.amber, background: 'rgba(9,13,32,0.92)', boxShadow: '0 0 16px rgba(255,207,77,0.3), 5px 5px 0 rgba(0,0,0,0.55)' }}>
+        <div className="font-retro text-[10px] mb-4" style={{ color: C.amber }}>◆ DEPLOYMENT ◆</div>
+        {bar('SAND HELD', hud.coverage, C.teal)}
+        {bar('COHESION', hud.cohesion, C.green)}
+        <div className="font-retro text-[9px] mt-4" style={{ color: '#ffffff' }}>
+          HI-SCORE
+          <div className="font-retro-glow text-[16px] mt-2" style={{ color: C.amber }}>{hud.score.toString().padStart(6, '0')}</div>
+        </div>
+      </div>
+
+      {/* Controls */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 border-[3px] px-5 py-3" style={{ borderColor: C.teal, background: 'rgba(9,13,32,0.92)', boxShadow: '4px 4px 0 rgba(0,0,0,0.5)' }}>
+        <div className="font-retro text-[10px]" style={{ color: C.teal }}>
+          WASD / ARROWS = FLY &nbsp;·&nbsp; <span className="retro-blink">HOLD SPACE = SPRAY</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ===========================================================================
+// SCENE 4b — Concentration tuning (No → Deployment)
+// ===========================================================================
+function TuneScene({
+  pga,
+  ca,
+  co2,
+  setPga,
+  setCa,
+  setCo2,
+  onDeploy,
+  onBack,
+}: {
+  pga: number;
+  ca: number;
+  co2: number;
+  setPga: (v: number) => void;
+  setCa: (v: number) => void;
+  setCo2: (v: number) => void;
+  onDeploy: () => void;
+  onBack: () => void;
+}) {
+  const binder = binderStrength(pga, ca, co2);
+  const slider = (label: string, val: number, set: (v: number) => void, color: string, unit: string) => (
+    <div className="mb-7">
+      <div className="flex justify-between font-retro text-[11px] mb-3" style={{ color: '#ffffff' }}>
+        <span>{label}</span>
+        <span style={{ color }}>{val.toFixed(1)} {unit}</span>
+      </div>
+      <input
+        type="range"
+        min={0}
+        max={100}
+        value={val}
+        onChange={(e) => set(Number(e.target.value))}
+        className="w-full retro-range"
+        style={{ accentColor: color }}
+      />
+    </div>
+  );
+  return (
+    <div className="absolute inset-0 crt-scanlines flex items-center justify-center p-5 overflow-y-auto" style={{ background: `radial-gradient(circle at 50% 20%, ${C.bg1}, ${C.bg0})` }}>
+      <div className="w-full max-w-xl border-4 p-8 my-16" style={{ borderColor: C.magenta, background: C.bg1, boxShadow: '0 0 26px rgba(255,94,168,0.35), 12px 12px 0 rgba(0,0,0,0.55)' }}>
+        <div className="font-retro-glow text-[14px] mb-3" style={{ color: C.magenta }}>⚙ TUNE THE FORMULA</div>
+        <div className="font-retro text-[10px] mb-7 leading-[2]" style={{ color: '#c7d0ff' }}>
+          Adjust the lab concentrations — the mix decides how well the drone locks the sand down.
+        </div>
+        {slider('γ-PGA POLYMER', pga, setPga, C.amber, 'g/L')}
+        {slider('Ca²⁺ CROSS-LINKER', ca, setCa, C.teal, 'mM')}
+        {slider('CARBONIC ANHYDRASE', co2, setCo2, C.purple, 'U/mL')}
+
+        <div className="border-2 p-4 mb-7" style={{ borderColor: C.green, background: 'rgba(0,0,0,0.3)' }}>
+          <div className="flex justify-between font-retro text-[10px] mb-3" style={{ color: '#ffffff' }}>
+            <span>PREDICTED BINDING</span>
+            <span style={{ color: C.green }}>{Math.round(binder * 62)}%</span>
+          </div>
+          <div className="h-4 border-2" style={{ borderColor: C.green }}>
+            <div className="h-full transition-all" style={{ width: `${Math.min(100, binder * 62)}%`, background: C.green }} />
+          </div>
+        </div>
+
+        <div className="flex gap-3 justify-between">
+          <RetroButton tone="ghost" onClick={onBack}>◀ BACK</RetroButton>
+          <RetroButton tone="magenta" onClick={onDeploy}>DEPLOY WITH THIS MIX ▶</RetroButton>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Map three 0..100 sliders to a 0.4..~1.6 binder multiplier. */
+function binderStrength(pga: number, ca: number, co2: number) {
+  const n = (pga * 0.5 + ca * 0.32 + co2 * 0.18) / 100; // 0..1
+  return 0.4 + n * 1.2;
+}
+
+// ===========================================================================
+// Orchestrator
+// ===========================================================================
+export default function SandyxAdventure({ open, onClose, onSeeModel, onProceedToModel }: SandyxAdventureProps) {
+  const [phase, setPhase] = useState<Phase>('intro');
+  const [modelPrompt, setModelPrompt] = useState(false);
+  const [droneChoice, setDroneChoice] = useState(false); // No→keep playing: show two buttons
+  const [pga, setPga] = useState(65);
+  const [ca, setCa] = useState(55);
+  const [co2, setCo2] = useState(50);
+
+  const binder = binderStrength(pga, ca, co2);
+
+  // Lock body scroll while open; reset on open.
+  useEffect(() => {
+    if (!open) return;
+    setPhase('intro');
+    setModelPrompt(false);
+    setDroneChoice(false);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+      // The Cursor primitive hides the native cursor; make sure it comes back.
+      document.body.style.cursor = '';
+    };
+  }, [open]);
+
+  // Escape closes.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, onClose]);
+
+  const isStory = phase === 'intro' || phase === 'storm' || phase === 'desert';
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[200] flex items-center justify-center p-2 sm:p-4"
+          style={{ background: 'rgba(2,3,10,0.92)', backdropFilter: 'blur(6px)' }}
+        >
+          <motion.div
+            initial={{ scale: 0.92, opacity: 0, y: 24 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.92, opacity: 0, y: 24 }}
+            transition={{ type: 'spring', stiffness: 220, damping: 24 }}
+            className="relative w-full h-full max-w-[1400px] overflow-hidden border-4"
+            style={{ borderColor: C.amber, background: C.bg0, boxShadow: '0 0 0 4px #1a1200, 0 30px 80px rgba(0,0,0,0.7)' }}
+          >
+            {/* Top bar */}
+            <div className="absolute top-0 left-0 right-0 z-[60] flex items-center justify-between px-3 py-2" style={{ background: 'linear-gradient(180deg, rgba(11,16,38,0.9), transparent)' }}>
+              <div className="font-retro text-[9px] sm:text-[11px] flex items-center gap-2" style={{ color: C.amber }}>
+                <Volume2 className="w-4 h-4" /> SANDYX vs. THE SANDSTORM
+              </div>
+              <div className="flex items-center gap-2">
+                {isStory && (
+                  <button
+                    onClick={() => setPhase('lab')}
+                    className="font-retro text-[9px] sm:text-[10px] px-3 py-2.5 border-2 flex items-center gap-1.5"
+                    style={{ borderColor: C.ink, color: C.ink, background: 'rgba(0,0,0,0.45)' }}
+                  >
+                    <SkipForward className="w-3.5 h-3.5" /> SKIP STORY
+                  </button>
+                )}
+                <button
+                  onClick={onClose}
+                  aria-label="Close"
+                  className="font-retro text-[9px] px-3 py-2.5 border-2 flex items-center gap-1.5"
+                  style={{ borderColor: C.red, color: C.red, background: 'rgba(0,0,0,0.45)' }}
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Themed retro cursor (motion-primitives) */}
+            <Cursor
+              className="z-[999]"
+              springConfig={{ stiffness: 1100, damping: 34, mass: 0.28 }}
+              variants={{
+                initial: { scale: 0, opacity: 0 },
+                animate: { scale: 1, opacity: 1 },
+                exit: { scale: 0, opacity: 0 },
+              }}
+            >
+              <div className="relative" style={{ width: 26, height: 26 }}>
+                <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-[2px]" style={{ background: C.amber }} />
+                <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-[2px]" style={{ background: C.amber }} />
+                <div className="absolute inset-0 border-2" style={{ borderColor: C.amber, background: 'rgba(255,207,77,0.12)' }} />
+              </div>
+            </Cursor>
+
+            {/* Scenes */}
+            <AnimatePresence mode="wait">
+              {phase === 'intro' && (
+                <motion.div key="intro" className="absolute inset-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  <IntroScene onFinish={() => setPhase('desert')} />
+                </motion.div>
+              )}
+              {phase === 'desert' && (
+                <motion.div key="desert" className="absolute inset-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  <DesertScene onFinish={() => setPhase('lab')} />
+                </motion.div>
+              )}
+              {phase === 'lab' && (
+                <motion.div key="lab" className="absolute inset-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  <LabGame onSolved={() => setPhase('deploy-prompt')} />
+                </motion.div>
+              )}
+              {phase === 'lab-tune' && (
+                <motion.div key="tune" className="absolute inset-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  <TuneScene
+                    pga={pga}
+                    ca={ca}
+                    co2={co2}
+                    setPga={setPga}
+                    setCa={setCa}
+                    setCo2={setCo2}
+                    onBack={() => setPhase('deploy-prompt')}
+                    onDeploy={() => {
+                      setDroneChoice(false);
+                      setModelPrompt(false);
+                      setPhase('drone');
+                    }}
+                  />
+                </motion.div>
+              )}
+              {phase === 'drone' && (
+                <motion.div key="drone" className="absolute inset-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  <DroneGame binder={binder} onFifteen={() => setModelPrompt(true)} />
+                  {/* Two-button branch after saying "No" to the model prompt */}
+                  {droneChoice && (
+                    <div className="absolute top-14 right-3 z-[60] flex flex-col gap-2 items-end">
+                      <RetroButton tone="teal" onClick={onProceedToModel}>PROCEED TO THE MODEL ▶</RetroButton>
+                      <RetroButton tone="ghost" onClick={() => { setDroneChoice(false); setPhase('lab'); }}>◀ BACK TO THE LAB</RetroButton>
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Prompt: Proceed to Deployment? */}
+            <AnimatePresence>
+              {phase === 'deploy-prompt' && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 z-[70] flex items-center justify-center p-4"
+                  style={{ background: 'rgba(5,6,15,0.82)' }}
+                >
+                  <RetroModal title="MISSION CONTROL" accent={C.amber}>
+                    <div className="font-retro text-[14px] mb-8 leading-[2] text-center" style={{ color: '#ffffff' }}>
+                      PROCEED TO DEPLOYMENT?
+                    </div>
+                    <div className="flex gap-3 justify-center">
+                      <RetroButton tone="teal" onClick={() => setPhase('drone')}>YES ▶</RetroButton>
+                      <RetroButton tone="ghost" onClick={() => setPhase('lab-tune')}>NO — TUNE MIX</RetroButton>
+                    </div>
+                  </RetroModal>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Prompt: Would you like to see how we actually model this? */}
+            <AnimatePresence>
+              {phase === 'drone' && modelPrompt && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 z-[80] flex items-center justify-center p-4"
+                  style={{ background: 'rgba(5,6,15,0.82)' }}
+                >
+                  <RetroModal title="SANDYX ASKS" accent={C.teal}>
+                    <div className="font-retro text-[13px] mb-8 leading-[2] text-center" style={{ color: '#ffffff' }}>
+                      WOULD YOU LIKE TO SEE HOW WE ACTUALLY MODEL THIS?
+                    </div>
+                    <div className="flex gap-3 justify-center">
+                      <RetroButton tone="teal" onClick={onSeeModel}>YES ▶</RetroButton>
+                      <RetroButton
+                        tone="ghost"
+                        onClick={() => {
+                          setModelPrompt(false);
+                          setDroneChoice(true);
+                        }}
+                      >
+                        NO — KEEP FLYING
+                      </RetroButton>
+                    </div>
+                  </RetroModal>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
