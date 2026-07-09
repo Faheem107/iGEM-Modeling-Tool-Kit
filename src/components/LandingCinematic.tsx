@@ -198,21 +198,37 @@ export function BranchConnector({ isLightMode: _isLightMode }: { isLightMode: bo
   const draw = useTransform(scrollYProgress, [0, 1], [0, 1]);
   const nodeOpacity = useTransform(scrollYProgress, [0.6, 1], [0, 1]);
 
+  // Three sibling branches fan out from a single junction node at (500, 66). The middle branch is
+  // drawn on the SAME footing as the left/right ones (its own path + end node) so all three read as
+  // limbs of one tree rather than the trunk merely continuing straight down to the centre card.
+  const branches = [
+    'M500 66 C500 132, 210 118, 167 196', // left
+    'M500 66 L500 196',                   // middle
+    'M500 66 C500 132, 790 118, 833 196', // right
+  ];
   return (
     <div ref={ref} className="relative w-full h-24 sm:h-32 -mb-2">
       <svg viewBox="0 0 1000 200" preserveAspectRatio="none" className="w-full h-full overflow-visible">
         <defs>
-          <linearGradient id="branchGrad" x1="0" y1="0" x2="0" y2="1">
+          {/* userSpaceOnUse so the gradient still resolves on the perfectly vertical middle
+              branch — an objectBoundingBox gradient is degenerate on a zero-width line and would
+              render it invisible (which is why the middle prong had no branch before). */}
+          <linearGradient id="branchGrad" gradientUnits="userSpaceOnUse" x1="500" y1="0" x2="500" y2="200">
             <stop offset="0%" stopColor="#22d3ee" />
             <stop offset="100%" stopColor="#818cf8" />
           </linearGradient>
         </defs>
-        <motion.path d="M500 0 L500 70" fill="none" stroke="url(#branchGrad)" strokeWidth="3" strokeLinecap="round" style={{ pathLength: draw }} />
-        {['M500 70 C500 140, 210 120, 167 200', 'M500 70 L500 200', 'M500 70 C500 140, 790 120, 833 200'].map((d, i) => (
+        {/* trunk */}
+        <motion.path d="M500 0 L500 66" fill="none" stroke="url(#branchGrad)" strokeWidth="3.5" strokeLinecap="round" style={{ pathLength: draw }} />
+        {/* three sibling branches (left, MIDDLE, right) — all identical treatment */}
+        {branches.map((d, i) => (
           <motion.path key={i} d={d} fill="none" stroke="url(#branchGrad)" strokeWidth="3" strokeLinecap="round" style={{ pathLength: draw }} />
         ))}
+        {/* junction node where the trunk splits — makes the split read as a tree fork */}
+        <motion.circle cx={500} cy={66} r={7} fill="#38bdf8" style={{ opacity: nodeOpacity }} />
+        {/* leaf node at the head of each branch (over each prong card) */}
         {[167, 500, 833].map((x, i) => (
-          <motion.circle key={i} cx={x} cy={198} r={6} fill="#22d3ee" style={{ opacity: nodeOpacity }} />
+          <motion.circle key={i} cx={x} cy={196} r={6} fill="#22d3ee" style={{ opacity: nodeOpacity }} />
         ))}
       </svg>
     </div>

@@ -318,14 +318,14 @@ export const ECONOMIC_CALIB = {
   // --- Prong 2: CaCO₃ (MICP via carbonic anhydrase) ---
   calciumSourceCostPerKg: calib(0.15, 'USD·kg⁻¹ CaCl₂', 'bulk calcium chloride', 'Quote calcium feedstock; CaCl₂ vs Ca(OH)₂.', [0.08, 0.5]),
   caReagentCostPerHa: calib(650, 'USD·ha⁻¹', 'enzyme induction + Ca dosing per hectare', 'Cost calcium + inducer dosing for one treated hectare.', [200, 1500]),
-  co2CreditPerKg: calib(0.05, 'USD·kg⁻¹ CO₂', 'voluntary carbon market (low)', 'Use the applicable carbon-credit price.', [0.0, 0.2]),
+  co2CreditPerKg: calib(0.01, 'USD·kg⁻¹ CO₂', 'voluntary carbon market 2024 ≈ $6/tCO₂ avg; nature-based removals command a premium — $10/t is a defensible mid-point (State of the VCM 2024)', 'Use the applicable carbon-credit price for durable mineral removal.', [0.003, 0.03]),
   // --- Prong 3: sodium alginate (purchased commodity) ---
-  alginateCostPerKg: calib(9.0, 'USD·kg⁻¹', 'food/technical-grade sodium alginate', 'Quote alginate + CaCl₂ crosslinker per kg applied.', [4, 20]),
+  alginateCostPerKg: calib(9.0, 'USD·kg⁻¹', 'food/technical-grade sodium alginate; within the 2024 bulk market band ≈ $6–12/kg (IMARC / Procurement Resource price trend)', 'Quote alginate + CaCl₂ crosslinker per kg applied.', [4, 20]),
   alginateDoseKgPerHa: calib(400, 'kg·ha⁻¹', '2 %w/v over a thin applied layer', 'Set by applied %w/v and layer depth.', [100, 1200]),
   // --- Shared field operations & conventional baselines ---
   bacterialSetupCapex: calib(25000, 'USD', 'pilot fermentation / enzyme-production setup', 'Estimate the one-time bioprocess infrastructure cost at deployment scale.', [5000, 100000]),
   fieldApplicationCostPerHa: calib(180, 'USD·ha⁻¹', 'spray rig + labour per hectare', 'Cost the spray application pass per hectare.', [80, 400]),
-  chemicalSprayCostPerHa: calib(2800, 'USD·ha⁻¹', 'petrochemical dust-suppressant', 'Vendor quote for conventional chemical stabiliser.', [1500, 4000]),
+  chemicalSprayCostPerHa: calib(2800, 'USD·ha⁻¹', 'petrochemical dust-suppressant (polymer emulsion class; cf. USDA FS "Dust Palliative Selection and Application Guide", commercial Soiltac/Soilworks)', 'Vendor quote for conventional chemical stabiliser.', [1500, 4000]),
   concreteBlanketCostPerHa: calib(18500, 'USD·ha⁻¹', 'hard-engineering blanket', 'Contractor quote for concrete/aggregate matting.', [10000, 30000]),
 } as const;
 

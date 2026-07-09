@@ -514,19 +514,10 @@ function DesertScene({ onFinish }: { onFinish: () => void }) {
         />
       ))}
 
-      {/* Sandyx presenting, bottom-left */}
-      <motion.img
-        src="/sandyx.png"
-        alt="Sandyx"
-        draggable={false}
-        className="absolute z-10 left-[4%] bottom-[10%] w-28 sm:w-44 object-contain"
-        style={{ filter: 'drop-shadow(0 14px 20px rgba(0,0,0,0.4))' }}
-        animate={{ y: [0, -8, 0] }}
-        transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
-      />
-
-      {/* Speech near Sandyx */}
-      <div className="absolute z-20 left-[4%] sm:left-[18%] bottom-[34%] right-[4%] sm:right-[10%] flex">
+      {/* Sandyx presenting: the speech bubble with Sandyx directly beneath it
+          (the bubble's tail points down onto her). The column hugs the bottom and
+          grows upward as the dense stat lines make the bubble taller. */}
+      <div className="absolute z-20 inset-x-[4%] sm:inset-x-[10%] top-[12%] bottom-[7%] flex flex-col justify-end items-center sm:items-start gap-2">
         <AnimatePresence mode="wait">
           <SpeechBubble
             key={i}
@@ -535,6 +526,15 @@ function DesertScene({ onFinish }: { onFinish: () => void }) {
             onDone={() => setTyped(true)}
           />
         </AnimatePresence>
+        <motion.img
+          src="/sandyx.png"
+          alt="Sandyx"
+          draggable={false}
+          className="w-24 sm:w-36 object-contain sm:ml-8 shrink-0"
+          style={{ filter: 'drop-shadow(0 14px 20px rgba(0,0,0,0.4))' }}
+          animate={{ y: [0, -8, 0] }}
+          transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
+        />
       </div>
 
       {/* Click-to-continue */}
@@ -741,12 +741,35 @@ function LabGame({ onSolved }: { onSolved: () => void }) {
   const flashRef = useRef(0);
   const hurtRef = useRef(0);
   const pellets = useRef<Set<number>>(new Set());
+  const scoreRef = useRef(0);
+  const hiRef = useRef(0);
 
   const [objIndex, setObjIndex] = useState(0);
   const [moved, setMoved] = useState(false);
   const [solved, setSolved] = useState(false);
   const [pelletsLeft, setPelletsLeft] = useState(0);
+  const [score, setScore] = useState(0);
+  const [hiScore, setHiScore] = useState(0);
   const movedRef = useRef(false);
+
+  // Persisted arcade high-score (pellets + completed objectives; caught costs points).
+  useEffect(() => {
+    try {
+      const stored = Number(window.localStorage.getItem('sandyx-maze-hiscore') || '0');
+      if (Number.isFinite(stored) && stored > 0) { hiRef.current = stored; setHiScore(stored); }
+    } catch { /* storage unavailable — high-score just won't persist */ }
+  }, []);
+
+  // Award points and keep the (persisted) high-score in sync.
+  const bumpScore = useCallback((delta: number) => {
+    scoreRef.current = Math.max(0, scoreRef.current + delta);
+    setScore(scoreRef.current);
+    if (scoreRef.current > hiRef.current) {
+      hiRef.current = scoreRef.current;
+      setHiScore(scoreRef.current);
+      try { window.localStorage.setItem('sandyx-maze-hiscore', String(scoreRef.current)); } catch { /* ignore */ }
+    }
+  }, []);
 
   // Load Sandyx sprite + seed the pellets (every corridor cell except stations/start).
   useEffect(() => {
@@ -845,6 +868,7 @@ function LabGame({ onSolved }: { onSolved: () => void }) {
       if (pellets.current.has(pkey)) {
         pellets.current.delete(pkey);
         setPelletsLeft(pellets.current.size);
+        bumpScore(10);
       }
 
       // --- interaction with the active station ---
@@ -860,7 +884,8 @@ function LabGame({ onSolved }: { onSolved: () => void }) {
             const next = objRef.current + 1;
             objRef.current = next;
             setObjIndex(next);
-            if (next >= STATIONS.length) setSolved(true);
+            bumpScore(500);
+            if (next >= STATIONS.length) { bumpScore(1000); setSolved(true); }
           }
         } else {
           progRef.current = Math.max(0, progRef.current - dt / 0.5);
@@ -891,6 +916,7 @@ function LabGame({ onSolved }: { onSolved: () => void }) {
           const [ggx, ggy] = cellCenter(...GHOST_START);
           g.x = ggx; g.y = ggy; g.tc = -1;
           hurtRef.current = 1;
+          bumpScore(-100);
         }
       }
 
@@ -1086,6 +1112,16 @@ function LabGame({ onSolved }: { onSolved: () => void }) {
         <span className="font-retro text-[9px]" style={{ color: C.speech }}>{pelletsLeft} LEFT</span>
       </div>
 
+      {/* Score + persisted high-score (bottom-right) */}
+      <div className="absolute bottom-4 right-4 border-2 px-3 py-2 text-right" style={{ borderColor: C.teal, background: 'rgba(9,13,32,0.85)' }}>
+        <div className="font-retro text-[8px] mb-1" style={{ color: C.teal }}>
+          HI <span style={{ color: C.amber }}>{hiScore.toString().padStart(6, '0')}</span>
+        </div>
+        <div className="font-retro-glow text-[13px]" style={{ color: C.speech }}>
+          {score.toString().padStart(6, '0')}
+        </div>
+      </div>
+
       {/* Solution splash */}
       <AnimatePresence>
         {solved && (
@@ -1111,6 +1147,10 @@ function LabGame({ onSolved }: { onSolved: () => void }) {
                 <span style={{ color: C.teal }}> CaCO₃ biocement</span>, Ca²⁺ cross-linked into a
                 wind-proof living crust that locks the sand down.
               </div>
+              <div className="mt-6 font-retro text-[10px] flex items-center justify-center gap-6" style={{ color: C.speech }}>
+                <span>SCORE <span style={{ color: C.amber }}>{score.toString().padStart(6, '0')}</span></span>
+                <span>HI <span style={{ color: C.teal }}>{hiScore.toString().padStart(6, '0')}</span></span>
+              </div>
               <div className="mt-6 flex justify-center">
                 <RetroButton tone="teal" onClick={onSolved}>
                   PROCEED ▶
@@ -1132,6 +1172,8 @@ const MOVE_KEYS = ['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arr
 // ===========================================================================
 const GRID_COLS = 40;
 const GRID_ROWS = 26;
+// A crust cell at/above this coverage is "locked" — fully cured and immune to the sand ghost.
+const LOCK = 0.9;
 
 function DroneGame({
   binder,
@@ -1145,11 +1187,15 @@ function DroneGame({
   const keys = useRef<Record<string, boolean>>({});
   const drone = useRef({ x: WORLD.w / 2, y: WORLD.h / 2 });
   const grid = useRef<number[]>(new Array(GRID_COLS * GRID_ROWS).fill(0));
-  const scoreRef = useRef(0);
   const firedRef = useRef(false);
   const startRef = useRef(0);
+  // The sand-particle ghost: roams the field and eats un-locked crust; the drone must
+  // fully lock cells before it arrives. Steered with velocity smoothing (no snapping).
+  const ghost = useRef({ x: WORLD.w * 0.14, y: WORLD.h * 0.2, vx: 0, vy: 0, tx: WORLD.w * 0.5, ty: WORLD.h * 0.5, retime: 0 });
+  const securedRef = useRef(0);
+  const eatenRef = useRef(0);
 
-  const [hud, setHud] = useState({ coverage: 0, score: 0, cohesion: 0 });
+  const [hud, setHud] = useState({ coverage: 0, cohesion: 0, secured: 0, eaten: 0 });
 
   useEffect(() => {
     const MOVE = [...MOVE_KEYS, ' '];
@@ -1229,7 +1275,53 @@ function DroneGame({
             const idx = gy * GRID_COLS + gx;
             const before = grid.current[idx];
             grid.current[idx] = Math.min(1, before + binder * dt * 1.6);
-            scoreRef.current += (grid.current[idx] - before) * 100;
+          }
+        }
+      }
+
+      // --- sand ghost: race the drone, eating un-locked crust ---
+      const gh = ghost.current;
+      // Re-target a few times a second: chase the nearest crust that is covered but not yet locked.
+      if (t - gh.retime > 340) {
+        gh.retime = t;
+        let bestD = Infinity, btx = -1, bty = -1;
+        for (let i = 0; i < grid.current.length; i++) {
+          const v = grid.current[i];
+          if (v <= 0.12 || v >= LOCK) continue; // ignore bare sand and locked crust
+          const gx = (i % GRID_COLS + 0.5) * cellW;
+          const gy = (Math.floor(i / GRID_COLS) + 0.5) * cellH;
+          const dd = (gx - gh.x) ** 2 + (gy - gh.y) ** 2;
+          if (dd < bestD) { bestD = dd; btx = gx; bty = gy; }
+        }
+        if (btx >= 0) { gh.tx = btx; gh.ty = bty; }
+        else { gh.tx = d.x; gh.ty = d.y; } // nothing soft to eat → hover near the drone
+      }
+      // Smoothly steer velocity toward the target (framerate-independent lerp).
+      {
+        const gdx = gh.tx - gh.x, gdy = gh.ty - gh.y;
+        const gm = Math.hypot(gdx, gdy) || 1;
+        const gspd = 78;
+        const steer = 1 - Math.pow(0.0015, dt);
+        gh.vx += ((gdx / gm) * gspd - gh.vx) * steer;
+        gh.vy += ((gdy / gm) * gspd - gh.vy) * steer;
+        gh.x = Math.max(10, Math.min(WORLD.w - 10, gh.x + gh.vx * dt));
+        gh.y = Math.max(10, Math.min(WORLD.h - 10, gh.y + gh.vy * dt));
+      }
+      // Erode un-locked crust in the ghost's footprint; locked crust resists it.
+      {
+        const cc = Math.floor(gh.x / cellW), cr = Math.floor(gh.y / cellH);
+        const ER = 2;
+        for (let r = -ER; r <= ER; r++) {
+          for (let c = -ER; c <= ER; c++) {
+            const gx = cc + c, gy = cr + r;
+            if (gx < 0 || gy < 0 || gx >= GRID_COLS || gy >= GRID_ROWS) continue;
+            if (Math.hypot(c, r) > ER) continue;
+            const idx = gy * GRID_COLS + gx;
+            const before = grid.current[idx];
+            if (before <= 0 || before >= LOCK) continue;
+            const after = Math.max(0, before - 0.7 * dt);
+            grid.current[idx] = after;
+            eatenRef.current += before - after;
           }
         }
       }
@@ -1260,17 +1352,28 @@ function DroneGame({
 
       // stabilized crust cells
       let covered = 0;
+      let secured = 0;
       for (let i = 0; i < grid.current.length; i++) {
         const v = grid.current[i];
         if (v <= 0) continue;
         covered += v;
         const gx = (i % GRID_COLS) * cellW;
         const gy = Math.floor(i / GRID_COLS) * cellH;
-        // crust color: darker/greener as it hardens
-        const g = Math.floor(120 + v * 80);
-        ctx.fillStyle = `rgba(${90 - v * 30},${g},${110 + v * 40},${0.35 + v * 0.5})`;
-        ctx.fillRect(gx, gy, cellW + 0.5, cellH + 0.5);
+        if (v >= LOCK) {
+          // locked crust — bright, glowing, ghost-proof
+          secured++;
+          ctx.fillStyle = 'rgba(124,255,107,0.85)';
+          ctx.fillRect(gx, gy, cellW + 0.5, cellH + 0.5);
+          ctx.fillStyle = 'rgba(200,255,190,0.5)';
+          ctx.fillRect(gx + 2, gy + 2, cellW - 4, cellH - 4);
+        } else {
+          // curing crust: darker/greener as it hardens
+          const g = Math.floor(120 + v * 80);
+          ctx.fillStyle = `rgba(${90 - v * 30},${g},${110 + v * 40},${0.35 + v * 0.5})`;
+          ctx.fillRect(gx, gy, cellW + 0.5, cellH + 0.5);
+        }
       }
+      securedRef.current = secured;
       const coverage = covered / grid.current.length;
 
       // spray cone
@@ -1280,6 +1383,9 @@ function DroneGame({
         ctx.arc(drone.current.x, drone.current.y, 42, 0, Math.PI * 2);
         ctx.fill();
       }
+
+      // the sand ghost (same drifting-sand sprite as the maze chaser)
+      drawSand(ctx, gh.x, gh.y, 15, t, drone.current.x, drone.current.y);
 
       // drone (pixel quadcopter)
       const dx = drone.current.x;
@@ -1311,8 +1417,9 @@ function DroneGame({
         hudTick = 0;
         setHud({
           coverage,
-          score: Math.floor(scoreRef.current),
           cohesion: Math.min(1, binder * (0.4 + coverage * 0.9)),
+          secured: securedRef.current,
+          eaten: Math.floor(eatenRef.current),
         });
       }
 
@@ -1354,16 +1461,26 @@ function DroneGame({
         <div className="font-retro text-[10px] mb-4" style={{ color: C.amber }}>◆ DEPLOYMENT ◆</div>
         {bar('SAND HELD', hud.coverage, C.teal)}
         {bar('COHESION', hud.cohesion, C.green)}
-        <div className="font-retro text-[9px] mt-4" style={{ color: '#ffffff' }}>
-          HI-SCORE
-          <div className="font-retro-glow text-[16px] mt-2" style={{ color: C.amber }}>{hud.score.toString().padStart(6, '0')}</div>
+        {/* Head-to-head: locked cells (your score) vs crust the sand ghost has eaten */}
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <div className="border-2 px-2 py-2 text-center" style={{ borderColor: C.green, background: 'rgba(0,0,0,0.35)' }}>
+            <div className="font-retro text-[7px] mb-1.5" style={{ color: C.green }}>▣ SECURED</div>
+            <div className="font-retro-glow text-[15px]" style={{ color: C.green }}>{hud.secured.toString().padStart(3, '0')}</div>
+          </div>
+          <div className="border-2 px-2 py-2 text-center" style={{ borderColor: C.sandDeep, background: 'rgba(0,0,0,0.35)' }}>
+            <div className="font-retro text-[7px] mb-1.5" style={{ color: C.sand }}>● GHOST ATE</div>
+            <div className="font-retro-glow text-[15px]" style={{ color: C.sand }}>{hud.eaten.toString().padStart(3, '0')}</div>
+          </div>
+        </div>
+        <div className="font-retro text-[7px] mt-3 leading-[1.9]" style={{ color: '#c7d0ff' }}>
+          LOCK CELLS FULLY (BRIGHT GREEN) BEFORE THE SAND GHOST EATS THEM.
         </div>
       </div>
 
       {/* Controls */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 border-[3px] px-5 py-3" style={{ borderColor: C.teal, background: 'rgba(9,13,32,0.92)', boxShadow: '4px 4px 0 rgba(0,0,0,0.5)' }}>
         <div className="font-retro text-[10px]" style={{ color: C.teal }}>
-          WASD / ARROWS = FLY &nbsp;·&nbsp; <span className="retro-blink">HOLD SPACE = SPRAY</span>
+          WASD / ARROWS = FLY &nbsp;·&nbsp; <span className="retro-blink">HOLD SPACE = SPRAY</span> &nbsp;·&nbsp; <span style={{ color: C.sand }}>BEAT THE SAND GHOST</span>
         </div>
       </div>
     </div>
