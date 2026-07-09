@@ -3,13 +3,24 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, PlayCircle, BookText, FileText, Loader2 } from 'lucide-react';
+import { X, PlayCircle, BookText, FileText, Loader2, ExternalLink } from 'lucide-react';
 import { lookupTerm, glossaryPhrases, type GlossaryEntry } from '../lib/glossary';
 import { MODULE_MATH } from '../lib/moduleMath';
 import { MODULE_VIDEOS, videoSrc, videoVtt } from '../lib/moduleVideos';
-import { MODULE_SOURCES } from '../lib/moduleSources';
+import { MODULE_SOURCES, type SourceRef } from '../lib/moduleSources';
 import type { ModuleId } from '../lib/prongs';
 import Katex from './Katex';
+import { TextEffect } from '@/components/motion-primitives/text-effect';
+
+/**
+ * Resolve a clickable target for a source. A verified `url` (DOI / dataset) is used directly;
+ * otherwise we send the reader to a Google Scholar search of the exact label so the link still
+ * lands on the primary work rather than a guessed URL.
+ */
+function sourceHref(s: SourceRef): string {
+  if (s.url) return s.url;
+  return `https://scholar.google.com/scholar?q=${encodeURIComponent(s.label)}`;
+}
 
 /**
  * Sandyx Glossary system
@@ -294,16 +305,27 @@ export const GlossaryProvider: React.FC<{ children: React.ReactNode; isLightMode
                       </button>
                     </div>
 
-                    <h3 className="text-lg sm:text-xl font-black tracking-tight mb-2.5">
+                    <TextEffect
+                      as="h3"
+                      per="char"
+                      preset="fade-in-blur"
+                      speedReveal={2.4}
+                      className="text-lg sm:text-xl font-black tracking-tight mb-2.5"
+                    >
                       {entry.title}
-                    </h3>
-                    <p
+                    </TextEffect>
+                    <TextEffect
+                      as="p"
+                      per="word"
+                      preset="fade-in-blur"
+                      speedReveal={2.2}
+                      delay={0.12}
                       className={`text-sm leading-relaxed ${
                         isLightMode ? 'text-slate-700' : 'text-slate-300'
                       }`}
                     >
                       {entry.plain}
-                    </p>
+                    </TextEffect>
 
                     {entry.module && (
                       <p
@@ -360,9 +382,15 @@ export const GlossaryProvider: React.FC<{ children: React.ReactNode; isLightMode
                     </div>
 
                     <h3 className="text-lg sm:text-xl font-black tracking-tight mb-2">{math.title}</h3>
-                    <p className={`text-sm leading-relaxed mb-5 ${isLightMode ? 'text-slate-700' : 'text-slate-300'}`}>
+                    <TextEffect
+                      as="p"
+                      per="word"
+                      preset="fade-in-blur"
+                      speedReveal={2.2}
+                      className={`text-sm leading-relaxed mb-5 ${isLightMode ? 'text-slate-700' : 'text-slate-300'}`}
+                    >
                       {math.intro}
-                    </p>
+                    </TextEffect>
 
                     <div className="space-y-4">
                       {math.blocks.map((b, i) => (
@@ -438,9 +466,15 @@ export const GlossaryProvider: React.FC<{ children: React.ReactNode; isLightMode
                       </div>
                     )}
 
-                    <p className={`mt-4 text-sm leading-relaxed ${isLightMode ? 'text-slate-700' : 'text-slate-300'}`}>
+                    <TextEffect
+                      as="p"
+                      per="word"
+                      preset="fade-in-blur"
+                      speedReveal={2.4}
+                      className={`mt-4 text-sm leading-relaxed ${isLightMode ? 'text-slate-700' : 'text-slate-300'}`}
+                    >
                       {video.plain}
-                    </p>
+                    </TextEffect>
                     <p className={`mt-3 pt-3 border-t text-[11px] font-mono ${isLightMode ? 'border-slate-200 text-slate-500' : 'border-white/10 text-slate-500'}`}>
                       {video.length} · narrated · subtitles included
                     </p>
@@ -487,9 +521,15 @@ export const GlossaryProvider: React.FC<{ children: React.ReactNode; isLightMode
                       </button>
                     </div>
 
-                    <p className={`text-sm leading-relaxed mb-5 ${isLightMode ? 'text-slate-700' : 'text-slate-300'}`}>
+                    <TextEffect
+                      as="p"
+                      per="word"
+                      preset="fade-in-blur"
+                      speedReveal={2.2}
+                      className={`text-sm leading-relaxed mb-5 ${isLightMode ? 'text-slate-700' : 'text-slate-300'}`}
+                    >
                       {sources.intro}
-                    </p>
+                    </TextEffect>
 
                     <ol className="space-y-3">
                       {sources.sources.map((s, i) => (
@@ -508,7 +548,17 @@ export const GlossaryProvider: React.FC<{ children: React.ReactNode; isLightMode
                           }`} />
                           <div className="min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="text-[13px] font-bold leading-snug">{s.label}</span>
+                              <a
+                                href={sourceHref(s)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`group/src inline-flex items-baseline gap-1 text-[13px] font-bold leading-snug underline decoration-dotted underline-offset-2 transition-colors ${
+                                  isLightMode ? 'text-indigo-700 hover:text-indigo-900 decoration-indigo-400' : 'text-indigo-300 hover:text-indigo-100 decoration-indigo-400/60'
+                                }`}
+                              >
+                                <span>{s.label}</span>
+                                <ExternalLink className="w-3 h-3 shrink-0 self-center opacity-60 group-hover/src:opacity-100" />
+                              </a>
                               <span className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full ${
                                 s.kind === 'internal'
                                   ? (isLightMode ? 'bg-teal-100 text-teal-700' : 'bg-teal-500/15 text-teal-300')
@@ -528,7 +578,7 @@ export const GlossaryProvider: React.FC<{ children: React.ReactNode; isLightMode
                     </ol>
 
                     <p className={`mt-4 pt-3 border-t text-[11px] leading-relaxed ${isLightMode ? 'border-slate-200 text-slate-500' : 'border-white/10 text-slate-500'}`}>
-                      These are the model&apos;s grounding references, drawn from the team&apos;s Research Table and the calibration provenance in the code. Verify each against the primary source before citing it on your wiki.
+                      These are the model&apos;s grounding references, drawn from the calibration provenance in the code. Each title links out to the source — verify it against the primary work before citing it on your wiki.
                     </p>
                   </div>
               </SandyxOverlay>
