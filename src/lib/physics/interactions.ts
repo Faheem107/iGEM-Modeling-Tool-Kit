@@ -22,24 +22,36 @@
  * macro result reflects genuine competition rather than an opaque negative coefficient.
  */
 
-import { INTERACTION_CALIB, COMPOSITE_CALIB, CROSSLINK_CALIB, ALGINATE_CALIB, cval } from './constants';
-import type { ProngId } from './composite';
+import {
+  INTERACTION_CALIB,
+  COMPOSITE_CALIB,
+  CROSSLINK_CALIB,
+  ALGINATE_CALIB,
+  cval,
+} from "./constants";
+import type { ProngId } from "./composite";
 
 /** Every prong sequesters Ca²⁺; this is the binding-site capacity B_p [mM sites]. */
 export function caDemandWeight(prong: ProngId): number {
   switch (prong) {
-    case 1: return cval(INTERACTION_CALIB.caDemandPGA);
-    case 2: return cval(INTERACTION_CALIB.caDemandCaCO3);
-    case 3: return cval(INTERACTION_CALIB.caDemandAlginate);
+    case 1:
+      return cval(INTERACTION_CALIB.caDemandPGA);
+    case 2:
+      return cval(INTERACTION_CALIB.caDemandCaCO3);
+    case 3:
+      return cval(INTERACTION_CALIB.caDemandAlginate);
   }
 }
 
 /** Effective Ca²⁺ dissociation constant K_d,p [mM] for each prong's binding sites. */
 export function caKd(prong: ProngId): number {
   switch (prong) {
-    case 1: return cval(CROSSLINK_CALIB.KdPGA);    // γ-PGA carboxylate–Ca²⁺ (reversible)
-    case 2: return cval(INTERACTION_CALIB.KdCalcite); // calcite: irreversible sink → high affinity
-    case 3: return cval(ALGINATE_CALIB.KdCa);      // alginate egg-box (high affinity)
+    case 1:
+      return cval(CROSSLINK_CALIB.KdPGA); // γ-PGA carboxylate–Ca²⁺ (reversible)
+    case 2:
+      return cval(INTERACTION_CALIB.KdCalcite); // calcite: irreversible sink → high affinity
+    case 3:
+      return cval(ALGINATE_CALIB.KdCa); // alginate egg-box (high affinity)
   }
 }
 
@@ -52,7 +64,8 @@ const occupancy = (freeCa: number, kd: number) => freeCa / (kd + freeCa);
  * i.e. total calcium partitions between the free pool and each prong's occupied sites.
  */
 function solveFreeCa(prongs: ProngId[], supply: number): number {
-  const bound = (c: number) => prongs.reduce((s, p) => s + caDemandWeight(p) * occupancy(c, caKd(p)), 0);
+  const bound = (c: number) =>
+    prongs.reduce((s, p) => s + caDemandWeight(p) * occupancy(c, caKd(p)), 0);
   let lo = 0;
   let hi = supply; // free Ca can never exceed total Ca
   for (let i = 0; i < 60; i++) {
@@ -91,7 +104,14 @@ export function calciumCompetition(prongs: ProngId[]): CalciumCompetition {
   const perProng = {} as Record<ProngId, number>;
 
   if (prongs.length === 0) {
-    return { totalDemand, supply, freeCa: supply, perProng, factor: 1, limited: false };
+    return {
+      totalDemand,
+      supply,
+      freeCa: supply,
+      perProng,
+      factor: 1,
+      limited: false,
+    };
   }
 
   const freeShared = solveFreeCa(prongs, supply);
@@ -108,7 +128,14 @@ export function calciumCompetition(prongs: ProngId[]): CalciumCompetition {
     if (f < 0.98) anyLimited = true;
   }
 
-  return { totalDemand, supply, freeCa: freeShared, perProng, factor: sum / prongs.length, limited: anyLimited };
+  return {
+    totalDemand,
+    supply,
+    freeCa: freeShared,
+    perProng,
+    factor: sum / prongs.length,
+    limited: anyLimited,
+  };
 }
 
 /**
@@ -130,13 +157,13 @@ export function prongYieldFactors(prongs: ProngId[]): Record<ProngId, number> {
   const burden = metabolicBurdenFactor(prongs);
   const out = {} as Record<ProngId, number>;
   for (const p of prongs) {
-    const bacterialBurden = (p === 1 || p === 2) ? burden : 1;
+    const bacterialBurden = p === 1 || p === 2 ? burden : 1;
     out[p] = (ca.perProng[p] ?? 1) * bacterialBurden;
   }
   return out;
 }
 
-export type InteractionKind = 'competition' | 'burden' | 'synergy';
+export type InteractionKind = "competition" | "burden" | "synergy";
 
 export interface InteractionEffect {
   prongs: ProngId[];
@@ -157,16 +184,22 @@ export function prongInteractions(prongs: ProngId[]): InteractionEffect[] {
   // 1. Shared Ca²⁺ competition (any ≥2 prongs, since all three bind Ca²⁺) — competitive Langmuir.
   const ca = calciumCompetition(prongs);
   if (ca.limited) {
-    const worst = prongs.reduce((w, p) => ((ca.perProng[p] ?? 1) < (ca.perProng[w] ?? 1) ? p : w), prongs[0]);
+    const worst = prongs.reduce(
+      (w, p) => ((ca.perProng[p] ?? 1) < (ca.perProng[w] ?? 1) ? p : w),
+      prongs[0],
+    );
     const perProngText = prongs
-      .map((p) => `${['γ-PGA', 'CaCO₃', 'Alginate'][p - 1]} −${((1 - (ca.perProng[p] ?? 1)) * 100).toFixed(0)}%`)
-      .join(', ');
+      .map(
+        (p) =>
+          `${["γ-PGA", "CaCO₃", "Alginate"][p - 1]} −${((1 - (ca.perProng[p] ?? 1)) * 100).toFixed(0)}%`,
+      )
+      .join(", ");
     effects.push({
       prongs: [...prongs],
-      kind: 'competition',
-      mechanism: 'Shared Ca²⁺ competition',
+      kind: "competition",
+      mechanism: "Shared Ca²⁺ competition",
       percent: -(1 - ca.factor) * 100,
-      description: `All active prongs bind Ca²⁺ from one soil pool (${ca.supply.toFixed(1)} mM total); free Ca²⁺ falls to ${ca.freeCa.toFixed(2)} mM at equilibrium. Because binders have different affinities the hit is uneven (${perProngText}) — the high-affinity calcite sink out-competes the reversible polymers, so ${['γ-PGA', 'CaCO₃', 'Alginate'][worst - 1]} loses most. Dosing more CaCl₂ relaxes it.`,
+      description: `All active prongs bind Ca²⁺ from one soil pool (${ca.supply.toFixed(1)} mM total); free Ca²⁺ falls to ${ca.freeCa.toFixed(2)} mM at equilibrium. Because binders have different affinities the hit is uneven (${perProngText}) — the high-affinity calcite sink out-competes the reversible polymers, so ${["γ-PGA", "CaCO₃", "Alginate"][worst - 1]} loses most. Dosing more CaCl₂ relaxes it.`,
     });
   }
 
@@ -175,8 +208,8 @@ export function prongInteractions(prongs: ProngId[]): InteractionEffect[] {
     const burden = metabolicBurdenFactor(prongs);
     effects.push({
       prongs: [1, 2],
-      kind: 'burden',
-      mechanism: 'Co-expression metabolic burden',
+      kind: "burden",
+      mechanism: "Co-expression metabolic burden",
       percent: -(1 - burden) * 100,
       description: `γ-PGA synthase and carbonic anhydrase share the same engineered cell's carbon, ATP and amino-acid budget, so each product's titre falls to ~${(burden * 100).toFixed(0)}% of its single-strain maximum. Splitting the two functions across separate strains (co-culture) would avoid this.`,
     });
@@ -186,28 +219,31 @@ export function prongInteractions(prongs: ProngId[]): InteractionEffect[] {
   if (prongs.includes(1) && prongs.includes(2)) {
     effects.push({
       prongs: [1, 2],
-      kind: 'synergy',
-      mechanism: 'γ-PGA → calcite nucleation template',
+      kind: "synergy",
+      mechanism: "γ-PGA → calcite nucleation template",
       percent: cval(COMPOSITE_CALIB.eta_PGA_CaCO3) * 100,
-      description: 'The acidic carboxylate groups of γ-PGA organise Ca²⁺ and seed calcite nucleation, giving a finer, tougher biocement than either binder alone.',
+      description:
+        "The acidic carboxylate groups of γ-PGA organise Ca²⁺ and seed calcite nucleation, giving a finer, tougher biocement than either binder alone.",
     });
   }
   if (prongs.includes(2) && prongs.includes(3)) {
     effects.push({
       prongs: [2, 3],
-      kind: 'synergy',
-      mechanism: 'Alginate moisture sustains precipitation',
+      kind: "synergy",
+      mechanism: "Alginate moisture sustains precipitation",
       percent: cval(COMPOSITE_CALIB.eta_CaCO3_Alginate) * 100,
-      description: 'Alginate is a water-magnet; the damp microhabitat it maintains keeps the bacteria and carbonic anhydrase active for longer, sustaining CaCO₃ precipitation.',
+      description:
+        "Alginate is a water-magnet; the damp microhabitat it maintains keeps the bacteria and carbonic anhydrase active for longer, sustaining CaCO₃ precipitation.",
     });
   }
   if (prongs.includes(1) && prongs.includes(3)) {
     effects.push({
       prongs: [1, 3],
-      kind: 'synergy',
-      mechanism: 'Co-retained surface moisture',
+      kind: "synergy",
+      mechanism: "Co-retained surface moisture",
       percent: cval(COMPOSITE_CALIB.eta_PGA_Alginate) * 100,
-      description: 'Both γ-PGA and alginate are moisture-holding polyanions; together they keep the crust damp, though they also compete for the same Ca²⁺ (see above).',
+      description:
+        "Both γ-PGA and alginate are moisture-holding polyanions; together they keep the crust damp, though they also compete for the same Ca²⁺ (see above).",
     });
   }
 

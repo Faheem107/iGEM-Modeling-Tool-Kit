@@ -15,7 +15,7 @@
  * The (1 − 2·Mx/Mn) chain-end correction is the standard affine-network finite-chain term.
  */
 
-import { PHYS } from './constants';
+import { PHYS } from "./constants";
 
 export interface CrossLinkInputs {
   /** Local divalent cation concentration [C²⁺] [mol·m⁻³ ≈ mM]. */
@@ -53,13 +53,19 @@ export function saturation(ionConcentration: number, Kd: number): number {
 }
 
 /** Eq 5 — affine network cross-link density with finite-chain end correction. */
-export function crossLinkDensity(rhoPolymer: number, theta: number, Mx: number, Mn: number): number {
+export function crossLinkDensity(
+  rhoPolymer: number,
+  theta: number,
+  Mx: number,
+  Mn: number,
+): number {
   const endCorrection = 1 - (2 * Mx) / Mn; // chains shorter than 2·Mx cannot bear load
   return Math.max(0, rhoPolymer * theta * endCorrection);
 }
 
 /** Eq 6 — rubber-elasticity shear modulus G = νRT. */
-export const shearModulus = (nu: number, temperature: number): number => nu * PHYS.R * temperature;
+export const shearModulus = (nu: number, temperature: number): number =>
+  nu * PHYS.R * temperature;
 
 /** Full Langmuir → network → modulus solve. */
 export function solveCrossLink(inp: CrossLinkInputs): CrossLinkResult {

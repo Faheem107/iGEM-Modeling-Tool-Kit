@@ -1,5 +1,5 @@
-import AppClient from "@/src/App";
+import LandingView from "@/src/components/pages/LandingView";
 
 export default function Page() {
-  return <AppClient />;
+  return <LandingView />;
 }

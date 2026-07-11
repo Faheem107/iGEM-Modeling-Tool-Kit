@@ -18,9 +18,17 @@
 
 // ----------------------------- Generic LP solver ----------------------------
 
-export type ConstraintType = '<=' | '>=' | '=';
-export interface LPConstraint { coef: number[]; type: ConstraintType; rhs: number; }
-export interface LPResult { x: number[]; objective: number; status: 'optimal' | 'infeasible' | 'unbounded'; }
+export type ConstraintType = "<=" | ">=" | "=";
+export interface LPConstraint {
+  coef: number[];
+  type: ConstraintType;
+  rhs: number;
+}
+export interface LPResult {
+  x: number[];
+  objective: number;
+  status: "optimal" | "infeasible" | "unbounded";
+}
 
 const EPS = 1e-9;
 
@@ -28,16 +36,24 @@ const EPS = 1e-9;
  * Two-phase primal simplex (maximize cᵀx, x ≥ 0) with Bland's anti-cycling rule.
  * Handles ≤, ≥, = constraints via slack/surplus/artificial variables.
  */
-export function solveLP(c: number[], constraints: LPConstraint[], nVars: number): LPResult {
+export function solveLP(
+  c: number[],
+  constraints: LPConstraint[],
+  nVars: number,
+): LPResult {
   const m = constraints.length;
 
   // Normalize: make every RHS ≥ 0 (flip row & relation if needed).
   const rows = constraints.map((con) => {
-    let { coef, type, rhs } = { coef: [...con.coef], type: con.type, rhs: con.rhs };
+    let { coef, type, rhs } = {
+      coef: [...con.coef],
+      type: con.type,
+      rhs: con.rhs,
+    };
     if (rhs < 0) {
       coef = coef.map((v) => -v);
       rhs = -rhs;
-      type = type === '<=' ? '>=' : type === '>=' ? '<=' : '=';
+      type = type === "<=" ? ">=" : type === ">=" ? "<=" : "=";
     }
     return { coef, type, rhs };
   });
@@ -47,9 +63,20 @@ export function solveLP(c: number[], constraints: LPConstraint[], nVars: number)
   const artCols: number[] = [];
   let nExtra = 0;
   rows.forEach((r) => {
-    if (r.type === '<=') { slackCols.push(nVars + nExtra); nExtra++; artCols.push(-1); }
-    else if (r.type === '>=') { slackCols.push(nVars + nExtra); nExtra++; artCols.push(nVars + nExtra); nExtra++; }
-    else { slackCols.push(-1); artCols.push(nVars + nExtra); nExtra++; }
+    if (r.type === "<=") {
+      slackCols.push(nVars + nExtra);
+      nExtra++;
+      artCols.push(-1);
+    } else if (r.type === ">=") {
+      slackCols.push(nVars + nExtra);
+      nExtra++;
+      artCols.push(nVars + nExtra);
+      nExtra++;
+    } else {
+      slackCols.push(-1);
+      artCols.push(nVars + nExtra);
+      nExtra++;
+    }
   });
   const totalCols = nVars + nExtra;
 
@@ -60,9 +87,17 @@ export function solveLP(c: number[], constraints: LPConstraint[], nVars: number)
 
   rows.forEach((r, i) => {
     for (let j = 0; j < nVars; j++) A[i][j] = r.coef[j] ?? 0;
-    if (r.type === '<=') { A[i][slackCols[i]] = 1; basis[i] = slackCols[i]; }
-    else if (r.type === '>=') { A[i][slackCols[i]] = -1; A[i][artCols[i]] = 1; basis[i] = artCols[i]; }
-    else { A[i][artCols[i]] = 1; basis[i] = artCols[i]; }
+    if (r.type === "<=") {
+      A[i][slackCols[i]] = 1;
+      basis[i] = slackCols[i];
+    } else if (r.type === ">=") {
+      A[i][slackCols[i]] = -1;
+      A[i][artCols[i]] = 1;
+      basis[i] = artCols[i];
+    } else {
+      A[i][artCols[i]] = 1;
+      basis[i] = artCols[i];
+    }
   });
 
   const pivot = (objRow: number[]) => {
@@ -72,17 +107,26 @@ export function solveLP(c: number[], constraints: LPConstraint[], nVars: number)
       // Bland's rule: smallest index with negative reduced cost (we minimize objRow).
       let enter = -1;
       for (let j = 0; j < totalCols; j++) {
-        if (objRow[j] < -EPS) { enter = j; break; }
+        if (objRow[j] < -EPS) {
+          enter = j;
+          break;
+        }
       }
       if (enter === -1) return true; // optimal
 
       // Min-ratio test (smallest index ties → Bland).
-      let leave = -1; let best = Infinity;
+      let leave = -1;
+      let best = Infinity;
       for (let i = 0; i < m; i++) {
         if (A[i][enter] > EPS) {
           const ratio = b[i] / A[i][enter];
-          if (ratio < best - EPS || (Math.abs(ratio - best) < EPS && (leave === -1 || basis[i] < basis[leave]))) {
-            best = ratio; leave = i;
+          if (
+            ratio < best - EPS ||
+            (Math.abs(ratio - best) < EPS &&
+              (leave === -1 || basis[i] < basis[leave]))
+          ) {
+            best = ratio;
+            leave = i;
           }
         }
       }
@@ -112,7 +156,9 @@ export function solveLP(c: number[], constraints: LPConstraint[], nVars: number)
   const hasArtificials = artCols.some((a) => a >= 0);
   if (hasArtificials) {
     const phase1 = new Array(totalCols).fill(0);
-    artCols.forEach((a) => { if (a >= 0) phase1[a] = 1; }); // minimize Σ artificials
+    artCols.forEach((a) => {
+      if (a >= 0) phase1[a] = 1;
+    }); // minimize Σ artificials
     // Reduce to express objective in nonbasic vars (subtract basic artificial rows).
     for (let i = 0; i < m; i++) {
       if (phase1[basis[i]] !== 0) {
@@ -124,15 +170,23 @@ export function solveLP(c: number[], constraints: LPConstraint[], nVars: number)
     // Feasibility: any artificial still basic with positive value ⇒ infeasible.
     const artSet = new Set(artCols.filter((a) => a >= 0));
     let artSum = 0;
-    for (let i = 0; i < m; i++) if (artSet.has(basis[i])) artSum += Math.max(0, b[i]);
-    if (artSum > 1e-6) return { x: new Array(nVars).fill(0), objective: 0, status: 'infeasible' };
+    for (let i = 0; i < m; i++)
+      if (artSet.has(basis[i])) artSum += Math.max(0, b[i]);
+    if (artSum > 1e-6)
+      return {
+        x: new Array(nVars).fill(0),
+        objective: 0,
+        status: "infeasible",
+      };
   }
 
   // ---- Phase 2: maximize cᵀx  → minimize (−c) ----
   const obj = new Array(totalCols).fill(0);
   for (let j = 0; j < nVars; j++) obj[j] = -(c[j] ?? 0);
   // Forbid artificials from re-entering by pricing them out (large cost).
-  artCols.forEach((a) => { if (a >= 0) obj[a] = 1e7; });
+  artCols.forEach((a) => {
+    if (a >= 0) obj[a] = 1e7;
+  });
   for (let i = 0; i < m; i++) {
     if (Math.abs(obj[basis[i]]) > EPS) {
       const f = obj[basis[i]];
@@ -140,12 +194,13 @@ export function solveLP(c: number[], constraints: LPConstraint[], nVars: number)
     }
   }
   const ok = pivot(obj);
-  if (!ok) return { x: new Array(nVars).fill(0), objective: 0, status: 'unbounded' };
+  if (!ok)
+    return { x: new Array(nVars).fill(0), objective: 0, status: "unbounded" };
 
   const x = new Array(nVars).fill(0);
   for (let i = 0; i < m; i++) if (basis[i] < nVars) x[basis[i]] = b[i];
   const objective = c.reduce((s, cj, j) => s + cj * x[j], 0);
-  return { x, objective, status: 'optimal' };
+  return { x, objective, status: "optimal" };
 }
 
 // ----------------------------- FBA model layer ------------------------------
@@ -163,7 +218,7 @@ export interface MetabolicNetwork {
 }
 
 export interface FbaSolution {
-  status: LPResult['status'];
+  status: LPResult["status"];
   objectiveValue: number;
   /** reaction id → flux. */
   fluxes: Record<string, number>;
@@ -173,8 +228,14 @@ export interface FbaSolution {
  * Encode S·v=0 with lb≤v≤ub as a generic LP using the shift x = v − lb (x ≥ 0).
  * Returns the LP plus a decoder back to flux space.
  */
-function buildLP(net: MetabolicNetwork, objective: number[]): {
-  c: number[]; constraints: LPConstraint[]; nVars: number; decode: (x: number[]) => number[];
+function buildLP(
+  net: MetabolicNetwork,
+  objective: number[],
+): {
+  c: number[];
+  constraints: LPConstraint[];
+  nVars: number;
+  decode: (x: number[]) => number[];
 } {
   const n = net.reactions.length;
   const lb = net.reactions.map((r) => r.lb);
@@ -184,38 +245,58 @@ function buildLP(net: MetabolicNetwork, objective: number[]): {
   const constraints: LPConstraint[] = net.metabolites.map((met) => {
     const coef = net.reactions.map((r) => r.stoich[met] ?? 0);
     const rhs = -coef.reduce((s, cj, j) => s + cj * lb[j], 0);
-    return { coef, type: '=' as ConstraintType, rhs };
+    return { coef, type: "=" as ConstraintType, rhs };
   });
   // Upper bounds: x_j ≤ ub_j − lb_j.
   for (let j = 0; j < n; j++) {
     const coef = new Array(n).fill(0);
     coef[j] = 1;
-    constraints.push({ coef, type: '<=', rhs: ub[j] - lb[j] });
+    constraints.push({ coef, type: "<=", rhs: ub[j] - lb[j] });
   }
   const decode = (x: number[]) => x.map((xj, j) => xj + lb[j]);
   return { c: objective, constraints, nVars: n, decode };
 }
 
-const objectiveVector = (net: MetabolicNetwork, rxnId: string, maximize = true): number[] =>
+const objectiveVector = (
+  net: MetabolicNetwork,
+  rxnId: string,
+  maximize = true,
+): number[] =>
   net.reactions.map((r) => (r.id === rxnId ? (maximize ? 1 : -1) : 0));
 
 /** Core FBA: optimize one reaction's flux subject to S·v=0 and bounds. */
-export function solveFBA(net: MetabolicNetwork, objectiveRxn: string, maximize = true): FbaSolution {
-  const { c, constraints, nVars, decode } = buildLP(net, objectiveVector(net, objectiveRxn, maximize));
+export function solveFBA(
+  net: MetabolicNetwork,
+  objectiveRxn: string,
+  maximize = true,
+): FbaSolution {
+  const { c, constraints, nVars, decode } = buildLP(
+    net,
+    objectiveVector(net, objectiveRxn, maximize),
+  );
   const res = solveLP(c, constraints, nVars);
   const v = decode(res.x);
   const fluxes: Record<string, number> = {};
   net.reactions.forEach((r, j) => (fluxes[r.id] = v[j]));
   const objIdx = net.reactions.findIndex((r) => r.id === objectiveRxn);
-  return { status: res.status, objectiveValue: objIdx >= 0 ? v[objIdx] : 0, fluxes };
+  return {
+    status: res.status,
+    objectiveValue: objIdx >= 0 ? v[objIdx] : 0,
+    fluxes,
+  };
 }
 
 /** In-silico knockouts: clamp the named reactions to zero flux (lb = ub = 0). */
-export function knockoutNetwork(net: MetabolicNetwork, rxnIds: string[]): MetabolicNetwork {
+export function knockoutNetwork(
+  net: MetabolicNetwork,
+  rxnIds: string[],
+): MetabolicNetwork {
   const ko = new Set(rxnIds);
   return {
     metabolites: net.metabolites,
-    reactions: net.reactions.map((r) => (ko.has(r.id) ? { ...r, lb: 0, ub: 0 } : r)),
+    reactions: net.reactions.map((r) =>
+      ko.has(r.id) ? { ...r, lb: 0, ub: 0 } : r,
+    ),
   };
 }
 
@@ -224,9 +305,12 @@ export function knockoutNetwork(net: MetabolicNetwork, rxnIds: string[]): Metabo
  * minimum total flux Σ|v|. Implemented by fixing the objective at its optimum and minimizing
  * Σ(vf+vr) on a forward/backward split (|v| = vf+vr).
  */
-export function parsimoniousFBA(net: MetabolicNetwork, objectiveRxn: string): FbaSolution {
+export function parsimoniousFBA(
+  net: MetabolicNetwork,
+  objectiveRxn: string,
+): FbaSolution {
   const opt = solveFBA(net, objectiveRxn, true);
-  if (opt.status !== 'optimal') return opt;
+  if (opt.status !== "optimal") return opt;
   const zStar = opt.objectiveValue;
 
   const n = net.reactions.length;
@@ -235,35 +319,52 @@ export function parsimoniousFBA(net: MetabolicNetwork, objectiveRxn: string): Fb
     const coef = new Array(2 * n).fill(0);
     net.reactions.forEach((r, j) => {
       const s = r.stoich[met] ?? 0;
-      coef[j] = s; coef[n + j] = -s;
+      coef[j] = s;
+      coef[n + j] = -s;
     });
-    return { coef, type: '=' as ConstraintType, rhs: 0 };
+    return { coef, type: "=" as ConstraintType, rhs: 0 };
   });
   const bounds: LPConstraint[] = [];
   net.reactions.forEach((r, j) => {
     // vf_j − vr_j ≤ ub_j ;  vf_j − vr_j ≥ lb_j
-    const up = new Array(2 * n).fill(0); up[j] = 1; up[n + j] = -1;
-    bounds.push({ coef: up, type: '<=', rhs: r.ub });
-    const lo = new Array(2 * n).fill(0); lo[j] = 1; lo[n + j] = -1;
-    bounds.push({ coef: lo, type: '>=', rhs: r.lb });
+    const up = new Array(2 * n).fill(0);
+    up[j] = 1;
+    up[n + j] = -1;
+    bounds.push({ coef: up, type: "<=", rhs: r.ub });
+    const lo = new Array(2 * n).fill(0);
+    lo[j] = 1;
+    lo[n + j] = -1;
+    bounds.push({ coef: lo, type: ">=", rhs: r.lb });
   });
   // Fix the objective at its optimum.
   const objIdx = net.reactions.findIndex((r) => r.id === objectiveRxn);
-  const fix = new Array(2 * n).fill(0); fix[objIdx] = 1; fix[n + objIdx] = -1;
-  const fixCon: LPConstraint = { coef: fix, type: '=', rhs: zStar };
+  const fix = new Array(2 * n).fill(0);
+  fix[objIdx] = 1;
+  fix[n + objIdx] = -1;
+  const fixCon: LPConstraint = { coef: fix, type: "=", rhs: zStar };
 
   // Minimize Σ(vf+vr) ⇒ maximize −Σ.
   const c = new Array(2 * n).fill(-1);
   const res = solveLP(c, [...metEqs, ...bounds, fixCon], 2 * n);
   const fluxes: Record<string, number> = {};
-  net.reactions.forEach((r, j) => (fluxes[r.id] = (res.x[j] ?? 0) - (res.x[n + j] ?? 0)));
+  net.reactions.forEach(
+    (r, j) => (fluxes[r.id] = (res.x[j] ?? 0) - (res.x[n + j] ?? 0)),
+  );
   return { status: res.status, objectiveValue: zStar, fluxes };
 }
 
-export interface FvaRange { min: number; max: number; }
+export interface FvaRange {
+  min: number;
+  max: number;
+}
 
 /** Flux Variability Analysis at a fraction (e.g. 0.99) of the optimal objective. */
-export function fluxVariability(net: MetabolicNetwork, objectiveRxn: string, fraction = 0.99, rxnIds?: string[]): Record<string, FvaRange> {
+export function fluxVariability(
+  net: MetabolicNetwork,
+  objectiveRxn: string,
+  fraction = 0.99,
+  rxnIds?: string[],
+): Record<string, FvaRange> {
   const opt = solveFBA(net, objectiveRxn, true);
   const target = opt.objectiveValue * fraction;
 
@@ -273,7 +374,7 @@ export function fluxVariability(net: MetabolicNetwork, objectiveRxn: string, fra
   const lbObj = net.reactions[objIdx].lb;
   const floor: LPConstraint = {
     coef: net.reactions.map((_, j) => (j === objIdx ? 1 : 0)),
-    type: '>=',
+    type: ">=",
     rhs: target - lbObj, // in shifted x-space
   };
   const constraints = [...base.constraints, floor];
@@ -283,24 +384,37 @@ export function fluxVariability(net: MetabolicNetwork, objectiveRxn: string, fra
   for (const id of ids) {
     const j = net.reactions.findIndex((r) => r.id === id);
     const cj = net.reactions.map((_, k) => (k === j ? 1 : 0));
-    const lo = solveLP(cj.map((v) => -v), constraints, base.nVars); // minimize x_j
-    const hi = solveLP(cj, constraints, base.nVars);                // maximize x_j
+    const lo = solveLP(
+      cj.map((v) => -v),
+      constraints,
+      base.nVars,
+    ); // minimize x_j
+    const hi = solveLP(cj, constraints, base.nVars); // maximize x_j
     out[id] = {
-      min: lo.status === 'optimal' ? (lo.x[j] ?? 0) + net.reactions[j].lb : NaN,
-      max: hi.status === 'optimal' ? (hi.x[j] ?? 0) + net.reactions[j].lb : NaN,
+      min: lo.status === "optimal" ? (lo.x[j] ?? 0) + net.reactions[j].lb : NaN,
+      max: hi.status === "optimal" ? (hi.x[j] ?? 0) + net.reactions[j].lb : NaN,
     };
   }
   return out;
 }
 
-export interface EnvelopePoint { growth: number; productMin: number; productMax: number; }
+export interface EnvelopePoint {
+  growth: number;
+  productMin: number;
+  productMax: number;
+}
 
 /**
  * Production envelope (phenotype phase plane): sweep the growth reaction across [0, μmax]
  * and, at each fixed growth, report the achievable product flux range. The upper edge is the
  * growth↔product Pareto front — how much growth must be traded for γ-PGA / glutamate.
  */
-export function productionEnvelope(net: MetabolicNetwork, growthRxn: string, productRxn: string, n = 20): EnvelopePoint[] {
+export function productionEnvelope(
+  net: MetabolicNetwork,
+  growthRxn: string,
+  productRxn: string,
+  n = 20,
+): EnvelopePoint[] {
   const muMax = solveFBA(net, growthRxn, true).objectiveValue;
   const points: EnvelopePoint[] = [];
   const gi = net.reactions.findIndex((r) => r.id === growthRxn);
@@ -308,14 +422,16 @@ export function productionEnvelope(net: MetabolicNetwork, growthRxn: string, pro
     const mu = (muMax * i) / n;
     const fixed: MetabolicNetwork = {
       metabolites: net.metabolites,
-      reactions: net.reactions.map((r, j) => (j === gi ? { ...r, lb: mu, ub: mu } : r)),
+      reactions: net.reactions.map((r, j) =>
+        j === gi ? { ...r, lb: mu, ub: mu } : r,
+      ),
     };
     const lo = solveFBA(fixed, productRxn, false);
     const hi = solveFBA(fixed, productRxn, true);
     points.push({
       growth: mu,
-      productMin: lo.status === 'optimal' ? lo.objectiveValue : 0,
-      productMax: hi.status === 'optimal' ? hi.objectiveValue : 0,
+      productMin: lo.status === "optimal" ? lo.objectiveValue : 0,
+      productMax: hi.status === "optimal" ? hi.objectiveValue : 0,
     });
   }
   return points;

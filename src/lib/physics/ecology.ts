@@ -19,7 +19,7 @@
  * All constants live in constants.ts (ECOLOGY_CALIB) with sources + wet-lab calibration notes.
  */
 
-import { ECOLOGY_CALIB as E, cval } from './constants';
+import { ECOLOGY_CALIB as E, cval } from "./constants";
 
 /** Effective sliding-expansion diffusivity D [mm²·h⁻¹] as a function of local Ca²⁺ [mM].
  *  D(Ca) = D₀ / (1 + [Ca²⁺]/K) — surfactin-complexation suppression (Kubota & Kobayashi 2017). */
@@ -58,7 +58,10 @@ export interface FrontKinematics {
  * Full front kinematics for a given colony vitality (0–1, folds moisture/nutrient/γ-PGA health)
  * and local Ca²⁺ [mM]. Vitality scales the reaction term µ; Ca²⁺ suppresses the diffusion term D.
  */
-export function frontKinematics(vitality: number, caConc_mM: number): FrontKinematics {
+export function frontKinematics(
+  vitality: number,
+  caConc_mM: number,
+): FrontKinematics {
   const mu = cval(E.muMax) * Math.max(0, Math.min(1, vitality));
   const D0 = cval(E.motilityD0);
   const D = expansionDiffusivity(caConc_mM);
@@ -80,9 +83,15 @@ export function frontKinematics(vitality: number, caConc_mM: number): FrontKinem
  * suppression of sliding — rather than a literal mm→pixel conversion (which the mm·day⁻¹ readout
  * reports exactly). Kept in a runnable band so the map neither freezes nor floods.
  */
-export function latticeInvasionProb(k: FrontKinematics, vitality: number): number {
+export function latticeInvasionProb(
+  k: FrontKinematics,
+  vitality: number,
+): number {
   const v = Math.max(0, Math.min(1, vitality));
-  return Math.max(0.08, Math.min(0.92, (0.15 + 0.75 * v) * k.caRetainedFraction));
+  return Math.max(
+    0.08,
+    Math.min(0.92, (0.15 + 0.75 * v) * k.caRetainedFraction),
+  );
 }
 
 // --- Biocontainment: kill-switch escape statistics -------------------------------------------
@@ -103,7 +112,10 @@ export interface EscapeStats {
 }
 
 /** Combine independent orthogonal kill-switches: escape frequencies multiply. */
-export function combinedEscapeFrequency(perSwitch: number, nSwitches: number): number {
+export function combinedEscapeFrequency(
+  perSwitch: number,
+  nSwitches: number,
+): number {
   return Math.pow(Math.max(0, perSwitch), Math.max(1, nSwitches));
 }
 
@@ -112,7 +124,10 @@ export function combinedEscapeFrequency(perSwitch: number, nSwitches: number): n
  * @param pEscape  per-cell-per-generation escape frequency (already combined across switches)
  * @param population deployed viable cell count
  */
-export function escapeStatistics(pEscape: number, population: number): EscapeStats {
+export function escapeStatistics(
+  pEscape: number,
+  population: number,
+): EscapeStats {
   const p = Math.max(0, Math.min(1, pEscape));
   const N = Math.max(0, population);
   const expected = N * p;
@@ -129,7 +144,14 @@ export function escapeStatistics(pEscape: number, population: number): EscapeSta
 }
 
 /** Deployed viable population for a treated patch of the given physical span [mm] and live fraction. */
-export function deployedPopulation(patchSpanMm: number, liveFraction: number): number {
+export function deployedPopulation(
+  patchSpanMm: number,
+  liveFraction: number,
+): number {
   const areaCm2 = Math.pow(patchSpanMm / 10, 2); // mm² → cm²
-  return areaCm2 * cval(E.fieldViableDensity) * Math.max(0, Math.min(1, liveFraction));
+  return (
+    areaCm2 *
+    cval(E.fieldViableDensity) *
+    Math.max(0, Math.min(1, liveFraction))
+  );
 }

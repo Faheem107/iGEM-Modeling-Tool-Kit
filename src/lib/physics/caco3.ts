@@ -16,7 +16,7 @@
  * far faster than the un-catalyzed hydration — without ureolysis, so no ammonia.
  */
 
-import { CACO3_CALIB, MOLAR_MASS, cval } from './constants';
+import { CACO3_CALIB, MOLAR_MASS, cval } from "./constants";
 
 const pow10 = (x: number) => Math.pow(10, x);
 
@@ -46,13 +46,21 @@ export function carbonateSpeciation(pH: number): Speciation {
 }
 
 /** Saturation ratio Ω = [Ca²⁺][CO₃²⁻]/Ksp (concentrations in mol·L⁻¹). */
-export function saturationRatio(caMolar: number, co3Molar: number, pKsp: number): number {
+export function saturationRatio(
+  caMolar: number,
+  co3Molar: number,
+  pKsp: number,
+): number {
   const Ksp = pow10(-pKsp);
   return (caMolar * co3Molar) / Ksp;
 }
 
 /** Saturation index SI = log₁₀ Ω. SI>0 ⇒ precipitation thermodynamically favorable. */
-export function saturationIndex(caMolar: number, co3Molar: number, pKsp: number): number {
+export function saturationIndex(
+  caMolar: number,
+  co3Molar: number,
+  pKsp: number,
+): number {
   const omega = saturationRatio(caMolar, co3Molar, pKsp);
   return omega > 0 ? Math.log10(omega) : -Infinity;
 }
@@ -62,7 +70,9 @@ export function saturationIndex(caMolar: number, co3Molar: number, pKsp: number)
  *   activity = log₁₀(1 + f·enhancement) / log₁₀(1 + enhancement)
  * (log scaling because CA enhancement spans orders of magnitude).
  */
-export function caActivityFraction(realizedEnhancementFraction: number): number {
+export function caActivityFraction(
+  realizedEnhancementFraction: number,
+): number {
   const E = cval(CACO3_CALIB.caRateEnhancement);
   const f = Math.max(0, Math.min(1, realizedEnhancementFraction));
   return Math.log10(1 + f * E) / Math.log10(1 + E);
@@ -86,14 +96,14 @@ export interface PrecipitationInputs {
 }
 
 export interface PrecipitationStep {
-  time: number;          // h
-  caMolar: number;       // mol/L dissolved Ca²⁺
-  co3Molar: number;      // mol/L carbonate ion
-  accMolar: number;      // mol/L amorphous CaCO₃
+  time: number; // h
+  caMolar: number; // mol/L dissolved Ca²⁺
+  co3Molar: number; // mol/L carbonate ion
+  accMolar: number; // mol/L amorphous CaCO₃
   vateriteMolar: number; // mol/L metastable vaterite
-  calciteMolar: number;  // mol/L crystalline calcite
-  SIcalcite: number;     // saturation index wrt calcite
-  omegaACC: number;      // saturation ratio wrt ACC
+  calciteMolar: number; // mol/L crystalline calcite
+  SIcalcite: number; // saturation index wrt calcite
+  omegaACC: number; // saturation ratio wrt ACC
 }
 
 export interface PrecipitationResult {
@@ -126,7 +136,9 @@ export interface PrecipitationResult {
  * is weaker while vaterite-rich and stiffens as it converts. CA activity raises the quasi-equilibrium
  * DIC, hence [CO₃²⁻] and Ω.
  */
-export function simulatePrecipitation(inp: PrecipitationInputs): PrecipitationResult {
+export function simulatePrecipitation(
+  inp: PrecipitationInputs,
+): PrecipitationResult {
   const hours = inp.hours ?? 48;
   const dt = inp.dt ?? 0.25;
   const steps = Math.round(hours / dt);
@@ -136,15 +148,16 @@ export function simulatePrecipitation(inp: PrecipitationInputs): PrecipitationRe
   const pKspACC = cval(CACO3_CALIB.pKspACC);
   const kPrecip = cval(CACO3_CALIB.kPrecip);
   const kRipen = cval(CACO3_CALIB.kAccToCalcite);
-  const fVaterite = cval(CACO3_CALIB.vateriteFraction);         // ACC ripens mostly to vaterite in CA-MICP
-  const kVatToCal = cval(CACO3_CALIB.kVateriteToCalcite);       // slow vaterite → calcite recrystallisation
+  const fVaterite = cval(CACO3_CALIB.vateriteFraction); // ACC ripens mostly to vaterite in CA-MICP
+  const kVatToCal = cval(CACO3_CALIB.kVateriteToCalcite); // slow vaterite → calcite recrystallisation
   const vatStrength = cval(CACO3_CALIB.vateriteStrengthFactor); // vaterite load-bearing vs calcite
 
   const pH = Math.max(8.5, Math.min(10.5, inp.pH));
   const { alpha2 } = carbonateSpeciation(pH);
 
   // Quasi-equilibrium DIC scales with CA activity (more enzyme ⇒ more bicarbonate captured).
-  const dicTargetM = (inp.dicMaxMillimolar * Math.max(0, Math.min(1, inp.caActivity))) / 1000;
+  const dicTargetM =
+    (inp.dicMaxMillimolar * Math.max(0, Math.min(1, inp.caActivity))) / 1000;
   const kDic = 0.6; // DIC relaxation toward target [h⁻¹] (fast CO₂ hydration once CA present)
 
   let ca = inp.calciumMillimolar / 1000; // mol/L
@@ -161,7 +174,16 @@ export function simulatePrecipitation(inp: PrecipitationInputs): PrecipitationRe
     const omegaACC = saturationRatio(ca, co3, pKspACC);
     const SIcalcite = omegaCal > 0 ? Math.log10(omegaCal) : -Infinity;
 
-    series.push({ time: i * dt, caMolar: ca, co3Molar: co3, accMolar: acc, vateriteMolar: vaterite, calciteMolar: calcite, SIcalcite, omegaACC });
+    series.push({
+      time: i * dt,
+      caMolar: ca,
+      co3Molar: co3,
+      accMolar: acc,
+      vateriteMolar: vaterite,
+      calciteMolar: calcite,
+      SIcalcite,
+      omegaACC,
+    });
 
     // CA-driven DIC supply (first-order relaxation to the activity-set target).
     const dDic = kDic * (dicTargetM - dic);
@@ -178,7 +200,10 @@ export function simulatePrecipitation(inp: PrecipitationInputs): PrecipitationRe
     dic = Math.max(0, dic + (dDic - rAccPrecip) * dt);
     acc = Math.max(0, acc + (rAccPrecip - rRipen) * dt);
     vaterite = Math.max(0, vaterite + (rRipen * fVaterite - rVatToCal) * dt);
-    calcite = Math.max(0, calcite + (rRipen * (1 - fVaterite) + rVatToCal) * dt);
+    calcite = Math.max(
+      0,
+      calcite + (rRipen * (1 - fVaterite) + rVatToCal) * dt,
+    );
   }
 
   const gPerL = (mol: number) => mol * MOLAR_MASS.CaCO3;
@@ -186,24 +211,35 @@ export function simulatePrecipitation(inp: PrecipitationInputs): PrecipitationRe
   const vateriteWtPercent = (gPerL(vaterite) / sandMass) * 100;
   const carbonateWtPercent = (gPerL(calcite + vaterite + acc) / sandMass) * 100;
   // Vaterite bears load at a reduced factor until it converts — this is what drives UCS.
-  const loadBearingWtPercent = calciteWtPercent + vatStrength * vateriteWtPercent;
+  const loadBearingWtPercent =
+    calciteWtPercent + vatStrength * vateriteWtPercent;
   const crystalline = calcite + vaterite;
   const vateriteFraction = crystalline > 0 ? vaterite / crystalline : 0;
   const ucsKpa = calciteToUCS(loadBearingWtPercent);
   const co2SequesteredGPerL = (calcite + vaterite + acc) * MOLAR_MASS.CO2; // 1 mol CaCO₃ fixes 1 mol CO₂
 
   return {
-    series, calciteMolar: calcite, vateriteMolar: vaterite,
-    calciteWtPercent, vateriteWtPercent, carbonateWtPercent, loadBearingWtPercent, vateriteFraction,
-    ucsKpa, co2SequesteredGPerL,
+    series,
+    calciteMolar: calcite,
+    vateriteMolar: vaterite,
+    calciteWtPercent,
+    vateriteWtPercent,
+    carbonateWtPercent,
+    loadBearingWtPercent,
+    vateriteFraction,
+    ucsKpa,
+    co2SequesteredGPerL,
   };
 }
 
 /** Empirical biocement strength curve: UCS = kUcs · (load-bearing carbonate wt%)^nUcs  [kPa]. */
 export function calciteToUCS(calciteWtPercent: number): number {
   if (calciteWtPercent <= 0) return 0;
-  return cval(CACO3_CALIB.kUcs) * Math.pow(calciteWtPercent, cval(CACO3_CALIB.nUcs));
+  return (
+    cval(CACO3_CALIB.kUcs) * Math.pow(calciteWtPercent, cval(CACO3_CALIB.nUcs))
+  );
 }
 
 /** CO₂ captured per mole of CaCO₃ precipitated (1:1 stoichiometry) → mass [g]. */
-export const co2Sequestered = (molCaCO3: number): number => Math.max(0, molCaCO3) * MOLAR_MASS.CO2;
+export const co2Sequestered = (molCaCO3: number): number =>
+  Math.max(0, molCaCO3) * MOLAR_MASS.CO2;

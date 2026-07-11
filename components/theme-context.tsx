@@ -12,7 +12,7 @@ const ThemeContext = createContext<{
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Initialize state to true so the site loads in Light Mode instantly
-  const [isLightMode, setIsLightMode] = useState(true); 
+  const [isLightMode, setIsLightMode] = useState(true);
 
   return (
     <ThemeContext.Provider value={{ isLightMode, setIsLightMode }}>
