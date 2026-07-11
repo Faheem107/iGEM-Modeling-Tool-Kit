@@ -33,7 +33,7 @@ export default function SandyxCompanion({ items, isLightMode }: Props) {
     items[0]?.id ?? null,
   );
 
-  // "Back to Top" visibility — appears once the reader has scrolled past the first fold, and
+  // "Back to Top" visibility, appears once the reader has scrolled past the first fold, and
   // fades away again near the top. Updated inside a rAF so we never thrash React on every tick.
   const [showTop, setShowTop] = React.useState(false);
   React.useEffect(() => {
@@ -173,7 +173,7 @@ export default function SandyxCompanion({ items, isLightMode }: Props) {
             </ul>
           </div>
 
-          {/* Back to Top — pops up smoothly once scrolled, sits right below the module tree */}
+          {/* Back to Top, pops up smoothly once scrolled, sits right below the module tree */}
           <AnimatePresence>
             {showTop && (
               <motion.button

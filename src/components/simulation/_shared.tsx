@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Shared UI primitives for the simulation modules — themed panels, sliders, stat cards,
+ * Shared UI primitives for the simulation modules, themed panels, sliders, stat cards,
  * a collapsible "Show the math" block, and recharts color tokens. Keeps every new module
  * visually consistent with the existing toolkit (light/dark) while staying graph-first.
  */
@@ -271,7 +271,7 @@ function ModuleToggle({
       type="button"
       {...attrs}
       onClick={onOpen}
-      title={`${label} — click, or drop Sandyx here`}
+      title={`${label}, click, or drop Sandyx here`}
       className={`w-full min-w-0 flex flex-col items-center justify-center gap-1.5 px-2 py-3.5 rounded-[4px] border text-[11px] font-mono font-bold uppercase tracking-wider transition-colors ${
         isLightMode
           ? "border-amber-900/10 bg-[#fcfaf5] text-stone-600 hover:bg-stone-100"
@@ -287,7 +287,7 @@ function ModuleToggle({
 }
 
 /**
- * "Show the Math" toggle — opens the LaTeX math window. Click it, OR drop Sandyx on it
+ * "Show the Math" toggle, opens the LaTeX math window. Click it, OR drop Sandyx on it
  * (it is a `data-sandyx-math` drop target). Highlights while Sandyx hovers over it.
  */
 export function ShowMathToggle({
@@ -313,7 +313,7 @@ export function ShowMathToggle({
 }
 
 /**
- * "Video Explanation" toggle — opens the narrated Manim animation window. Click it, OR drop
+ * "Video Explanation" toggle, opens the narrated Manim animation window. Click it, OR drop
  * Sandyx on it (`data-sandyx-video` drop target).
  */
 export function VideoExplanationToggle({
@@ -339,7 +339,7 @@ export function VideoExplanationToggle({
 }
 
 /**
- * "Sources" toggle — opens the model's grounding references. Sits farthest right in the toolbar.
+ * "Sources" toggle, opens the model's grounding references. Sits farthest right in the toolbar.
  * Click it, OR drop Sandyx on it (`data-sandyx-sources` drop target).
  */
 export function SourcesToggle({

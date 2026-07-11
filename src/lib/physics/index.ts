@@ -1,9 +1,9 @@
 /**
- * NYUAD iGEM 2026 — Dry-Lab Physics Core (single source of truth)
+ * NYUAD iGEM 2026, Dry-Lab Physics Core (single source of truth)
  * ==============================================================
  * Every model equation lives here as a pure, testable function so the FBA portal, the
  * simulation workspace, and the wet-lab sandbox all compute the SAME physics.
- * Import from '@/src/lib/physics' (or relative) — never re-derive inline.
+ * Import from '@/src/lib/physics' (or relative), never re-derive inline.
  */
 
 export * from "./constants";
@@ -20,3 +20,4 @@ export * from "./composite";
 export * from "./interactions";
 export * from "./economic";
 export * from "./ecology";
+export * from "./killswitch";

@@ -104,7 +104,7 @@ export function useGlossary(): GlossaryContextValue {
 // ---------------------------------------------------------------------------
 /**
  * The <video> used to flash its `poster` (a full-frame Sandyx image) for a single frame before the
- * mp4 started — the "buffer" glitch. Fix: no poster at all. Instead the video renders transparent
+ * mp4 started, the "buffer" glitch. Fix: no poster at all. Instead the video renders transparent
  * and a Sandyx "Please wait" panel sits on top of it, only fading away once the browser reports the
  * clip can actually play through. The reserved 16:9 box means nothing jumps as the loader swaps out.
  */
@@ -172,7 +172,7 @@ function VideoPanel({
             <div className="flex items-center gap-2 text-slate-200">
               <Loader2 className="w-4 h-4 animate-spin text-rose-400" />
               <span className="text-sm font-bold">
-                Please wait — loading the animation…
+                Please wait, loading the animation…
               </span>
             </div>
             <span className="text-[11px] text-slate-400">
@@ -192,8 +192,7 @@ function VideoPanel({
  * One shell for every Sandyx window so all four open with the *same* seamless transition.
  *
  * The blur layer is the fix for the old "flash of the un-blurred page" glitch: it is promoted to
- * its own compositor layer up front (`translateZ(0)` + `will-change`) and fades its OWN opacity —
- * it is never nested inside an opacity-animating ancestor, so the `backdrop-filter` is already
+ * its own compositor layer up front (`translateZ(0)` + `will-change`) and fades its OWN opacity, * it is never nested inside an opacity-animating ancestor, so the `backdrop-filter` is already
  * realised on the first painted frame instead of one frame late.
  */
 const DIALOG_SPRING = { type: "spring" as const, stiffness: 320, damping: 26 };
@@ -512,7 +511,7 @@ export const GlossaryProvider: React.FC<{
                 overlayKey="sandyx-math-overlay"
                 onClose={closeMath}
                 isLightMode={isLightMode}
-                ariaLabel={`${math.title} — mathematics`}
+                ariaLabel={`${math.title}, mathematics`}
                 maxWidthClass="max-w-lg"
                 scroll
                 glowA="bg-amber-400/20"
@@ -600,7 +599,7 @@ export const GlossaryProvider: React.FC<{
                 overlayKey="sandyx-video-overlay"
                 onClose={closeVideo}
                 isLightMode={isLightMode}
-                ariaLabel={`${video.title} — video explanation`}
+                ariaLabel={`${video.title}, video explanation`}
                 maxWidthClass="max-w-2xl"
                 scroll
                 glowA="bg-rose-400/20"
@@ -821,7 +820,7 @@ export const GlossaryProvider: React.FC<{
                   >
                     These are the model&apos;s grounding references, drawn from
                     the calibration provenance in the code. Each title links out
-                    to the source — verify it against the primary work before
+                    to the source, verify it against the primary work before
                     citing it on your wiki.
                   </p>
                 </div>
@@ -841,7 +840,7 @@ function GLOSSARY_BY_ID(id: string): GlossaryEntry | null {
 }
 
 // ---------------------------------------------------------------------------
-// <Term> — underlined, tappable, Sandyx drop target
+// <Term>, underlined, tappable, Sandyx drop target
 // ---------------------------------------------------------------------------
 export interface TermProps {
   /** Canonical or alias key into the glossary. */
@@ -878,7 +877,7 @@ export const Term: React.FC<TermProps> = ({ k, term, children, className }) => {
           open(id);
         }
       }}
-      title={`${resolved.entry.title} — tap or drop Sandyx for an explanation`}
+      title={`${resolved.entry.title}, tap or drop Sandyx for an explanation`}
       className={`sandyx-term cursor-help underline decoration-dotted decoration-2 underline-offset-2 font-semibold transition-colors duration-150 rounded px-0.5 -mx-0.5 py-1 -my-1 ${
         isLightMode
           ? "decoration-teal-500/70 text-slate-900 hover:text-teal-700"
@@ -893,7 +892,7 @@ export const Term: React.FC<TermProps> = ({ k, term, children, className }) => {
 };
 
 // ---------------------------------------------------------------------------
-// <GlossaryText> — auto-underline every known glossary term in a block of prose
+// <GlossaryText>, auto-underline every known glossary term in a block of prose
 // ---------------------------------------------------------------------------
 // Build the matcher once. Longest phrases first so multi-word terms win over substrings.
 const PHRASES = glossaryPhrases();

@@ -1,5 +1,5 @@
 /**
- * Approach 3 — Aeolian Fluid Dynamics & Sand Erosion Thresholds
+ * Approach 3, Aeolian Fluid Dynamics & Sand Erosion Thresholds
  * =============================================================
  * Implements the modeling-subteam theory exactly:
  *   Eq 7  baseline threshold friction velocity (untreated dry sand)
@@ -23,9 +23,9 @@ export interface AeolianInputs {
 }
 
 export interface AeolianResult {
-  /** Eq 7 — untreated threshold friction velocity u*t0 [m/s]. */
+  /** Eq 7, untreated threshold friction velocity u*t0 [m/s]. */
   uStarT0: number;
-  /** Eq 8 — treated (cohesion-enhanced) threshold u*t [m/s]. */
+  /** Eq 8, treated (cohesion-enhanced) threshold u*t [m/s]. */
   uStarT: number;
   /** Saltation mass flux of the UNtreated bed [kg·m⁻¹·s⁻¹]. */
   fluxUntreated: number;
@@ -43,7 +43,7 @@ export const uStarToFreestream = (uStar: number): number =>
 export const freestreamToUStar = (uInf: number): number =>
   uInf * cval(AEOLIAN_CALIB.uStarRatio);
 
-/** Eq 7 — baseline threshold friction velocity for an untreated grain of diameter d. */
+/** Eq 7, baseline threshold friction velocity for an untreated grain of diameter d. */
 export function thresholdUntreated(grainDiameter: number): number {
   const A = cval(AEOLIAN_CALIB.A);
   const buoyancy =
@@ -52,7 +52,7 @@ export function thresholdUntreated(grainDiameter: number): number {
 }
 
 /**
- * Eq 8 — cohesion-modified threshold friction velocity.
+ * Eq 8, cohesion-modified threshold friction velocity.
  *   u*t = A·√[ (ρs−ρa)/ρa · g·d  +  γ/(ρa·d) ]
  * The added γ/(ρa·d) term is the interparticle adhesive force per unit inertia.
  */
@@ -68,7 +68,7 @@ export function thresholdTreated(
 }
 
 /**
- * Inverse of Eq 8 — the interparticle cohesion γ [N/m] a crust needs so that its treated threshold
+ * Inverse of Eq 8, the interparticle cohesion γ [N/m] a crust needs so that its treated threshold
  * friction velocity reaches `targetUStar`. Solving u*t = A·√(buoyancy + γ/(ρa·d)) for γ:
  *   γ = ρa·d·[ (u*t/A)² − buoyancy ]        (clamped ≥ 0)
  * Used by the curing/deployment timeline to express a design survival wind as a cohesion floor.
@@ -85,7 +85,7 @@ export function cohesionForThreshold(
 }
 
 /**
- * Eq 9 — Bagnold saltation mass flux.
+ * Eq 9, Bagnold saltation mass flux.
  *   q = C·(ρa/g)·u*³·(1 − u*t²/u*²)   for u* > u*t,  else 0
  */
 export function saltationFlux(

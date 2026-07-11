@@ -4,7 +4,7 @@
  * Composite Strength Synthesis (shown only for ≥2 prongs).
  * Two outputs: (1) composite cohesion via rule-of-mixtures + pairwise synergy, and
  * (2) a failure-mode robustness radar showing how the combination covers each prong's
- * weaknesses — the central thesis of the three-pronged design.
+ * weaknesses, the central thesis of the three-pronged design.
  */
 
 import React, { useMemo } from "react";
@@ -121,8 +121,7 @@ export default function CompositeSynthesisPanel({
           <p
             className={`text-[11px] ${isLightMode ? "text-stone-500" : "text-slate-400"}`}
           >
-            How {prongs.map((p) => PRONG_LABEL[p]).join(" + ")} combine —
-            mechanically and as redundant failsafes.
+            How {prongs.map((p) => PRONG_LABEL[p]).join(" + ")} combine, mechanically and as redundant failsafes.
           </p>
         </div>
       </div>
@@ -186,8 +185,7 @@ export default function CompositeSynthesisPanel({
           <>
             <GlossaryTerm term="prong-interaction">
               Inter-Prong Interactions
-            </GlossaryTerm>{" "}
-            — what happens when they share a chassis & soil
+            </GlossaryTerm>{" "}, what happens when they share a chassis & soil
           </>
         }
         icon={GitCompareArrows}

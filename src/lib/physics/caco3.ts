@@ -1,19 +1,19 @@
 /**
- * §6 — CaCO₃ Geochemical Precipitation (Prong 2, non-ureolytic via Carbonic Anhydrase)
+ * §6, CaCO₃ Geochemical Precipitation (Prong 2, non-ureolytic via Carbonic Anhydrase)
  * ===================================================================================
- * A GEOCHEMICAL precipitation model (per Lassin et al. 2018) — NOT a full biological MICP
+ * A GEOCHEMICAL precipitation model (per Lassin et al. 2018), NOT a full biological MICP
  * model. Scope: simplified Ca–CO₂–H₂O chemistry around pH 8.5–10.5, ~25 °C.
  *
  * Cascade:
  *   pH + DIC → carbonate speciation (α0,α1,α2)
  *           → [CO₃²⁻]
- *   Ω = [Ca²⁺][CO₃²⁻]/Ksp ,  SI = log₁₀ Ω        (supersaturation)
+ *   Ω = [Ca²⁺][CO₃²⁻]/Ksp,  SI = log₁₀ Ω        (supersaturation)
  *   aqueous ions → ACC (fast, kinetic precursor) → calcite (ripening)   two-step
  *   calcite wt% → UCS (empirical power law)        biocement strength
  *   mol CaCO₃ → mol CO₂ captured                   climate co-benefit
  *
  * Carbonic anhydrase accelerates CO₂(aq)+H₂O → H⁺+HCO₃⁻, raising DIC (hence [CO₃²⁻] and Ω)
- * far faster than the un-catalyzed hydration — without ureolysis, so no ammonia.
+ * far faster than the un-catalyzed hydration, without ureolysis, so no ammonia.
  */
 
 import { CACO3_CALIB, MOLAR_MASS, cval } from "./constants";
@@ -21,11 +21,11 @@ import { CACO3_CALIB, MOLAR_MASS, cval } from "./constants";
 const pow10 = (x: number) => Math.pow(10, x);
 
 export interface Speciation {
-  /** α0 — fraction as dissolved CO₂(aq)/H₂CO₃*. */
+  /** α0, fraction as dissolved CO₂(aq)/H₂CO₃*. */
   alpha0: number;
-  /** α1 — fraction as bicarbonate HCO₃⁻. */
+  /** α1, fraction as bicarbonate HCO₃⁻. */
   alpha1: number;
-  /** α2 — fraction as carbonate CO₃²⁻. */
+  /** α2, fraction as carbonate CO₃²⁻. */
   alpha2: number;
 }
 
@@ -120,7 +120,7 @@ export interface PrecipitationResult {
   carbonateWtPercent: number;
   /** Strength-weighted "effective calcite" wt% that drives UCS (vaterite counts at a reduced factor). */
   loadBearingWtPercent: number;
-  /** Vaterite as a fraction of total crystalline carbonate (0–1) — the polymorph purity readout. */
+  /** Vaterite as a fraction of total crystalline carbonate (0–1), the polymorph purity readout. */
   vateriteFraction: number;
   /** Unconfined compressive strength [kPa]. */
   ucsKpa: number;
@@ -210,7 +210,7 @@ export function simulatePrecipitation(
   const calciteWtPercent = (gPerL(calcite) / sandMass) * 100;
   const vateriteWtPercent = (gPerL(vaterite) / sandMass) * 100;
   const carbonateWtPercent = (gPerL(calcite + vaterite + acc) / sandMass) * 100;
-  // Vaterite bears load at a reduced factor until it converts — this is what drives UCS.
+  // Vaterite bears load at a reduced factor until it converts, this is what drives UCS.
   const loadBearingWtPercent =
     calciteWtPercent + vatStrength * vateriteWtPercent;
   const crystalline = calcite + vaterite;

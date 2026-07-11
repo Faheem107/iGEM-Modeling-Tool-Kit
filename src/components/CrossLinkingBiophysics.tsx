@@ -60,7 +60,7 @@ export default function CrossLinkingBiophysics({
     }
   };
 
-  // Base physics solver — Langmuir → affine network → G=νRT, via the shared physics core.
+  // Base physics solver, Langmuir → affine network → G=νRT, via the shared physics core.
   const results = useMemo(() => {
     const {
       theta,

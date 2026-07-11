@@ -3,7 +3,7 @@
  * =======================
  * Drives the prong-aware Simulation Workspace. A "combination" is any non-empty subset of
  * the three prongs (a single prong counts). `modulesForSelection()` returns the meaningful,
- * ordered set of modules for that exact combination — different combinations surface
+ * ordered set of modules for that exact combination, different combinations surface
  * genuinely different module sets.
  */
 
@@ -26,6 +26,7 @@ import {
   Beaker,
   Ruler,
   CalendarClock,
+  ShieldAlert,
 } from "lucide-react";
 import type { ProngId } from "./physics";
 
@@ -109,6 +110,7 @@ export type ModuleId =
   | "thermal"
   | "protein-3d"
   | "ecological"
+  | "killswitch"
   | "aeolian"
   | "wetlab"
   | "grainsize"
@@ -209,9 +211,18 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
     id: "ecological",
     title: "Ecological Spread & Kill Switch",
     blurb:
-      "Reaction-diffusion colony growth with MazE/MazF biocontainment — any engineered B. subtilis prong.",
+      "Reaction-diffusion colony growth with MazE/MazF biocontainment, any engineered B. subtilis prong.",
     scale: "ecology",
     icon: Bug,
+    appliesTo: anyBacterial,
+  },
+  {
+    id: "killswitch",
+    title: "Biocontainment Kill Switch",
+    blurb:
+      "MazE/MazF toxin–antitoxin dynamics: aTc-inducible kill + plasmid-dilution self-limiting, HGT containment, and germinate-then-kill spore clearance, the reframed third element.",
+    scale: "ecology",
+    icon: ShieldAlert,
     appliesTo: anyBacterial,
   },
   {
@@ -223,7 +234,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
     icon: Wind,
     appliesTo: (s) => s.length > 0,
   },
-  // The bench assay is glutamate substrate → γ-PGA yield → dune crust — a Prong-1 protocol.
+  // The bench assay is glutamate substrate → γ-PGA yield → dune crust, a Prong-1 protocol.
   {
     id: "wetlab",
     title: "Wet-Lab Sandbox (γ-PGA)",
@@ -235,12 +246,12 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
   },
   // Grain-size coverage: how the active binder(s) hold the UAE dune-sand size distribution.
   // Useful for a single prong (shows its grain-size gap) and decisive for combinations (the prongs
-  // are grain-size complementary — the "cover all sizes" thesis).
+  // are grain-size complementary, the "cover all sizes" thesis).
   {
     id: "grainsize",
     title: "Grain-Size Coverage",
     blurb:
-      "How the binders cover the UAE dune-sand grain-size distribution — MICP's 63–125 µm sweet spot vs the coarse/fine gaps γ-PGA and alginate close.",
+      "How the binders cover the UAE dune-sand grain-size distribution, MICP's 63–125 µm sweet spot vs the coarse/fine gaps γ-PGA and alginate close.",
     scale: "macro",
     icon: Ruler,
     appliesTo: (s) => s.length > 0,

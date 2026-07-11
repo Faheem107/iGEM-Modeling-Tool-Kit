@@ -4,7 +4,7 @@ import { motion, type HTMLMotionProps } from "motion/react";
 import type { ReactNode } from "react";
 
 /**
- * Reveal — the single scroll-fade primitive used across the toolkit (DESIGN.md §6).
+ * Reveal, the single scroll-fade primitive used across the toolkit (DESIGN.md §6).
  * Wrap any graph, canvas, panel, or section so it fades + rises into view once.
  * Respects prefers-reduced-motion via the global CSS reset (animations collapse
  * to ~0ms), so no special-casing is needed here.
@@ -14,8 +14,7 @@ export function Reveal({
   delay = 0,
   y = 24,
   amount = 0.3,
-  className,
-  ...rest
+  className, ...rest
 }: {
   children: ReactNode;
   delay?: number;

@@ -35,7 +35,7 @@ export default function MetabolicModel({
   setCalibratedKcat,
   isLightMode = false,
 }: MetabolicProps) {
-  // RK4 ODE integration — delegated to the shared physics core (single source of truth).
+  // RK4 ODE integration, delegated to the shared physics core (single source of truth).
   const simulationData: SimulationStep[] = useMemo(
     () => simulateMetabolicODE(params),
     [params],

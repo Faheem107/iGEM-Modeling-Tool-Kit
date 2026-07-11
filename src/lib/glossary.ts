@@ -1,24 +1,24 @@
 /**
- * Sandyx Glossary — plain-language explanations
+ * Sandyx Glossary, plain-language explanations
  * =============================================
  * Every complex term or concept surfaced in the toolkit is explained here in the
  * layman voice of "Toolkit in layman's terminology.md". The Sandyx companion reads from
  * this single source: underline a term anywhere with <Term k="..."> and dropping Sandyx on
  * it (or tapping it) opens the matching explanation.
  *
- * Keep definitions short, plain, and scientifically honest — they render inside a pop-up.
+ * Keep definitions short, plain, and scientifically honest, they render inside a pop-up.
  */
 
 export interface GlossaryEntry {
   /** Display heading for the pop-up. */
   title: string;
-  /** Plain-language explanation (1–3 short sentences) — "what this means". */
+  /** Plain-language explanation (1–3 short sentences), "what this means". */
   plain: string;
   /** Grouping label shown as a chip. */
   category: string;
   /** Optional: which module the concept lives in. */
   module?: string;
-  /** Optional: "how we got it" — the concentrations + calculation behind a headline value. */
+  /** Optional: "how we got it", the concentrations + calculation behind a headline value. */
   derivation?: string;
   /**
    * Optional: module ids to jump to (rendered as a button in the pop-up). The first id whose
@@ -32,7 +32,7 @@ export interface GlossaryEntry {
 
 /**
  * Canonical entries keyed by a stable slug. Prefer lowercase-hyphen slugs, but human-readable
- * keys are fine too — lookups are normalized (case/space/punctuation-insensitive) and the
+ * keys are fine too, lookups are normalized (case/space/punctuation-insensitive) and the
  * ALIASES map below routes alternate spellings to a canonical key.
  */
 export const GLOSSARY: Record<string, GlossaryEntry> = {
@@ -71,7 +71,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "production-envelope": {
     title: "Production Envelope (Pareto Front)",
     plain:
-      "The trade-off curve between growth and γ-PGA. It slopes downward because the cell cannot maximize both at once — more carbon toward growth means less toward γ-PGA, and vice-versa. The orange dot is the current predicted operating point.",
+      "The trade-off curve between growth and γ-PGA. It slopes downward because the cell cannot maximize both at once, more carbon toward growth means less toward γ-PGA, and vice-versa. The orange dot is the current predicted operating point.",
     category: "Metabolic Modeling",
   },
   "growth-rate": {
@@ -121,7 +121,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "transcription-rate": {
     title: "Transcription Rate (α_m)",
     plain:
-      'How quickly the gene is copied into mRNA — essentially how strongly the cell is "turning on" the γ-PGA instructions.',
+      'How quickly the gene is copied into mRNA, essentially how strongly the cell is "turning on" the γ-PGA instructions.',
     category: "Gene Expression",
   },
   "mrna-degradation": {
@@ -145,7 +145,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "k-cat": {
     title: "Catalytic Efficiency (k_cat)",
     plain:
-      "How fast one enzyme converts precursor into γ-PGA — its top speed. A higher k_cat means each enzyme is more productive per second.",
+      "How fast one enzyme converts precursor into γ-PGA, its top speed. A higher k_cat means each enzyme is more productive per second.",
     category: "Enzyme Kinetics",
   },
   "l-glutamate": {
@@ -169,7 +169,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "wet-lab-calibration": {
     title: "Wet-Lab Calibration",
     plain:
-      "Feeding a real measured γ-PGA yield back into the model so it tunes the enzyme efficiency (k_cat) until the simulation matches the experiment — making later predictions more trustworthy.",
+      "Feeding a real measured γ-PGA yield back into the model so it tunes the enzyme efficiency (k_cat) until the simulation matches the experiment, making later predictions more trustworthy.",
     category: "Modeling",
   },
 
@@ -213,7 +213,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "active-site": {
     title: "Active Site",
     plain:
-      "The pocket of the enzyme where the chemistry happens — where the substrate binds and is converted to product.",
+      "The pocket of the enzyme where the chemistry happens, where the substrate binds and is converted to product.",
     category: "Structural Biology",
   },
 
@@ -227,7 +227,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "cross-linking": {
     title: "Ionic Cross-Linking",
     plain:
-      "Calcium ions (Ca²⁺) act as bridges that tie many γ-PGA chains together into a net. More bridges make a denser, stronger gel around the sand grains — γ-PGA is the net, calcium is the knots, sand is caught inside.",
+      "Calcium ions (Ca²⁺) act as bridges that tie many γ-PGA chains together into a net. More bridges make a denser, stronger gel around the sand grains, γ-PGA is the net, calcium is the knots, sand is caught inside.",
     category: "Biochemistry",
   },
   kd: {
@@ -253,19 +253,19 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "cellular-automata": {
     title: "Cellular Automata",
     plain:
-      "A grid-based simulation where each cell spreads into neighboring squares based on local rules — moisture, nutrients, and survival probabilities — mimicking how a colony would creep across sand.",
+      "A grid-based simulation where each cell spreads into neighboring squares based on local rules, moisture, nutrients, and survival probabilities, mimicking how a colony would creep across sand.",
     category: "Computation",
   },
   "kill-switch": {
     title: "Kill Switch (Biocontainment)",
     plain:
-      "An engineered safety circuit: when moisture drops below a safe threshold, the bacteria lose viability and stop growing. This keeps the engineered strain from spreading beyond the treated area.",
+      "A genetically-encoded safety circuit built on the MazE/MazF toxin–antitoxin pair. Adding the aTc trigger (or letting the plasmid dilute out over generations) tips the balance so the MazF toxin shreds the cell's RNA and the engineered bacteria self-limit. A second, E. coli-derived copy kills any wild microbe that picks up the genes by horizontal transfer, keeping the strain from spreading beyond the treated area.",
     category: "Biocontainment",
   },
   "fisher-kpp": {
     title: "Fisher–KPP Front Speed",
     plain:
-      "The speed at which a growing bacterial colony pushes its edge outward. When cells both grow (rate µ) and spread (diffusivity D), the front travels at c = 2·√(D·µ) — the classic Fisher–Kolmogorov travelling wave. Dosing calcium lowers D (it disables the surfactin-driven sliding), so the colony spreads more slowly.",
+      "The speed at which a growing bacterial colony pushes its edge outward. When cells both grow (rate µ) and spread (diffusivity D), the front travels at c = 2·√(D·µ), the classic Fisher–Kolmogorov travelling wave. Dosing calcium lowers D (it disables the surfactin-driven sliding), so the colony spreads more slowly.",
     category: "Ecology",
   },
   "moisture-spread": {
@@ -327,7 +327,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
     plain:
       "The wind speed the engineered crust withstands before grains move. The gap above the untreated threshold is exactly what the bacteria buy you.",
     derivation:
-      "Cohesion-modified threshold (Eq 8): u*t = A·√[((ρs−ρa)/ρa)·g·d + γ/(ρa·d)]. The extra γ/(ρa·d) term is the interparticle cohesion the binder adds. γ is the composite cohesion (built from the active prong's binder — the Ca²⁺-crosslinked γ-PGA gel modulus at 10 mM Ca²⁺, the calcite UCS, or the alginate egg-box modulus), converted here into a survivable wind speed.",
+      "Cohesion-modified threshold (Eq 8): u*t = A·√[((ρs−ρa)/ρa)·g·d + γ/(ρa·d)]. The extra γ/(ρa·d) term is the interparticle cohesion the binder adds. γ is the composite cohesion (built from the active prong's binder, the Ca²⁺-crosslinked γ-PGA gel modulus at 10 mM Ca²⁺, the calcite UCS, or the alginate egg-box modulus), converted here into a survivable wind speed.",
     category: "Wind Mechanics",
     jumpTo: ["aeolian"],
     jumpLabel: "Open the Aeolian Wind Tunnel",
@@ -335,7 +335,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "erosion-reduction": {
     title: "Erosion Reduction",
     plain:
-      "How much less sand is carried away once the crust is in place — the headline protection the treatment delivers at the current wind.",
+      "How much less sand is carried away once the crust is in place, the headline protection the treatment delivers at the current wind.",
     derivation:
       "From Bagnold's saltation flux (Eq 9): q = C·(ρa/g)·u*³·(1 − u*t²/u*²) for winds above threshold. We compute the transported mass for the untreated bed and the treated bed at the same wind and report 1 − q_treated/q_untreated. Raising the threshold cuts the flux sharply because q scales with how far the wind sits above u*t.",
     category: "Wind Mechanics",
@@ -389,19 +389,19 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   ucs: {
     title: "Unconfined Compressive Strength (UCS)",
     plain:
-      "How much crushing load the cemented sand can take before failing. It grows with calcite content — the standard strength metric for bio-cement.",
+      "How much crushing load the cemented sand can take before failing. It grows with calcite content, the standard strength metric for bio-cement.",
     category: "Geomechanics",
   },
   "co2-sequestration": {
     title: "CO₂ Sequestration",
     plain:
-      "Locking carbon dioxide into solid mineral (calcium carbonate) so it is captured rather than released — a climate co-benefit of the cementing pathway.",
+      "Locking carbon dioxide into solid mineral (calcium carbonate) so it is captured rather than released, a climate co-benefit of the cementing pathway.",
     category: "Sustainability",
   },
   "maze-mazf": {
     title: "MazE/MazF Kill-Switch",
     plain:
-      "A toxin–antitoxin safety system. MazF is a toxin that shreds the cell’s RNA; MazE is the short-lived antitoxin that neutralises it. While the engineered bacteria stay in place they keep making antitoxin, but as the plasmid dilutes out over generations (or conditions change), the toxin wins and the cells self-limit — stopping overspread and gene transfer to wild microbes.",
+      "A toxin–antitoxin safety system. MazF is a toxin that shreds the cell’s RNA; MazE is the short-lived antitoxin that neutralises it. While the engineered bacteria stay in place they keep making antitoxin, but as the plasmid dilutes out over generations (or conditions change), the toxin wins and the cells self-limit, stopping overspread and gene transfer to wild microbes.",
     category: "Biosafety",
   },
   "prong-interaction": {
@@ -413,7 +413,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "chemical-spray": {
     title: "Chemical Dust Suppressant",
     plain:
-      "The conventional way to hold down dust: spraying petrochemical polymers or salts over the ground. It works, but it is costly per hectare, needs re-applying, and is not biodegradable — the baseline our biological approach is measured against.",
+      "The conventional way to hold down dust: spraying petrochemical polymers or salts over the ground. It works, but it is costly per hectare, needs re-applying, and is not biodegradable, the baseline our biological approach is measured against.",
     category: "Economics",
   },
   dic: {
@@ -427,7 +427,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "sodium-alginate": {
     title: "Sodium Alginate",
     plain:
-      "A ready-made, plant/seaweed-derived biopolymer sprayed straight onto sand — no bacteria needed. Calcium cross-links it into a gel that holds grains and moisture, though it can weaken after repeated rain.",
+      "A ready-made, plant/seaweed-derived biopolymer sprayed straight onto sand, no bacteria needed. Calcium cross-links it into a gel that holds grains and moisture, though it can weaken after repeated rain.",
     category: "Biopolymer",
   },
   "egg-box": {
@@ -453,7 +453,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "composite-cohesion": {
     title: "Composite Cohesion",
     plain:
-      "The single number for how strongly the engineered crust holds sand grains together — the interparticle cohesion γ (in mN/m) that every prong ultimately feeds into the wind-erosion result.",
+      "The single number for how strongly the engineered crust holds sand grains together, the interparticle cohesion γ (in mN/m) that every prong ultimately feeds into the wind-erosion result.",
     derivation:
       "Each active prong's binder is first converted to a standalone cohesion: γ-PGA and alginate through their Ca²⁺-crosslinked gel shear modulus G (10 mM Ca²⁺ default), and CaCO₃ through the calcite unconfined compressive strength (UCS). Each is then knocked down by inter-prong competition (shared Ca²⁺ + co-expression metabolic burden) and its yield factor, and finally combined with a physicochemical synergy term into one composite γ. That γ is what raises the treated wind threshold.",
     category: "Composite Mechanics",
@@ -469,13 +469,13 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "failure-mode": {
     title: "Failure-Mode Robustness",
     plain:
-      "How well each strategy holds up against different stresses — drought/heat, flood/rain, bacterial death, high wind, and long-term wear. Combining prongs covers each other's weak points.",
+      "How well each strategy holds up against different stresses, drought/heat, flood/rain, bacterial death, high wind, and long-term wear. Combining prongs covers each other's weak points.",
     category: "Reliability",
   },
   lca: {
     title: "Life-Cycle Assessment (LCA)",
     plain:
-      "An accounting of the environmental cost and benefit across the whole process — here, the CO₂ avoided by skipping cement kilns plus the carbon trapped in the crust.",
+      "An accounting of the environmental cost and benefit across the whole process, here, the CO₂ avoided by skipping cement kilns plus the carbon trapped in the crust.",
     category: "Sustainability",
   },
 
@@ -483,7 +483,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   od600: {
     title: "Cell Density (OD600)",
     plain:
-      "A quick optical reading of how cloudy the culture is, used to estimate how many bacterial cells are present. Higher OD600 can support a denser biofilm — as long as cells stay viable and fed.",
+      "A quick optical reading of how cloudy the culture is, used to estimate how many bacterial cells are present. Higher OD600 can support a denser biofilm, as long as cells stay viable and fed.",
     category: "Wet Lab",
   },
   inoculation: {
@@ -495,7 +495,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   anaplerosis: {
     title: "Anaplerosis",
     plain:
-      "The cell's \"top-up\" reactions (like pyruvate carboxylase) that refill central metabolism when γ-PGA production siphons off building blocks — so the engine doesn't stall while making product.",
+      "The cell's \"top-up\" reactions (like pyruvate carboxylase) that refill central metabolism when γ-PGA production siphons off building blocks, so the engine doesn't stall while making product.",
     category: "Metabolic Modeling",
   },
   oxaloacetate: {
@@ -531,13 +531,13 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "constraint-based": {
     title: "Constraint-Based Modelling",
     plain:
-      "Predicting cell behaviour without knowing every reaction speed — you just set bounds on each reaction and find the best flux pattern allowed. FBA is the classic example.",
+      "Predicting cell behaviour without knowing every reaction speed, you just set bounds on each reaction and find the best flux pattern allowed. FBA is the classic example.",
     category: "Metabolic Modeling",
   },
   "tca-cycle": {
     title: "TCA Cycle",
     plain:
-      "The tricarboxylic-acid (Krebs) cycle — central metabolism's hub that burns carbon for energy and hands out building blocks for growth and products.",
+      "The tricarboxylic-acid (Krebs) cycle, central metabolism's hub that burns carbon for energy and hands out building blocks for growth and products.",
     category: "Metabolic Modeling",
   },
   chemostat: {
@@ -579,7 +579,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "grain-size-distribution": {
     title: "Grain-Size Distribution",
     plain:
-      "Sand is a mix of grain sizes, not one. UAE dune sand is mostly 100–300 µm (median ≈ 200 µm). This matters because no single binder grips every size — calcite cements fine-medium grains best, so we track how much of the whole size distribution is actually held.",
+      "Sand is a mix of grain sizes, not one. UAE dune sand is mostly 100–300 µm (median ≈ 200 µm). This matters because no single binder grips every size, calcite cements fine-medium grains best, so we track how much of the whole size distribution is actually held.",
     category: "Aeolian Physics",
     module: "Grain-Size Coverage",
   },

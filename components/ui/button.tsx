@@ -11,7 +11,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // maroon (light) / orange (dark) — the brand primary
+        // maroon (light) / orange (dark), the brand primary
         default: "bg-primary text-primary-foreground hover:opacity-90",
         // orange call-to-action, both themes
         accent: "bg-dune-orange text-[#241c19] hover:brightness-105",
@@ -44,8 +44,7 @@ function Button({
   className,
   variant = "default",
   size = "default",
-  asChild = false,
-  ...props
+  asChild = false, ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;

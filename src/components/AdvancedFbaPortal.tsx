@@ -509,10 +509,10 @@ const REACTIONS: Reaction[] = [
 ];
 
 // -------------------------------------------------------------
-// FBA SOLVE — delegated to the shared, mass-balanced physics core
+// FBA SOLVE, delegated to the shared, mass-balanced physics core
 // -------------------------------------------------------------
 // Genuine Flux Balance Analysis: the portal solves the detailed B. subtilis network with the
-// two-phase simplex in src/lib/physics (fba.ts + fbaDetailed.ts) — the single source of truth
+// two-phase simplex in src/lib/physics (fba.ts + fbaDetailed.ts), the single source of truth
 // shared with the simulation workspace. The old hand-coded flux cascade and the duplicate
 // in-file simplex have been removed.
 export function calculateFluxes(
@@ -1137,8 +1137,7 @@ export default function AdvancedFbaPortal({
                 className={isLightMode ? "text-teal-805" : "text-teal-400"}
               >
                 NADPH
-              </strong>
-              , while biopolymer polymerization drains{" "}
+              </strong>, while biopolymer polymerization drains{" "}
               <strong
                 className={isLightMode ? "text-amber-805" : "text-amber-400"}
               >

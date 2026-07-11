@@ -1,5 +1,5 @@
 /**
- * Prong 3 — Sodium Alginate (commercial biopolymer, applied directly; NO bacteria)
+ * Prong 3, Sodium Alginate (commercial biopolymer, applied directly; NO bacteria)
  * ================================================================================
  * Alginate gels by ionic "egg-box" cross-linking: Ca²⁺ bridges guluronate (G) blocks of
  * adjacent chains. Only G-blocks form load-bearing junctions, so junction density scales
@@ -18,7 +18,7 @@ import { PHYS, ALGINATE_CALIB, cval } from "./constants";
 
 /**
  * Ca²⁺ saturation of guluronate binding sites (Langmuir). Alginate keeps its own copy of this
- * isotherm — its junctions are egg-box G-block chelation, physically distinct from γ-PGA's
+ * isotherm, its junctions are egg-box G-block chelation, physically distinct from γ-PGA's
  * carboxylate bridging even though both share the Langmuir form.
  */
 export function eggBoxSaturation(

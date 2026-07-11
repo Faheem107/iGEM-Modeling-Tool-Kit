@@ -1,11 +1,11 @@
 /**
- * NYUAD iGEM 2026 — Centralized physical & calibration constants
+ * NYUAD iGEM 2026, Centralized physical & calibration constants
  * ================================================================
  * Single source of truth for every numerical constant used by the dry-lab models.
  *
  * Two tiers:
- *   1. FUNDAMENTAL — exact physical constants (gas constant, gravity, densities, molar masses).
- *   2. CALIBRATION — empirical / model constants that SHOULD be fit to NYUAD wet-lab data.
+ *   1. FUNDAMENTAL, exact physical constants (gas constant, gravity, densities, molar masses).
+ *   2. CALIBRATION, empirical / model constants that SHOULD be fit to NYUAD wet-lab data.
  *      Every CALIBRATION entry carries a `wetlab` note and is mirrored in /WETLAB_TODO.md.
  *
  * Each CALIBRATION constant is a {@link Calib} object so the UI can render provenance
@@ -34,7 +34,7 @@ const calib = (
 ): Calib => ({ value, units, source, wetlab, range });
 
 // ---------------------------------------------------------------------------
-// 1. FUNDAMENTAL CONSTANTS (exact — not calibrated)
+// 1. FUNDAMENTAL CONSTANTS (exact, not calibrated)
 // ---------------------------------------------------------------------------
 export const PHYS = {
   R: 8.314462618, // J·mol⁻¹·K⁻¹  ideal gas constant
@@ -57,10 +57,10 @@ export const MOLAR_MASS = {
 } as const;
 
 // ---------------------------------------------------------------------------
-// 2. CALIBRATION CONSTANTS  (fit these to wet-lab data — see WETLAB_TODO.md)
+// 2. CALIBRATION CONSTANTS  (fit these to wet-lab data, see WETLAB_TODO.md)
 // ---------------------------------------------------------------------------
 
-/** Approach 5 — Flux Balance Analysis (central carbon → precursor). */
+/** Approach 5, Flux Balance Analysis (central carbon → precursor). */
 export const FBA_CALIB = {
   /** Maximum glucose uptake bound; sets the LP feed. */
   vGlcMax: calib(
@@ -101,7 +101,7 @@ export const FBA_CALIB = {
   ),
 } as const;
 
-/** Approach 2 — γ-PGA / alginate ionic cross-linking (Langmuir → rubber elasticity). */
+/** Approach 2, γ-PGA / alginate ionic cross-linking (Langmuir → rubber elasticity). */
 export const CROSSLINK_CALIB = {
   /** Ca²⁺ binding dissociation constant to γ-PGA carboxylates. */
   KdPGA: calib(
@@ -129,7 +129,7 @@ export const CROSSLINK_CALIB = {
   ),
 } as const;
 
-/** Approach 3 — Aeolian erosion (Bagnold threshold + saltation). */
+/** Approach 3, Aeolian erosion (Bagnold threshold + saltation). */
 export const AEOLIAN_CALIB = {
   /** Bagnold empirical threshold parameter A (aerodynamic regime). */
   A: calib(
@@ -181,7 +181,7 @@ export const AEOLIAN_CALIB = {
   ),
 } as const;
 
-/** §6 — CaCO₃ geochemical precipitation (Lassin et al. 2018) + biocement strength. */
+/** §6, CaCO₃ geochemical precipitation (Lassin et al. 2018) + biocement strength. */
 export const CACO3_CALIB = {
   /** Calcite solubility product (25 °C). */
   pKspCalcite: calib(
@@ -288,9 +288,9 @@ export const CACO3_CALIB = {
   ),
 } as const;
 
-/** Prong 3 — Sodium alginate (egg-box gel, moisture, washout). */
+/** Prong 3, Sodium alginate (egg-box gel, moisture, washout). */
 export const ALGINATE_CALIB = {
-  /** Guluronate (G) fraction — controls Ca²⁺ egg-box junction density. */
+  /** Guluronate (G) fraction, controls Ca²⁺ egg-box junction density. */
   guluronateFraction: calib(
     0.55,
     "fraction",
@@ -333,13 +333,13 @@ export const ALGINATE_CALIB = {
 } as const;
 
 /**
- * Grain-size-resolved crust performance (Study 4 — Erdmann et al. 2024, Discover Materials,
+ * Grain-size-resolved crust performance (Study 4, Erdmann et al. 2024, Discover Materials,
  * doi:10.1007/s43939-024-00108-3, MICP vs particle size;
  * UAE dune-sand grain-size distribution). MICP cementation is NOT uniform across grain sizes:
  * it peaks for fine–medium sand (~63–125 µm), where pores are small enough for calcite bridging
  * yet permeable enough for bacteria to penetrate, and falls off for coarse sand (pores too large
  * to bridge) and ultra-fine sand (too low-permeability for cells to colonise). γ-PGA and alginate
- * cover the grain sizes MICP misses — the quantitative basis of the three-prong "cover all sizes"
+ * cover the grain sizes MICP misses, the quantitative basis of the three-prong "cover all sizes"
  * thesis.
  */
 export const GRAINSIZE_CALIB = {
@@ -375,7 +375,7 @@ export const GRAINSIZE_CALIB = {
     "Fit the fine-side UCS drop to a logistic in ln d.",
     [3, 12],
   ),
-  /** γ-PGA pore-filling half-diameter — polymer bridges fine/medium pores, fails at coarse gaps. */
+  /** γ-PGA pore-filling half-diameter, polymer bridges fine/medium pores, fails at coarse gaps. */
   pgaCoverHalfD: calib(
     320,
     "µm",
@@ -433,14 +433,14 @@ export const GRAINSIZE_CALIB = {
 } as const;
 
 /**
- * Curing & deployment timeline (Study 5 — NYUAD Research Table field protocol).
+ * Curing & deployment timeline (Study 5, NYUAD Research Table field protocol).
  * The engineered crust is not instant and it is not permanent. It CURES over the first ~32 h
  * (sprayed at 0/8/16/24/32 h to keep the biofilm hydrated and the MICP substrate replenished),
  * then slowly WEATHERS over months until it must be re-applied (every ~6 months in the protocol).
  * Each binder has its own maturation speed and its own field durability:
- *   • CaCO₃ (MICP)  — matures slowly (calcite ripening needs the full 32 h) but is the most durable.
- *   • γ-PGA          — sets on an intermediate timescale; biodegradable, months-scale field life.
- *   • Alginate       — gels almost instantly but is soluble and washes out fastest.
+ *   • CaCO₃ (MICP), matures slowly (calcite ripening needs the full 32 h) but is the most durable.
+ *   • γ-PGA, sets on an intermediate timescale; biodegradable, months-scale field life.
+ *   • Alginate, gels almost instantly but is soluble and washes out fastest.
  * This is the mechanism behind the multi-prong advantage: a fast-setting polymer buys early-age
  * strength while the durable calcite floor extends the re-application interval.
  */
@@ -461,7 +461,7 @@ export const CURING_CALIB = {
     "UCS/rheometry of γ-PGA crust vs cure time; fit τ.",
     [1, 12],
   ),
-  /** CaCO₃ (MICP) maturation time constant [h] — slow calcite ripening over the full 32 h protocol. */
+  /** CaCO₃ (MICP) maturation time constant [h], slow calcite ripening over the full 32 h protocol. */
   tauMatureCaCO3: calib(
     11,
     "h",
@@ -469,7 +469,7 @@ export const CURING_CALIB = {
     "UCS of MICP cores vs cure time; fit τ to reach plateau by 32 h.",
     [6, 20],
   ),
-  /** Alginate maturation time constant [h] — near-instant Ca²⁺ egg-box gelation. */
+  /** Alginate maturation time constant [h], near-instant Ca²⁺ egg-box gelation. */
   tauMatureAlginate: calib(
     0.5,
     "h",
@@ -477,7 +477,7 @@ export const CURING_CALIB = {
     "Time-to-gel of the applied alginate; effectively immediate.",
     [0.1, 3],
   ),
-  /** γ-PGA field-life half-life [months] — biodegradable polyanion under UV/desiccation/microbial loss. */
+  /** γ-PGA field-life half-life [months], biodegradable polyanion under UV/desiccation/microbial loss. */
   halfLifePGAMonths: calib(
     5,
     "months",
@@ -485,7 +485,7 @@ export const CURING_CALIB = {
     "Residual crust cohesion vs field exposure time for a γ-PGA-only plot.",
     [2, 12],
   ),
-  /** CaCO₃ field-life half-life [months] — calcite is the durable, weather-resistant load-bearer. */
+  /** CaCO₃ field-life half-life [months], calcite is the durable, weather-resistant load-bearer. */
   halfLifeCaCO3Months: calib(
     30,
     "months",
@@ -493,7 +493,7 @@ export const CURING_CALIB = {
     "Residual UCS of an MICP crust vs field exposure over 1–2 years.",
     [12, 60],
   ),
-  /** Alginate field-life half-life [months] — soluble, rain-washout limited (shortest). */
+  /** Alginate field-life half-life [months], soluble, rain-washout limited (shortest). */
   halfLifeAlginateMonths: calib(
     3,
     "months",
@@ -520,20 +520,20 @@ export const CURING_CALIB = {
 } as const;
 
 /**
- * Ecology — engineered-colony spread (Fisher–KPP) + MazE/MazF biocontainment.
+ * Ecology, engineered-colony spread (Fisher–KPP) + MazE/MazF biocontainment.
  * ==========================================================================
  * Two distinct, literature-anchored quantities the previous model lumped into one raw
  * "spread probability" knob:
  *
- *   1. COLONY FRONT SPEED  — how fast the living colony physically expands across the treated
+ *   1. COLONY FRONT SPEED, how fast the living colony physically expands across the treated
  *      patch. Bacterial range expansion is the textbook Fisher–Kolmogorov (KPP) travelling wave:
  *          c = 2·√(D·µ)
  *      with µ the edge specific-growth-rate [h⁻¹] and D an effective sliding/expansion
  *      diffusivity [mm²·h⁻¹]. Ca²⁺ (which prongs 1–2 dose for cross-linking / MICP) *lowers* D by
  *      complexing surfactin and disabling flagellum-independent sliding (Kubota/Kobayashi 2017,
- *      PMC5374384) — a genuine spread-limiting synergy of the chemistry we already deploy.
+ *      PMC5374384), a genuine spread-limiting synergy of the chemistry we already deploy.
  *
- *   2. BIOCONTAINMENT ESCAPE FREQUENCY — the probability a cell evades the MazE/MazF kill-switch
+ *   2. BIOCONTAINMENT ESCAPE FREQUENCY, the probability a cell evades the MazE/MazF kill-switch
  *      per generation. This is the real biosafety "spread probability": it multiplies by the huge
  *      deployed cell count to give the expected number of escapees. NIH/NIST-style guidance sets a
  *      < 10⁻⁸ escapees·cell⁻¹·gen⁻¹ target (Chan et al. 2016 Nat Chem Biol; Stirling et al. 2017
@@ -573,7 +573,7 @@ export const ECOLOGY_CALIB = {
     "Colony diameter vs [Ca²⁺] (0/1/10/100 mM); fit the half-suppression constant.",
     [0.3, 10],
   ),
-  /** Physical edge length of the simulated deployment patch [mm] — sets the grid cell size Δx. */
+  /** Physical edge length of the simulated deployment patch [mm], sets the grid cell size Δx. */
   patchSpanMm: calib(
     100,
     "mm",
@@ -582,7 +582,7 @@ export const ECOLOGY_CALIB = {
     [20, 500],
   ),
   /**
-   * Kill-switch escape frequency [escapees·cell⁻¹·generation⁻¹] — a cell mutationally inactivating
+   * Kill-switch escape frequency [escapees·cell⁻¹·generation⁻¹], a cell mutationally inactivating
    * MazF / retaining the antitoxin. Default at the NIH < 10⁻⁸ biocontainment target.
    */
   escapeFreqPerGen: calib(
@@ -610,7 +610,7 @@ export const ECOLOGY_CALIB = {
   ),
 } as const;
 
-/** Composite — multi-prong strength combination (rule of mixtures + synergy). */
+/** Composite, multi-prong strength combination (rule of mixtures + synergy). */
 export const COMPOSITE_CALIB = {
   /**
    * Pairwise PHYSICOCHEMICAL synergy η_ij in γ_total = Σγᵢ + Σ η_ij·√(γᵢγⱼ).
@@ -641,7 +641,7 @@ export const COMPOSITE_CALIB = {
   ),
 } as const;
 
-/** Inter-prong interactions — shared-resource competition + co-expression burden. */
+/** Inter-prong interactions, shared-resource competition + co-expression burden. */
 export const INTERACTION_CALIB = {
   /**
    * Relative Ca²⁺ demand weight of each prong (all three sequester divalent calcium):
@@ -688,7 +688,7 @@ export const INTERACTION_CALIB = {
     0.05,
     "mM",
     "calcite precipitation is an irreversible high-affinity Ca²⁺ sink",
-    "Effective — set far below the polymer Kd values; not directly titratable.",
+    "Effective, set far below the polymer Kd values; not directly titratable.",
     [0.01, 0.3],
   ),
   /**
@@ -704,7 +704,7 @@ export const INTERACTION_CALIB = {
   ),
 } as const;
 
-/** Economic scalability — per-prong deployment cost bases (field-scale). */
+/** Economic scalability, per-prong deployment cost bases (field-scale). */
 export const ECONOMIC_CALIB = {
   // --- Prong 1: γ-PGA fermentation ---
   glucoseCostPerKg: calib(
@@ -753,7 +753,7 @@ export const ECONOMIC_CALIB = {
   co2CreditPerKg: calib(
     0.01,
     "USD·kg⁻¹ CO₂",
-    "voluntary carbon market 2024 ≈ $6/tCO₂ avg; nature-based removals command a premium — $10/t is a defensible mid-point (State of the VCM 2024)",
+    "voluntary carbon market 2024 ≈ $6/tCO₂ avg; nature-based removals command a premium, $10/t is a defensible mid-point (State of the VCM 2024)",
     "Use the applicable carbon-credit price for durable mineral removal.",
     [0.003, 0.03],
   ),

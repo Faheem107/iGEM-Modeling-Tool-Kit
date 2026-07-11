@@ -7,13 +7,13 @@
  * page; otherwise the renderer builds a Google Scholar search of the exact label so the link still
  * lands on the primary work rather than a guessed URL.
  *
- * HONESTY NOTE — every entry here is drawn from something already in this repository: the
+ * HONESTY NOTE, every entry here is drawn from something already in this repository: the
  * calibration provenance in src/lib/physics/constants.ts (each Calib carries a `source`) or the
  * physics module headers. For the ECONOMIC module the cost figures were checked against the
  * published biocementation and carbon-market literature (URLs below). No DOI here is invented:
  * hard-coded links are either verified references or stable dataset pages; anything uncertain is
  * left as a title search rather than a fabricated identifier. If you add a source, cite a real
- * reference you can defend to a judge — see .claude/RESPONSIBLE_AI_USE.md.
+ * reference you can defend to a judge.
  */
 
 import type { ModuleId } from "./prongs";
@@ -117,14 +117,14 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
     sources: [
       {
         label:
-          "Lassin et al. (2018) — TST surface-complexation CaCO₃ precipitation",
+          "Lassin et al. (2018), TST surface-complexation CaCO₃ precipitation",
         detail:
           "kPrecip and ACC-ripening kinetics; the precipitation-rate law (caco3.ts header, CACO3_CALIB).",
         kind: "literature",
       },
       {
         label:
-          "Rodriguez-Blanco et al. (2011) — ACC → vaterite → calcite crystallisation",
+          "Rodriguez-Blanco et al. (2011), ACC → vaterite → calcite crystallisation",
         detail:
           "The vaterite fraction, its slow solution-mediated ripening, and its reduced strength (CACO3_CALIB).",
         kind: "literature",
@@ -142,7 +142,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       'Sodium-alginate "egg-box" gelation: Ca²⁺ bridges guluronate blocks; only G-blocks bear load.',
     sources: [
       {
-        label: 'Grant et al. — "egg-box" model of alginate gelation',
+        label: 'Grant et al., "egg-box" model of alginate gelation',
         detail:
           "Guluronate-weighted junction density (ALGINATE_CALIB, moduleMath.ts).",
         kind: "model",
@@ -180,10 +180,10 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
   },
   "protein-3d": {
     intro:
-      "A structural view of the key enzymes — PgsBCA (γ-PGA synthase, Prong 1) and carbonic anhydrase (Prong 2).",
+      "A structural view of the key enzymes, PgsBCA (γ-PGA synthase, Prong 1) and carbonic anhydrase (Prong 2).",
     sources: [
       {
-        label: "RCSB Protein Data Bank — deposited structures (uploaded .pdb)",
+        label: "RCSB Protein Data Bank, deposited structures (uploaded .pdb)",
         detail:
           "The Cα backbone is drawn directly from residue coordinates; no free parameters.",
         kind: "literature",
@@ -229,7 +229,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       },
       {
         label:
-          "Shao & Lu (2000) — threshold friction velocity parameterisation",
+          "Shao & Lu (2000), threshold friction velocity parameterisation",
         detail: "The threshold parameter A fit on untreated sand.",
         kind: "literature",
       },
@@ -264,7 +264,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
     sources: [
       {
         label:
-          "Erdmann et al. (2024), Discover Materials — MICP vs particle size",
+          "Erdmann et al. (2024), Discover Materials, MICP vs particle size",
         detail:
           "MICP UCS-vs-diameter sweet spot (~63–125 µm) and the coarse/fine fall-off (GRAINSIZE_CALIB).",
         kind: "literature",
@@ -285,12 +285,12 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label: "Wei (2015); acidic-polymer CaCO₃ nucleation",
         detail:
-          "γ-PGA carboxylates template/toughen calcite — the 1+2 synergy η (COMPOSITE_CALIB).",
+          "γ-PGA carboxylates template/toughen calcite, the 1+2 synergy η (COMPOSITE_CALIB).",
         kind: "literature",
       },
       {
         label:
-          "Ceroni (2015); Borkowski (2016) — metabolic burden of dual heterologous expression",
+          "Ceroni (2015); Borkowski (2016), metabolic burden of dual heterologous expression",
         detail:
           "The co-expression burden knock-down when γ-PGA synthase and CA share one cell (INTERACTION_CALIB).",
         kind: "literature",
@@ -323,14 +323,14 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label: "Per-binder maturation τ and field half-life H",
         detail:
-          "Alginate fast/short, γ-PGA intermediate, calcite slow/durable — the multi-prong timing advantage.",
+          "Alginate fast/short, γ-PGA intermediate, calcite slow/durable, the multi-prong timing advantage.",
         kind: "internal",
       },
     ],
   },
   economic: {
     intro:
-      "Bottom-up per-prong deployment cost, summed per combination and benchmarked against the published biocementation and carbon-market literature — every headline figure below is checked against a real study.",
+      "Bottom-up per-prong deployment cost, summed per combination and benchmarked against the published biocementation and carbon-market literature, every headline figure below is checked against a real study.",
     sources: [
       {
         label:
@@ -342,15 +342,15 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       },
       {
         label:
-          "Plant-derived urease EICP field study (2025), PLOS One — doi:10.1371/journal.pone.0331241",
+          "Plant-derived urease EICP field study (2025), PLOS One, doi:10.1371/journal.pone.0331241",
         detail:
-          "Carbonate-precipitation treatment at ≈ $52 m⁻³ vs ≈ $135 m⁻³ for microbial MICP — the order-of-magnitude reality check on caReagentCostPerHa.",
+          "Carbonate-precipitation treatment at ≈ $52 m⁻³ vs ≈ $135 m⁻³ for microbial MICP, the order-of-magnitude reality check on caReagentCostPerHa.",
         kind: "literature",
         url: "https://doi.org/10.1371/journal.pone.0331241",
       },
       {
         label:
-          "Sodium-alginate market price — bulk ≈ $6–12 kg⁻¹ (IMARC / Procurement Resource price trend, 2024)",
+          "Sodium-alginate market price, bulk ≈ $6–12 kg⁻¹ (IMARC / Procurement Resource price trend, 2024)",
         detail:
           "Grounds alginateCostPerKg = 9 USD·kg⁻¹ (Prong-3 commodity binder).",
         kind: "literature",
@@ -358,7 +358,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       },
       {
         label:
-          "State of the Voluntary Carbon Market 2024 — average ≈ $6 tCO₂⁻¹; nature-based removals command a premium",
+          "State of the Voluntary Carbon Market 2024, average ≈ $6 tCO₂⁻¹; nature-based removals command a premium",
         detail:
           "Sets the CO₂ credit subtracted from the CaCO₃ prong (co2CreditPerKg corrected from $50 to $10 tCO₂⁻¹).",
         kind: "literature",
@@ -366,11 +366,62 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       },
       {
         label:
-          'Conventional baselines — USDA Forest Service, "Dust Palliative Selection and Application Guide" (9977-1207); commercial polymer emulsions (Soilworks Soiltac)',
+          'Conventional baselines, USDA Forest Service, "Dust Palliative Selection and Application Guide" (9977-1207); commercial polymer emulsions (Soilworks Soiltac)',
         detail:
           "The petrochemical dust-suppressant and hard-engineering costs the biological treatment breaks even against.",
         kind: "literature",
         url: "https://www.fs.usda.gov/t-d/pubs/pdf/99771207.pdf",
+      },
+    ],
+  },
+  killswitch: {
+    intro:
+      "A Type II toxin–antitoxin (MazE/MazF) circuit, its aTc-inducible and plasmid-dilution kill modes, the horizontal-gene-transfer containment logic, and the spore-germination caveat, grounded in the team's reframe research (project reframe/*.md) and its primary literature.",
+    sources: [
+      {
+        label:
+          'Kamada, Hanaoka & Burley (2003), "Crystal structure of the MazE/MazF complex", Mol. Cell 11:875',
+        detail:
+          "The E. coli MazE·MazF complex (PDB 1UB4) that grounds the antitoxin-neutralises-toxin mechanism and the 3D viewer.",
+        kind: "literature",
+        url: "https://doi.org/10.1016/S1097-2765(03)00097-2",
+      },
+      {
+        label:
+          "B. subtilis EndoA/MazF structures, PDB 4MDX (MazF·RNA) and 4ME7 (MazF·cognate MazE)",
+        detail:
+          "The cognate B. subtilis toxin bound to RNA substrate and to its own antitoxin, the structural basis of the 'lock-and-key' species specificity.",
+        kind: "literature",
+        url: "https://www.rcsb.org/structure/4ME7",
+      },
+      {
+        label:
+          "Yamaguchi, Park & Inouye (2011), Toxin–antitoxin systems in bacteria and archaea, Annu. Rev. Genet. 45:61",
+        detail:
+          "Cognate specificity: an antitoxin does not neutralise a toxin from a different species/family, why E. coli MazF kills a B. subtilis recipient lacking E. coli MazE.",
+        kind: "literature",
+        url: "https://doi.org/10.1146/annurev-genet-110410-132412",
+      },
+      {
+        label:
+          "Ghosh, Korza, Setlow et al. (2012), Levels of germination proteins in dormant and superdormant B. subtilis spores, PMC3347068",
+        detail:
+          "Superdormancy from very low germinant-receptor levels, the fraction of spores a single germinant cannot wake, which the kill switch (translation-dependent) then cannot reach.",
+        kind: "literature",
+        url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC3347068/",
+      },
+      {
+        label:
+          "TA-system population dynamics (Cataudella et al. 2013; standard mass-action toxin–antitoxin ODEs)",
+        detail:
+          "The dA/dt, dT/dt, dC/dt balances and the toxin-gated net growth rate integrated in killswitch.ts.",
+        kind: "model",
+      },
+      {
+        label: "NYUAD iGEM 2026 reframe research, project reframe/*.md",
+        detail:
+          "The aTc-inducible + plasmid-dilution kill design, the E. coli MazEF HGT-containment split (with mazE splitting / codon optimisation), and the spore germinate-then-kill strategy.",
+        kind: "internal",
       },
     ],
   },

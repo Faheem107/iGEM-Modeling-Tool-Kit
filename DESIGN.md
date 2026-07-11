@@ -1,4 +1,4 @@
-# Dunelock Toolkit — Design System
+# Dunelock Toolkit, Design System
 
 This document is the single source of truth for the look, feel, and motion of the
 NYUAD iGEM 2026 modeling toolkit. It exists to kill the "generic AI dashboard"
@@ -25,14 +25,14 @@ cross-section). We do **not** use the old indigo/cyan sci-fi palette anymore.
 | `--dune-rose`    | `#C28A7C`  | Tertiary accent (grain cross-section), highlights |
 | `--dune-sand`    | `#E7D8C4`  | Warm surface / card fill (light)                   |
 | `--dune-paper`   | `#FBF7F0`  | Page background (light)                            |
-| `--dune-basalt`  | `#241C19`  | Page background (dark) — warm near-black, no blue  |
+| `--dune-basalt`  | `#241C19`  | Page background (dark), warm near-black, no blue  |
 | `--dune-slate`   | `#2E2622`  | Card fill (dark)                                   |
 | `--dune-ash`     | `#8A7E75`  | Muted text / captions                             |
 
 **Rule:** semantic status colors (success/warn/error) are drawn from the same
-warm family — success = `--dune-teal`, warning = `--dune-orange`, error =
+warm family, success = `--dune-teal`, warning = `--dune-orange`, error =
 `--dune-maroon`. No stock emerald/rose/indigo tailwind ramps in UI chrome.
-(Data-viz series may still use a wider accessible ramp — see §7.)
+(Data-viz series may still use a wider accessible ramp, see §7.)
 
 These are defined as CSS variables in `app/globals.css` and exposed to Tailwind
 via `@theme`. Use the tokens, never raw hexes in components.
@@ -41,17 +41,17 @@ via `@theme`. Use the tokens, never raw hexes in components.
 
 ## 2. Typography
 
-- **Headings / display:** **Super Dream** — the rounded retro face that matches
+- **Headings / display:** **Super Dream**, the rounded retro face that matches
   the Dunelock wordmark. Used for h1–h3, portal titles, hero, section titles.
   Loaded via `@font-face` from `public/fonts/`. Fallback stack:
   `"Super Dream", "Fredoka", "Baloo 2", system-ui, sans-serif` so the site still
   reads on-brand if the file is missing.
 - **Body / UI:** **Lexend** (Google font via `next/font`). Weights in use:
-  - `300` — long-form captions, muted metadata
-  - `400` — body copy
-  - `500` — default UI text, labels
-  - `600` — emphasized labels, table headers
-  - `700` — buttons, small all-caps eyebrows
+  - `300`, long-form captions, muted metadata
+  - `400`, body copy
+  - `500`, default UI text, labels
+  - `600`, emphasized labels, table headers
+  - `700`, buttons, small all-caps eyebrows
 - **Monospace / numeric:** reserve for actual code/equations only. Numbers in the
   UI use Lexend with `font-variant-numeric: tabular-nums`.
 - **Kill the old rule:** the blanket `* { font-family: Montserrat !important }`
@@ -68,8 +68,7 @@ These are the specific tells the user flagged. Treat each as a lint rule.
 
 1. **No fully-rounded buttons/inputs.** Buttons use `rounded-none` or at most
    `rounded-[3px]` (`--radius-crisp`). Pills (`rounded-full`) are allowed **only**
-   for: the theme toggle, avatar/logo, carousel dots, and true "tag/chip" data —
-   never for actions.
+   for: the theme toggle, avatar/logo, carousel dots, and true "tag/chip" data, never for actions.
 2. **No colored left-accent or top-accent bars** (`border-l-4`, `border-t-4`
    colored strips on cards). Separation is a **1px hairline** in `--border`, or a
    change of surface tone. Emphasis is done with the heading, not a stripe.
@@ -78,7 +77,7 @@ These are the specific tells the user flagged. Treat each as a lint rule.
    (b) a one-step surface-tone change. A single, near-flat
    `--shadow-flat: 0 1px 0 rgba(0,0,0,.04)` is the only permitted shadow, used
    sparingly. Retro/arcade game surfaces are exempt (they keep neon/CRT styling).
-4. **No glassmorphism stacks** — the page-wide `backdrop-blur` + translucent card
+4. **No glassmorphism stacks**, the page-wide `backdrop-blur` + translucent card
    look is replaced by opaque warm surfaces. One ambient background (the grain
    gradient) is fine; UI panels sit on solid fills.
 5. **No gradient ring/`ring-4` focus halos as decoration.** Focus is a 2px solid
@@ -101,27 +100,27 @@ These are the specific tells the user flagged. Treat each as a lint rule.
     shadow, `rounded-[4px]`.
 - **motion-primitives** (already in `components/motion-primitives/`) supply the
   motion layer and are used **throughout**, not just on the landing page:
-  - `TextEffect` — heading/intro reveals (word or char `fade-in-blur`).
-  - `AnimatedBackground` — active-tab/nav highlight (already used in the pipeline
+  - `TextEffect`, heading/intro reveals (word or char `fade-in-blur`).
+  - `AnimatedBackground`, active-tab/nav highlight (already used in the pipeline
     nav; extend to portal cards and sub-nav).
-  - `Carousel` — portal chooser and any multi-panel step flow.
+  - `Carousel`, portal chooser and any multi-panel step flow.
   - Add as needed: `InView`/scroll-reveal wrapper for graphs (§6).
 - Icons: `lucide-react`, stroke width `1.5`, sized to the text. No filled icon
-  chips with colored backgrounds (that's an AI tell) — icons sit inline.
+  chips with colored backgrounds (that's an AI tell), icons sit inline.
 
 ---
 
 ## 5. Portal explainer modal (required on every portal open)
 
-When any portal — or any prong **combination** — is opened, a smooth modal
+When any portal, or any prong **combination**, is opened, a smooth modal
 presents a **3-step explainer** before the tool loads. Component:
 `<PortalIntro>` driven by data in `src/lib/prongs.ts`.
 
 Three steps, in order, each revealed with `TextEffect`:
 
-1. **What it is** — one plain-language sentence.
-2. **What it does** — what the biology/physics accomplishes.
-3. **What we plan to model** — the specific quantities/equations this portal
+1. **What it is**, one plain-language sentence.
+2. **What it does**, what the biology/physics accomplishes.
+3. **What we plan to model**, the specific quantities/equations this portal
    simulates.
 
 Behavior:
@@ -143,7 +142,7 @@ portal entry.
   `700ms ease-out`). One shared `<Reveal>` component; do not hand-roll per graph.
 - Page/section transitions: 300–500ms, `ease-out`. No bounce on chrome; light
   spring (`bounce ≤ 0.2`) only on playful/mascot elements.
-- Respect `prefers-reduced-motion` (already handled globally — keep it).
+- Respect `prefers-reduced-motion` (already handled globally, keep it).
 
 ---
 
@@ -164,9 +163,9 @@ portal entry.
 
 - Remove decorative status noise that serves no user purpose:
   - `"Cartoon Mode Enabled"` badge (`HighFidelityProteinExplorer.tsx:1098`).
-  - `"LP: {status}"` chip (`FbaOptimizationModule.tsx:373`) — fold the solver
+  - `"LP: {status}"` chip (`FbaOptimizationModule.tsx:373`), fold the solver
     status into a single explained line, not a floating chip.
-  - `"Optimal (FBA)"` raw label (`AdvancedFbaPortal.tsx:504`) — replace with a
+  - `"Optimal (FBA)"` raw label (`AdvancedFbaPortal.tsx:504`), replace with a
     human sentence ("Solver found an optimal flux distribution").
 - Any button that only toggles a cosmetic label with no functional effect is
   deleted.
@@ -197,7 +196,7 @@ Sandyx) lives in the root layout.
 - The Dunelock logo (`public/dunelock-logo.png`, from `attachments/`) sits in the
   **top-right** as a home button. Clicking it routes to `/` and resets transient
   state (selected prongs, open modals) to the start.
-- It is a plain image link — round badge is fine (it's a logo, exempt from the
+- It is a plain image link, round badge is fine (it's a logo, exempt from the
   no-pills rule), **no** added shadow, ring, or hover glow beyond a subtle
   scale/opacity.
 
@@ -205,7 +204,7 @@ Sandyx) lives in the root layout.
 
 ## 11. Protein Explorer (PyMOL question)
 
-PyMOL is a **desktop OpenGL application** — it cannot run inside a web page, so it
+PyMOL is a **desktop OpenGL application**, it cannot run inside a web page, so it
 can't be embedded in this Next.js site directly. The correct web-native, equally
 high-fidelity path is **Mol\*** (molstar, the viewer RCSB PDB itself uses) or
 **3Dmol.js**. Recommendation: **Mol\*** for publication-quality cartoon/surface
@@ -219,7 +218,7 @@ hand-rolled `HighFidelityProteinExplorer` canvas cartoon. PyMOL can still be use
 
 See the accompanying report. Summary: `shadcn` UI primitives (via `npx shadcn
 add …`), `molstar` (protein viewer), and the **Super Dream** font file (not on
-Google Fonts — must be supplied). Lexend loads via `next/font/google` (no
+Google Fonts, must be supplied). Lexend loads via `next/font/google` (no
 download).
 
 ---

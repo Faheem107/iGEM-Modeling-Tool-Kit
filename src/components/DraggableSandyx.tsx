@@ -26,7 +26,7 @@ function clientPoint(
   return t ? { x: t.clientX, y: t.clientY } : null;
 }
 
-/** A drop target under the pointer — an underlined <Term> or one of the three module toggles. */
+/** A drop target under the pointer, an underlined <Term> or one of the three module toggles. */
 type DropTarget =
   | { kind: "term"; id: string }
   | { kind: "math"; id: ModuleId }
@@ -99,8 +99,7 @@ export default function DraggableSandyx({ size, className }: Props) {
   const onDragStart = () => setDragging(true);
 
   // Hit-testing is expensive (elementsFromPoint forces a layout flush), so run it at most once
-  // per animation frame, and only push a new hoverId into context when it actually changed —
-  // otherwise every drag tick re-renders the whole provider subtree.
+  // per animation frame, and only push a new hoverId into context when it actually changed, // otherwise every drag tick re-renders the whole provider subtree.
   const runHitTest = React.useCallback(() => {
     rafRef.current = null;
     const p = pendingPoint.current;
@@ -149,7 +148,7 @@ export default function DraggableSandyx({ size, className }: Props) {
   return (
     <motion.img
       src="/sandyx.png"
-      alt="Sandyx — drag me onto an underlined word, or a Show-the-Math toggle, for an explanation"
+      alt="Sandyx, drag me onto an underlined word, or a Show-the-Math toggle, for an explanation"
       draggable={false}
       drag
       dragSnapToOrigin

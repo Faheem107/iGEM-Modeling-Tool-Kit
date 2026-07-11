@@ -124,7 +124,7 @@
 
 /* Everything is Lexend by default (via --font-sans on <body>); its weight scales
  * with the text size (light → black). Super Dream is reserved for *very large*
- * display type only, and is opt-in via the .font-display utility — never applied
+ * display type only, and is opt-in via the .font-display utility, never applied
  * to ordinary h1/h2/h3 section or panel titles. */
 .font-display {
   font-family: var(--font-display);
@@ -274,7 +274,7 @@ html {
 }
 
 /* ---------------------------------------------------------------------------
- * Sandyx Adventure — retro 80s arcade game overlay
+ * Sandyx Adventure, retro 80s arcade game overlay
  * ------------------------------------------------------------------------- */
 .font-retro {
   font-family: var(--font-press-start), ui-monospace, "Courier New", monospace;
@@ -285,7 +285,7 @@ html {
   font-family: var(--font-press-start), ui-monospace, "Courier New", monospace;
   letter-spacing: 0.02em;
   line-height: 1.6;
-  /* soft neon halo only — no hard offset shadow */
+  /* soft neon halo only, no hard offset shadow */
   text-shadow: 0 0 12px currentColor;
 }
 .pixelated {

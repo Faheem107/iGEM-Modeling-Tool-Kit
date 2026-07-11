@@ -12,7 +12,7 @@ open-source license requirement; note that **Software & AI** village teams are n
 > If your team does not have any software tool, you can totally ignore this repository. If left unchanged, this
 repository will be automatically deleted by the end of the season.
 
-> **Using an AI assistant (e.g. Claude Code)?** Please read [.claude/RESPONSIBLE_AI_USE.md](.claude/RESPONSIBLE_AI_USE.md) first. You remain fully responsible for everything you commit: don't misrepresent what your tool does, never commit secrets, and review every change.
+> **Using an AI assistant?** Please read the responsible-use notes first. You remain fully responsible for everything you commit: don't misrepresent what your tool does, never commit secrets, and review every change.
 
 ## Description
 Let people know what your project can do specifically. Provide context and add a link to any reference visitors might
@@ -33,7 +33,7 @@ include in the README.
 
 ## Data and large files
 Keep this repository for **source code**. For datasets, machine-learning model weights, large media, and other heavy
-artifacts, use [Zenodo](https://teams.igem.org/go/deliverables/software/zenodo) — it gives each upload a citable DOI and
+artifacts, use [Zenodo](https://teams.igem.org/go/deliverables/software/zenodo), it gives each upload a citable DOI and
 is the recommended long-term archive for iGEM teams. Reference your Zenodo records from this README so judges and future
 teams can find them.
 
@@ -52,7 +52,7 @@ helpful if it requires external setup, such as starting a Selenium server for te
 Show your appreciation to those who have contributed to the project.
 
 ## License
-This repository is licensed under the [Apache License 2.0](LICENSE) — a permissive
+This repository is licensed under the [Apache License 2.0](LICENSE), a permissive
 open-source license recommended for software (Creative Commons licenses are *not*
 intended for source code). You are free to use, modify, and distribute this software,
 provided you keep the license and attribution notices. If you prefer different terms

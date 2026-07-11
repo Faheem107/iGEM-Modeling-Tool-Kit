@@ -1,5 +1,5 @@
 /**
- * Approach 2 — Polymer Physics & Intermolecular Cross-linking Thermodynamics
+ * Approach 2, Polymer Physics & Intermolecular Cross-linking Thermodynamics
  * =========================================================================
  * Divalent-cation (Ca²⁺/Mg²⁺) cross-linking of a carboxylated biopolymer into a
  * structural hydrogel, evaluated with a Langmuir binding isotherm feeding affine
@@ -38,21 +38,21 @@ export interface CrossLinkInputs {
 }
 
 export interface CrossLinkResult {
-  /** θ — fractional saturation of binding sites (0–1). */
+  /** θ, fractional saturation of binding sites (0–1). */
   theta: number;
-  /** ν — effective cross-link network density [mol·m⁻³ proxy]. */
+  /** ν, effective cross-link network density [mol·m⁻³ proxy]. */
   nu: number;
-  /** G — shear modulus [Pa]. */
+  /** G, shear modulus [Pa]. */
   shearModulus: number;
 }
 
-/** Eq 4 — Langmuir fractional saturation of carboxylate sites by divalent cations. */
+/** Eq 4, Langmuir fractional saturation of carboxylate sites by divalent cations. */
 export function saturation(ionConcentration: number, Kd: number): number {
   if (ionConcentration <= 0) return 0;
   return ionConcentration / (Kd + ionConcentration);
 }
 
-/** Eq 5 — affine network cross-link density with finite-chain end correction. */
+/** Eq 5, affine network cross-link density with finite-chain end correction. */
 export function crossLinkDensity(
   rhoPolymer: number,
   theta: number,
@@ -63,7 +63,7 @@ export function crossLinkDensity(
   return Math.max(0, rhoPolymer * theta * endCorrection);
 }
 
-/** Eq 6 — rubber-elasticity shear modulus G = νRT. */
+/** Eq 6, rubber-elasticity shear modulus G = νRT. */
 export const shearModulus = (nu: number, temperature: number): number =>
   nu * PHYS.R * temperature;
 

@@ -1,5 +1,5 @@
 /**
- * Ecology — Colony Spread (Fisher–KPP) + MazE/MazF Biocontainment
+ * Ecology, Colony Spread (Fisher–KPP) + MazE/MazF Biocontainment
  * ================================================================
  * Turns the ecological-spread module's two questions into literature-anchored numbers instead of
  * one phenomenological "spread probability" slider:
@@ -9,7 +9,7 @@
  *          c = 2·√(D·µ)          [mm·h⁻¹]
  *      µ = edge specific growth rate [h⁻¹]; D = effective sliding-expansion diffusivity [mm²·h⁻¹].
  *      Ca²⁺ (dosed by prongs 1–2 for cross-linking / MICP) lowers D by complexing surfactin and
- *      disabling flagellum-independent sliding — a real spread-limiting synergy (PMC5374384).
+ *      disabling flagellum-independent sliding, a real spread-limiting synergy (PMC5374384).
  *
  *   2. HOW WELL is it contained? The MazE/MazF kill-switch has a per-cell-per-generation escape
  *      frequency p. Over a deployed population of N cells the expected number of escapees is N·p and
@@ -22,7 +22,7 @@
 import { ECOLOGY_CALIB as E, cval } from "./constants";
 
 /** Effective sliding-expansion diffusivity D [mm²·h⁻¹] as a function of local Ca²⁺ [mM].
- *  D(Ca) = D₀ / (1 + [Ca²⁺]/K) — surfactin-complexation suppression (Kubota & Kobayashi 2017). */
+ *  D(Ca) = D₀ / (1 + [Ca²⁺]/K), surfactin-complexation suppression (Kubota & Kobayashi 2017). */
 export function expansionDiffusivity(caConc_mM: number): number {
   const D0 = cval(E.motilityD0);
   const K = cval(E.caSuppressHalf);
@@ -79,8 +79,8 @@ export function frontKinematics(
 /**
  * Cellular-automaton per-neighbour invasion probability for the (time-accelerated) colony map.
  * The lattice is a schematic visualiser, so this is a monotone function of the SAME physical
- * drivers as the rigorous Fisher speed — it rises with colony vitality (µ) and falls with Ca²⁺
- * suppression of sliding — rather than a literal mm→pixel conversion (which the mm·day⁻¹ readout
+ * drivers as the rigorous Fisher speed, it rises with colony vitality (µ) and falls with Ca²⁺
+ * suppression of sliding, rather than a literal mm→pixel conversion (which the mm·day⁻¹ readout
  * reports exactly). Kept in a runnable band so the map neither freezes nor floods.
  */
 export function latticeInvasionProb(

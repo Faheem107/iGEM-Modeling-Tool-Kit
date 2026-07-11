@@ -75,7 +75,7 @@ export default function EcologicalSpread({
 
   // --- Physical spread & biocontainment levers (module-local; not part of the shared CAConfig) ---
   // Ca²⁺ dosed for cross-linking / MICP also SUPPRESSES colony sliding (surfactin complexation,
-  // Kubota & Kobayashi 2017) — a real spread-limiting synergy of the chemistry the prongs deploy.
+  // Kubota & Kobayashi 2017), a real spread-limiting synergy of the chemistry the prongs deploy.
   const [caConc, setCaConc] = useState<number>(1.0); // mM Ca²⁺
   // MazE/MazF kill-switch escape frequency exponent: escape = 10^(−escapeExp) per cell·generation.
   const [escapeExp, setEscapeExp] = useState<number>(8); // 8 → 10⁻⁸ (NIH target)
@@ -132,7 +132,7 @@ export default function EcologicalSpread({
   const gridRef = useRef<number[][]>([]);
   const resourceGridRef = useRef<number[][]>([]);
   const pgaGridRef = useRef<number[][]>([]);
-  // Per-cell generation age of the active colony — drives MazE/MazF plasmid-dilution death.
+  // Per-cell generation age of the active colony, drives MazE/MazF plasmid-dilution death.
   const ageGridRef = useRef<number[][]>([]);
 
   // Initialize grids
@@ -226,7 +226,7 @@ export default function EcologicalSpread({
   // • active cells consume water, secrete crust, and age one generation
   // • the MazE/MazF kill-switch fires two ways: instantly when local moisture dries out (SigB drought
   // response), and stochastically as the containment plasmid dilutes out over ~killSwitchDelay–2×
-  // generations — so even well-watered colonies self-terminate, blocking overspread & HGT.
+  // generations, so even well-watered colonies self-terminate, blocking overspread & HGT.
   const tickSimulation = () => {
     const size = config.gridSize;
     const grid = gridRef.current;
@@ -277,7 +277,7 @@ export default function EcologicalSpread({
           nextRes[r][c] = Math.max(0, moisture - config.resourceConsume);
 
           // Kill-switch: drought-triggered OR plasmid dilution (probability ramps after genDilution,
-          // certain by ~2× — matching the 8–20 generation dilution window).
+          // certain by ~2×, matching the 8–20 generation dilution window).
           const drought = nextRes[r][c] <= 0.05;
           const dilutionP =
             gen <= genDilution
@@ -604,7 +604,7 @@ export default function EcologicalSpread({
                 }`}
               >
                 <span>
-                  Linked to secretion — faster spread when γ-PGA yield is higher
+                  Linked to secretion, faster spread when γ-PGA yield is higher
                 </span>
               </div>
             ) : (
@@ -665,7 +665,7 @@ export default function EcologicalSpread({
             </div>
           </div>
 
-          {/* Ca²⁺ dosing — suppresses sliding motility (a spread-limiting lever we already control). */}
+          {/* Ca²⁺ dosing, suppresses sliding motility (a spread-limiting lever we already control). */}
           <div>
             <div
               className={`flex justify-between text-[11px] mb-1 ${isLightMode ? "text-stone-701" : "text-slate-400"}`}
@@ -798,7 +798,7 @@ export default function EcologicalSpread({
             gene transfer to wild strains.
           </p>
 
-          {/* Quantitative escape-frequency biosafety calculator — the real "spread probability". */}
+          {/* Quantitative escape-frequency biosafety calculator, the real "spread probability". */}
           <div
             className={`mb-3 p-3 rounded border font-mono ${isLightMode ? "bg-white border-amber-900/12" : "bg-[#1c1512] border-slate-800"}`}
           >
@@ -852,7 +852,7 @@ export default function EcologicalSpread({
             <p
               className={`text-[9px] mt-1 leading-normal font-sans ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
             >
-              Two independent switches multiply their escape frequencies — the
+              Two independent switches multiply their escape frequencies, the
               design route to beating the NIH 10⁻⁸ line.
             </p>
 
@@ -900,14 +900,14 @@ export default function EcologicalSpread({
                 {escape.containedAtScale ? (
                   <>
                     <ShieldCheck className="w-3.5 h-3.5" /> Contained at hectare
-                    scale — fewer than one escapee expected (vs NIH 10⁻⁸
+                    scale, fewer than one escapee expected (vs NIH 10⁻⁸
                     single-cell target: {escape.meetsNIH ? "met" : "not met"}).
                   </>
                 ) : (
                   <>
                     <ShieldAlert className="w-3.5 h-3.5" />{" "}
                     {escape.expectedEscapees.toExponential(1)} escapees expected
-                    per ha — enable the redundant switch or tighten the design.
+                    per ha, enable the redundant switch or tighten the design.
                   </>
                 )}
               </div>
@@ -955,7 +955,7 @@ export default function EcologicalSpread({
                     : "bg-[#081810] text-teal-400 border-teal-800"
                 }`}
               >
-                ✓ BIOSAFETY VERIFIED: MazE/MazF kill-switch operational — live
+                ✓ BIOSAFETY VERIFIED: MazE/MazF kill-switch operational, live
                 microbes cleared while the {binderLabel} sand crust remains
                 intact.
               </div>
@@ -1030,7 +1030,7 @@ export default function EcologicalSpread({
             colony; watch it spread along the moisture front, lay down{" "}
             {binderLabel}, and then self-terminate as the{" "}
             <GlossaryTerm term="maze-mazf">MazE/MazF</GlossaryTerm> plasmid
-            dilutes out — leaving crust but no live microbes.
+            dilutes out, leaving crust but no live microbes.
           </p>
 
           <div className="flex flex-col md:flex-row gap-6 items-start justify-center">

@@ -1,12 +1,12 @@
 /**
- * Curing & Deployment Timeline — how the crust rises to strength and then weathers away
+ * Curing & Deployment Timeline, how the crust rises to strength and then weathers away
  * ====================================================================================
- * The macro modules all report the crust's MATURE cohesion — its strength once fully cured. But in
+ * The macro modules all report the crust's MATURE cohesion, its strength once fully cured. But in
  * the field the crust is neither instant nor permanent (NYUAD Research Table, Study 5):
  *
  *   • MATURATION (hours). The biofilm is sprayed at 0/8/16/24/32 h to stay hydrated and keep the
  *     MICP substrate topped up; it is "fully mature" at 32 h. Each binder cures on its own
- *     timescale — alginate gels on contact, γ-PGA sets within hours, and MICP calcite ripens slowly
+ *     timescale, alginate gels on contact, γ-PGA sets within hours, and MICP calcite ripens slowly
  *     over the whole 32 h protocol. Modelled as a saturating approach to the mature cohesion,
  *     γ_p(t) = γ_p^mature · (1 − e^{−t/τ_p}).
  *
@@ -17,7 +17,7 @@
  *
  * This is the mechanism behind the multi-prong advantage: a fast-setting polymer buys EARLY-AGE
  * strength (the crust resists wind within hours instead of days) while the durable calcite floor
- * EXTENDS the re-application interval — so a combination beats any single prong at both ends of the
+ * EXTENDS the re-application interval, so a combination beats any single prong at both ends of the
  * timeline. Every parameter is a Calib in constants.ts (CURING_CALIB).
  */
 
@@ -91,7 +91,7 @@ export interface CuringTimeline {
   designWindMs: number;
   /** Hours to reach 95% of the mature cohesion. */
   hoursToMature: number;
-  /** Fraction of mature strength already available at the first re-spray (8 h) — the early-age metric. */
+  /** Fraction of mature strength already available at the first re-spray (8 h), the early-age metric. */
   earlyAgeFraction: number;
   /** Months until the total cohesion drops below the survival floor (Infinity if it never does within the horizon). */
   reapplyMonths: number;

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * SandyxAdventure — full-screen interactive story + retro arcade
+ * SandyxAdventure, full-screen interactive story + retro arcade
  * =============================================================
  * Launched when the reader clicks the Sandyx mascot beside "NYUAD iGEM 2026".
  * A near-fullscreen overlay runs a smooth, skippable flow:
@@ -190,7 +190,7 @@ function SpeechBubble({
 }
 
 // ===========================================================================
-// SCENE 1 — Intro: Sandyx drives UP a road, city blocks scroll past on both sides
+// SCENE 1, Intro: Sandyx drives UP a road, city blocks scroll past on both sides
 // ===========================================================================
 
 // A single top-down city block: a building, a park, or a plaza.
@@ -375,7 +375,7 @@ function IntroScene({ onFinish }: { onFinish: () => void }) {
     };
   }, []);
 
-  // Drive loop — WASD/arrows nudge the car; it idles with a gentle bob otherwise.
+  // Drive loop, WASD/arrows nudge the car; it idles with a gentle bob otherwise.
   useEffect(() => {
     let raf = 0;
     let last = performance.now();
@@ -459,7 +459,7 @@ function IntroScene({ onFinish }: { onFinish: () => void }) {
         </motion.div>
       </div>
 
-      {/* The car — player-driven with WASD / arrows */}
+      {/* The car, player-driven with WASD / arrows */}
       <img
         ref={carRef}
         src="/sandyx-car.png"
@@ -488,7 +488,7 @@ function IntroScene({ onFinish }: { onFinish: () => void }) {
         )}
       </AnimatePresence>
 
-      {/* Drive hint — disappears after the first key press */}
+      {/* Drive hint, disappears after the first key press */}
       <AnimatePresence>
         {!moved && stage === "drive" && (
           <motion.div
@@ -509,7 +509,7 @@ function IntroScene({ onFinish }: { onFinish: () => void }) {
         )}
       </AnimatePresence>
 
-      {/* Sandstorm — rolls DOWN from the top of the screen */}
+      {/* Sandstorm, rolls DOWN from the top of the screen */}
       <AnimatePresence>
         {stage === "storm" && (
           <motion.div
@@ -558,10 +558,10 @@ function IntroScene({ onFinish }: { onFinish: () => void }) {
 }
 
 // ===========================================================================
-// SCENE 2 — Desert: the stakes, presented by Sandyx
+// SCENE 2, Desert: the stakes, presented by Sandyx
 // ===========================================================================
 const DESERT_LINES = [
-  "The World Meteorological Association and the WHO state that 3.8 billion people — nearly half the world's population — are exposed to dust levels that vastly exceed safe thresholds.",
+  "The World Meteorological Association and the WHO state that 3.8 billion people, nearly half the world's population, are exposed to dust levels that vastly exceed safe thresholds.",
   "In the Middle East alone, particulate pollution is responsible for nearly 118,000 premature deaths. The World Bank estimates the MENA region loses around $13 billion each year to sand and dust storms affecting health, infrastructure, and agriculture.",
   "This loss of life is the cost of severe sand and dust storms. Our project hopes to make the sky clearer for all those that see a future as bright.",
   "A project designed for where the wind meets the soil.",
@@ -765,7 +765,7 @@ function DesertScene({ onFinish }: { onFinish: () => void }) {
 }
 
 // ===========================================================================
-// SCENE 3 — Lab: top-down 80s arcade (WASD/arrows), 5 Prong-1 & 2 experiments
+// SCENE 3, Lab: top-down 80s arcade (WASD/arrows), 5 Prong-1 & 2 experiments
 // ===========================================================================
 const WORLD = { w: 640, h: 400 };
 
@@ -813,7 +813,7 @@ const STATIONS: MazeStation[] = [
 const PLAYER_START: [number, number] = [6, 5];
 const GHOST_START: [number, number] = [7, 7];
 
-// BFS one step from (sc,sr) toward (gc,gr) through the maze — powers the sand chaser.
+// BFS one step from (sc,sr) toward (gc,gr) through the maze, powers the sand chaser.
 function bfsNextStep(
   sc: number,
   sr: number,
@@ -927,7 +927,7 @@ function drawLabIcon(
   ctx.restore();
 }
 
-// The "sand particle" chaser — a Pac-Man-style ghost made of drifting sand.
+// The "sand particle" chaser, a Pac-Man-style ghost made of drifting sand.
 function drawSand(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -1007,7 +1007,7 @@ const OBJECTIVES: Objective[] = [
   },
   {
     title: "FEED GLUTAMATE PRECURSOR",
-    hint: "Take the culture to the GLUTAMATE bench — the substrate for γ-PGA.",
+    hint: "Take the culture to the GLUTAMATE bench, the substrate for γ-PGA.",
   },
   {
     title: "EXPRESS γ-PGA (pgsBCA)",
@@ -1068,7 +1068,7 @@ function LabGame({ onSolved }: { onSolved: () => void }) {
         setHiScore(stored);
       }
     } catch {
-      /* storage unavailable — high-score just won't persist */
+      /* storage unavailable, high-score just won't persist */
     }
   }, []);
 
@@ -1628,11 +1628,11 @@ const MOVE_KEYS = [
 ];
 
 // ===========================================================================
-// SCENE 4 — Drone deployment: fly a drone, spray the crust, watch it hold
+// SCENE 4, Drone deployment: fly a drone, spray the crust, watch it hold
 // ===========================================================================
 const GRID_COLS = 40;
 const GRID_ROWS = 26;
-// A crust cell at/above this coverage is "locked" — fully cured and immune to the sand ghost.
+// A crust cell at/above this coverage is "locked", fully cured and immune to the sand ghost.
 const LOCK = 0.9;
 
 function DroneGame({
@@ -1852,7 +1852,7 @@ function DroneGame({
         const gx = (i % GRID_COLS) * cellW;
         const gy = Math.floor(i / GRID_COLS) * cellH;
         if (v >= LOCK) {
-          // locked crust — bright, glowing, ghost-proof
+          // locked crust, bright, glowing, ghost-proof
           secured++;
           ctx.fillStyle = "rgba(124,255,107,0.85)";
           ctx.fillRect(gx, gy, cellW + 0.5, cellH + 0.5);
@@ -2057,7 +2057,7 @@ function DroneGame({
 }
 
 // ===========================================================================
-// SCENE 4b — Concentration tuning (No → Deployment)
+// SCENE 4b, Concentration tuning (No → Deployment)
 // ===========================================================================
 function TuneScene({
   pga,
@@ -2133,7 +2133,7 @@ function TuneScene({
           className="font-retro text-[10px] mb-7 leading-[2]"
           style={{ color: "#c7d0ff" }}
         >
-          Adjust the lab concentrations — the mix decides how well the drone
+          Adjust the lab concentrations, the mix decides how well the drone
           locks the sand down.
         </div>
         {slider("γ-PGA POLYMER", pga, setPga, C.amber, "g/L")}
@@ -2443,7 +2443,7 @@ export default function SandyxAdventure({
                         tone="ghost"
                         onClick={() => setPhase("lab-tune")}
                       >
-                        NO — TUNE MIX
+                        NO, TUNE MIX
                       </RetroButton>
                     </div>
                   </RetroModal>
@@ -2479,7 +2479,7 @@ export default function SandyxAdventure({
                           setDroneChoice(true);
                         }}
                       >
-                        NO — KEEP FLYING
+                        NO, KEEP FLYING
                       </RetroButton>
                     </div>
                   </RetroModal>

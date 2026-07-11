@@ -1,5 +1,5 @@
 /**
- * Approach 1 — Metabolic Kinetics & Gene-Overexpression Optimization
+ * Approach 1, Metabolic Kinetics & Gene-Overexpression Optimization
  * =================================================================
  * Deterministic intracellular ODE model of γ-PGA production, integrated with RK4.
  *
@@ -127,7 +127,7 @@ export function finalYield(
 
 /**
  * Closed-form steady state (when k_deg > 0):
- *   M* = α_m/β_m ,  E* = α_e·M* / β_e ,  P* = k_cat·E*·[S] / ((K_m+[S])·k_deg)
+ *   M* = α_m/β_m,  E* = α_e·M* / β_e,  P* = k_cat·E*·[S] / ((K_m+[S])·k_deg)
  * With both knockouts (k_deg = 0) accumulation is unbounded → return null for P*.
  */
 export function steadyState(p: MetabolicParams): {

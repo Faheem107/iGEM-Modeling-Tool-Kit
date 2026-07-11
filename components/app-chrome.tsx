@@ -36,7 +36,7 @@ export function AppChrome() {
 
   return (
     <>
-      {/* Warm wash behind non-landing views — a solid tint, not a glass blur */}
+      {/* Warm wash behind non-landing views, a solid tint, not a glass blur */}
       <div
         className={`fixed inset-0 z-[-1] pointer-events-none transition-colors duration-700 ${
           !isLanding
@@ -66,12 +66,12 @@ export function AppChrome() {
         </button>
         <Link
           href="/"
-          aria-label="Dunelock home — return to the start"
+          aria-label="Dunelock home, return to the start"
           className="transition-transform duration-300 hover:scale-105 active:scale-95"
         >
           <img
             src="/dunelock-logo.png"
-            alt="Dunelock — return home"
+            alt="Dunelock, return home"
             draggable={false}
             className="w-11 h-11 object-contain rounded-full"
           />

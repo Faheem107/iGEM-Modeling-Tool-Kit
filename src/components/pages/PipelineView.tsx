@@ -10,7 +10,7 @@ import AdvancedFbaPortal from "@/src/components/AdvancedFbaPortal";
 import ModuleErrorBoundary from "@/src/components/ErrorBoundary";
 
 /**
- * Physical Pipeline portal — Flux Balance Analysis only. The other biophysical
+ * Physical Pipeline portal, Flux Balance Analysis only. The other biophysical
  * modules live in the prong-tailored /model workspace; this standalone portal is
  * dedicated to the constraint-based metabolic optimisation.
  */

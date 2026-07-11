@@ -79,7 +79,7 @@ export interface ResidueInfo {
 
 // --- Prong-combination simulation types ------------------------------------
 
-/** Prong 2 — CaCO₃ precipitation controls (Carbonic Anhydrase / non-ureolytic). */
+/** Prong 2, CaCO₃ precipitation controls (Carbonic Anhydrase / non-ureolytic). */
 export interface Caco3Params {
   calcium: number; // initial dissolved Ca²⁺ [mM]
   dicMax: number; // max attainable DIC when CA fully active [mM]
@@ -87,7 +87,7 @@ export interface Caco3Params {
   caEnhancement: number; // realized CA rate-enhancement fraction (0–1)
 }
 
-/** Prong 3 — Sodium alginate gel controls (applied commercial biopolymer). */
+/** Prong 3, Sodium alginate gel controls (applied commercial biopolymer). */
 export interface AlginateParams {
   appliedPercent: number; // applied alginate [%w/v]
   calcium: number; // Ca²⁺ crosslinker [mM]

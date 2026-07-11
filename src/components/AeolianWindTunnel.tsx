@@ -44,8 +44,7 @@ export default function AeolianWindTunnel({
   externalCohesion,
   activeProngs = [1],
 }: AeolianProps) {
-  // Every prong forms a wind-resistant crust — γ-PGA/alginate via shear modulus, CaCO₃ via UCS —
-  // so this tunnel applies to ANY combination; label the crust by whatever binder(s) formed it.
+  // Every prong forms a wind-resistant crust, γ-PGA/alginate via shear modulus, CaCO₃ via UCS, // so this tunnel applies to ANY combination; label the crust by whatever binder(s) formed it.
   const crustLabel = (() => {
     const parts: string[] = [];
     if (activeProngs.includes(1)) parts.push("γ-PGA");
@@ -54,7 +53,7 @@ export default function AeolianWindTunnel({
     return parts.length ? parts.join(" + ") : "engineered";
   })();
 
-  // Prong-specific crust palette + short label — the treated grains and the biocrust legend are
+  // Prong-specific crust palette + short label, the treated grains and the biocrust legend are
   // coloured by whichever binder(s) actually formed the crust (γ-PGA gel, CaCO₃ cement, alginate coat).
   const PRONG_CRUST: Record<
     1 | 2 | 3,
@@ -89,7 +88,7 @@ export default function AeolianWindTunnel({
   // Active shear modulus to use in calculations
   const activeGs = isLinked ? Math.max(100, shearModulus) : localShearModulus;
 
-  // Bagnold threshold + saltation constants — pulled from the physics core so this tunnel
+  // Bagnold threshold + saltation constants, pulled from the physics core so this tunnel
   // and the workspace headline stats never disagree.
   const A = cval(AEOLIAN_CALIB.A); // empirical dimensionless constant
   const rho_s = PHYS.RHO_SAND; // sand density (kg/m³)
@@ -280,8 +279,8 @@ export default function AeolianWindTunnel({
   const triggerReset = () => {
     if (liveTestTimerRef.current) clearInterval(liveTestTimerRef.current);
     // Idempotent: when there is nothing to reset (idle, no live-test data) every setter bails, so
-    // this effect adds NO re-render. That matters because it fires on activeGs — which shifts as the
-    // upstream modules settle — and an unconditional reset here would amplify the settle cascade
+    // this effect adds NO re-render. That matters because it fires on activeGs, which shifts as the
+    // upstream modules settle, and an unconditional reset here would amplify the settle cascade
     // past React's update-depth guard.
     setIsLiveTesting((v) => (v ? false : v));
     setLiveTestTime((v) => (v !== 0 ? 0 : v));
@@ -293,7 +292,7 @@ export default function AeolianWindTunnel({
   const particleCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const viewportWrapRef = useRef<HTMLDivElement | null>(null);
 
-  // Live values the animation reads each frame — lets the canvas set up ONCE (no teardown on every
+  // Live values the animation reads each frame, lets the canvas set up ONCE (no teardown on every
   // slider tick) and stay perfectly sized to its container (fixing the old stretched look).
   const drawRef = useRef({
     wind: currentFreestreamWind,
@@ -1012,7 +1011,7 @@ export default function AeolianWindTunnel({
               </span>
             </div>
 
-            {/* Binder legend — the crust is coloured by whichever prong(s) actually formed it. */}
+            {/* Binder legend, the crust is coloured by whichever prong(s) actually formed it. */}
             <div className="flex items-center gap-3 px-1 flex-wrap">
               <span className="flex items-center gap-1 text-[9px] font-mono text-slate-500">
                 <span
@@ -1035,7 +1034,7 @@ export default function AeolianWindTunnel({
               ))}
             </div>
 
-            {/* Canvas Block — the wrapper is measured so the canvas is DPR-sized to its box (no stretch). */}
+            {/* Canvas Block, the wrapper is measured so the canvas is DPR-sized to its box (no stretch). */}
             <div
               ref={viewportWrapRef}
               className="relative rounded-lg overflow-hidden border border-slate-200 dark:border-slate-850"
