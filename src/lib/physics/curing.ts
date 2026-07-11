@@ -21,25 +21,36 @@
  * timeline. Every parameter is a Calib in constants.ts (CURING_CALIB).
  */
 
-import { CURING_CALIB, cval } from './constants';
-import { cohesionForThreshold, freestreamToUStar, thresholdTreated, uStarToFreestream } from './aeolian';
-import type { ProngId, ProngContribution } from './composite';
+import { CURING_CALIB, cval } from "./constants";
+import {
+  cohesionForThreshold,
+  freestreamToUStar,
+  thresholdTreated,
+  uStarToFreestream,
+} from "./aeolian";
+import type { ProngId, ProngContribution } from "./composite";
 
 /** Maturation time constant τ_p [h] for a prong's cure (bigger = slower to reach full strength). */
 export function maturationTau(prong: ProngId): number {
   switch (prong) {
-    case 1: return cval(CURING_CALIB.tauMaturePGA);
-    case 2: return cval(CURING_CALIB.tauMatureCaCO3);
-    case 3: return cval(CURING_CALIB.tauMatureAlginate);
+    case 1:
+      return cval(CURING_CALIB.tauMaturePGA);
+    case 2:
+      return cval(CURING_CALIB.tauMatureCaCO3);
+    case 3:
+      return cval(CURING_CALIB.tauMatureAlginate);
   }
 }
 
 /** Field-life half-life H_p [months] for a prong (bigger = more durable). */
 export function fieldHalfLifeMonths(prong: ProngId): number {
   switch (prong) {
-    case 1: return cval(CURING_CALIB.halfLifePGAMonths);
-    case 2: return cval(CURING_CALIB.halfLifeCaCO3Months);
-    case 3: return cval(CURING_CALIB.halfLifeAlginateMonths);
+    case 1:
+      return cval(CURING_CALIB.halfLifePGAMonths);
+    case 2:
+      return cval(CURING_CALIB.halfLifeCaCO3Months);
+    case 3:
+      return cval(CURING_CALIB.halfLifeAlginateMonths);
   }
 }
 
@@ -108,7 +119,10 @@ export interface CuringOptions {
  * cohesion contributions. Each prong is matured on its own τ and weathered on its own half-life; the
  * survival floor comes from inverting the aeolian threshold at the design wind.
  */
-export function curingTimeline(contributions: ProngContribution[], opts: CuringOptions): CuringTimeline {
+export function curingTimeline(
+  contributions: ProngContribution[],
+  opts: CuringOptions,
+): CuringTimeline {
   const mature = contributions.filter((c) => c.cohesion > 0);
   const matureCohesion = mature.reduce((s, c) => s + c.cohesion, 0);
 
@@ -116,7 +130,10 @@ export function curingTimeline(contributions: ProngContribution[], opts: CuringO
   const matureHours = opts.matureHours ?? 48;
   const fieldMonths = opts.fieldMonths ?? 18;
   const scheduledReapplyMonths = cval(CURING_CALIB.reapplyIntervalMonths);
-  const survivalCohesion = cohesionForThreshold(opts.grainDiameter, freestreamToUStar(designWindMs));
+  const survivalCohesion = cohesionForThreshold(
+    opts.grainDiameter,
+    freestreamToUStar(designWindMs),
+  );
 
   // --- Maturation series (hours) ---
   const maturation: MaturationPoint[] = [];
@@ -137,13 +154,23 @@ export function curingTimeline(contributions: ProngContribution[], opts: CuringO
   let hoursToMature = matureHours;
   if (matureCohesion > 0) {
     for (let h = 0; h <= matureHours; h += 0.25) {
-      const tot = mature.reduce((s, c) => s + c.cohesion * maturationFraction(c.prong, h), 0);
-      if (tot >= 0.95 * matureCohesion) { hoursToMature = h; break; }
+      const tot = mature.reduce(
+        (s, c) => s + c.cohesion * maturationFraction(c.prong, h),
+        0,
+      );
+      if (tot >= 0.95 * matureCohesion) {
+        hoursToMature = h;
+        break;
+      }
     }
   }
-  const earlyAgeFraction = matureCohesion > 0
-    ? mature.reduce((s, c) => s + c.cohesion * maturationFraction(c.prong, 8), 0) / matureCohesion
-    : 0;
+  const earlyAgeFraction =
+    matureCohesion > 0
+      ? mature.reduce(
+          (s, c) => s + c.cohesion * maturationFraction(c.prong, 8),
+          0,
+        ) / matureCohesion
+      : 0;
 
   // --- Field-life series (months) ---
   const field: FieldPoint[] = [];
@@ -164,19 +191,35 @@ export function curingTimeline(contributions: ProngContribution[], opts: CuringO
   let reapplyMonths = Infinity;
   if (matureCohesion > survivalCohesion) {
     for (let m = 0; m <= fieldMonths; m += 0.1) {
-      const tot = mature.reduce((s, c) => s + c.cohesion * fieldRetention(c.prong, m), 0);
-      if (tot < survivalCohesion) { reapplyMonths = m; break; }
+      const tot = mature.reduce(
+        (s, c) => s + c.cohesion * fieldRetention(c.prong, m),
+        0,
+      );
+      if (tot < survivalCohesion) {
+        reapplyMonths = m;
+        break;
+      }
     }
   } else {
     // Never clears the floor even fresh → immediate under-performance.
     reapplyMonths = 0;
   }
   const survivesToScheduledReapply = reapplyMonths >= scheduledReapplyMonths;
-  const maxSurvivableWindFresh = uStarToFreestream(thresholdTreated(opts.grainDiameter, matureCohesion));
+  const maxSurvivableWindFresh = uStarToFreestream(
+    thresholdTreated(opts.grainDiameter, matureCohesion),
+  );
 
   return {
-    maturation, field, matureCohesion, survivalCohesion, designWindMs,
-    hoursToMature, earlyAgeFraction, reapplyMonths, survivesToScheduledReapply, scheduledReapplyMonths,
+    maturation,
+    field,
+    matureCohesion,
+    survivalCohesion,
+    designWindMs,
+    hoursToMature,
+    earlyAgeFraction,
+    reapplyMonths,
+    survivesToScheduledReapply,
+    scheduledReapplyMonths,
     maxSurvivableWindFresh,
   };
 }

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React from 'react';
-import katex from 'katex';
+import React from "react";
+import katex from "katex";
 
 /**
  * Katex
@@ -24,7 +24,7 @@ export default function Katex({
       return katex.renderToString(tex, {
         displayMode: display,
         throwOnError: false,
-        output: 'html',
+        output: "html",
       });
     } catch {
       return tex;

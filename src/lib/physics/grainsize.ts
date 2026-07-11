@@ -21,8 +21,8 @@
  * thesis, and a genuine multi-prong interaction (each prong closes another's grain-size gap).
  */
 
-import { GRAINSIZE_CALIB, cval } from './constants';
-import type { ProngId } from './composite';
+import { GRAINSIZE_CALIB, cval } from "./constants";
+import type { ProngId } from "./composite";
 
 const logistic = (x: number) => 1 / (1 + Math.exp(-x));
 
@@ -66,9 +66,12 @@ export function alginateCoverage(diameterUm: number): number {
 /** Per-prong binding effectiveness eₚ(d) ∈ [0,1] at grain diameter d [µm]. */
 export function prongCoverage(prong: ProngId, diameterUm: number): number {
   switch (prong) {
-    case 1: return pgaCoverage(diameterUm);
-    case 2: return micpEfficiency(diameterUm);
-    case 3: return alginateCoverage(diameterUm);
+    case 1:
+      return pgaCoverage(diameterUm);
+    case 2:
+      return micpEfficiency(diameterUm);
+    case 3:
+      return alginateCoverage(diameterUm);
   }
 }
 
@@ -91,7 +94,11 @@ export function combinedCoverage(
 }
 
 /** Log-normal grain-size PDF (per unit ln d) for the deployment-site sand. */
-export function grainSizePdf(diameterUm: number, d50Um: number, sigmaG: number): number {
+export function grainSizePdf(
+  diameterUm: number,
+  d50Um: number,
+  sigmaG: number,
+): number {
   const d = Math.max(1e-3, diameterUm);
   const lnSigma = Math.log(Math.max(1.001, sigmaG));
   const z = Math.log(d / d50Um) / lnSigma;
@@ -157,7 +164,8 @@ export function grainSizeProfile(
     const w = grainSizePdf(d, d50, sigmaG); // per unit ln d → constant dLn spacing cancels on normalise
     pdfSum += w;
     const perProng = {} as Record<ProngId, number>;
-    for (const p of prongs) perProng[p] = prongCoverage(p, d) * (opts?.yieldFactors?.[p] ?? 1);
+    for (const p of prongs)
+      perProng[p] = prongCoverage(p, d) * (opts?.yieldFactors?.[p] ?? 1);
     bands.push({
       diameter: d,
       massFraction: w, // normalised below

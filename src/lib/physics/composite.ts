@@ -16,19 +16,25 @@
  *    scenario if AT LEAST ONE active mechanism survives it (probabilistic redundancy).
  */
 
-import { COMPOSITE_CALIB, cval } from './constants';
+import { COMPOSITE_CALIB, cval } from "./constants";
 
 export const PRONG_IDS = [1, 2, 3] as const;
 export type ProngId = (typeof PRONG_IDS)[number];
 
 export const PRONG_LABEL: Record<ProngId, string> = {
-  1: 'γ-PGA',
-  2: 'CaCO₃',
-  3: 'Alginate',
+  1: "γ-PGA",
+  2: "CaCO₃",
+  3: "Alginate",
 };
 
 /** Failure scenarios the desert deployment must survive. */
-export const SCENARIOS = ['Drought / Heat', 'Flood / Rain', 'Bacterial Death', 'High Wind', 'Long-term Durability'] as const;
+export const SCENARIOS = [
+  "Drought / Heat",
+  "Flood / Rain",
+  "Bacterial Death",
+  "High Wind",
+  "Long-term Durability",
+] as const;
 export type Scenario = (typeof SCENARIOS)[number];
 
 /**
@@ -40,9 +46,27 @@ export type Scenario = (typeof SCENARIOS)[number];
  *   P3 Alginate: bacteria-independent & moisture-holding, but soluble
  */
 export const PRONG_RESILIENCE: Record<ProngId, Record<Scenario, number>> = {
-  1: { 'Drought / Heat': 0.70, 'Flood / Rain': 0.20, 'Bacterial Death': 0.15, 'High Wind': 0.60, 'Long-term Durability': 0.35 },
-  2: { 'Drought / Heat': 0.85, 'Flood / Rain': 0.80, 'Bacterial Death': 0.70, 'High Wind': 0.90, 'Long-term Durability': 0.90 },
-  3: { 'Drought / Heat': 0.75, 'Flood / Rain': 0.20, 'Bacterial Death': 0.95, 'High Wind': 0.55, 'Long-term Durability': 0.40 },
+  1: {
+    "Drought / Heat": 0.7,
+    "Flood / Rain": 0.2,
+    "Bacterial Death": 0.15,
+    "High Wind": 0.6,
+    "Long-term Durability": 0.35,
+  },
+  2: {
+    "Drought / Heat": 0.85,
+    "Flood / Rain": 0.8,
+    "Bacterial Death": 0.7,
+    "High Wind": 0.9,
+    "Long-term Durability": 0.9,
+  },
+  3: {
+    "Drought / Heat": 0.75,
+    "Flood / Rain": 0.2,
+    "Bacterial Death": 0.95,
+    "High Wind": 0.55,
+    "Long-term Durability": 0.4,
+  },
 };
 
 export interface ProngContribution {
@@ -53,12 +77,16 @@ export interface ProngContribution {
 
 /** Pairwise synergy coefficient η_ij for a prong pair (order-independent). */
 export function etaFor(a: ProngId, b: ProngId): number {
-  const key = [a, b].sort().join('-');
+  const key = [a, b].sort().join("-");
   switch (key) {
-    case '1-2': return cval(COMPOSITE_CALIB.eta_PGA_CaCO3);
-    case '1-3': return cval(COMPOSITE_CALIB.eta_PGA_Alginate);
-    case '2-3': return cval(COMPOSITE_CALIB.eta_CaCO3_Alginate);
-    default: return 0;
+    case "1-2":
+      return cval(COMPOSITE_CALIB.eta_PGA_CaCO3);
+    case "1-3":
+      return cval(COMPOSITE_CALIB.eta_PGA_Alginate);
+    case "2-3":
+      return cval(COMPOSITE_CALIB.eta_CaCO3_Alginate);
+    default:
+      return 0;
   }
 }
 
@@ -74,15 +102,22 @@ export interface CompositeResult {
 }
 
 /** γ_total = Σ γᵢ + Σ η_ij·√(γᵢγⱼ). */
-export function compositeCohesion(contributions: ProngContribution[]): CompositeResult {
-  const additive = contributions.reduce((s, c) => s + Math.max(0, c.cohesion), 0);
+export function compositeCohesion(
+  contributions: ProngContribution[],
+): CompositeResult {
+  const additive = contributions.reduce(
+    (s, c) => s + Math.max(0, c.cohesion),
+    0,
+  );
 
   let interaction = 0;
   for (let i = 0; i < contributions.length; i++) {
     for (let j = i + 1; j < contributions.length; j++) {
       const ci = contributions[i];
       const cj = contributions[j];
-      interaction += etaFor(ci.prong, cj.prong) * Math.sqrt(Math.max(0, ci.cohesion) * Math.max(0, cj.cohesion));
+      interaction +=
+        etaFor(ci.prong, cj.prong) *
+        Math.sqrt(Math.max(0, ci.cohesion) * Math.max(0, cj.cohesion));
     }
   }
 
@@ -118,10 +153,16 @@ export function robustnessMatrix(prongs: ProngId[]): RobustnessRow[] {
 }
 
 /** Weakest-scenario resilience — the limiting failure mode of a combination. */
-export function limitingScenario(prongs: ProngId[]): { scenario: Scenario; resilience: number } {
+export function limitingScenario(prongs: ProngId[]): {
+  scenario: Scenario;
+  resilience: number;
+} {
   const rows = robustnessMatrix(prongs);
   return rows.reduce(
-    (worst, r) => (r.combined < worst.resilience ? { scenario: r.scenario, resilience: r.combined } : worst),
+    (worst, r) =>
+      r.combined < worst.resilience
+        ? { scenario: r.scenario, resilience: r.combined }
+        : worst,
     { scenario: rows[0].scenario, resilience: rows[0].combined },
   );
 }

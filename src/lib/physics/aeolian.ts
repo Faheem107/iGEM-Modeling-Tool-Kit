@@ -11,7 +11,7 @@
  * This is what lets ANY prong combination resolve to one macro erosion-resistance result.
  */
 
-import { PHYS, AEOLIAN_CALIB, cval } from './constants';
+import { PHYS, AEOLIAN_CALIB, cval } from "./constants";
 
 export interface AeolianInputs {
   /** Grain diameter d [m] (desert quartz ≈ 1–3 ×10⁻⁴ m). */
@@ -38,13 +38,16 @@ export interface AeolianResult {
 }
 
 /** u* = ratio · U∞  (log-law surface coupling). */
-export const uStarToFreestream = (uStar: number): number => uStar / cval(AEOLIAN_CALIB.uStarRatio);
-export const freestreamToUStar = (uInf: number): number => uInf * cval(AEOLIAN_CALIB.uStarRatio);
+export const uStarToFreestream = (uStar: number): number =>
+  uStar / cval(AEOLIAN_CALIB.uStarRatio);
+export const freestreamToUStar = (uInf: number): number =>
+  uInf * cval(AEOLIAN_CALIB.uStarRatio);
 
 /** Eq 7 — baseline threshold friction velocity for an untreated grain of diameter d. */
 export function thresholdUntreated(grainDiameter: number): number {
   const A = cval(AEOLIAN_CALIB.A);
-  const buoyancy = ((PHYS.RHO_SAND - PHYS.RHO_AIR) / PHYS.RHO_AIR) * PHYS.g * grainDiameter;
+  const buoyancy =
+    ((PHYS.RHO_SAND - PHYS.RHO_AIR) / PHYS.RHO_AIR) * PHYS.g * grainDiameter;
   return A * Math.sqrt(Math.max(0, buoyancy));
 }
 
@@ -53,9 +56,13 @@ export function thresholdUntreated(grainDiameter: number): number {
  *   u*t = A·√[ (ρs−ρa)/ρa · g·d  +  γ/(ρa·d) ]
  * The added γ/(ρa·d) term is the interparticle adhesive force per unit inertia.
  */
-export function thresholdTreated(grainDiameter: number, cohesion: number): number {
+export function thresholdTreated(
+  grainDiameter: number,
+  cohesion: number,
+): number {
   const A = cval(AEOLIAN_CALIB.A);
-  const buoyancy = ((PHYS.RHO_SAND - PHYS.RHO_AIR) / PHYS.RHO_AIR) * PHYS.g * grainDiameter;
+  const buoyancy =
+    ((PHYS.RHO_SAND - PHYS.RHO_AIR) / PHYS.RHO_AIR) * PHYS.g * grainDiameter;
   const cohesionTerm = Math.max(0, cohesion) / (PHYS.RHO_AIR * grainDiameter);
   return A * Math.sqrt(Math.max(0, buoyancy + cohesionTerm));
 }
@@ -66,9 +73,13 @@ export function thresholdTreated(grainDiameter: number, cohesion: number): numbe
  *   γ = ρa·d·[ (u*t/A)² − buoyancy ]        (clamped ≥ 0)
  * Used by the curing/deployment timeline to express a design survival wind as a cohesion floor.
  */
-export function cohesionForThreshold(grainDiameter: number, targetUStar: number): number {
+export function cohesionForThreshold(
+  grainDiameter: number,
+  targetUStar: number,
+): number {
   const A = cval(AEOLIAN_CALIB.A);
-  const buoyancy = ((PHYS.RHO_SAND - PHYS.RHO_AIR) / PHYS.RHO_AIR) * PHYS.g * grainDiameter;
+  const buoyancy =
+    ((PHYS.RHO_SAND - PHYS.RHO_AIR) / PHYS.RHO_AIR) * PHYS.g * grainDiameter;
   const needed = Math.pow(targetUStar / A, 2) - buoyancy;
   return Math.max(0, needed * PHYS.RHO_AIR * grainDiameter);
 }
@@ -77,11 +88,18 @@ export function cohesionForThreshold(grainDiameter: number, targetUStar: number)
  * Eq 9 — Bagnold saltation mass flux.
  *   q = C·(ρa/g)·u*³·(1 − u*t²/u*²)   for u* > u*t,  else 0
  */
-export function saltationFlux(frictionVelocity: number, thresholdVelocity: number): number {
+export function saltationFlux(
+  frictionVelocity: number,
+  thresholdVelocity: number,
+): number {
   if (frictionVelocity <= thresholdVelocity) return 0;
   const C = cval(AEOLIAN_CALIB.saltationC);
-  const ratio2 = (thresholdVelocity * thresholdVelocity) / (frictionVelocity * frictionVelocity);
-  return C * (PHYS.RHO_AIR / PHYS.g) * Math.pow(frictionVelocity, 3) * (1 - ratio2);
+  const ratio2 =
+    (thresholdVelocity * thresholdVelocity) /
+    (frictionVelocity * frictionVelocity);
+  return (
+    C * (PHYS.RHO_AIR / PHYS.g) * Math.pow(frictionVelocity, 3) * (1 - ratio2)
+  );
 }
 
 /** Full untreated-vs-treated comparison at one wind condition. */
@@ -92,13 +110,24 @@ export function solveAeolian(inp: AeolianInputs): AeolianResult {
   const fluxUntreated = saltationFlux(inp.frictionVelocity, uStarT0);
   const fluxTreated = saltationFlux(inp.frictionVelocity, uStarT);
 
-  const protectionFactor = fluxTreated <= 1e-12
-    ? (fluxUntreated > 1e-12 ? Infinity : 1)
-    : fluxUntreated / fluxTreated;
+  const protectionFactor =
+    fluxTreated <= 1e-12
+      ? fluxUntreated > 1e-12
+        ? Infinity
+        : 1
+      : fluxUntreated / fluxTreated;
 
-  const fluxReduction = fluxUntreated <= 1e-12 ? 0 : 1 - fluxTreated / fluxUntreated;
+  const fluxReduction =
+    fluxUntreated <= 1e-12 ? 0 : 1 - fluxTreated / fluxUntreated;
 
-  return { uStarT0, uStarT, fluxUntreated, fluxTreated, protectionFactor, fluxReduction };
+  return {
+    uStarT0,
+    uStarT,
+    fluxUntreated,
+    fluxTreated,
+    protectionFactor,
+    fluxReduction,
+  };
 }
 
 // --- Strength → cohesion bridges (the unifying conversion for every prong) ----

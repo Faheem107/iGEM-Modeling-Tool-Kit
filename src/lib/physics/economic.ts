@@ -9,8 +9,8 @@
  * The result is compared against conventional chemical-spray and concrete-blanket baselines.
  */
 
-import { ECONOMIC_CALIB as E, cval } from './constants';
-import type { ProngId } from './composite';
+import { ECONOMIC_CALIB as E, cval } from "./constants";
+import type { ProngId } from "./composite";
 
 export interface EconContext {
   /** Treated area [hectares]. */
@@ -54,7 +54,10 @@ export interface CombinationCost {
 const M3_PER_HA = (thicknessMm: number) => 10000 * (thicknessMm / 1000); // m³ of crust per hectare
 
 /** Per-hectare recurring cost + capex + CO₂ for a single prong. */
-export function prongTreatmentCost(prong: ProngId, ctx: EconContext): ProngCost {
+export function prongTreatmentCost(
+  prong: ProngId,
+  ctx: EconContext,
+): ProngCost {
   const volumePerHa = M3_PER_HA(ctx.crustThicknessMm);
 
   if (prong === 1) {
@@ -66,12 +69,18 @@ export function prongTreatmentCost(prong: ProngId, ctx: EconContext): ProngCost 
       cval(E.glucoseMassFractionInMedia) * cval(E.glucoseCostPerKg) +
       cval(E.mediaSaltsCostPerL) +
       cval(E.utilitiesCostPerL);
-    return { prong: 1, capex: cval(E.bacterialSetupCapex), opexPerHa: litersPerHa * perLiter, co2PerHa: 0 };
+    return {
+      prong: 1,
+      capex: cval(E.bacterialSetupCapex),
+      opexPerHa: litersPerHa * perLiter,
+      co2PerHa: 0,
+    };
   }
 
   if (prong === 2) {
     // CaCO₃ / MICP: calcium + enzyme dosing, minus a CO₂ credit.
-    const co2KgPerHa = ((ctx.co2SequesteredGPerL ?? 0) / 1000) * (volumePerHa * 1000); // g/L × L(=m³·1000) → kg
+    const co2KgPerHa =
+      ((ctx.co2SequesteredGPerL ?? 0) / 1000) * (volumePerHa * 1000); // g/L × L(=m³·1000) → kg
     const credit = co2KgPerHa * cval(E.co2CreditPerKg);
     return {
       prong: 2,
@@ -87,11 +96,14 @@ export function prongTreatmentCost(prong: ProngId, ctx: EconContext): ProngCost 
 }
 
 /** Full cost of a prong combination over the deployment area. */
-export function combinationCost(prongs: ProngId[], ctx: EconContext): CombinationCost {
+export function combinationCost(
+  prongs: ProngId[],
+  ctx: EconContext,
+): CombinationCost {
   const per = prongs.map((p) => prongTreatmentCost(p, ctx));
   // Bacterial prongs share one bioprocess capex (don't double-count 1 & 2).
   const hasBacterial = prongs.some((p) => p === 1 || p === 2);
-  const capex = (hasBacterial ? cval(E.bacterialSetupCapex) : 0);
+  const capex = hasBacterial ? cval(E.bacterialSetupCapex) : 0;
   const opexPerHa = per.reduce((s, c) => s + c.opexPerHa, 0);
   const applicationPerHa = cval(E.fieldApplicationCostPerHa);
   const co2PerHa = per.reduce((s, c) => s + c.co2PerHa, 0);
@@ -107,7 +119,16 @@ export function combinationCost(prongs: ProngId[], ctx: EconContext): Combinatio
   const margin = chemPerHa - recurringPerHa;
   const breakEvenHaVsChemical = margin > 0 ? capex / margin : Infinity;
 
-  return { prongs, capex, opexPerHa, applicationPerHa, totalCost, costPerHa, co2Total, breakEvenHaVsChemical };
+  return {
+    prongs,
+    capex,
+    opexPerHa,
+    applicationPerHa,
+    totalCost,
+    costPerHa,
+    co2Total,
+    breakEvenHaVsChemical,
+  };
 }
 
 /** Conventional baseline costs per hectare. */
@@ -125,5 +146,7 @@ export function allProngCombinations(): ProngId[][] {
     out.push(combo);
   }
   // Order by size then numerically for a readable comparison axis.
-  return out.sort((a, b) => a.length - b.length || a.join().localeCompare(b.join()));
+  return out.sort(
+    (a, b) => a.length - b.length || a.join().localeCompare(b.join()),
+  );
 }

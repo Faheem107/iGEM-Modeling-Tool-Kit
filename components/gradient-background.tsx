@@ -1,21 +1,21 @@
-"use client"
+"use client";
 
-import { GrainGradient } from "@paper-design/shaders-react"
+import { GrainGradient } from "@paper-design/shaders-react";
 // We MUST import from your context, not "next-themes"
-import { useTheme } from "@/components/theme-context"
-import { useEffect, useState } from "react"
+import { useTheme } from "@/components/theme-context";
+import { useEffect, useState } from "react";
 
 export function GradientBackground() {
   // Grab your exact toggle state
-  const { isLightMode } = useTheme()
-  const [mounted, setMounted] = useState(false)
+  const { isLightMode } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   if (!mounted) {
-    return <div className="fixed inset-0 -z-10 bg-transparent" />
+    return <div className="fixed inset-0 -z-10 bg-transparent" />;
   }
 
   return (
@@ -31,12 +31,12 @@ export function GradientBackground() {
         shape="corners"
         colors={
           isLightMode
-            // warm sand tones that sit under the desert scenes instead of fighting them
-            ? ["#E7D2A9", "#EBDFC4", "#DFC79E"]
-            // deep warm ember in the corners for dark mode
-            : ["#4A3320", "#2E2114", "#43301E"]
+            ? // warm sand tones that sit under the desert scenes instead of fighting them
+              ["#E7D2A9", "#EBDFC4", "#DFC79E"]
+            : // deep warm ember in the corners for dark mode
+              ["#4A3320", "#2E2114", "#43301E"]
         }
       />
     </div>
-  )
+  );
 }

@@ -4,64 +4,88 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
+  /* ---- Dunelock brand palette (raw, see DESIGN.md §1) ---- */
+  --dune-maroon: #6e1e18;
+  --dune-orange: #d6884a;
+  --dune-teal: #8fb3ac;
+  --dune-rose: #c28a7c;
+  --dune-sand: #e7d8c4;
+  --dune-paper: #fbf7f0;
+  --dune-basalt: #241c19;
+  --dune-slate: #2e2622;
+  --dune-ash: #8a7e75;
+
+  /* ---- Semantic tokens (light) ---- */
+  --background: var(--dune-paper);
+  --foreground: #2a1a16;
+  --card: #ffffff;
+  --card-foreground: #2a1a16;
+  --popover: #ffffff;
+  --popover-foreground: #2a1a16;
+  --primary: var(--dune-maroon);
+  --primary-foreground: var(--dune-paper);
+  --secondary: var(--dune-sand);
+  --secondary-foreground: #2a1a16;
+  --muted: #efe6d8;
+  --muted-foreground: #6f6157;
+  --accent: var(--dune-orange);
+  --accent-foreground: #2a1a16;
+  --destructive: var(--dune-maroon);
+  --destructive-foreground: var(--dune-paper);
+  --border: #e0d3c1;
+  --input: #e0d3c1;
+  --ring: var(--dune-orange);
+  --chart-1: var(--dune-orange);
+  --chart-2: var(--dune-teal);
+  --chart-3: var(--dune-rose);
+  --chart-4: var(--dune-maroon);
+  --chart-5: #b9a07f;
+  --radius: 0.25rem;
+  --radius-crisp: 3px;
+  --shadow-flat: 0 1px 0 rgba(0, 0, 0, 0.04);
 }
 
 .dark {
   --background: transparent;
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
+  --foreground: #f3e9db;
+  --card: var(--dune-slate);
+  --card-foreground: #f3e9db;
+  --popover: var(--dune-slate);
+  --popover-foreground: #f3e9db;
+  --primary: var(--dune-orange);
+  --primary-foreground: #241c19;
+  --secondary: #3a2f29;
+  --secondary-foreground: #f3e9db;
+  --muted: #3a2f29;
+  --muted-foreground: #b3a496;
+  --accent: var(--dune-orange);
+  --accent-foreground: #241c19;
+  --destructive: var(--dune-rose);
+  --destructive-foreground: #241c19;
+  --border: #43362e;
+  --input: #43362e;
+  --ring: var(--dune-orange);
+  --chart-1: var(--dune-orange);
+  --chart-2: var(--dune-teal);
+  --chart-3: var(--dune-rose);
+  --chart-4: #d9b48c;
+  --chart-5: #a88f6f;
 }
 
 @theme inline {
-  --font-sans: var(--font-montserrat), "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --font-mono: var(--font-montserrat), "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --font-serif: var(--font-montserrat), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-sans: var(--font-lexend), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: var(--font-super-dream), var(--font-lexend), "Fredoka", "Baloo 2", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "Menlo", monospace;
+  --font-serif: var(--font-lexend), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --color-dune-maroon: var(--dune-maroon);
+  --color-dune-orange: var(--dune-orange);
+  --color-dune-teal: var(--dune-teal);
+  --color-dune-rose: var(--dune-rose);
+  --color-dune-sand: var(--dune-sand);
+  --color-dune-paper: var(--dune-paper);
+  --color-dune-basalt: var(--dune-basalt);
+  --color-dune-slate: var(--dune-slate);
+  --color-dune-ash: var(--dune-ash);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -98,43 +122,47 @@
   }
 }
 
-/* Complete typography overloads: everything perfectly inherits Montserrat */
-*, html, body, p, label, span, button, input, select, option, textarea, div, a, td, th, li, code, pre, var, kbd, samp, .font-mono, .math-style, [class*="math"], [class*="formula"], [class*="equation"], code *, pre * {
-  font-family: var(--font-montserrat), "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+/* Everything is Lexend by default (via --font-sans on <body>); its weight scales
+ * with the text size (light → black). Super Dream is reserved for *very large*
+ * display type only, and is opt-in via the .font-display utility — never applied
+ * to ordinary h1/h2/h3 section or panel titles. */
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
 }
 
-h1, h2, h3, h4, h5, h6, .section-title, [class*="section-title"], [class*="heading"], h1 *, h2 *, h3 *, h4 *, h5 *, h6 * {
-  font-family: var(--font-montserrat), "Helvetica Neue", Helvetica, Arial, sans-serif !important;
-  font-weight: bold !important;
+/* Tabular numbers everywhere numbers are shown in the UI chrome */
+.tabular-nums, [class*="tabular"] {
+  font-variant-numeric: tabular-nums;
 }
 
-/* Sci-fi instrumentation visual scrollbars */
+/* Slim warm scrollbars */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #06090f;
+  background: #1c1512;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 3px;
+  background: #43362e;
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #06b6d4;
+  background: var(--dune-orange);
 }
 
 body {
   background-color: transparent !important; /* Make way for the GrainGradient! */
-  color: #cbd5e1;
+  color: #d9c9b8;
 }
 
 /* Highly readable text colors inside light mode elements */
 .light-mode-active {
-  color: #0f172a !important; /* Force text-slate-900 */
+  color: #2a1a16 !important; /* warm ink */
 }
 
 /* Force primary texts / headings / labels / numbers */
@@ -154,7 +182,7 @@ body {
 .light-mode-active .text-stone-950,
 .light-mode-active .text-black,
 .light-mode-active .font-black {
-  color: #000000 !important; /* Force black for headings/primary text */
+  color: #241c19 !important; /* warm near-black */
 }
 
 /* Force secondary body text */
@@ -167,7 +195,7 @@ body {
 .light-mode-active .text-slate-700,
 .light-mode-active .text-stone-700,
 .light-mode-active .text-slate-550 {
-  color: #1e293b !important; /* Force text-slate-800 */
+  color: #4a3a32 !important; /* warm secondary ink */
 }
 
 /* Eradicate any faded text (gray-400, slate-500, etc.) in light mode */
@@ -180,7 +208,7 @@ body {
 .light-mode-active .text-muted,
 .light-mode-active .opacity-70,
 .light-mode-active .opacity-60 {
-  color: #1e293b !important; /* Elevate to text-slate-800 */
+  color: #4a3a32 !important; /* warm secondary ink */
   opacity: 1 !important;
 }
 
@@ -199,7 +227,7 @@ body {
 
 /* Custom range inputs for cybernetic precise knobs */
 input[type="range"] {
-  accent-color: #06b6d4;
+  accent-color: var(--dune-orange);
   cursor: grab;
 }
 input[type="range"]:active {
@@ -208,7 +236,7 @@ input[type="range"]:active {
 }
 
 input[type="checkbox"] {
-  accent-color: #06b6d4;
+  accent-color: var(--dune-orange);
   cursor: pointer;
 }
 
