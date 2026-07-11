@@ -1,8 +1,8 @@
 /**
- * Economic Scalability — combination-aware deployment cost
+ * Economic Scalability, combination-aware deployment cost
  * ========================================================
  * Cost is built bottom-up, per prong, then summed for whatever combination is deployed:
- *   Prong 1 (γ-PGA)  : fermentation — glucose + salts + utilities, scaled by broth yield.
+ *   Prong 1 (γ-PGA)  : fermentation, glucose + salts + utilities, scaled by broth yield.
  *   Prong 2 (CaCO₃)  : calcium feedstock + carbonic-anhydrase dosing, minus a CO₂ credit.
  *   Prong 3 (alginate): purchased commodity biopolymer + crosslinker, sprayed directly.
  * Bacterial prongs (1,2) share a one-time bioprocess capex; alginate needs none.
@@ -90,7 +90,7 @@ export function prongTreatmentCost(
     };
   }
 
-  // Prong 3 — purchased alginate commodity, no fermentation.
+  // Prong 3, purchased alginate commodity, no fermentation.
   const alginateOpex = cval(E.alginateDoseKgPerHa) * cval(E.alginateCostPerKg);
   return { prong: 3, capex: 0, opexPerHa: alginateOpex, co2PerHa: 0 };
 }

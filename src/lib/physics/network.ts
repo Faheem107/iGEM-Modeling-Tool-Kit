@@ -2,11 +2,11 @@
  * Canonical B. subtilis core-carbon metabolic network for FBA.
  * ===========================================================
  * A compact but **fully mass-balanced** reconstruction (every internal metabolite has producers
- * AND consumers) so `solveFBA` returns genuine optima — not a hand-coded flux cascade. It captures
+ * AND consumers) so `solveFBA` returns genuine optima, not a hand-coded flux cascade. It captures
  * the branch points that actually decide precursor supply in B. subtilis:
  *
  *   • Glycolysis (EMP)                      glucose → G6P → PEP → pyruvate
- *   • Oxidative pentose-phosphate pathway   G6P → R5P + 2 NADPH        (zwf) — NADPH + nucleotides
+ *   • Oxidative pentose-phosphate pathway   G6P → R5P + 2 NADPH        (zwf), NADPH + nucleotides
  *   • Pyruvate node                          → acetyl-CoA (pdhA) │ → OAA anaplerosis (pycA)
  *   • A CLOSED TCA cycle                     AcCoA+OAA→citrate→α-KG→…→OAA   (citZ, citC, odhAB)
  *   • GS–GOGAT glutamate synthesis           α-KG + NH₃ + NADPH + ATP → L-Glu  (glnA/gltAB)
@@ -17,7 +17,7 @@
  * Deliberately faithful to B. subtilis: glutamate is made by GS–GOGAT (rocG/gudB run catabolically),
  * and there is **no glyoxylate shunt** (B. subtilis lacks isocitrate lyase). Blocking 2-oxoglutarate
  * dehydrogenase (ΔodhAB) makes α-KG pile up and is the textbook lever for glutamate / γ-PGA
- * overproduction — the knockout list surfaces it. Lumped stoichiometry balances C, ATP and redox.
+ * overproduction, the knockout list surfaces it. Lumped stoichiometry balances C, ATP and redox.
  */
 
 import type { FbaReaction, MetabolicNetwork } from "./fba";
@@ -204,7 +204,7 @@ export function buildCoreNetwork(opts?: {
       1000,
       "capBCA",
     ),
-    // Prong 2 — carbonic anhydrase is a secreted protein; expressing it draws amino-acid
+    // Prong 2, carbonic anhydrase is a secreted protein; expressing it draws amino-acid
     // (glutamate proxy) and ATP away from growth, exactly like γ-PGA competes for carbon.
     r(
       "CAS",
@@ -299,19 +299,19 @@ export function buildCoreNetwork(opts?: {
 /** Objective reaction ids. */
 export const OBJ_GROWTH = "EX_BIOM";
 export const OBJ_PGA = "EX_PGA";
-/** Prong 2 objective — maximise secreted carbonic-anhydrase titre. */
+/** Prong 2 objective, maximise secreted carbonic-anhydrase titre. */
 export const OBJ_CA = "EX_CA";
 
 /**
  * Knockout-able reactions surfaced in the UI (gene → reaction id). Chosen to teach real
  * metabolic-engineering levers, each of which visibly re-routes carbon in the flow map:
- *   • ΔodhAB  — the classic α-KG/glutamate over-production lever (drives γ-PGA precursor supply)
- *   • Δpta    — kills acetate overflow, recovering wasted carbon
- *   • Δldh    — removes the fermentative lactate sink (matters under low O₂)
- *   • Δzwf    — closes the oxidative PPP → NADPH must come from the TCA/transhydrogenase
- *   • ΔpycA   — removes anaplerosis → OAA (hence TCA + biomass) becomes limiting
- *   • ΔpdhA   — cuts acetyl-CoA supply to the TCA cycle
- *   • ΔRESP   — forces fermentation (overflow lights up)
+ *   • ΔodhAB, the classic α-KG/glutamate over-production lever (drives γ-PGA precursor supply)
+ *   • Δpta, kills acetate overflow, recovering wasted carbon
+ *   • Δldh, removes the fermentative lactate sink (matters under low O₂)
+ *   • Δzwf, closes the oxidative PPP → NADPH must come from the TCA/transhydrogenase
+ *   • ΔpycA, removes anaplerosis → OAA (hence TCA + biomass) becomes limiting
+ *   • ΔpdhA, cuts acetyl-CoA supply to the TCA cycle
+ *   • ΔRESP, forces fermentation (overflow lights up)
  */
 export const KNOCKOUTS: { id: string; gene: string; label: string }[] = [
   { id: "AKGD", gene: "odhAB", label: "ΔodhAB (2-oxoglutarate DH)" },

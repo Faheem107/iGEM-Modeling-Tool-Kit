@@ -29,7 +29,7 @@ export default function PortalsView() {
           Choose a Sandbox Portal
         </TextEffect>
         <p className="opacity-60 text-sm">
-          Each portal is its own workspace — open one to begin simulating.
+          Each portal is its own workspace, open one to begin simulating.
         </p>
       </div>
 

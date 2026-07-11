@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Prong-aware Simulation Workspace — the destination of "Proceed to Model".
+ * Prong-aware Simulation Workspace, the destination of "Proceed to Model".
  * Composes a meaningful, combination-specific set of modules (a single prong is a valid
  * combination), threads each prong's binder output into a composite cohesion that drives the
  * macro wind-erosion result, and presents them as one scrollable path alongside the Sandyx
@@ -10,7 +10,9 @@
 
 import React, { useState, useMemo, useCallback } from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, Wind, ShieldCheck, Gauge } from "lucide-react";
+import { ArrowLeft, Wind, ShieldCheck, Gauge, Ban } from "lucide-react";
+
+import { PRONGS as PRONG_COPY } from "../../lib/portalsData";
 
 import type {
   MetabolicParams,
@@ -49,6 +51,7 @@ import FbaOptimizationModule from "./modules/FbaOptimizationModule";
 import Caco3PrecipitationModule from "./modules/Caco3PrecipitationModule";
 import AlginateGelModule from "./modules/AlginateGelModule";
 import CaAnchoringModule from "./modules/CaAnchoringModule";
+import KillSwitchModule from "./modules/KillSwitchModule";
 import CompositeSynthesisPanel from "./CompositeSynthesisPanel";
 import GrainSizeCoveragePanel from "./GrainSizeCoveragePanel";
 import CuringTimelinePanel from "./CuringTimelinePanel";
@@ -161,8 +164,7 @@ export default function SimulationWorkspace({
     [],
   );
   // Stable + guarded: the FBA precursor feed used to be an inline arrow, so it changed identity
-  // every render, re-fired the module's effect, and set a fresh metabolicParams object each time —
-  // an infinite update loop. A memoised, value-guarded callback breaks it.
+  // every render, re-fired the module's effect, and set a fresh metabolicParams object each time, // an infinite update loop. A memoised, value-guarded callback breaks it.
   const handlePrecursorFlux = useCallback((v: number) => {
     const clean = Number(Math.max(0, v).toFixed(4));
     setMetabolicParams((p) =>
@@ -170,7 +172,7 @@ export default function SimulationWorkspace({
     );
   }, []);
 
-  // The bacterial prongs present (γ-PGA and/or CaCO₃) — drives the shared cell-level modules.
+  // The bacterial prongs present (γ-PGA and/or CaCO₃), drives the shared cell-level modules.
   const bacterialProngs = useMemo(
     () => prongs.filter((p) => p === 1 || p === 2) as ProngId[],
     [prongs],
@@ -179,7 +181,7 @@ export default function SimulationWorkspace({
   // --- Composite cohesion across active prongs (the unifying macro driver) ---
   // Each prong's standalone cohesion is first knocked down by the inter-prong interactions
   // (shared-Ca²⁺ competition + co-expression metabolic burden), THEN combined with the
-  // physicochemical synergy term — so the macro result reflects genuine competition.
+  // physicochemical synergy term, so the macro result reflects genuine competition.
   const interactions = useMemo(() => prongInteractions(prongs), [prongs]);
   const yieldFactors = useMemo(() => prongYieldFactors(prongs), [prongs]);
   const contributions = useMemo<ProngContribution[]>(() => {
@@ -312,6 +314,8 @@ export default function SimulationWorkspace({
               activeProngs={bacterialProngs}
             />
           );
+        case "killswitch":
+          return <KillSwitchModule isLightMode={isLightMode} />;
         case "aeolian":
           return (
             <AeolianWindTunnel
@@ -460,7 +464,7 @@ export default function SimulationWorkspace({
             <h1
               className={`text-xl md:text-2xl font-extrabold tracking-tight ${isLightMode ? "text-amber-950" : "text-white"}`}
             >
-              Tailored Simulation — {combinationLabel(prongs)}
+              Tailored Simulation, {combinationLabel(prongs)}
             </h1>
             <div className="flex flex-wrap items-center gap-2 mt-2">
               {prongs.map((p) => {
@@ -522,6 +526,11 @@ export default function SimulationWorkspace({
         </div>
       </div>
 
+      {/* Why Sodium Alginate is modelled but not deployed as a prong */}
+      {prongs.includes(3) && (
+        <AlginateRationaleBanner isLightMode={isLightMode} />
+      )}
+
       {/* Rail + stacked modules */}
       <div className="lg:grid lg:grid-cols-[210px_minmax(0,1fr)] lg:gap-8">
         <SandyxCompanion items={treeItems} isLightMode={isLightMode} />
@@ -545,6 +554,41 @@ export default function SimulationWorkspace({
           ))}
         </div>
       </div>
+    </div>
+  );
+}
+
+function AlginateRationaleBanner({ isLightMode }: { isLightMode: boolean }) {
+  const reasons = PRONG_COPY.find((p) => p.id === 3)?.whyDropped ?? [];
+  return (
+    <div
+      className={`mb-8 rounded-2xl border p-5 md:p-6 ${isLightMode ? "border-rose-200 bg-rose-50/60" : "border-rose-900/40 bg-rose-950/15"}`}
+    >
+      <div
+        className={`mb-2 flex items-center gap-2 ${isLightMode ? "text-rose-700" : "text-rose-300"}`}
+      >
+        <Ban className="h-4 w-4 shrink-0" />
+        <h2 className="text-sm font-black uppercase tracking-wide">
+          Sodium Alginate, modelled for comparison, not deployed as a prong
+        </h2>
+      </div>
+      <p
+        className={`mb-3 text-[13px] leading-relaxed ${isLightMode ? "text-rose-900/80" : "text-rose-100/70"}`}
+      >
+        Alginate was originally scoped as a third prong (an externally applied
+        binder). We kept it fully modelled here so its trade-offs stay
+        quantifiable, but it is <strong>not</strong> part of the deployed design.
+        Its role is now filled by the two engineered prongs plus a
+        genetically-encoded kill switch. We did not proceed with it as a prong
+        because:
+      </p>
+      <ol
+        className={`list-decimal space-y-1.5 pl-5 text-[13px] leading-relaxed ${isLightMode ? "text-rose-900/80" : "text-rose-100/70"}`}
+      >
+        {reasons.map((r, i) => (
+          <li key={i}>{r}</li>
+        ))}
+      </ol>
     </div>
   );
 }

@@ -1,16 +1,16 @@
 /**
- * Approach 5 — Flux Balance Analysis (constraint-based metabolic optimization)
+ * Approach 5, Flux Balance Analysis (constraint-based metabolic optimization)
  * ===========================================================================
  * A REAL FBA: a self-contained two-phase primal simplex solves
- *     maximize  cᵀv     subject to  S·v = 0 ,  lb ≤ v ≤ ub
+ *     maximize  cᵀv     subject to  S·v = 0,  lb ≤ v ≤ ub
  * on a stoichiometric network. Built on top are the analyses that make FBA a meaningful
- * dry-lab tool — not a single point solve:
+ * dry-lab tool, not a single point solve:
  *
- *   • solveFBA            — optimal flux distribution + objective + shadow prices
- *   • parsimoniousFBA     — unique min-Σ|v| flux map at the optimum (pFBA)
- *   • fluxVariability     — per-reaction [min,max] flux at (near-)optimal growth (FVA)
- *   • productionEnvelope  — growth ↔ product Pareto front (phenotype phase plane)
- *   • knockoutNetwork     — in-silico gene deletions (lb=ub=0) with genuine LP rerouting
+ *   • solveFBA, optimal flux distribution + objective + shadow prices
+ *   • parsimoniousFBA, unique min-Σ|v| flux map at the optimum (pFBA)
+ *   • fluxVariability, per-reaction [min,max] flux at (near-)optimal growth (FVA)
+ *   • productionEnvelope, growth ↔ product Pareto front (phenotype phase plane)
+ *   • knockoutNetwork, in-silico gene deletions (lb=ub=0) with genuine LP rerouting
  *
  * The network DATA (metabolites/reactions/bounds) is supplied by the caller so the model is
  * a single source of truth shared by the FBA portal UI and the simulation workspace.
@@ -407,7 +407,7 @@ export interface EnvelopePoint {
 /**
  * Production envelope (phenotype phase plane): sweep the growth reaction across [0, μmax]
  * and, at each fixed growth, report the achievable product flux range. The upper edge is the
- * growth↔product Pareto front — how much growth must be traded for γ-PGA / glutamate.
+ * growth↔product Pareto front, how much growth must be traded for γ-PGA / glutamate.
  */
 export function productionEnvelope(
   net: MetabolicNetwork,

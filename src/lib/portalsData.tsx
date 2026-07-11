@@ -2,6 +2,7 @@ import {
   Sparkles,
   Layers,
   ShieldCheck,
+  ShieldAlert,
   Bug,
   Workflow,
   Dna,
@@ -11,8 +12,9 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 
-// Prong-tailored simulation lives at /model?prongs=1,2 — one shared source of truth
-// for the three engineering prongs, the portal cards, and the pipeline sub-nav.
+// Prong-tailored simulation lives at /model?prongs=1,2, one shared source of truth
+// for the two engineered prongs, the biocontainment kill switch, the (archived) alginate
+// option, the portal cards, and the pipeline sub-nav.
 
 export interface Prong {
   id: number;
@@ -24,6 +26,8 @@ export interface Prong {
   impact: string;
   /** The biological job the prong does out in the desert during deployment. */
   inDesert: string;
+  /** Only set for the archived alginate option, documented reasons it was not pursued as a prong. */
+  whyDropped?: string[];
 }
 
 export const PRONGS: Prong[] = [
@@ -33,13 +37,13 @@ export const PRONGS: Prong[] = [
     icon: <Sparkles className="w-8 h-8 text-dune-orange" />,
     short: "Gamma-PGA bio-adhesive matrix",
     whatItIs:
-      "Enhancing the natural production of Gamma-PGA in Bacillus subtilis to act as a primary bio-adhesive matrix.",
+      "We boost the natural production of Gamma-PGA in Bacillus subtilis so it works as a bio-adhesive matrix.",
     modelDoes:
-      "Simulates metabolic flux, cross-linking thermodynamics with calcium ions, and calculates the resulting shear modulus.",
+      "Simulates metabolic flux, cross-linking with calcium ions, and the resulting shear modulus.",
     impact:
-      "Maximizes structural integrity and provides a biodegradable crust capable of withstanding severe wind friction.",
+      "Builds a biodegradable crust that holds up against wind.",
     inDesert:
-      "Sprayed onto the dune, the bacteria secrete poly-γ-glutamic acid — a sticky, water-retaining biopolymer that glues loose sand grains into a flexible living crust and holds the moisture the colony needs to survive the heat.",
+      "Sprayed onto the dune, the bacteria secrete poly-γ-glutamic acid, a sticky, water-retaining biopolymer that glues loose sand grains into a flexible living crust and holds the moisture the colony needs to survive the heat.",
   },
   {
     id: 2,
@@ -49,27 +53,52 @@ export const PRONGS: Prong[] = [
     whatItIs:
       "Engineering B. subtilis to secrete Carbonic Anhydrase (CA) and anchor it to the cell surface via Sortase-mediated ligation. This enzyme sequesters CO2 and water to form calcium carbonate crystals without producing toxic ammonia.",
     modelDoes:
-      "Simulates Sortase & Sorting Signal functionality, CA dimerization kinetics, and Signal Peptide efficiency to predict successful covalent anchoring and biomineralization rates.",
+      "Simulates Sortase anchoring, CA dimerization, and signal-peptide efficiency to predict covalent anchoring and biomineralization rates.",
     impact:
-      "Provides a sustainable, ammonia-free pathway to cement sand grains together, permanently sequestering atmospheric CO2 while drastically improving crust durability.",
+      "Cements sand grains together without ammonia, captures CO2, and makes the crust more durable.",
     inDesert:
-      "In the sand, the surface-displayed carbonic anhydrase pulls CO₂ from the air and, using calcium already present in desert dust, grows calcium-carbonate cement between grains — hardening the surface into a durable, ammonia-free biocement while locking away carbon.",
+      "In the sand, the surface-displayed carbonic anhydrase pulls CO₂ from the air and, using calcium already present in desert dust, grows calcium-carbonate cement between grains, hardening the surface into a durable, ammonia-free biocement while locking away carbon.",
   },
   {
     id: 3,
-    title: "Commercial Biopolymer Backup",
+    title: "Sodium Alginate",
     icon: <ShieldCheck className="w-8 h-8 text-dune-rose" />,
-    short: "Sodium Alginate fail-safe",
+    short: "Applied hydrogel binder, not pursued as a prong",
     whatItIs:
-      "Utilizing Sodium Alginate, a robust commercial biopolymer, as a fail-safe additive if engineered bacteria fail to establish in extreme, fluctuating desert conditions.",
+      "Sodium alginate is a food-grade commercial biopolymer that cross-links with calcium on contact to form an 'egg-box' gel. It was originally scoped as a third prong (an externally applied binder), but was later dropped from the core design.",
     modelDoes:
-      "Models the rheological properties, gelation thermodynamics, and cross-linking efficiency of Sodium Alginate under extreme temperatures and salinity.",
+      "Still fully modelled here: gelation thermodynamics, moisture retention, and Ca²⁺ egg-box cross-linking efficiency under desert temperature and salinity, so its trade-offs against the engineered prongs remain quantifiable.",
     impact:
-      "Ensures reliable, immediate sand stabilization in the harshest environments, providing a dependable fallback to guarantee project success.",
+      "Retained as an archived comparison rather than a deployed prong. Its role is now filled by the two engineered prongs plus a genetically-encoded kill switch, keeping the whole solution a genuine synbio system.",
     inDesert:
-      "As a fail-safe, food-grade sodium alginate is cross-linked with calcium on contact to form an 'egg-box' gel that instantly binds the surface — guaranteeing stabilization even where the engineered bacteria struggle to establish.",
+      "On contact with the calcium already present in desert dust, sodium alginate forms an 'egg-box' gel that instantly binds the surface, but as an inert applied material rather than anything the bacteria produce.",
+    whyDropped: [
+      "Highly water-absorbent. As a hydrogel it can retain significant water, potentially reducing water availability and limiting nutrient diffusion to the cells, which could work against the engineered Prong 2 (CA → CaCO₃).",
+      "Depends on a consistent external Ca²⁺ supply for calcite formation. Without enough calcium, the bacteria may form alternative CaCO₃ polymorphs or poorly-formed aggregates, compromising the bioremediation outcome.",
+      "It is not a synthetic-biology solution. iGEM rewards demonstrating engineering through genetic design; a core prong that relies solely on an externally added material makes the overall system feel less integrated. A genetically-encoded strategy showcases the engineering contribution far better.",
+    ],
   },
 ];
+
+/**
+ * The biocontainment kill switch, the "third element" that replaced the applied alginate prong.
+ * It is a control/biosafety layer for the two engineered prongs rather than a sand binder, so it is
+ * modelled separately from the prong combinations.
+ */
+export const KILL_SWITCH = {
+  id: "killswitch" as const,
+  title: "Biocontainment Kill Switch",
+  icon: <ShieldAlert className="w-8 h-8 text-dune-orange" />,
+  short: "MazE/MazF control of the engineered population",
+  whatItIs:
+    "A genetically-encoded control layer that limits and, when needed, eliminates the engineered B. subtilis population, replacing the applied alginate as the project's third element and keeping the whole design a synbio system.",
+  modelDoes:
+    "Models the MazE/MazF Type II toxin–antitoxin circuit: aTc-inducible MazF for on-demand elimination of vegetative cells, plasmid-dilution self-limiting, and an E. coli MazEF split that kills any wild microbe that acquires the engineered genes by horizontal gene transfer.",
+  impact:
+    "Function: promote rapid biofilm formation for desert bioremediation. Containment: eliminate vegetative cells via the kill switch. Long-term biosafety: pair enhanced, more uniform spore germination (gerB*) with the kill switch so dormant spores are woken and cleared rather than persisting.",
+  inDesert:
+    "While the colony is working it keeps making antitoxin and stays alive; add the aTc trigger, or let the plasmid dilute out over generations, and the toxin wins, self-limiting the strain. Genes that jump to native microbes carry the toxin without its cognate antitoxin, so those recipients self-eliminate.",
+};
 
 export interface PortalCard {
   id: string;

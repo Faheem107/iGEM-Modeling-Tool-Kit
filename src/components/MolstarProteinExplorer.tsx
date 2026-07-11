@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { Dna, Atom } from "lucide-react";
 import { Reveal } from "@/components/reveal";
 
-// WebGL viewer is browser-only — load it client-side with no SSR.
+// WebGL viewer is browser-only, load it client-side with no SSR.
 const MolstarViewer = dynamic(() => import("@/components/molstar-viewer"), {
   ssr: false,
   loading: () => (

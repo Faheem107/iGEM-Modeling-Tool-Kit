@@ -12,12 +12,12 @@ import {
 } from "@/components/motion-primitives/carousel";
 
 /**
- * LandingCinematic — "Sandyx presents" (carousel edition)
+ * LandingCinematic, "Sandyx presents" (carousel edition)
  * =======================================================
  * The three story panes (Project Overview → How the models help → Lab usage) now live in a
  * motion-primitives <Carousel>: swipe/drag, arrow buttons, dot indicators, and a gentle
  * auto-advance. Sandyx stands at the window's bottom-left, "presenting" each pane. The old
- * duplicated top-left scene-title chip is gone — each pane shows its title exactly once.
+ * duplicated top-left scene-title chip is gone, each pane shows its title exactly once.
  */
 
 type Accent = "indigo" | "emerald" | "amber";
@@ -60,22 +60,20 @@ const SCENES: Scene[] = [
     accent: "indigo",
     paragraphs: [
       <>
-        This project tackles the environmental crisis of wind-driven desert sand
-        erosion by engineering{" "}
+        This project fights wind-driven desert sand erosion. We engineer{" "}
         <Term k="bacillus-subtilis">
           <i>Bacillus subtilis</i>
         </Term>{" "}
-        to biologically stabilize sandy surfaces.
+        to bind and stabilize sandy surfaces.
       </>,
       <>
-        We employ a three-pronged synthetic biology approach to maximize soil
-        cohesion, utilize native desert resources, and ensure strict{" "}
-        <Term k="kill-switch">biosafety</Term>.
+        Two engineered prongs do the work: <Term k="gamma-pga">γ-PGA</Term> and
+        carbonic-anhydrase biomineralization. A genetically-encoded{" "}
+        <Term k="kill-switch">kill switch</Term> keeps the strain contained.
       </>,
       <>
-        By binding loose particulate matter into a durable{" "}
-        <Term k="gamma-pga">γ-PGA</Term> crust, we aim to significantly reduce
-        airborne dust and improve regional air quality.
+        Binding loose sand into a <Term k="gamma-pga">γ-PGA</Term> crust cuts
+        airborne dust and improves air quality.
       </>,
     ],
   },
@@ -85,16 +83,16 @@ const SCENES: Scene[] = [
     accent: "emerald",
     paragraphs: [
       <>
-        These computational models bridge the gap between microscopic bacterial
-        behaviors and macroscopic environmental impact.
+        These models connect what the bacteria do inside the cell to the effect
+        on the ground.
       </>,
       <>
-        They let researchers simulate polymer{" "}
-        <Term k="cross-linking">cross-linking</Term> dynamics, optimize
-        metabolic pathways with{" "}
-        <Term k="flux-balance-analysis">flux balance analysis</Term>, and
-        predict the real-world <Term k="aeolian-transport">aeolian</Term> stress
-        resistance of treated sand — before touching a single flask.
+        Simulate polymer <Term k="cross-linking">cross-linking</Term>, optimize
+        pathways with{" "}
+        <Term k="flux-balance-analysis">flux balance analysis</Term>, and predict
+        how treated sand resists{" "}
+        <Term k="aeolian-transport">aeolian</Term> wind stress, before touching a
+        single flask.
       </>,
     ],
   },
@@ -104,14 +102,14 @@ const SCENES: Scene[] = [
     accent: "amber",
     paragraphs: [
       <>
-        Use this suite to fine-tune your wet lab parameters — incubation
-        temperature, <Term k="precursor">precursor</Term> concentrations, and{" "}
+        Set your wet lab parameters here: incubation temperature,{" "}
+        <Term k="precursor">precursor</Term> concentrations, and{" "}
         <Term k="od600">inoculum</Term> volumes.
       </>,
       <>
-        The simulated outputs guide exact experimental setups, so you hit the
-        optimal <Term k="shear-modulus">shear modulus</Term> and environmental
-        durability in your physical assays.
+        The outputs guide your setup, so you hit the{" "}
+        <Term k="shear-modulus">shear modulus</Term> and durability you need in
+        your assays.
       </>,
     ],
   },
@@ -132,7 +130,7 @@ function Pane({ scene, isLightMode }: { scene: Scene; isLightMode: boolean }) {
         className="absolute inset-0 w-full h-full object-cover scale-110"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-black/25" />
-      {/* presented text — full-width top on mobile, right-hand card on desktop */}
+      {/* presented text, full-width top on mobile, right-hand card on desktop */}
       <div className="absolute z-20 left-4 right-4 top-8 sm:left-auto sm:top-1/2 sm:-translate-y-1/2 sm:right-[6%] sm:w-[56%] sm:max-w-lg">
         <motion.div
           key={scene.title}
@@ -216,7 +214,7 @@ export default function LandingCinematic({
             />
           </Carousel>
 
-          {/* Sandyx — large, bottom-left, presenting each pane */}
+          {/* Sandyx, large, bottom-left, presenting each pane */}
           <motion.img
             src="/sandyx.png"
             alt="Sandyx"
@@ -241,7 +239,7 @@ export default function LandingCinematic({
 }
 
 // ---------------------------------------------------------------------------
-// Branch-split connector — grows from the centre into three roots above the prong cards.
+// Branch-split connector, grows from the centre into three roots above the prong cards.
 // ---------------------------------------------------------------------------
 export function BranchConnector({
   isLightMode: _isLightMode,
@@ -273,7 +271,7 @@ export function BranchConnector({
       >
         <defs>
           {/* userSpaceOnUse so the gradient still resolves on the perfectly vertical middle
- branch — an objectBoundingBox gradient is degenerate on a zero-width line and would
+ branch, an objectBoundingBox gradient is degenerate on a zero-width line and would
  render it invisible (which is why the middle prong had no branch before). */}
           <linearGradient
             id="branchGrad"
@@ -296,7 +294,7 @@ export function BranchConnector({
           strokeLinecap="round"
           style={{ pathLength: draw }}
         />
-        {/* three sibling branches (left, MIDDLE, right) — all identical treatment */}
+        {/* three sibling branches (left, MIDDLE, right), all identical treatment */}
         {branches.map((d, i) => (
           <motion.path
             key={i}
@@ -308,7 +306,7 @@ export function BranchConnector({
             style={{ pathLength: draw }}
           />
         ))}
-        {/* junction node where the trunk splits — makes the split read as a tree fork */}
+        {/* junction node where the trunk splits, makes the split read as a tree fork */}
         <motion.circle
           cx={500}
           cy={66}

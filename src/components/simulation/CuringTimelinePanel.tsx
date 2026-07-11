@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Curing & Deployment Timeline — the crust's life story in one module.
+ * Curing & Deployment Timeline, the crust's life story in one module.
  * The other macro modules report the MATURE cohesion; this one shows how the crust rises to that
  * strength over the 0/8/16/24/32 h spray protocol (Study 5) and then weathers over months until it
  * must be re-applied. The multi-prong pay-off is explicit: a fast-setting polymer buys early-age
@@ -280,7 +280,7 @@ export default function CuringTimelinePanel({
           >
             Dashed lines are the protocol spray times (0/8/16/24/32 h). Alginate
             gels on contact, γ-PGA sets within hours, and MICP calcite ripens
-            over the full 32 h — so the mix reaches useful strength early and
+            over the full 32 h, so the mix reaches useful strength early and
             plateaus by maturation.
           </p>
         </Panel>
@@ -407,8 +407,7 @@ export default function CuringTimelinePanel({
           {!meetsDesign ? (
             <>
               This selection cures to withstand only{" "}
-              <b>{timeline.maxSurvivableWindFresh.toFixed(0)} m/s</b> when fresh
-              — below the {designWind} m/s design wind. Lower the design wind,
+              <b>{timeline.maxSurvivableWindFresh.toFixed(0)} m/s</b> when fresh, below the {designWind} m/s design wind. Lower the design wind,
               or add/strengthen the CaCO₃ (MICP) prong, whose cement supplies
               the extra cohesion needed to survive UAE storm winds.
             </>
@@ -417,8 +416,7 @@ export default function CuringTimelinePanel({
               Best of both ends: the crust reaches{" "}
               <b>{(timeline.earlyAgeFraction * 100).toFixed(0)}%</b> strength by
               the first re-spray and stays above the {designWind} m/s survival
-              line for <b>{reapplyLabel}</b> —
-              {hasCalcite
+              line for <b>{reapplyLabel}</b>, {hasCalcite
                 ? " the durable calcite floor carries it"
                 : " longer than a soluble polymer alone would"}{" "}
               beyond the {timeline.scheduledReapplyMonths.toFixed(0)}-month
@@ -428,7 +426,7 @@ export default function CuringTimelinePanel({
             <>
               This crust matures in <b>{timeline.hoursToMature.toFixed(0)} h</b>{" "}
               and clears {designWind} m/s when fresh, but weathers below the
-              survival line at <b>{reapplyLabel}</b> — short of the{" "}
+              survival line at <b>{reapplyLabel}</b>, short of the{" "}
               {timeline.scheduledReapplyMonths.toFixed(0)}-month cadence.
               {hasCalcite
                 ? " Boost the calcite recipe (more Ca²⁺ / CA activity in the CaCO₃ module) to raise the durable floor and extend the interval."

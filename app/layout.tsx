@@ -9,7 +9,7 @@ import { ThemeProvider } from "@/components/theme-context";
 import { GradientBackground } from "@/components/gradient-background";
 import { Providers } from "@/components/providers";
 
-// Body / UI — Lexend across weights (see DESIGN.md §2)
+// Body / UI, Lexend across weights (see DESIGN.md §2)
 const lexend = Lexend({
   subsets: ["latin"],
   display: "swap",
@@ -17,7 +17,7 @@ const lexend = Lexend({
   weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
-// Display / headings — Super Dream, the rounded retro face that matches the
+// Display / headings, Super Dream, the rounded retro face that matches the
 // Dunelock wordmark. Shipped locally in public/fonts.
 const superDream = localFont({
   src: "../public/fonts/SuperDream.ttf",

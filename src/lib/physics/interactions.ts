@@ -1,11 +1,10 @@
 /**
- * Inter-prong interactions — what actually happens when prongs share a chassis and a soil
+ * Inter-prong interactions, what actually happens when prongs share a chassis and a soil
  * ======================================================================================
  * The three prongs are not independent. When combined they interact through concrete,
  * modellable mechanisms:
  *
- *   1. SHARED Ca²⁺ COMPETITION (physicochemical). All three prongs consume divalent calcium —
- *      γ-PGA carboxylate chelation, calcite precipitation, and alginate egg-box junctions all
+ *   1. SHARED Ca²⁺ COMPETITION (physicochemical). All three prongs consume divalent calcium, *      γ-PGA carboxylate chelation, calcite precipitation, and alginate egg-box junctions all
  *      draw from the same finite soil Ca²⁺ pool. Co-applying them splits that pool, so each
  *      prong sees a lower effective [Ca²⁺] and yields a weaker binder than it would alone.
  *
@@ -95,7 +94,7 @@ export interface CalciumCompetition {
  * Shared-Ca²⁺ competition via competitive Langmuir binding. Each prong's cohesion is scaled by how
  * much of its STANDALONE calcium binding it retains once it must share the pool with the others.
  * Because calcite (Prong 2) is modelled as an irreversible high-affinity sink, it preferentially
- * draws calcium and depresses the reversible polymer binders more than they depress it — a genuine,
+ * draws calcium and depresses the reversible polymer binders more than they depress it, a genuine,
  * asymmetric mechanism rather than a single uniform knock-down.
  */
 export function calciumCompetition(prongs: ProngId[]): CalciumCompetition {
@@ -181,7 +180,7 @@ export function prongInteractions(prongs: ProngId[]): InteractionEffect[] {
   const effects: InteractionEffect[] = [];
   if (prongs.length < 2) return effects;
 
-  // 1. Shared Ca²⁺ competition (any ≥2 prongs, since all three bind Ca²⁺) — competitive Langmuir.
+  // 1. Shared Ca²⁺ competition (any ≥2 prongs, since all three bind Ca²⁺), competitive Langmuir.
   const ca = calciumCompetition(prongs);
   if (ca.limited) {
     const worst = prongs.reduce(
@@ -199,7 +198,7 @@ export function prongInteractions(prongs: ProngId[]): InteractionEffect[] {
       kind: "competition",
       mechanism: "Shared Ca²⁺ competition",
       percent: -(1 - ca.factor) * 100,
-      description: `All active prongs bind Ca²⁺ from one soil pool (${ca.supply.toFixed(1)} mM total); free Ca²⁺ falls to ${ca.freeCa.toFixed(2)} mM at equilibrium. Because binders have different affinities the hit is uneven (${perProngText}) — the high-affinity calcite sink out-competes the reversible polymers, so ${["γ-PGA", "CaCO₃", "Alginate"][worst - 1]} loses most. Dosing more CaCl₂ relaxes it.`,
+      description: `All active prongs bind Ca²⁺ from one soil pool (${ca.supply.toFixed(1)} mM total); free Ca²⁺ falls to ${ca.freeCa.toFixed(2)} mM at equilibrium. Because binders have different affinities the hit is uneven (${perProngText}), the high-affinity calcite sink out-competes the reversible polymers, so ${["γ-PGA", "CaCO₃", "Alginate"][worst - 1]} loses most. Dosing more CaCl₂ relaxes it.`,
     });
   }
 

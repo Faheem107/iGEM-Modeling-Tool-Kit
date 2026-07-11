@@ -1,9 +1,8 @@
-import { Workflow, Bug, Dna, FlaskConical } from "lucide-react";
+import { Workflow, Bug, Dna, FlaskConical, ShieldAlert } from "lucide-react";
 import type { ReactNode } from "react";
 import { PRONGS } from "./portalsData";
 
-// The 3-step explainer shown when a portal (or a prong combination) is opened —
-// what it is / what it does / what we plan to model. See DESIGN.md §5.
+// The 3-step explainer shown when a portal (or a prong combination) is opened, // what it is / what it does / what we plan to model. See DESIGN.md §5.
 
 export interface IntroStep {
   label: string;
@@ -29,11 +28,11 @@ export const PORTAL_INTROS: Record<
     steps: [
       {
         label: "What it is",
-        body: "A constraint-based model of the engineered B. subtilis metabolism — the mathematical core that decides how the cell splits its carbon between growing and making bio-adhesive.",
+        body: "A constraint-based model of the engineered B. subtilis metabolism, the mathematical core that decides how the cell splits its carbon between growing and making bio-adhesive.",
       },
       {
         label: "What it does",
-        body: "It solves a real linear program on the mass-balanced reaction network (S·v = 0, subject to the glucose and oxygen limits you set) to find the best the cell can do — then lets you knock out genes and watch the carbon re-route.",
+        body: "It solves a real linear program on the mass-balanced reaction network (S·v = 0, subject to the glucose and oxygen limits you set) to find the best the cell can do, then lets you knock out genes and watch the carbon re-route.",
       },
       {
         label: "What we plan to model",
@@ -56,7 +55,7 @@ export const PORTAL_INTROS: Record<
       },
       {
         label: "What we plan to model",
-        body: "Surface coverage, propagation rate, and crust cohesion — driven by the same γ-PGA yield and shear-modulus values the pipeline computes.",
+        body: "Surface coverage, propagation rate, and crust cohesion, driven by the same γ-PGA yield and shear-modulus values the pipeline computes.",
       },
     ],
   },
@@ -67,7 +66,7 @@ export const PORTAL_INTROS: Record<
     steps: [
       {
         label: "What it is",
-        body: "A structural viewer for the engineered enzymes at the heart of the project — carbonic anhydrase and the sortase anchor.",
+        body: "A structural viewer for the engineered enzymes at the heart of the project, carbonic anhydrase and the sortase anchor.",
       },
       {
         label: "What it does",
@@ -75,10 +74,31 @@ export const PORTAL_INTROS: Record<
       },
       {
         label: "What we plan to model",
-        body: "Thermal stability of the enzyme — the fraction of protein that stays correctly folded and active across the desert's temperature swings.",
+        body: "Thermal stability of the enzyme, the fraction of protein that stays correctly folded and active across the desert's temperature swings.",
       },
     ],
   },
+};
+
+/** The biocontainment kill switch, modelled on its own (the biosafety element). */
+export const KILL_SWITCH_INTRO: PortalIntroContent = {
+  storageKey: "portal-intro:killswitch",
+  title: "Biocontainment Kill Switch",
+  icon: <ShieldAlert className="w-7 h-7 text-dune-orange" />,
+  steps: [
+    {
+      label: "What it is",
+      body: "The biosafety element of the project. A MazE/MazF toxin and antitoxin circuit that controls the engineered B. subtilis and clears it when the job is done.",
+    },
+    {
+      label: "What it does",
+      body: "Add the aTc trigger and the toxin wins, so the cells die. Even with no trigger, the antitoxin plasmid dilutes out over generations and the strain limits itself. A second copy kills any wild microbe that picks up the genes.",
+    },
+    {
+      label: "What we plan to model",
+      body: "The kill dynamics and time to clear the population, how well horizontal gene transfer is contained, and how many rounds of germination it takes to clear dormant spores.",
+    },
+  ],
 };
 
 /**
@@ -123,7 +143,7 @@ export function buildModelIntro(prongIds: number[]): PortalIntroContent {
         label: "What we plan to model",
         body:
           chosen.length > 1
-            ? "How the selected prongs combine — the total crust strength, CO₂ captured, and wind resistance you get when they work together."
+            ? "How the selected prongs combine, the total crust strength, CO₂ captured, and wind resistance you get when they work together."
             : (chosen[0]?.impact ??
               "The crust strength and durability this approach delivers."),
       },

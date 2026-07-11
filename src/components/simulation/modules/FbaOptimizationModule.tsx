@@ -68,7 +68,7 @@ type Obj = "growth" | "pga" | "ca";
  * A dynamic flowchart of the core-carbon network. Each arrow is one reaction; its thickness,
  * opacity and animated flow speed scale with the pFBA flux carried by that reaction, so moving a
  * slider or toggling a knockout visibly re-routes the traffic. This is the same flux vector that
- * drives the bar chart and the ODE coupling — the picture and the numbers cannot disagree.
+ * drives the bar chart and the ODE coupling, the picture and the numbers cannot disagree.
  */
 type ColorKey = "spine" | "tca" | "ppp" | "ana" | "over" | "bio" | "pga" | "ca";
 
@@ -116,7 +116,7 @@ function PathwayFlowMap({
   const edges: FlowEdge[] = [
     {
       id: "GLT",
-      rxn: "Glucose uptake — PTS (ptsG)",
+      rxn: "Glucose uptake, PTS (ptsG)",
       from: [NODE.glc.x, NODE.glc.y],
       to: [NODE.G6P.x, NODE.G6P.y],
       color: "spine",
@@ -151,7 +151,7 @@ function PathwayFlowMap({
     },
     {
       id: "PYC",
-      rxn: "Pyruvate carboxylase — anaplerosis (pycA)",
+      rxn: "Pyruvate carboxylase, anaplerosis (pycA)",
       from: [NODE.PYR.x, NODE.PYR.y],
       to: [NODE.OAA.x, NODE.OAA.y],
       color: "ana",
@@ -186,7 +186,7 @@ function PathwayFlowMap({
     },
     {
       id: "LDH",
-      rxn: "Lactate overflow — NADH sink (ldh)",
+      rxn: "Lactate overflow, NADH sink (ldh)",
       from: [NODE.PYR.x, NODE.PYR.y],
       to: [NODE.lac.x, NODE.lac.y],
       color: "over",
@@ -200,7 +200,7 @@ function PathwayFlowMap({
     },
     {
       id: "BIO",
-      rxn: "Biomass assembly — multi-precursor drain (growth)",
+      rxn: "Biomass assembly, multi-precursor drain (growth)",
       from: [NODE.ACCOA.x, NODE.ACCOA.y],
       to: [NODE.BIO.x, NODE.BIO.y],
       color: "bio",
@@ -446,7 +446,7 @@ export default function FbaOptimizationModule({
   const [objective, setObjective] = useState<Obj>(has1 ? "pga" : "ca");
   const [knockouts, setKnockouts] = useState<Set<string>>(new Set());
 
-  // Which flux ids to plot — drop the pathway that isn't active.
+  // Which flux ids to plot, drop the pathway that isn't active.
   const fluxDisplay = useMemo(() => {
     const base = [
       "EX_GLC",
@@ -604,7 +604,7 @@ export default function FbaOptimizationModule({
             step={0.5}
             unit="mmol/gDCW/h"
             onChange={setGlucoseUb}
-            hint="Upper bound on EX_glc — the measured substrate uptake flux that scales the whole linear program."
+            hint="Upper bound on EX_glc, the measured substrate uptake flux that scales the whole linear program."
           />
           <Slider
             isLightMode={isLightMode}
@@ -778,8 +778,7 @@ export default function FbaOptimizationModule({
       <Panel
         title={
           <>
-            <GlossaryTerm term="flux">Live Pathway Flow Map</GlossaryTerm> —
-            carbon routing at the optimum
+            <GlossaryTerm term="flux">Live Pathway Flow Map</GlossaryTerm>, carbon routing at the optimum
           </>
         }
         icon={Network}
@@ -829,8 +828,7 @@ export default function FbaOptimizationModule({
           <>
             <GlossaryTerm term="production-envelope">
               Production Envelope
-            </GlossaryTerm>{" "}
-            — Growth ↔ {productLabel}{" "}
+            </GlossaryTerm>{" "}, Growth ↔ {productLabel}{" "}
             <GlossaryTerm term="production-envelope">Pareto Front</GlossaryTerm>
           </>
         }
@@ -897,7 +895,7 @@ export default function FbaOptimizationModule({
       </Panel>
 
       <Panel
-        title={<>Carbon Fate — where the fixed feed lands</>}
+        title={<>Carbon Fate, where the fixed feed lands</>}
         icon={Sigma}
         isLightMode={isLightMode}
       >

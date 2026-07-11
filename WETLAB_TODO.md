@@ -1,12 +1,11 @@
-# WETLAB_TODO — Calibrating the Dry-Lab Models
+# WETLAB_TODO, Calibrating the Dry-Lab Models
 
 This document is the bridge between the dry-lab simulation toolkit and the NYUAD iGEM 2026 wet
 lab. Every model in `src/lib/physics/` is built on real equations, but several constants are
 **placeholders** that must be replaced with values measured in our own lab to make the predictions
 quantitative rather than illustrative.
 
-**How the code is organized.** All calibratable constants live in one place —
-[`src/lib/physics/constants.ts`](src/lib/physics/constants.ts) — as `Calib` objects:
+**How the code is organized.** All calibratable constants live in one place, [`src/lib/physics/constants.ts`](src/lib/physics/constants.ts), as `Calib` objects:
 
 ```ts
 KdPGA: calib(4.0, 'mol·m⁻³ (mM)', '<source>', '<wet-lab experiment>', [1, 15])
@@ -14,24 +13,24 @@ KdPGA: calib(4.0, 'mol·m⁻³ (mM)', '<source>', '<wet-lab experiment>', [1, 15
 ```
 
 To update a parameter after an experiment: change the first argument (`value`) and, if useful,
-tighten the `range`. Nothing else in the codebase needs to change — every model reads from here.
+tighten the `range`. Nothing else in the codebase needs to change, every model reads from here.
 
 **Priority key (out of 10).** 9-10 = blocks a quantitative claim until measured; 5-7 = important for
 realism; 2-4 = refinement once the essentials are done. Higher = do sooner.
 
 ---
 
-## 1. Flux Balance Analysis — `FBA_CALIB` (Approach 5, Prong 1 & 2)
+## 1. Flux Balance Analysis, `FBA_CALIB` (Approach 5, Prong 1 & 2)
 
 The FBA solves `max cᵀv s.t. S·v = 0, lb ≤ v ≤ ub`. The exchange-reaction bounds are the physical
 link to the lab: **the wet lab measures the bounds, the dry lab predicts the routing.**
 
 | Param | Symbol | What it is | Experiment & protocol | Pri |
 |---|---|---|---|---|
-| `vGlcMax` | `ub(EX_glc)` | Max glucose uptake [mmol·gDCW⁻¹·h⁻¹] — the LP feed | Batch/fed-batch bioreactor: sample broth glucose (YSI/HPLC) and biomass (OD600 → DCW via a dry-weight calibration) over time. `q_glc = (1/X)·d[Glc]/dt` in exponential phase = the slope. | 9 |
+| `vGlcMax` | `ub(EX_glc)` | Max glucose uptake [mmol·gDCW⁻¹·h⁻¹], the LP feed | Batch/fed-batch bioreactor: sample broth glucose (YSI/HPLC) and biomass (OD600 → DCW via a dry-weight calibration) over time. `q_glc = (1/X)·d[Glc]/dt` in exponential phase = the slope. | 9 |
 | `vO2Max` | `ub(EX_o2)` | Max O₂ uptake (aerobiosis ceiling) | Respirometry / off-gas O₂ mass balance at known DCW; or DO-stat. | 6 |
 | `atpMaintenance` | NGAM | Non-growth ATP burn [mmol·gDCW⁻¹·h⁻¹] | Chemostat at ≥3 dilution rates; plot `q_ATP` vs µ; intercept = NGAM. | 3 |
-| `fluxToConc` | — | Converts FBA precursor flux `v_glu` → ODE intracellular `[S]` [mM]. Lumps biomass density × residence time | Quench + extract cells; LC-MS for intracellular L-glutamate pool; regress measured `[S]` against the measured precursor flux. | 9 |
+| `fluxToConc` |, | Converts FBA precursor flux `v_glu` → ODE intracellular `[S]` [mM]. Lumps biomass density × residence time | Quench + extract cells; LC-MS for intracellular L-glutamate pool; regress measured `[S]` against the measured precursor flux. | 9 |
 
 **Knockout validation (no constant, but a key prediction to test):** the FBA predicts that deleting
 overflow (`pta`/`ackA`) reroutes carbon toward γ-PGA. Confirm by building the knockout strain and
@@ -39,7 +38,7 @@ comparing acetate excretion and PGA yield to wild type.
 
 ---
 
-## 2. γ-PGA Cross-Linking — `CROSSLINK_CALIB` (Approach 2, Prong 1)
+## 2. γ-PGA Cross-Linking, `CROSSLINK_CALIB` (Approach 2, Prong 1)
 
 `θ = [Ca²⁺]/(Kd+[Ca²⁺])` → `ν = ρ·θ·(1−2Mx/Mn)` → `G = νRT`.
 
@@ -52,7 +51,7 @@ comparing acetate excretion and PGA yield to wild type.
 
 ---
 
-## 3. Aeolian Erosion — `AEOLIAN_CALIB` (Approach 3, all prongs)
+## 3. Aeolian Erosion, `AEOLIAN_CALIB` (Approach 3, all prongs)
 
 Bagnold threshold `u*t = A·√[(ρs−ρa)/ρa·g·d + γ/(ρa·d)]` and saltation flux
 `q = C·(ρa/g)·u*³·(1 − u*t²/u*²)`. **This is where the wind tunnel earns its keep.**
@@ -71,7 +70,7 @@ Bagnold threshold `u*t = A·√[(ρs−ρa)/ρa·g·d + γ/(ρa·d)]` and saltat
 
 ---
 
-## 4. CaCO₃ Precipitation & Biocement Strength — `CACO3_CALIB` (§6, Prong 2) — **NEW**
+## 4. CaCO₃ Precipitation & Biocement Strength, `CACO3_CALIB` (§6, Prong 2), **NEW**
 
 Geochemistry (Lassin et al. 2018): speciation → `Ω = [Ca²⁺][CO₃²⁻]/Ksp` → ACC → calcite → **UCS**.
 
@@ -91,13 +90,13 @@ assay (CA activity), and the periplasmic-fractionation signal-peptide test.
 
 ---
 
-## 5. Sodium Alginate — `ALGINATE_CALIB` (Prong 3) — **NEW**
+## 5. Sodium Alginate, `ALGINATE_CALIB` (Prong 3), **NEW**
 
 Egg-box gel: `ν = ρ·θ·F_G·(1−2Mx/Mn)`, `G = νRT`, plus moisture & washout.
 
 | Param | What it is | Experiment & protocol | Pri |
 |---|---|---|---|
-| `guluronateFraction` | F_G — fraction of guluronate blocks (sets junction density) | From supplier certificate of analysis, or measure by **¹H-NMR block analysis** of the lot used. | 6 |
+| `guluronateFraction` | F_G, fraction of guluronate blocks (sets junction density) | From supplier certificate of analysis, or measure by **¹H-NMR block analysis** of the lot used. | 6 |
 | `KdCa` | Ca²⁺ dissociation constant to alginate G-blocks [mM] | Ca²⁺-ISE titration of the alginate solution. Also sets the alginate affinity in the competitive-Ca²⁺ model. | 4 |
 | `concToRho` | Applied %w/v → retained network density [kg/m³] | Gravimetric: retained alginate mass per treated sand volume vs applied concentration. | 3 |
 | `waterHoldingCapacity` | g water held per g alginate | Equilibrate alginate-treated sand at controlled RH (saturated-salt chambers); gravimetric water uptake. Field anchor: alginate beads retain ~55% water (Study 2). | 3 |
@@ -105,7 +104,7 @@ Egg-box gel: `ν = ρ·θ·F_G·(1−2Mx/Mn)`, `G = νRT`, plus moisture & washo
 
 ---
 
-## 6. Composite Combination — `COMPOSITE_CALIB` + resilience priors (≥2 prongs) — **NEW**
+## 6. Composite Combination, `COMPOSITE_CALIB` + resilience priors (≥2 prongs), **NEW**
 
 `γ_total = Σ γᵢ + Σ η_ij·√(γᵢγⱼ)`.
 
@@ -127,19 +126,18 @@ notes. Refine each with a targeted stress assay and re-score:
 
 ---
 
-## 7. Inter-Prong Interactions — `INTERACTION_CALIB` (≥2 prongs)
+## 7. Inter-Prong Interactions, `INTERACTION_CALIB` (≥2 prongs)
 
 The composite total already reflects two antagonistic mechanisms applied **before** the synergy
 term. Shared-Ca²⁺ competition is now a **competitive Langmuir partition** of one soil calcium pool
 (`interactions.ts`): free Ca²⁺ solves `S = c_f + Σ B_p·c_f/(K_d,p+c_f)`, and each prong keeps
-`φ_Ca,p = θ_p(shared)/θ_p(alone)` of its binding. Because affinities differ, the hit is uneven —
-the high-affinity calcite sink out-competes the reversible polymer binders.
+`φ_Ca,p = θ_p(shared)/θ_p(alone)` of its binding. Because affinities differ, the hit is uneven, the high-affinity calcite sink out-competes the reversible polymer binders.
 
 | Param | What it is | Experiment & protocol | Pri |
 |---|---|---|---|
 | `caSupplyCapacity` | Shared plant-available + dosed Ca²⁺ pool [mM total] | Titrate available Ca²⁺ in treated deployment-site soil (Ca²⁺-ISE); include the dosed CaCl₂. | 6 |
 | `caDemandPGA/CaCO3/Alginate` | Per-prong Ca²⁺ binding-site capacity `B_p` [mM sites] | Ca²⁺-ISE: Ca bound per gram of each binder; for calcite, Ca consumed per unit calcite formed. | 6 |
-| `KdCalcite` | Effective Ca²⁺ affinity of the (irreversible) calcite sink [mM] | Not directly titratable — set far below the polymer `KdPGA`/`KdCa` so calcite wins the partition; sensitivity-check only. | 4 |
+| `KdCalcite` | Effective Ca²⁺ affinity of the (irreversible) calcite sink [mM] | Not directly titratable, set far below the polymer `KdPGA`/`KdCa` so calcite wins the partition; sensitivity-check only. | 4 |
 | `coexpressionBurden` | Fraction of single-strain titre retained when γ-PGA synthase **and** CA are co-expressed | Compare γ-PGA and CA titres in single-function vs dual-function strains (CTAB / WA assays); ratio = β. | 6 |
 
 **Validation:** make 1+2, 1+3, 2+3, and 1+2+3 cores at fixed total Ca²⁺; the model predicts γ-PGA
@@ -147,7 +145,7 @@ loses the most cohesion and calcite the least. Dosing excess CaCl₂ should rela
 
 ---
 
-## 8. Grain-Size Coverage — `GRAINSIZE_CALIB` (all prongs)
+## 8. Grain-Size Coverage, `GRAINSIZE_CALIB` (all prongs)
 
 No single binder grips every grain size. MICP cements a fine-medium sweet spot; γ-PGA and alginate
 close the coarse and fine gaps. Coverage is integrated over the site grain-size distribution, so the
@@ -165,12 +163,12 @@ close the coarse and fine gaps. Coverage is integrated over the site grain-size 
 
 ## Suggested experimental order (maximize dry-lab value early)
 
-1. **DCW calibration + glucose uptake** (`vGlcMax`) — unlocks quantitative FBA.
-2. **CA activity assay** (`caRateEnhancement`) — unlocks Prong 2 precipitation realism + the anchoring decision.
-3. **UCS vs calcite%** (`kUcs`, `nUcs`) — the headline biocement strength curve.
-4. **Cohesion bridges** (`cohesionPerG`, `cohesionPerUCS`) — connect all strengths to wind resistance.
-5. **Wind-tunnel A + profile** (`A`, `uStarRatio`) — anchor the macro erosion claim.
-6. **Site grain-size distribution** (`uaeD50`, `uaeSizeSigma`) + **MICP band UCS** (`micpPeakDiameter`) — ground the grain-size coverage story in the real deployment sand.
-7. **Paired combination cores** (`η_ij`, `coexpressionBurden`) — validate the composite synergy + competition story.
+1. **DCW calibration + glucose uptake** (`vGlcMax`), unlocks quantitative FBA.
+2. **CA activity assay** (`caRateEnhancement`), unlocks Prong 2 precipitation realism + the anchoring decision.
+3. **UCS vs calcite%** (`kUcs`, `nUcs`), the headline biocement strength curve.
+4. **Cohesion bridges** (`cohesionPerG`, `cohesionPerUCS`), connect all strengths to wind resistance.
+5. **Wind-tunnel A + profile** (`A`, `uStarRatio`), anchor the macro erosion claim.
+6. **Site grain-size distribution** (`uaeD50`, `uaeSizeSigma`) + **MICP band UCS** (`micpPeakDiameter`), ground the grain-size coverage story in the real deployment sand.
+7. **Paired combination cores** (`η_ij`, `coexpressionBurden`), validate the composite synergy + competition story.
 
 *Maintained automatically as new `CALIBRATION` constants are added to the physics core.*

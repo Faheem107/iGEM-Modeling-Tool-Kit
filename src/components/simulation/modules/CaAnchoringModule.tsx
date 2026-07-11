@@ -1,12 +1,12 @@
 "use client";
 
 /**
- * Prong 2 — Carbonic Anhydrase surface-display strategy comparison.
- * Compares the two anchoring routes the wet lab is deciding between — Sortase-mediated
- * ligation vs LytE-CWBD binding motif — across the three failure modes they flagged:
+ * Prong 2, Carbonic Anhydrase surface-display strategy comparison.
+ * Compares the two anchoring routes the wet lab is deciding between, Sortase-mediated
+ * ligation vs LytE-CWBD binding motif, across the three failure modes they flagged:
  * signal-peptide export, CA dimerization, and the anchoring step itself.
  *
- * Display efficiency = export × dimerization × anchoring (multiplicative — every step must work).
+ * Display efficiency = export × dimerization × anchoring (multiplicative, every step must work).
  * This is a decision-support comparison; the sub-efficiencies are wet-lab measurable
  * (see WETLAB_TODO.md §4). Overall display ⇒ realized CA activity for the CaCO₃ module.
  */
@@ -122,7 +122,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
             step={0.02}
             format={(v) => `${(v * 100).toFixed(0)}%`}
             onChange={setDimerEff}
-            hint="pNPA esterase assay — active CA requires dimers."
+            hint="pNPA esterase assay, active CA requires dimers."
           />
           <div
             className={`pt-2 border-t ${isLightMode ? "border-amber-900/10" : "border-slate-800"}`}
@@ -197,7 +197,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
       <Panel
         title={
           <>
-            Route Comparison —{" "}
+            Route Comparison, {" "}
             <GlossaryTerm term="sortase">Sortase</GlossaryTerm> vs{" "}
             <GlossaryTerm term="cwbd-binding">Binding Motif</GlossaryTerm>
           </>

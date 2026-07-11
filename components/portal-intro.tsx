@@ -16,7 +16,7 @@ const STEP_ACCENTS = [
  * The 3-step "what it is / does / we model" explainer shown on portal entry.
  * It reads its own dismissal from localStorage so a "don't show again for this
  * portal" choice is remembered, and reveals each step with the TextEffect
- * motion-primitive. Rendering it is idempotent — it decides for itself whether
+ * motion-primitive. Rendering it is idempotent, it decides for itself whether
  * to appear.
  */
 export function PortalIntro({ content }: { content: PortalIntroContent }) {

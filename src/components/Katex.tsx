@@ -7,7 +7,7 @@ import katex from "katex";
  * Katex
  * =====
  * Tiny offline LaTeX renderer used by the "Show the Math" windows. It calls
- * `katex.renderToString` once per formula and injects the result — no network, so it is
+ * `katex.renderToString` once per formula and injects the result, no network, so it is
  * safe under a strict CSP and in SSR. `display` centres block-level equations.
  */
 export default function Katex({

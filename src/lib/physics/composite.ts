@@ -1,5 +1,5 @@
 /**
- * Composite Strength Synthesis — multi-prong combination logic
+ * Composite Strength Synthesis, multi-prong combination logic
  * ============================================================
  * Two complementary outputs when ≥2 prongs are selected:
  *
@@ -12,7 +12,7 @@
  * 2. ROBUSTNESS MATRIX (resilience / redundancy):
  *    The core thesis of the three-prong design is that prongs "compensate for each other's
  *    weaknesses." Each prong carries a resilience profile across failure scenarios; a
- *    combination's resilience per scenario is 1 − Π(1 − rᵢ) — i.e. the crust survives a
+ *    combination's resilience per scenario is 1 − Π(1 − rᵢ), i.e. the crust survives a
  *    scenario if AT LEAST ONE active mechanism survives it (probabilistic redundancy).
  */
 
@@ -42,7 +42,7 @@ export type Scenario = (typeof SCENARIOS)[number];
  * the wet-lab honesty notes (wet_lab_prongs_approach.md). Refinable via the scenario assays
  * listed in WETLAB_TODO.md (e.g. rain-simulation residual strength).
  *   P1 γ-PGA  : water-retaining but soluble & bacteria-dependent
- *   P2 CaCO₃  : mineral cement — persists even if cells die, insoluble, rigid
+ *   P2 CaCO₃  : mineral cement, persists even if cells die, insoluble, rigid
  *   P3 Alginate: bacteria-independent & moisture-holding, but soluble
  */
 export const PRONG_RESILIENCE: Record<ProngId, Record<Scenario, number>> = {
@@ -152,7 +152,7 @@ export function robustnessMatrix(prongs: ProngId[]): RobustnessRow[] {
   });
 }
 
-/** Weakest-scenario resilience — the limiting failure mode of a combination. */
+/** Weakest-scenario resilience, the limiting failure mode of a combination. */
 export function limitingScenario(prongs: ProngId[]): {
   scenario: Scenario;
   resilience: number;

@@ -148,14 +148,14 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
       {
         tex: "R(n) = (1 - k)^{\\,n}",
         caption:
-          "Residual alginate after n rain/wet cycles — its honest solubility limitation.",
+          "Residual alginate after n rain/wet cycles, its honest solubility limitation.",
       },
     ],
   },
   thermal: {
     title: "Protein Thermal Stability",
     intro:
-      "A two-state folding equilibrium sets what fraction of the enzyme/scaffold is folded and active at a given temperature — the viability multiplier that gates every downstream rate.",
+      "A two-state folding equilibrium sets what fraction of the enzyme/scaffold is folded and active at a given temperature, the viability multiplier that gates every downstream rate.",
     blocks: [
       {
         tex: "\\Delta G(T) = \\Delta H - T\\,\\Delta S",
@@ -171,7 +171,7 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
   "protein-3d": {
     title: "3D Protein Explorer",
     intro:
-      "A structural view of the key enzymes — PgsBCA (γ-PGA synthase, Prong 1) or carbonic anhydrase (Prong 2). The backbone is drawn from residue coordinates; no free parameters.",
+      "A structural view of the key enzymes, PgsBCA (γ-PGA synthase, Prong 1) or carbonic anhydrase (Prong 2). The backbone is drawn from residue coordinates; no free parameters.",
     blocks: [
       {
         tex: "\\mathbf{r}_i = (x_i, y_i, z_i)",
@@ -209,7 +209,7 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
       {
         tex: "u_{*t} = A\\sqrt{\\frac{\\rho_s - \\rho_a}{\\rho_a}\\,g\\,d + \\frac{\\gamma}{\\rho_a d}}",
         caption:
-          "Cohesion-enhanced threshold — the crust adds an adhesive term γ/(ρₐd) (Eq. 8).",
+          "Cohesion-enhanced threshold, the crust adds an adhesive term γ/(ρₐd) (Eq. 8).",
       },
       {
         tex: "q = C\\,\\frac{\\rho_a}{g}\\,u_*^{3}\\left(1 - \\frac{u_{*t}^{2}}{u_*^{2}}\\right),\\quad u_* > u_{*t}",
@@ -296,7 +296,7 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
       {
         tex: "\\gamma_{\\text{survive}} = \\rho_a d\\left[\\left(\\tfrac{u_{*}(U_{\\text{design}})}{A}\\right)^2 - \\tfrac{\\rho_s-\\rho_a}{\\rho_a}g d\\right],\\quad m^{*}: \\textstyle\\sum_p \\gamma_p(m^{*}) = \\gamma_{\\text{survive}}",
         caption:
-          "Re-application is due at m* — when the total surviving cohesion drops below the floor needed to withstand the design wind (inverse aeolian threshold).",
+          "Re-application is due at m*, when the total surviving cohesion drops below the floor needed to withstand the design wind (inverse aeolian threshold).",
       },
     ],
   },
@@ -314,6 +314,48 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
         tex: "A_{\\text{break-even}} = \\frac{C^{\\text{capex}}}{C_{\\text{conv}}^{\\text{/ha}} - C^{\\text{opex/ha}}}",
         caption:
           "Area at which the biological treatment undercuts the conventional chemical/concrete baseline.",
+      },
+    ],
+  },
+  killswitch: {
+    title: "Biocontainment Kill Switch (MazE/MazF)",
+    intro:
+      "A Type II toxin–antitoxin circuit as mass-action ODEs: the labile antitoxin A (MazE) sequesters the stable toxin T (MazF) into an inert complex C. Free toxin gates a net growth rate that flips from growth to death, so the viable population is an RK4-integrated log balance.",
+    blocks: [
+      {
+        tex: "\\frac{dA}{dt} = \\sigma_A(p) - \\delta_A A - k_{on} A T + k_{off} C",
+        caption:
+          "Antitoxin: production (constitutive + plasmid-borne σ_A·p) minus fast degradation and toxin binding.",
+      },
+      {
+        tex: "\\frac{dT}{dt} = \\sigma_T(\\text{aTc}) - \\delta_T T - k_{on} A T + k_{off} C + \\delta_A C",
+        caption:
+          "Toxin: production (constitutive + aTc-induced) minus slow degradation; the labile antitoxin in the complex decays, releasing stable toxin.",
+      },
+      {
+        tex: "\\sigma_T(\\text{aTc}) = \\sigma_T^{0} + \\sigma_T^{\\max}\\left[\\ell + (1-\\ell)\\frac{\\text{aTc}^h}{K_d^h + \\text{aTc}^h}\\right]",
+        caption:
+          "The Tet promoter's aTc dose–response (leak ℓ) sets the inducible mazF copy's output.",
+      },
+      {
+        tex: "p(t) = (1 - \\phi)^{\\,t/\\tau_g}, \\qquad \\mu(T) = \\mu_{\\max}(1-\\theta) - d_{\\max}\\,\\theta,\\;\\; \\theta = \\frac{T^n}{K_T^n + T^n}",
+        caption:
+          "Plasmid copy dilutes by loss-per-generation φ; free toxin θ switches the specific rate from growth to death.",
+      },
+      {
+        tex: "\\frac{d}{dt}\\log_{10} N = \\frac{\\mu(T)}{\\ln 10}",
+        caption:
+          "Viable-cell log balance; the time to an X-log kill is when log₁₀(N/N₀) ≤ −X.",
+      },
+      {
+        tex: "P_{\\text{contain}} = e_{\\text{expr}}\\left(1 - \\big[f_{cog} + (1-f_{cog})\\,f_{frag}^{\\,s}\\,\\varepsilon_{codon}\\big]\\right)",
+        caption:
+          "HGT containment: a recipient that expresses the linked toxin self-eliminates unless it is a cognate carrier or acquires (both halves of, if split) a translatable E. coli mazE.",
+      },
+      {
+        tex: "V_R = f_{\\min} + \\sum_{r=1}^{R}\\big[\\text{dormant}_r - g\\,(\\text{dormant}_r - f_{\\min})\\big], \\quad g = 1-(1-g_1)^{n_{\\text{germ}}}",
+        caption:
+          "Spore clearance: each germinate-then-kill round wakes fraction g (raised by gerB* and multiple germinants); a superdormant floor f_min never wakes.",
       },
     ],
   },

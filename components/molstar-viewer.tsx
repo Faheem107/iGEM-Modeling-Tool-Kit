@@ -6,7 +6,7 @@ import { RotateCw, RefreshCw, Loader2 } from "lucide-react";
 /**
  * Headless Mol* 3D structure viewer. We drive Mol*'s PluginContext directly (no
  * mol-plugin-ui), so there's no Mol* control chrome and no external stylesheet to
- * import — the canvas blends into the Dunelock card and we render our own controls.
+ * import, the canvas blends into the Dunelock card and we render our own controls.
  * All Mol* imports are dynamic + inside effects so nothing touches the server.
  */
 export default function MolstarViewer({

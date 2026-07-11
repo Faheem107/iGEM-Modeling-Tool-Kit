@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Prong 3 — Sodium Alginate egg-box gel (applied commercial biopolymer; no bacteria).
+ * Prong 3, Sodium Alginate egg-box gel (applied commercial biopolymer; no bacteria).
  * Ca²⁺ egg-box gelation → shear modulus, plus the honest limitations: moisture retention
  * (a plus) and rain washout (a minus). Deliberately a smaller, distinct module set.
  */

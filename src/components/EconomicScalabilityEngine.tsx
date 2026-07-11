@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Economic Scalability — combination-aware deployment cost.
+ * Economic Scalability, combination-aware deployment cost.
  * Costs the SELECTED prong combination (γ-PGA fermentation, CaCO₃ feedstock+enzyme, and/or
  * purchased alginate), then compares every possible combination and the conventional
  * chemical-spray / concrete baselines on one chart. Physics lives in lib/physics/economic.ts.
@@ -226,7 +226,7 @@ export default function EconomicScalabilityEngine({
 
       <div className="lg:col-span-7 space-y-5">
         <Panel
-          title="Cost per Hectare — Combination Comparison"
+          title="Cost per Hectare, Combination Comparison"
           icon={TrendingDown}
           isLightMode={isLightMode}
           right={
@@ -341,7 +341,7 @@ export default function EconomicScalabilityEngine({
               . Break-even vs chemical spray at ~
               {Number.isFinite(cost.breakEvenHaVsChemical)
                 ? Math.ceil(cost.breakEvenHaVsChemical)
-                : "—"}{" "}
+                : ", "}{" "}
               ha.
             </p>
           </div>

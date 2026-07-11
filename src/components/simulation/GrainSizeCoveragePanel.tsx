@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Grain-Size Coverage — how the active prongs bind the UAE dune-sand size distribution.
+ * Grain-Size Coverage, how the active prongs bind the UAE dune-sand size distribution.
  * MICP (CaCO₃) only cements a mid-fine sweet spot (~63–125 µm); γ-PGA and alginate close the
  * coarse- and fine-grain gaps it misses. The combined union coverage over the site's log-normal
  * grain-size distribution is the quantitative form of the three-prong "cover all sizes" thesis.
@@ -28,7 +28,7 @@ import { grainSizeProfile, PRONG_LABEL, type ProngId } from "../../lib/physics";
 
 interface Props extends Themed {
   prongs: ProngId[];
-  /** Realised-yield factors per prong (inter-prong competition / burden) — starved prongs cover less. */
+  /** Realised-yield factors per prong (inter-prong competition / burden), starved prongs cover less. */
   yieldFactors?: Partial<Record<ProngId, number>>;
 }
 
@@ -254,13 +254,13 @@ export default function GrainSizeCoveragePanel({
             <>
               The prongs are grain-size complementary: MICP (CaCO₃) peaks at
               63–125 µm, while γ-PGA and alginate close the coarse and fine gaps
-              it misses — together holding
+              it misses, together holding
               <b> {(profile.boundMassFraction * 100).toFixed(0)}%</b> of the
               sand mass.
             </>
           ) : (
             <>
-              A single binder leaves a grain-size gap — this selection's weakest
+              A single binder leaves a grain-size gap, this selection's weakest
               band is at
               <b> {profile.weakestDiameter.toFixed(0)} µm</b> (
               {(profile.weakestCoverage * 100).toFixed(0)}% held). Adding

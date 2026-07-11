@@ -10,14 +10,14 @@
  *     bacteria to colonise). Modelled as a log-Gaussian in grain diameter × a fine-side
  *     permeability (penetration) roll-off.
  *   • γ-PGA (Prong 1) is a water-binding gel that bridges fine/medium grain contacts but cannot
- *     span coarse-sand pores — a decreasing logistic in diameter.
+ *     span coarse-sand pores, a decreasing logistic in diameter.
  *   • Alginate (Prong 3) coats grains and seeds nucleation "regardless of grain size" and partially
- *     fills the large pores MICP misses — a broad floor with a coarse-end boost.
+ *     fills the large pores MICP misses, a broad floor with a coarse-end boost.
  *
  * A grain of diameter d is "held" if AT LEAST ONE active mechanism binds it, so per-grain coverage
  * is the probabilistic union  1 − Π(1 − eₚ(d))  (the same redundancy idiom as the robustness
  * matrix). Integrating that union over the site's log-normal grain-size distribution yields the
- * effective bound mass fraction — the quantitative statement of the three-prong "cover all sizes"
+ * effective bound mass fraction, the quantitative statement of the three-prong "cover all sizes"
  * thesis, and a genuine multi-prong interaction (each prong closes another's grain-size gap).
  */
 
@@ -44,7 +44,7 @@ export function micpEfficiency(diameterUm: number): number {
   return Math.max(0, Math.min(1, sweetSpot * penetration));
 }
 
-/** γ-PGA gel bridging effectiveness at diameter d [µm] — high for fine/medium, fails at coarse. */
+/** γ-PGA gel bridging effectiveness at diameter d [µm], high for fine/medium, fails at coarse. */
 export function pgaCoverage(diameterUm: number): number {
   const d = Math.max(1, diameterUm);
   const dHalf = cval(GRAINSIZE_CALIB.pgaCoverHalfD);
@@ -53,7 +53,7 @@ export function pgaCoverage(diameterUm: number): number {
   return Math.max(0, Math.min(1, 1 - logistic(k * Math.log(d / dHalf))));
 }
 
-/** Alginate surface-coating effectiveness at diameter d [µm] — broad floor + coarse-pore boost. */
+/** Alginate surface-coating effectiveness at diameter d [µm], broad floor + coarse-pore boost. */
 export function alginateCoverage(diameterUm: number): number {
   const d = Math.max(1, diameterUm);
   const floor = cval(GRAINSIZE_CALIB.alginateCoverFloor);

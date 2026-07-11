@@ -411,7 +411,7 @@ export default function WetLabSandbox2D({
           : "bg-gradient-to-br from-[#1c1512] to-teal-950/20 border-slate-800 text-slate-200"
       }`}
     >
-      {/* Compact module header — matches the other workspace modules' card style. */}
+      {/* Compact module header, matches the other workspace modules' card style. */}
       <div className="flex items-center gap-3 border-b pb-4 border-slate-200/60 dark:border-slate-800">
         <div
           className={`p-2.5 rounded-xl ${isLightMode ? "bg-teal-50 text-teal-600" : "bg-teal-950/40 text-teal-400"}`}
@@ -427,8 +427,7 @@ export default function WetLabSandbox2D({
           <p
             className={`text-[11px] ${isLightMode ? "text-stone-500" : "text-slate-400"}`}
           >
-            Feed real bench values — OD₆₀₀, glutamate, calcium salt, temperature
-            — into the same erosion physics: a γ-PGA dune-crust assay.
+            Feed real bench values, OD₆₀₀, glutamate, calcium salt, temperature, into the same erosion physics: a γ-PGA dune-crust assay.
           </p>
         </div>
       </div>

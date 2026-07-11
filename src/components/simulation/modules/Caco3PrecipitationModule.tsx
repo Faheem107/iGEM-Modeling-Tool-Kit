@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Prong 2 — CaCO₃ Precipitation → UCS → CO₂ capture (Carbonic Anhydrase, non-ureolytic).
+ * Prong 2, CaCO₃ Precipitation → UCS → CO₂ capture (Carbonic Anhydrase, non-ureolytic).
  * Geochemical model per §6 (Lassin et al. 2018). Graph-first; dense math behind a disclosure.
  */
 
@@ -216,7 +216,7 @@ export default function Caco3PrecipitationModule({
         <StatCard
           isLightMode={isLightMode}
           label="Saturation index"
-          value={finalSI <= -99 ? "—" : finalSI.toFixed(2)}
+          value={finalSI <= -99 ? ", " : finalSI.toFixed(2)}
           unit="SI"
           accent={
             finalSI > 0
@@ -330,7 +330,7 @@ export default function Caco3PrecipitationModule({
         <Panel
           title={
             <>
-              Precipitation Kinetics (48 h) —{" "}
+              Precipitation Kinetics (48 h), {" "}
               <GlossaryTerm term="ostwald-ripening">
                 Ostwald ripening
               </GlossaryTerm>

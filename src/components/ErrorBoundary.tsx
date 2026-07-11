@@ -54,7 +54,7 @@ export default class ModuleErrorBoundary extends React.Component<Props, State> {
         </div>
         <p className="text-xs leading-relaxed opacity-80 max-w-md">
           A value from one of the controls pushed this simulation out of range.
-          Nothing else on the page was affected — reset the module to continue.
+          Nothing else on the page was affected, reset the module to continue.
         </p>
         <button
           onClick={this.reset}

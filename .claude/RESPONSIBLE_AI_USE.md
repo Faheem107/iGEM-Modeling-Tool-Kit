@@ -1,10 +1,10 @@
 # Responsible & honest use of AI assistants
 
-This repository ships with configuration for AI coding assistants (such as Claude
-Code). These tools can help you build your software tool faster — but **you and
-your team remain fully responsible for everything you commit and publish.** AI is
-an assistant, not an author and not a substitute for understanding your own code.
-Read this before you start.
+This repository ships with configuration for AI coding assistants. These tools can
+help you build your software tool faster, but **you and your team remain fully
+responsible for everything you commit and publish.** AI is an assistant, not an
+author and not a substitute for understanding your own code. Read this before you
+start.
 
 ## 1. You are accountable
 - Judges evaluate **your team's** work. Be able to explain and defend every line
@@ -16,7 +16,7 @@ Read this before you start.
 - Do **not** let an AI invent experimental results, data, measurements,
   citations, references, statistics, or attributions.
 - All scientific claims must come from your actual work and be verifiable.
-- AI may help you phrase, structure, translate, or debug — it must not generate
+- AI may help you phrase, structure, translate, or debug, it must not generate
   fake science or pad your pages with content you cannot back up.
 
 ## 3. Honesty & attribution
@@ -24,7 +24,7 @@ Read this before you start.
   before committing it.
 - Do not present AI-generated text as a real person's quote or as peer-reviewed
   fact.
-- Properly credit collaborators, mentors, and sources — the **Attributions Form**
+- Properly credit collaborators, mentors, and sources, the **Attributions Form**
   is a judging requirement, not a formality.
 
 ## 4. Security & Privacy
@@ -39,4 +39,4 @@ Read this before you start.
 
 When in doubt, ask a human (an instructor or advisor) and consult the official
 iGEM resources. The goal of AI assistance here is to help you do **your** work
-well — not to do it for you.
+well, not to do it for you.

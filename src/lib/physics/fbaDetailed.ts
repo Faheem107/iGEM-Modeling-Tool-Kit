@@ -2,7 +2,7 @@
  * Detailed B. subtilis central-carbon network for the Advanced FBA Portal.
  * =======================================================================
  * This is the SAME data the portal displays (glycolysis, PPP, TCA, overflow, PGA synthesis,
- * respiration, biomass, exchanges) — moved into the physics layer so the portal solves it with
+ * respiration, biomass, exchanges), moved into the physics layer so the portal solves it with
  * the shared, verified two-phase simplex in `fba.ts` instead of a hand-coded flux cascade.
  *
  * Two corrections make it a genuine, mass-balanced FBA:
@@ -310,7 +310,7 @@ export const DETAILED_REACTIONS: DetailedReaction[] = [
     defaultUb: 100,
     subsystem: "tca",
     description:
-      "Anaplerotic replenishment of oxaloacetate — refills the TCA cycle when α-ketoglutarate is drained to glutamate for PGA. Without it the cycle cannot sustain product synthesis.",
+      "Anaplerotic replenishment of oxaloacetate, refills the TCA cycle when α-ketoglutarate is drained to glutamate for PGA. Without it the cycle cannot sustain product synthesis.",
     stoich: { pyr: -1, atp: -1, co2: -1, oaa: 1 },
   },
   // Overflow
