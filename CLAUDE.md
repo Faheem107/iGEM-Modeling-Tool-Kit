@@ -15,5 +15,18 @@ Keep every user-facing string simple and easy to follow.
 - Do not add AI signatures or credits anywhere (code, commits, or GitHub). Do not
   mention specific AI assistants by name in committed content.
 
+## Component gotchas (see DESIGN.md §14–16)
+
+- **Mol\* viewer** (`components/molstar-viewer.tsx`): give it a real height via the
+  `className` (`h-full` on a sized parent, or `h-[NNNpx]`). Never pass
+  `absolute inset-0`, it collapses the viewer to 0px and the protein renders
+  invisibly. Baseline spin speed is `0.3` (Mol\*'s own default is `1.0`).
+- **One title per module:** the workspace already renders each module's title via
+  `sectionHeader`. A module component must not render its own title; gate any
+  standalone header behind a `showHeader` prop.
+- **Aeolian and other modules** should use the shared `Panel` / `ModuleShell` /
+  `StatCard` primitives and radii (`rounded-[6px]` / `rounded-[4px]`), not bespoke
+  `rounded-2xl` cards or decorative `animate-pulse` tape.
+
 ## Responsible & honest use
 @.claude/RESPONSIBLE_AI_USE.md

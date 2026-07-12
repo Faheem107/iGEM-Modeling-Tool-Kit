@@ -9,8 +9,9 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
 import type { LucideIcon } from "lucide-react";
-import { ChevronDown, Sigma, PlayCircle, BookText } from "lucide-react";
+import { ChevronDown, Sigma, PlayCircle, BookText, Code2 } from "lucide-react";
 import { useGlossary, GlossaryText } from "../GlossaryTerm";
+import { MODULE_CODE } from "../../lib/moduleCode";
 import type { ModuleId } from "../../lib/prongs";
 
 export interface Themed {
@@ -256,7 +257,11 @@ function ModuleToggle({
   className = "",
 }: Themed & {
   moduleId: ModuleId;
-  dropAttr: "data-sandyx-math" | "data-sandyx-video" | "data-sandyx-sources";
+  dropAttr:
+    | "data-sandyx-math"
+    | "data-sandyx-video"
+    | "data-sandyx-sources"
+    | "data-sandyx-code";
   icon: LucideIcon;
   label: string;
   onOpen: () => void;
@@ -365,15 +370,42 @@ export function SourcesToggle({
 }
 
 /**
- * The standard module toolbar: [ Show the Math | Video Explanation | Sources ] in one responsive
- * row. Replaces the bare <ShowMathToggle> at the foot of every module. All three are Sandyx drop
- * targets. On narrow screens the row wraps.
+ * "Code & Plots" toggle, opens the downloadable Python script + matplotlib previews. Click it, OR
+ * drop Sandyx on it (`data-sandyx-code` drop target). Only rendered for modules that ship code.
+ */
+export function CodePlotsToggle({
+  moduleId,
+  isLightMode,
+  className = "",
+}: Themed & { moduleId: ModuleId; className?: string }) {
+  const { openCode, hoverId } = useGlossary();
+  return (
+    <ModuleToggle
+      isLightMode={isLightMode}
+      moduleId={moduleId}
+      dropAttr="data-sandyx-code"
+      icon={Code2}
+      label="Code & Plots"
+      onOpen={() => openCode(moduleId)}
+      ringLight="ring-teal-400/60 bg-teal-50"
+      ringDark="ring-teal-400/50 bg-teal-500/10"
+      hovered={hoverId === moduleId}
+      className={className}
+    />
+  );
+}
+
+/**
+ * The standard module toolbar: [ Show the Math | Video Explanation | Sources | Code & Plots ] in one
+ * responsive row. Replaces the bare <ShowMathToggle> at the foot of every module. Each is a Sandyx
+ * drop target. The Code & Plots toggle only appears for modules that ship a reproducible script.
  */
 export function ModuleActions({
   moduleId,
   isLightMode,
   className = "",
 }: Themed & { moduleId: ModuleId; className?: string }) {
+  const hasCode = moduleId in MODULE_CODE;
   return (
     <div className={className}>
       <p
@@ -388,12 +420,17 @@ export function ModuleActions({
           className="w-4 h-4 object-contain shrink-0"
           draggable={false}
         />
-        Drop Sandyx or click any of the 3 below!
+        Drop Sandyx or click any of the {hasCode ? 4 : 3} below!
       </p>
-      <div className="grid grid-cols-3 items-stretch gap-2">
+      <div
+        className={`grid items-stretch gap-2 ${hasCode ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3"}`}
+      >
         <ShowMathToggle moduleId={moduleId} isLightMode={isLightMode} />
         <VideoExplanationToggle moduleId={moduleId} isLightMode={isLightMode} />
         <SourcesToggle moduleId={moduleId} isLightMode={isLightMode} />
+        {hasCode && (
+          <CodePlotsToggle moduleId={moduleId} isLightMode={isLightMode} />
+        )}
       </div>
     </div>
   );

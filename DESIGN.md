@@ -229,3 +229,41 @@ A component is "on-brand" when: square-cornered actions, no drop shadow, no acce
 stripe, opaque warm surface, Dunelock tokens (no raw indigo/cyan), Super
 Dream headings + Lexend body, motion-primitive reveal on entry, and every headline
 number is explained.
+
+---
+
+## 14. Mol\* protein viewer
+
+`components/molstar-viewer.tsx` drives Mol\*'s `PluginContext` directly (no
+`mol-plugin-ui`), so we own the chrome.
+
+- **Sizing:** the viewer root is `position: relative` and gets its size from the
+  `className` you pass. It must carry a real height. Pass `h-full` (with a sized
+  parent) or an explicit height like `h-[440px]`. Do **not** pass
+  `absolute inset-0`: that fights the root's `relative` and collapses the viewer
+  to 0px, so the structure renders but is invisible.
+- **Spin speed:** `BASE_SPIN_SPEED = 0.3` (Mol\*'s own default is `1.0`). Keep the
+  baseline well under `1.0` so structures read as "alive" without spinning fast.
+  The landing hero bumps to `1.3` only while the page is actively scrolling, then
+  eases back to `0.3`.
+- **Chrome off:** the orientation-axes gizmo is disabled
+  (`camera.helper.axes = off`) and the background is transparent so the warm card
+  shows through.
+
+## 15. One title per module
+
+In the simulation workspace each module is rendered as
+`sectionHeader(meta)` (the single title, from `moduleMath.ts` / `prongs.ts`)
+followed by the module component. A module component must **not** render its own
+title, that double-titles the section. If a component has a standalone header for
+other contexts, gate it behind a `showHeader` prop and pass `showHeader={false}`
+from `SimulationWorkspace` (see `MolstarProteinExplorer`).
+
+## 16. Timed objective modal (Sandyx arcade)
+
+The arcade objective is a **modal on top of the game**, not an inline banner. When
+an objective becomes active (including the first, and after each completion) the
+world freezes (`pausedRef`) and a full-cover scrim (`inset-0 z-50`, dark translucent
+fill + `backdrop-blur`) dims the game behind a centered window with a 7s countdown
+bar. The game is unplayable for those 7s, then the modal auto-dismisses and play
+resumes. Retro/CRT styling on the game surface stays exempt from §3.

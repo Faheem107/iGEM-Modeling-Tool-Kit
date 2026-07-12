@@ -11,6 +11,10 @@ import {
   Loader2,
   ExternalLink,
   ArrowRight,
+  Code2,
+  Download,
+  Copy,
+  Check,
 } from "lucide-react";
 import {
   lookupTerm,
@@ -20,6 +24,7 @@ import {
 import { MODULE_MATH } from "../lib/moduleMath";
 import { MODULE_VIDEOS, videoSrc, videoVtt } from "../lib/moduleVideos";
 import { MODULE_SOURCES, type SourceRef } from "../lib/moduleSources";
+import { MODULE_CODE } from "../lib/moduleCode";
 import type { ModuleId } from "../lib/prongs";
 import Katex from "./Katex";
 import { TextEffect } from "@/components/motion-primitives/text-effect";
@@ -61,6 +66,10 @@ interface GlossaryContextValue {
   activeSourcesId: ModuleId | null;
   openSources: (id: ModuleId) => void;
   closeSources: () => void;
+  /** Module id whose "Code & Plots" window is open, or null. */
+  activeCodeId: ModuleId | null;
+  openCode: (id: ModuleId) => void;
+  closeCode: () => void;
   dragging: boolean;
   setDragging: (b: boolean) => void;
   hoverId: string | null;
@@ -89,6 +98,9 @@ export function useGlossary(): GlossaryContextValue {
       activeSourcesId: null,
       openSources: () => {},
       closeSources: () => {},
+      activeCodeId: null,
+      openCode: () => {},
+      closeCode: () => {},
       dragging: false,
       setDragging: () => {},
       hoverId: null,
@@ -186,7 +198,111 @@ function VideoPanel({
 }
 
 // ---------------------------------------------------------------------------
-// Shared pop-up shell (glossary / math / video / sources)
+// Code panel: fetches the runnable script and offers copy + download
+// ---------------------------------------------------------------------------
+function CodePanel({
+  codeUrl,
+  filename,
+  isLightMode,
+}: {
+  codeUrl: string;
+  filename: string;
+  isLightMode: boolean;
+}) {
+  const [code, setCode] = React.useState<string | null>(null);
+  const [failed, setFailed] = React.useState(false);
+  const [copied, setCopied] = React.useState(false);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    setCode(null);
+    setFailed(false);
+    fetch(codeUrl)
+      .then((r) => {
+        if (!r.ok) throw new Error(String(r.status));
+        return r.text();
+      })
+      .then((t) => {
+        if (!cancelled) setCode(t);
+      })
+      .catch(() => {
+        if (!cancelled) setFailed(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [codeUrl]);
+
+  const copy = async () => {
+    if (!code) return;
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1600);
+    } catch {
+      /* clipboard blocked; the download button still works */
+    }
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between gap-2 mb-2">
+        <span
+          className={`text-[11px] font-mono ${isLightMode ? "text-slate-500" : "text-slate-400"}`}
+        >
+          {filename}
+        </span>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={copy}
+            disabled={!code}
+            className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1.5 rounded-[3px] border transition-colors disabled:opacity-50 ${
+              isLightMode
+                ? "border-slate-300 text-slate-600 hover:bg-slate-100"
+                : "border-white/15 text-slate-300 hover:bg-white/10"
+            }`}
+          >
+            {copied ? (
+              <Check className="w-3.5 h-3.5" />
+            ) : (
+              <Copy className="w-3.5 h-3.5" />
+            )}
+            {copied ? "Copied" : "Copy"}
+          </button>
+          <a
+            href={codeUrl}
+            download={filename}
+            className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1.5 rounded-[3px] bg-dune-orange text-[#241c19] transition-opacity hover:opacity-90"
+          >
+            <Download className="w-3.5 h-3.5" /> Download .py
+          </a>
+        </div>
+      </div>
+      <div
+        className={`rounded-2xl border overflow-hidden ${
+          isLightMode ? "border-slate-200 bg-slate-950" : "border-white/10 bg-slate-950"
+        }`}
+      >
+        {code === null && !failed ? (
+          <div className="flex items-center gap-2 p-4 text-sm text-slate-400">
+            <Loader2 className="w-4 h-4 animate-spin" /> Loading code…
+          </div>
+        ) : failed ? (
+          <div className="p-4 text-sm text-slate-400">
+            Could not load the script. Use the Download button to fetch it directly.
+          </div>
+        ) : (
+          <pre className="max-h-[42vh] overflow-auto no-scrollbar p-4 text-[11.5px] leading-relaxed text-slate-100">
+            <code>{code}</code>
+          </pre>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Shared pop-up shell (glossary / math / video / sources / code)
 // ---------------------------------------------------------------------------
 /**
  * One shell for every Sandyx window so all four open with the *same* seamless transition.
@@ -287,63 +403,75 @@ export const GlossaryProvider: React.FC<{
   const [activeSourcesId, setActiveSourcesId] = React.useState<ModuleId | null>(
     null,
   );
+  const [activeCodeId, setActiveCodeId] = React.useState<ModuleId | null>(null);
   const [dragging, setDragging] = React.useState(false);
   const [hoverId, setHoverId] = React.useState<string | null>(null);
 
   // Only ever one pop-up at a time: opening any window closes all the others.
-  const open = React.useCallback((id: string) => {
+  const closeAll = React.useCallback(() => {
+    setActiveId(null);
     setActiveMathId(null);
     setActiveVideoId(null);
     setActiveSourcesId(null);
-    setActiveId(id);
+    setActiveCodeId(null);
   }, []);
+  const open = React.useCallback(
+    (id: string) => {
+      closeAll();
+      setActiveId(id);
+    },
+    [closeAll],
+  );
   const close = React.useCallback(() => setActiveId(null), []);
-  const openMath = React.useCallback((id: ModuleId) => {
-    setActiveId(null);
-    setActiveVideoId(null);
-    setActiveSourcesId(null);
-    setActiveMathId(id);
-  }, []);
+  const openMath = React.useCallback(
+    (id: ModuleId) => {
+      closeAll();
+      setActiveMathId(id);
+    },
+    [closeAll],
+  );
   const closeMath = React.useCallback(() => setActiveMathId(null), []);
-  const openVideo = React.useCallback((id: ModuleId) => {
-    setActiveId(null);
-    setActiveMathId(null);
-    setActiveSourcesId(null);
-    setActiveVideoId(id);
-  }, []);
+  const openVideo = React.useCallback(
+    (id: ModuleId) => {
+      closeAll();
+      setActiveVideoId(id);
+    },
+    [closeAll],
+  );
   const closeVideo = React.useCallback(() => setActiveVideoId(null), []);
-  const openSources = React.useCallback((id: ModuleId) => {
-    setActiveId(null);
-    setActiveMathId(null);
-    setActiveVideoId(null);
-    setActiveSourcesId(id);
-  }, []);
+  const openSources = React.useCallback(
+    (id: ModuleId) => {
+      closeAll();
+      setActiveSourcesId(id);
+    },
+    [closeAll],
+  );
   const closeSources = React.useCallback(() => setActiveSourcesId(null), []);
+  const openCode = React.useCallback(
+    (id: ModuleId) => {
+      closeAll();
+      setActiveCodeId(id);
+    },
+    [closeAll],
+  );
+  const closeCode = React.useCallback(() => setActiveCodeId(null), []);
 
   // Close any open window on Escape.
   React.useEffect(() => {
-    if (!activeId && !activeMathId && !activeVideoId && !activeSourcesId)
+    if (
+      !activeId &&
+      !activeMathId &&
+      !activeVideoId &&
+      !activeSourcesId &&
+      !activeCodeId
+    )
       return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        close();
-        closeMath();
-        closeVideo();
-        closeSources();
-      }
+      if (e.key === "Escape") closeAll();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [
-    activeId,
-    activeMathId,
-    activeVideoId,
-    activeSourcesId,
-    close,
-    closeMath,
-    closeVideo,
-    closeSources,
-  ]);
+  }, [activeId, activeMathId, activeVideoId, activeSourcesId, activeCodeId, closeAll]);
 
   const entry: GlossaryEntry | null = activeId
     ? GLOSSARY_BY_ID(activeId)
@@ -351,6 +479,7 @@ export const GlossaryProvider: React.FC<{
   const math = activeMathId ? MODULE_MATH[activeMathId] : null;
   const video = activeVideoId ? MODULE_VIDEOS[activeVideoId] : null;
   const sources = activeSourcesId ? MODULE_SOURCES[activeSourcesId] : null;
+  const code = activeCodeId ? MODULE_CODE[activeCodeId] : null;
 
   return (
     <GlossaryContext.Provider
@@ -367,6 +496,9 @@ export const GlossaryProvider: React.FC<{
         activeSourcesId,
         openSources,
         closeSources,
+        activeCodeId,
+        openCode,
+        closeCode,
         dragging,
         setDragging,
         hoverId,
@@ -822,6 +954,124 @@ export const GlossaryProvider: React.FC<{
                     the calibration provenance in the code. Each title links out
                     to the source, verify it against the primary work before
                     citing it on your wiki.
+                  </p>
+                </div>
+              </SandyxOverlay>
+            )}
+          </AnimatePresence>,
+          document.body,
+        )}
+
+      {/* Fifth portal: the "Code & Plots" window (downloadable Python + matplotlib previews). */}
+      {typeof document !== "undefined" &&
+        createPortal(
+          <AnimatePresence>
+            {activeCodeId && code && (
+              <SandyxOverlay
+                overlayKey="sandyx-code-overlay"
+                onClose={closeCode}
+                isLightMode={isLightMode}
+                ariaLabel={`${code.title}, code and preliminary plots`}
+                maxWidthClass="max-w-3xl"
+                scroll
+                glowA="bg-teal-400/20"
+                glowB="bg-amber-400/20"
+              >
+                <div className="relative p-6 sm:p-7">
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <img
+                        src="/sandyx.png"
+                        alt="Sandyx"
+                        className="w-11 h-11 object-contain shrink-0 drop-shadow"
+                        draggable={false}
+                      />
+                      <span
+                        className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.15em] px-2 py-1 rounded-full ${
+                          isLightMode
+                            ? "bg-teal-100 text-teal-800"
+                            : "bg-teal-500/15 text-teal-300"
+                        }`}
+                      >
+                        <Code2 className="w-3.5 h-3.5" /> Code &amp; Plots
+                      </span>
+                    </div>
+                    <button
+                      onClick={closeCode}
+                      aria-label="Close code"
+                      className={`shrink-0 flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full border transition-colors ${
+                        isLightMode
+                          ? "border-slate-300 text-slate-600 hover:bg-slate-100"
+                          : "border-white/15 text-slate-300 hover:bg-white/10"
+                      }`}
+                    >
+                      <X className="w-3.5 h-3.5" /> Close
+                    </button>
+                  </div>
+
+                  <h3 className="text-lg sm:text-xl font-black tracking-tight mb-1.5">
+                    {code.title}
+                  </h3>
+                  <TextEffect
+                    as="p"
+                    per="word"
+                    preset="fade-in-blur"
+                    speedReveal={2.2}
+                    className={`text-sm leading-relaxed mb-4 ${isLightMode ? "text-slate-700" : "text-slate-300"}`}
+                  >
+                    {code.intro}
+                  </TextEffect>
+                  <p
+                    className={`mb-4 text-[11px] font-mono ${isLightMode ? "text-slate-500" : "text-slate-500"}`}
+                  >
+                    {code.language}
+                  </p>
+
+                  <CodePanel
+                    codeUrl={code.codeUrl}
+                    filename={code.filename}
+                    isLightMode={isLightMode}
+                  />
+
+                  <h4 className="mt-6 mb-3 text-[10px] font-black uppercase tracking-[0.15em] text-dune-orange">
+                    Preliminary output
+                  </h4>
+                  <div className="space-y-4">
+                    {code.plots.map((pl, i) => (
+                      <figure
+                        key={i}
+                        className={`rounded-2xl border overflow-hidden ${
+                          isLightMode
+                            ? "bg-white/70 border-slate-200"
+                            : "bg-slate-950/50 border-white/10"
+                        }`}
+                      >
+                        <img
+                          src={pl.src}
+                          alt={pl.caption}
+                          loading="lazy"
+                          className="w-full h-auto block"
+                        />
+                        <figcaption
+                          className={`px-4 py-2.5 text-xs leading-relaxed border-t ${
+                            isLightMode
+                              ? "border-slate-200 text-slate-600"
+                              : "border-white/10 text-slate-400"
+                          }`}
+                        >
+                          {pl.caption}
+                        </figcaption>
+                      </figure>
+                    ))}
+                  </div>
+
+                  <p
+                    className={`mt-4 pt-3 border-t text-[11px] leading-relaxed ${isLightMode ? "border-slate-200 text-slate-500" : "border-white/10 text-slate-500"}`}
+                  >
+                    This script ports the module&apos;s physics from the toolkit
+                    source; running it reproduces the plots above. Every constant
+                    traces to the model code or a cited source. Verify against the
+                    primary work before citing it on your wiki.
                   </p>
                 </div>
               </SandyxOverlay>

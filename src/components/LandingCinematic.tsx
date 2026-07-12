@@ -1,63 +1,52 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
-import { Term } from "./GlossaryTerm";
+import React, { useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
 import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselIndicator,
-  CarouselNavigation,
-} from "@/components/motion-primitives/carousel";
+  motion,
+  useScroll,
+  useTransform,
+  useReducedMotion,
+  type MotionValue,
+} from "motion/react";
+import { Term } from "./GlossaryTerm";
+import type { MolstarApi } from "@/components/molstar-viewer";
 
 /**
- * LandingCinematic, "Sandyx presents" (carousel edition)
- * =======================================================
- * The three story panes (Project Overview → How the models help → Lab usage) now live in a
- * motion-primitives <Carousel>: swipe/drag, arrow buttons, dot indicators, and a gentle
- * auto-advance. Sandyx stands at the window's bottom-left, "presenting" each pane. The old
- * duplicated top-left scene-title chip is gone, each pane shows its title exactly once.
+ * LandingCinematic, scroll-driven story
+ * =====================================
+ * The three story panes (Project Overview -> How the models help -> Lab usage) are now a
+ * scroll-pinned narrative (DESIGN.md §6). A real Mol* protein sits pinned on one side and rotates
+ * as you scroll; the text panes cross-fade in sequence driven by scroll progress, over the global
+ * Antigravity-style grain-gradient background. Replaces the old auto-advancing carousel, each pane
+ * still shows its title exactly once.
  */
 
-type Accent = "indigo" | "emerald" | "amber";
+// WebGL viewer is browser-only.
+const MolstarViewer = dynamic(() => import("@/components/molstar-viewer"), {
+  ssr: false,
+  loading: () => (
+    <div className="absolute inset-0 flex items-center justify-center text-sm text-dune-ash">
+      Preparing 3D structure…
+    </div>
+  ),
+});
 
-const ACCENT: Record<
-  Accent,
-  { text: string; textLight: string; ring: string; dot: string }
-> = {
-  indigo: {
-    text: "text-amber-300",
-    textLight: "text-amber-600",
-    ring: "ring-amber-400/30",
-    dot: "bg-amber-400",
-  },
-  emerald: {
-    text: "text-teal-300",
-    textLight: "text-teal-600",
-    ring: "ring-teal-400/30",
-    dot: "bg-teal-400",
-  },
-  amber: {
-    text: "text-amber-300",
-    textLight: "text-amber-600",
-    ring: "ring-amber-400/30",
-    dot: "bg-amber-400",
-  },
-};
+// A real deposited structure behind the engineered enzymes (CapB, the gamma-PGA synthase subunit).
+const HERO_STRUCTURE = "/pdb/AF-P96736.pdb";
 
 interface Scene {
-  bg: string;
   title: string;
-  accent: Accent;
+  accentLight: string;
+  accentDark: string;
   paragraphs: React.ReactNode[];
 }
 
 const SCENES: Scene[] = [
   {
-    bg: "/landing/desert.jpg",
     title: "Project Overview",
-    accent: "indigo",
+    accentLight: "text-dune-maroon",
+    accentDark: "text-dune-orange",
     paragraphs: [
       <>
         This project fights wind-driven desert sand erosion. We engineer{" "}
@@ -78,9 +67,9 @@ const SCENES: Scene[] = [
     ],
   },
   {
-    bg: "/landing/city.jpg",
     title: "How do these models help?",
-    accent: "emerald",
+    accentLight: "text-teal-700",
+    accentDark: "text-teal-300",
     paragraphs: [
       <>
         These models connect what the bacteria do inside the cell to the effect
@@ -90,16 +79,15 @@ const SCENES: Scene[] = [
         Simulate polymer <Term k="cross-linking">cross-linking</Term>, optimize
         pathways with{" "}
         <Term k="flux-balance-analysis">flux balance analysis</Term>, and predict
-        how treated sand resists{" "}
-        <Term k="aeolian-transport">aeolian</Term> wind stress, before touching a
-        single flask.
+        how treated sand resists <Term k="aeolian-transport">aeolian</Term> wind
+        stress, before touching a single flask.
       </>,
     ],
   },
   {
-    bg: "/landing/lab.jpg",
     title: "How to use this toolkit in the lab",
-    accent: "amber",
+    accentLight: "text-dune-orange",
+    accentDark: "text-dune-orange",
     paragraphs: [
       <>
         Set your wet lab parameters here: incubation temperature,{" "}
@@ -115,70 +103,103 @@ const SCENES: Scene[] = [
   },
 ];
 
-// ---------------------------------------------------------------------------
-// A single carousel pane: background + the presented text card.
-// ---------------------------------------------------------------------------
-function Pane({ scene, isLightMode }: { scene: Scene; isLightMode: boolean }) {
-  const a = ACCENT[scene.accent];
+// One text pane, cross-faded over its slice of the scroll.
+function Pane({
+  scene,
+  progress,
+  index,
+  count,
+  isLightMode,
+}: {
+  scene: Scene;
+  progress: MotionValue<number>;
+  index: number;
+  count: number;
+  isLightMode: boolean;
+}) {
+  // Each scene owns a window of scroll; it fades/slides in as that window opens and out as it closes.
+  const span = 1 / count;
+  const start = index * span;
+  const inAt = index === 0 ? 0 : start - span * 0.15;
+  const peakA = start + span * 0.18;
+  const peakB = start + span * 0.82;
+  const outAt = index === count - 1 ? 1 : start + span + span * 0.02;
+
+  const opacity = useTransform(
+    progress,
+    [inAt, peakA, peakB, outAt],
+    [0, 1, 1, 0],
+  );
+  const y = useTransform(progress, [inAt, peakA, peakB, outAt], [40, 0, 0, -40]);
+
   return (
-    <div className="relative w-full h-[68vh] min-h-[420px] max-h-[620px] overflow-hidden">
-      <img
-        src={scene.bg}
-        alt=""
-        aria-hidden
-        draggable={false}
-        className="absolute inset-0 w-full h-full object-cover scale-110"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-black/25" />
-      {/* presented text, full-width top on mobile, right-hand card on desktop */}
-      <div className="absolute z-20 left-4 right-4 top-8 sm:left-auto sm:top-1/2 sm:-translate-y-1/2 sm:right-[6%] sm:w-[56%] sm:max-w-lg">
-        <motion.div
-          key={scene.title}
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className={`rounded-3xl border p-6 sm:p-8 backdrop-blur-xl ring-1 ${a.ring} ${
-            isLightMode
-              ? "bg-white/80 border-white/70 text-slate-900"
-              : "bg-slate-950/70 border-white/10 text-slate-100"
-          }`}
-        >
-          <h2
-            className={`text-xl sm:text-3xl font-black uppercase tracking-widest mb-4 ${isLightMode ? a.textLight : a.text}`}
-          >
-            {scene.title}
-          </h2>
-          <div className="space-y-3 text-sm sm:text-lg leading-relaxed opacity-90">
-            {scene.paragraphs.map((p, i) => (
-              <p key={i}>{p}</p>
-            ))}
-          </div>
-        </motion.div>
+    <motion.div
+      style={{ opacity, y }}
+      className="absolute inset-0 flex flex-col justify-center"
+    >
+      <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] text-dune-ash mb-3">
+        {String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
+      </span>
+      <h2
+        className={`text-2xl sm:text-4xl font-black uppercase tracking-tight mb-5 font-display ${
+          isLightMode ? scene.accentLight : scene.accentDark
+        }`}
+      >
+        {scene.title}
+      </h2>
+      <div
+        className={`space-y-3 text-sm sm:text-lg leading-relaxed max-w-xl ${
+          isLightMode ? "text-slate-800" : "text-slate-200"
+        }`}
+      >
+        {scene.paragraphs.map((p, i) => (
+          <p key={i}>{p}</p>
+        ))}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
-// ---------------------------------------------------------------------------
-// The carousel cinematic
-// ---------------------------------------------------------------------------
 export default function LandingCinematic({
   isLightMode,
 }: {
   isLightMode: boolean;
 }) {
-  const [index, setIndex] = useState(0);
-  const a = ACCENT[SCENES[index].accent];
+  const sectionRef = useRef<HTMLElement>(null);
+  const apiRef = useRef<MolstarApi | null>(null);
+  const reduced = useReducedMotion();
 
-  // Gentle auto-advance; each manual change resets the timer.
-  useEffect(() => {
-    const id = setTimeout(() => setIndex((i) => (i + 1) % SCENES.length), 7000);
-    return () => clearTimeout(id);
-  }, [index]);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
 
-  // Returning from the adventure ("see how we model this") snaps back to Project Overview.
+  // Active dot: which scene owns the current scroll position.
+  const activeIndex = useTransform(scrollYProgress, (p) =>
+    Math.min(SCENES.length - 1, Math.floor(p * SCENES.length)),
+  );
+
+  // The protein spins gently by default and speeds up while the page is scrolling, then eases back.
   useEffect(() => {
-    const h = () => setIndex(0);
+    if (reduced) return;
+    let idle: ReturnType<typeof setTimeout>;
+    const onScroll = () => {
+      apiRef.current?.setSpinSpeed(1.3);
+      clearTimeout(idle);
+      idle = setTimeout(() => apiRef.current?.setSpinSpeed(0.3), 200);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      clearTimeout(idle);
+    };
+  }, [reduced]);
+
+  // Returning from the adventure ("see how we model this") scrolls back to this section's start.
+  useEffect(() => {
+    const h = () => {
+      sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
     window.addEventListener("sandyx:overview", h);
     return () => window.removeEventListener("sandyx:overview", h);
   }, []);
@@ -186,55 +207,77 @@ export default function LandingCinematic({
   return (
     <section
       id="cinematic"
-      className="relative w-full flex justify-center px-4 py-14 sm:py-24 scroll-mt-20"
+      ref={sectionRef}
+      className="relative w-full scroll-mt-0"
+      style={{ height: "320vh" }}
     >
-      <div className="relative w-full max-w-5xl">
+      {/* Sticky stage: protein + narrating panes, held in view while the section scrolls past. */}
+      <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center">
+        {/* soft vignette so the text stays legible over the ambient gradient */}
         <div
-          className={`relative rounded-[2rem] overflow-hidden border ring-1 ${a.ring} ${
-            isLightMode ? "border-white/70" : "border-white/10"
+          aria-hidden
+          className={`pointer-events-none absolute inset-0 ${
+            isLightMode
+              ? "bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(251,247,240,0.65)_100%)]"
+              : "bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(8,7,6,0.7)_100%)]"
           }`}
-        >
-          <Carousel index={index} onIndexChange={setIndex}>
-            <CarouselContent className="items-stretch">
-              {SCENES.map((s) => (
-                <CarouselItem key={s.bg} className="h-full">
-                  <Pane scene={s} isLightMode={isLightMode} />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
+        />
 
-            <CarouselNavigation
-              alwaysShow
-              className="left-0 w-full px-3 sm:px-4"
-              classNameButton="bg-white/90 hover:bg-white border border-black/10 h-9 w-9 flex items-center justify-center"
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 items-center">
+          {/* Rotating protein. The wrapper carries the height; the viewer fills it with
+              h-full (passing `absolute inset-0` collapses the viewer root to 0px). */}
+          <div className="order-1 lg:order-none relative h-[34vh] sm:h-[42vh] lg:h-[64vh] w-full">
+            <MolstarViewer
+              url={HERO_STRUCTURE}
+              className="h-full w-full"
+              showControls={false}
+              spinByDefault
+              onReady={(api) => {
+                apiRef.current = api;
+              }}
             />
-            <CarouselIndicator
-              className="bottom-5"
-              classNameButton="!w-2.5 !h-2.5"
-            />
-          </Carousel>
+          </div>
 
-          {/* Sandyx, large, bottom-left, presenting each pane */}
-          <motion.img
-            src="/sandyx.png"
-            alt="Sandyx"
-            draggable={false}
-            className="pointer-events-none absolute z-30 left-[2%] sm:left-[3%] bottom-0 w-24 sm:w-48 md:w-56 object-contain drop-shadow-[0_14px_22px_rgba(0,0,0,0.5)]"
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
-          />
+          {/* Narrating panes (cross-faded on scroll) */}
+          <div className="order-2 lg:order-none relative min-h-[260px] sm:min-h-[320px] lg:h-[64vh]">
+            {SCENES.map((s, i) => (
+              <Pane
+                key={s.title}
+                scene={s}
+                progress={scrollYProgress}
+                index={i}
+                count={SCENES.length}
+                isLightMode={isLightMode}
+              />
+            ))}
+          </div>
+        </div>
 
-          {/* glassy frame edge */}
-          <div
-            className="pointer-events-none absolute inset-0 z-40 rounded-[2rem]"
-            style={{
-              boxShadow:
-                "inset 0 1px 0 rgba(255,255,255,0.35), inset 0 0 70px rgba(0,0,0,0.4)",
-            }}
-          />
+        {/* Progress dots */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2.5">
+          {SCENES.map((_, i) => (
+            <Dot key={i} index={i} active={activeIndex} />
+          ))}
         </div>
       </div>
     </section>
+  );
+}
+
+function Dot({
+  index,
+  active,
+}: {
+  index: number;
+  active: MotionValue<number>;
+}) {
+  const opacity = useTransform(active, (a) => (a === index ? 1 : 0.35));
+  const scale = useTransform(active, (a) => (a === index ? 1.35 : 1));
+  return (
+    <motion.span
+      style={{ opacity, scale }}
+      className="w-2.5 h-2.5 rounded-full bg-dune-orange block"
+    />
   );
 }
 

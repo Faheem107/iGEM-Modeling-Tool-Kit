@@ -67,9 +67,12 @@ const STRUCTURES: Structure[] = [
 export default function MolstarProteinExplorer({
   isLightMode = false,
   prongs,
+  showHeader = true,
 }: {
   isLightMode?: boolean;
   prongs?: (1 | 2 | 3)[];
+  /** Hide the built-in title when the page already renders a section header. */
+  showHeader?: boolean;
 }) {
   const active = (prongs && prongs.length ? prongs : [1, 2]).filter(
     (p): p is 1 | 2 => p === 1 || p === 2,
@@ -84,16 +87,18 @@ export default function MolstarProteinExplorer({
 
   return (
     <div>
-      <div className="mb-6">
-        <h2 className="text-3xl font-extrabold tracking-tight flex items-center gap-3">
-          <Dna className="w-7 h-7 text-dune-rose" />
-          Protein Structure Explorer
-        </h2>
-        <p className="opacity-70 text-sm mt-1 max-w-2xl">
-          Real deposited structures behind the engineered enzymes, rendered in 3-D
-          with Mol*. Drag to rotate, scroll to zoom.
-        </p>
-      </div>
+      {showHeader && (
+        <div className="mb-6">
+          <h2 className="text-3xl font-extrabold tracking-tight flex items-center gap-3">
+            <Dna className="w-7 h-7 text-dune-rose" />
+            Protein Structure Explorer
+          </h2>
+          <p className="opacity-70 text-sm mt-1 max-w-2xl">
+            Real deposited structures behind the engineered enzymes, rendered in
+            3-D with Mol*. Drag to rotate, scroll to zoom.
+          </p>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Structure selector */}

@@ -300,6 +300,7 @@ export default function SimulationWorkspace({
             <MolstarProteinExplorer
               isLightMode={isLightMode}
               prongs={bacterialProngs as (1 | 2 | 3)[]}
+              showHeader={false}
             />
           );
         case "ecological":
