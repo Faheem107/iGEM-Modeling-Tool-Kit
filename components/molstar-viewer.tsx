@@ -15,16 +15,17 @@ export interface MolstarApi {
   setSpinSpeed: (speed: number) => void;
 }
 
-// A slow baseline spin so structures read as alive without being distracting
+// A very slow baseline spin so structures read as alive without being distracting
 // (DESIGN.md: quiet, alive). Mol*'s default trackball spin speed is 1.0, so this is
-// deliberately well under that.
-const BASE_SPIN_SPEED = 0.3;
+// deliberately far under that, close to the calm rotation on premium biotech sites.
+const BASE_SPIN_SPEED = 0.12;
 
 export default function MolstarViewer({
   url,
   className = "",
   spinByDefault = true,
   showControls = true,
+  emphasis = false,
   onReady,
 }: {
   url: string;
@@ -33,6 +34,9 @@ export default function MolstarViewer({
   spinByDefault?: boolean;
   /** Show the spin / reset buttons (hidden when rotation is driven externally). */
   showControls?: boolean;
+  /** Premium hero look: adds a soft edge outline so the structure reads crisply
+   *  on an elegant dark stage (used on the landing page). */
+  emphasis?: boolean;
   /** Receives an imperative handle once the viewer is live. */
   onReady?: (api: MolstarApi) => void;
 }) {
@@ -100,6 +104,28 @@ export default function MolstarViewer({
           transparentBackground: true,
           camera: { helper: { axes: { name: "off", params: {} } } },
         });
+        // Premium hero: a soft dark edge outline makes the ribbons read crisply on the
+        // dark stage. Guarded, if this Mol* build shapes the params differently we just
+        // skip it and the structure still renders normally.
+        if (emphasis) {
+          try {
+            plugin.canvas3d?.setProps({
+              postprocessing: {
+                outline: {
+                  name: "on",
+                  params: {
+                    scale: 1,
+                    threshold: 0.15,
+                    color: 0x0a0f14,
+                    includeTransparent: true,
+                  },
+                },
+              },
+            });
+          } catch {
+            /* outline unsupported in this build, ignore */
+          }
+        }
 
         pluginRef.current = plugin;
         setReady(true);

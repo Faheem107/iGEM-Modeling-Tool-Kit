@@ -25,7 +25,6 @@ import {
   Cell,
 } from "recharts";
 import {
-  Combine,
   ShieldAlert,
   TrendingUp,
   GitCompareArrows,
@@ -106,26 +105,6 @@ export default function CompositeSynthesisPanel({
           : "bg-gradient-to-br from-[#1c1512] to-amber-950/20 border-slate-800 "
       }`}
     >
-      <div className="flex items-center gap-3 border-b pb-4 border-slate-200/60 dark:border-slate-800">
-        <div
-          className={`p-2.5 rounded-xl ${isLightMode ? "bg-amber-50 text-amber-600" : "bg-amber-950/40 text-amber-400"}`}
-        >
-          <Combine className="w-5 h-5" />
-        </div>
-        <div>
-          <h3
-            className={`text-sm font-black uppercase tracking-wider ${isLightMode ? "text-slate-900" : "text-white"}`}
-          >
-            Composite Strength Synthesis
-          </h3>
-          <p
-            className={`text-[11px] ${isLightMode ? "text-stone-500" : "text-slate-400"}`}
-          >
-            How {prongs.map((p) => PRONG_LABEL[p]).join(" + ")} combine, mechanically and as redundant failsafes.
-          </p>
-        </div>
-      </div>
-
       <ModuleActions moduleId="composite" isLightMode={isLightMode} />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
