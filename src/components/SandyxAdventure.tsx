@@ -1203,15 +1203,23 @@ function LabGame({
   const [score, setScore] = useState(0);
   const [objPopup, setObjPopup] = useState(true);
   const movedRef = useRef(false);
+  // The sim freezes while an objective pop-up is up. Starts paused so the very first
+  // objective is read before play begins.
+  const pausedRef = useRef(true);
 
   // Show the current objective as a timed pop-up (auto-dismisses after 7s) whenever
-  // the active objective changes.
+  // the active objective changes. The game pauses in the background for those 7s.
   useEffect(() => {
     if (solved) return;
     setObjPopup(true);
     const id = setTimeout(() => setObjPopup(false), 7000);
     return () => clearTimeout(id);
   }, [objIndex, solved]);
+
+  // Keep the pause flag in lockstep with the pop-up (read inside the RAF loop).
+  useEffect(() => {
+    pausedRef.current = objPopup && !solved;
+  }, [objPopup, solved]);
 
   // Award points (no persistence, no high-score).
   const bumpScore = useCallback((delta: number) => {
@@ -1285,6 +1293,14 @@ function LabGame({
       last = t;
       const p = pos.current;
       const g = ghost.current;
+
+      // While an objective pop-up is up the world is frozen: still render it (so the game
+      // sits "in the background" behind the pop-up) but run no movement, interaction, or chaser.
+      if (pausedRef.current) {
+        draw(ctx, canvas, p, g, t);
+        raf = requestAnimationFrame(step);
+        return;
+      }
 
       // --- player movement (maze collision, axis-separated) ---
       let vx = 0,
@@ -1573,53 +1589,71 @@ function LabGame({
         })}
       </div>
 
-      {/* Current objective: pop-up window with a 7s countdown bar on top */}
-      <AnimatePresence mode="wait">
+      {/* Objective modal: a window shown ON TOP of the game. The world is paused
+          (pausedRef) and dimmed behind this scrim for the 7s, so the game reads as an
+          unplayable background. A new modal appears each time an objective is completed. */}
+      <AnimatePresence>
         {objPopup && !solved && (
           <motion.div
-            key={objIndex}
-            initial={{ y: -24, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -24, opacity: 0 }}
-            className="absolute top-14 sm:top-16 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-md pointer-events-none"
+            key={`scrim-${objIndex}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="absolute inset-0 z-50 flex items-center justify-center px-4"
+            style={{
+              background: "rgba(4,6,16,0.74)",
+              backdropFilter: "blur(2px)",
+            }}
           >
-            <div className="h-2 w-full" style={{ background: "rgba(0,0,0,0.45)" }}>
-              <motion.div
-                key={`bar-${objIndex}`}
-                className="h-full"
-                style={{ background: C.amber }}
-                initial={{ width: "100%" }}
-                animate={{ width: "0%" }}
-                transition={{ duration: 7, ease: "linear" }}
-              />
-            </div>
-            <div
-              className="border-[3px] border-t-0 px-4 py-3 text-center"
-              style={{
-                borderColor: C.amber,
-                background: "rgba(9,13,32,0.96)",
-                boxShadow: "5px 5px 0 rgba(0,0,0,0.55)",
-              }}
+            <motion.div
+              key={`win-${objIndex}`}
+              initial={{ y: -18, opacity: 0, scale: 0.96 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: -18, opacity: 0, scale: 0.96 }}
+              className="w-[92%] max-w-md"
             >
               <div
-                className="font-retro text-[9px] mb-2"
-                style={{ color: C.amber }}
+                className="h-2 w-full"
+                style={{ background: "rgba(0,0,0,0.45)" }}
               >
-                OBJECTIVE {objIndex + 1}/{OBJECTIVES.length}
+                <motion.div
+                  key={`bar-${objIndex}`}
+                  className="h-full"
+                  style={{ background: C.amber }}
+                  initial={{ width: "100%" }}
+                  animate={{ width: "0%" }}
+                  transition={{ duration: 7, ease: "linear" }}
+                />
               </div>
               <div
-                className="font-retro text-[11px] sm:text-[13px]"
-                style={{ color: C.speech }}
+                className="border-[3px] border-t-0 px-4 py-4 text-center"
+                style={{
+                  borderColor: C.amber,
+                  background: "rgba(9,13,32,0.98)",
+                  boxShadow: "6px 6px 0 rgba(0,0,0,0.6)",
+                }}
               >
-                {OBJECTIVES[objIndex]?.title}
+                <div
+                  className="font-retro text-[9px] mb-2"
+                  style={{ color: C.amber }}
+                >
+                  OBJECTIVE {objIndex + 1}/{OBJECTIVES.length}
+                </div>
+                <div
+                  className="font-retro text-[11px] sm:text-[13px]"
+                  style={{ color: C.speech }}
+                >
+                  {OBJECTIVES[objIndex]?.title}
+                </div>
+                <div
+                  className="font-retro text-[9px] sm:text-[10px] mt-2 leading-[1.9]"
+                  style={{ color: "#c7d0ff" }}
+                >
+                  {OBJECTIVES[objIndex]?.hint}
+                </div>
               </div>
-              <div
-                className="font-retro text-[9px] sm:text-[10px] mt-2 leading-[1.9]"
-                style={{ color: "#c7d0ff" }}
-              >
-                {OBJECTIVES[objIndex]?.hint}
-              </div>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

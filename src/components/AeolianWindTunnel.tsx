@@ -571,7 +571,7 @@ export default function AeolianWindTunnel({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* INPUT HARDWARE SLIDERS PANEL (5 Cols) */}
         <div
-          className={`lg:col-span-5 p-6 rounded-2xl border flex flex-col justify-between space-y-6 ${
+          className={`lg:col-span-5 p-6 rounded-[6px] border flex flex-col justify-between space-y-6 ${
             isLightMode
               ? "bg-white text-slate-900 border-slate-205 "
               : "bg-[#040813] text-slate-100 border-slate-850 "
@@ -617,7 +617,7 @@ export default function AeolianWindTunnel({
               {/* SLIDER 2: CRUST RESISTANCE THICKNESS */}
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center text-xs font-mono">
-                  <span className="text-slate-650 dark:text-slate-400 font-bold flex items-center gap-1 animate-pulse">
+                  <span className="text-slate-650 dark:text-slate-400 font-bold flex items-center gap-1">
                     <ShieldCheck className="w-3.5 h-3.5 text-teal-500" />{" "}
                     Bio-Crust Thickness:
                   </span>
@@ -665,7 +665,7 @@ export default function AeolianWindTunnel({
 
                 {isLinked ? (
                   <div
-                    className={`p-3 rounded-xl border text-xs font-mono flex items-center justify-between ${
+                    className={`p-3 rounded-[4px] border text-xs font-mono flex items-center justify-between ${
                       isLightMode
                         ? "bg-teal-50/50 text-teal-800 border-teal-100"
                         : "bg-teal-950/15 text-teal-400 border-teal-900/35"
@@ -720,7 +720,7 @@ export default function AeolianWindTunnel({
 
           {/* DIAGNOSTIC FORMULA LABELS OVERVIEW */}
           <div
-            className={`p-4 rounded-xl border font-mono text-xs space-y-2.5 ${
+            className={`p-4 rounded-[4px] border font-mono text-xs space-y-2.5 ${
               isLightMode
                 ? "bg-slate-50 border-slate-200 text-slate-800"
                 : "bg-slate-950 border-slate-900 text-slate-300"
@@ -783,7 +783,7 @@ export default function AeolianWindTunnel({
         <div className="lg:col-span-7 flex flex-col justify-between gap-6">
           {/* THE CHART VIEWPORTS */}
           <div
-            className={`p-6 rounded-2xl border flex flex-col justify-between min-h-[340px] ${
+            className={`p-6 rounded-[6px] border flex flex-col justify-between min-h-[340px] ${
               isLightMode
                 ? "bg-white text-slate-900 border-slate-200 "
                 : "bg-[#040813] text-slate-100 border-slate-850 "
@@ -804,7 +804,7 @@ export default function AeolianWindTunnel({
               <button
                 type="button"
                 onClick={startLiveWindTunnelTest}
-                className={`py-2 px-5 rounded-xl text-xs uppercase font-mono font-bold tracking-wider flex items-center justify-center gap-1.5 shadow transition-all duration-300 ${
+                className={`py-2 px-5 rounded-[4px] text-xs uppercase font-mono font-bold tracking-wider flex items-center justify-center gap-1.5 shadow transition-all duration-300 ${
                   isLiveTesting
                     ? "bg-red-650 hover:bg-red-550 text-white"
                     : "bg-amber-650 hover:bg-amber-550 text-white"
@@ -822,7 +822,7 @@ export default function AeolianWindTunnel({
 
             {/* HIGH FIDELITY GRAPH CANVAS SVG - THEMED FOR LIGHT/DARK MODE */}
             <div
-              className={`h-44 w-full relative border rounded-xl p-3 flex flex-col justify-between ${
+              className={`h-44 w-full relative border rounded-[4px] p-3 flex flex-col justify-between ${
                 isLightMode
                   ? "bg-slate-50 border-slate-200"
                   : "bg-[#010204] border-slate-850"
@@ -995,7 +995,7 @@ export default function AeolianWindTunnel({
 
           {/* GRAIN-MOTION VIEWPORT (live side-by-side saltation of untreated vs bio-crusted sand) */}
           <div
-            className={`p-4 rounded-xl border flex flex-col gap-2 overflow-hidden ${
+            className={`p-4 rounded-[4px] border flex flex-col gap-2 overflow-hidden ${
               isLightMode
                 ? "bg-[#f8fafc] border-slate-200"
                 : "bg-[#02050b] border-slate-900"
@@ -1047,34 +1047,25 @@ export default function AeolianWindTunnel({
 
       {/* 3. COHESIVE RESULTS & WET LAB TRANSLATION (5 STAGE OUTLINE SCORECARD AT THE BOTTOM) */}
       <div
-        className={`p-6 rounded-2xl border ${
+        className={`p-6 rounded-[6px] border ${
           isLightMode
             ? "bg-gradient-to-br from-white to-amber-50/20 border-amber-200 "
             : "bg-gradient-to-br from-slate-950 to-slate-950/80 border-slate-850 "
         }`}
       >
-        {/* SCORECARD TAPE DECORATION */}
-        <div className="flex items-center gap-4 border-b border-amber-100 dark:border-slate-900 pb-5 mb-5 justify-between flex-wrap">
-          <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded bg-teal-500 text-white font-mono text-[9px] font-extrabold tracking-widest animate-pulse">
-              FINAL REPORT
-            </span>
-            <h3 className="text-sm font-black uppercase text-slate-900 dark:text-white tracking-widest font-mono">
-              Durability &amp; Wet-Lab Translation
-            </h3>
-          </div>
-
-          <div className="text-[11px] text-slate-550 dark:text-slate-400 font-mono">
-            Computed live, in-browser •{" "}
-            <span className="text-teal-500 font-bold">up to date</span>
-          </div>
+        <div className="border-b border-amber-100 dark:border-slate-900 pb-4 mb-5">
+          <h3
+            className={`text-xs font-extrabold uppercase tracking-wider ${isLightMode ? "text-dune-maroon" : "text-dune-paper"}`}
+          >
+            Durability and wet-lab translation
+          </h3>
         </div>
 
         {/* TWO COLUMNS GRID BENTO STRUCTURE (economics live in the dedicated Economic module) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* PANEL A: SIMULATION CRUST STOPWATCH DIGITAL TIMERS */}
           <div
-            className={`p-4 rounded-xl border flex flex-col justify-between ${
+            className={`p-4 rounded-[4px] border flex flex-col justify-between ${
               isLightMode
                 ? "bg-[#f8fafc] border-slate-200"
                 : "bg-[#030610] border-slate-900"
@@ -1082,11 +1073,10 @@ export default function AeolianWindTunnel({
           >
             <div className="space-y-1">
               <span className="text-[9.5px] uppercase font-mono font-black tracking-wider text-amber-700 dark:text-amber-400 block mb-1">
-                Panel A // Durability Stopwatch
+                Durability stopwatch
               </span>
               <p className="text-[10px] text-slate-500 leading-normal mb-3">
-                Stopwatch records exact simulated failure points at complete
-                cumulative mass dislodgement.
+                Simulated time until the crust fails at the set wind speed.
               </p>
             </div>
 
@@ -1140,7 +1130,7 @@ export default function AeolianWindTunnel({
 
           {/* PANEL B: WET LAB OPERATIONAL BLUEPRINT TRANSLATION */}
           <div
-            className={`p-4 rounded-xl border flex flex-col justify-between ${
+            className={`p-4 rounded-[4px] border flex flex-col justify-between ${
               isLightMode
                 ? "bg-[#f8fafc] border-slate-200"
                 : "bg-[#030610] border-slate-900"
@@ -1148,11 +1138,10 @@ export default function AeolianWindTunnel({
           >
             <div className="space-y-1">
               <span className="text-[9.5px] uppercase font-mono font-black tracking-wider text-teal-700 dark:text-teal-400 block mb-1">
-                Panel B // Wet Lab Directives
+                Wet-lab directives
               </span>
               <p className="text-[10px] text-slate-500 leading-normal mb-3">
-                Translates physical boundary model limits into precise
-                laboratory execution instructions.
+                Model outputs turned into wet-lab settings to target.
               </p>
             </div>
 
@@ -1204,7 +1193,7 @@ export default function AeolianWindTunnel({
 
         {/* CROSS-REFERENCE: macro deployment cost & LCA are owned by the Economic module */}
         <div
-          className={`mt-5 p-3 rounded-xl border flex items-start gap-2.5 text-[11px] font-mono ${
+          className={`mt-5 p-3 rounded-[4px] border flex items-start gap-2.5 text-[11px] font-mono ${
             isLightMode
               ? "bg-amber-50/60 border-amber-200 text-stone-700"
               : "bg-[#05111d] border-teal-950/50 text-teal-300"
@@ -1212,16 +1201,9 @@ export default function AeolianWindTunnel({
         >
           <Coins className="w-4 h-4 shrink-0 mt-0.5 text-amber-500" />
           <span className="leading-relaxed">
-            <strong className="uppercase font-bold">
-              Deployment economics moved.
-            </strong>{" "}
-            Per-hectare biopolymer volume, fermentation CapEx and LCA carbon
-            offsets are now computed in the dedicated{" "}
-            <span className="font-bold">
-              Economic Scalability &amp; LCA Engine
-            </span>{" "}
-            module, which draws directly from the live FBA yield feed for a
-            single, consistent cost model.
+            <strong className="font-bold">Deployment economics moved.</strong>{" "}
+            Cost, yield per hectare, and life-cycle numbers now live in the{" "}
+            <span className="font-bold">Economic Scalability module</span>.
           </span>
         </div>
       </div>

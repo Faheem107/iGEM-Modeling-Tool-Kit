@@ -22,3 +22,5 @@ manim_videos/pdb/
 
 # Python bytecode
 manim_videos/__pycache__/
+__pycache__/
+*.pyc

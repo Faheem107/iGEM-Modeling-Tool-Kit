@@ -31,7 +31,8 @@ type DropTarget =
   | { kind: "term"; id: string }
   | { kind: "math"; id: ModuleId }
   | { kind: "video"; id: ModuleId }
-  | { kind: "sources"; id: ModuleId };
+  | { kind: "sources"; id: ModuleId }
+  | { kind: "code"; id: ModuleId };
 
 /** Radius (px) of the forgiving drop zone sampled around the pointer. */
 const DROP_RADIUS = 42;
@@ -47,6 +48,8 @@ function targetInStack(stack: Element[]): DropTarget | null {
     if (video) return { kind: "video", id: video as ModuleId };
     const sources = node.getAttribute?.("data-sandyx-sources");
     if (sources) return { kind: "sources", id: sources as ModuleId };
+    const codeTarget = node.getAttribute?.("data-sandyx-code");
+    if (codeTarget) return { kind: "code", id: codeTarget as ModuleId };
   }
   return null;
 }
@@ -87,6 +90,7 @@ export default function DraggableSandyx({ size, className }: Props) {
     openMath,
     openVideo,
     openSources,
+    openCode,
     setDragging,
     setHoverId,
     dragging,
@@ -136,6 +140,7 @@ export default function DraggableSandyx({ size, className }: Props) {
     else if (dropped?.kind === "math") openMath(dropped.id);
     else if (dropped?.kind === "video") openVideo(dropped.id);
     else if (dropped?.kind === "sources") openSources(dropped.id);
+    else if (dropped?.kind === "code") openCode(dropped.id);
   };
 
   React.useEffect(
