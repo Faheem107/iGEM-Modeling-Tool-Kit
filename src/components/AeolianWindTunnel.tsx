@@ -673,10 +673,10 @@ export default function AeolianWindTunnel({
                   >
                     <div className="space-y-0.5">
                       <span className="text-[10px] text-slate-555 dark:text-slate-500 font-bold block">
-                        INTRINSIC BIOPHYSICS LINK ACTIVE
+                        Linked to cross-linking model
                       </span>
                       <span className="text-[11px]">
-                        Synced with Crosslinked Protein Scaffold state.
+                        Crust stiffness comes from that module.
                       </span>
                     </div>
                     <button
@@ -726,11 +726,8 @@ export default function AeolianWindTunnel({
                 : "bg-slate-950 border-slate-900 text-slate-300"
             }`}
           >
-            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-900 pb-1 flex justify-between items-center">
-              <span>AEROLIAN SHEAR PROFILE</span>
-              <span className="text-[9.5px] bg-slate-200 dark:bg-slate-900 px-1.5 py-0.5 rounded text-amber-500">
-                MATH SOLVED
-              </span>
+            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-900 pb-1">
+              <span>Aeolian shear profile</span>
             </div>
 
             <div className="flex justify-between">
@@ -850,12 +847,11 @@ export default function AeolianWindTunnel({
                     }`}
                   >
                     <Wind
-                      className={`w-6 h-6 animate-pulse ${isLightMode ? "text-slate-400" : "text-slate-700"}`}
+                      className={`w-6 h-6 ${isLightMode ? "text-slate-400" : "text-slate-700"}`}
                     />
-                    <span>WIND CHAMBER CALIBRATED</span>
+                    <span>Ready</span>
                     <span className="text-[10px] opacity-80">
-                      Press &quot;Initiate Wind Tunnel Test&quot; above to trace
-                      live soil failure curves.
+                      Press Initiate Wind Tunnel Test to run the erosion curve.
                     </span>
                   </div>
                 ) : (
@@ -986,10 +982,9 @@ export default function AeolianWindTunnel({
 
             <div className="flex justify-between items-center text-[10.5px] font-mono mt-3 text-slate-500">
               <span className="flex items-center gap-0.5">
-                <Clock className="w-3.5 h-3.5 text-amber-500" /> Live Clock
-                ticker
+                <Clock className="w-3.5 h-3.5 text-amber-500" /> Elapsed
               </span>
-              <span>Duration: 15.0 Continuous Secs</span>
+              <span>15 s run</span>
             </div>
           </div>
 
