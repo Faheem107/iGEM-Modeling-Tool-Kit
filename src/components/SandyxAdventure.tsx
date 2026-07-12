@@ -22,7 +22,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, SkipForward, Volume2 } from "lucide-react";
+import { X, SkipForward } from "lucide-react";
 import { Cursor } from "@/components/motion-primitives/cursor";
 
 // ---------------------------------------------------------------------------
@@ -190,6 +190,113 @@ function SpeechBubble({
 }
 
 // ===========================================================================
+// Touch controls (mobile)
+// ===========================================================================
+/** True on coarse-pointer / no-hover devices (phones, most tablets). */
+function useIsTouch() {
+  const [touch, setTouch] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    const mq = window.matchMedia("(hover: none) and (pointer: coarse)");
+    const update = () => setTouch(mq.matches);
+    update();
+    mq.addEventListener?.("change", update);
+    return () => mq.removeEventListener?.("change", update);
+  }, []);
+  return touch;
+}
+
+/**
+ * On-screen D-pad that drives the same key ref the keyboard handlers use, so every
+ * game becomes touch-playable with no change to its movement loop. An optional
+ * round action button (e.g. the drone's SPRAY) sits on the opposite thumb.
+ */
+function TouchDpad({
+  keysRef,
+  onFirstMove,
+  action,
+}: {
+  keysRef: React.MutableRefObject<Record<string, boolean>>;
+  onFirstMove?: () => void;
+  action?: { label: string; keyName: string; color: string };
+}) {
+  const hold = (k: string) => ({
+    onPointerDown: (e: React.PointerEvent) => {
+      e.preventDefault();
+      keysRef.current[k] = true;
+      onFirstMove?.();
+    },
+    onPointerUp: () => {
+      keysRef.current[k] = false;
+    },
+    onPointerLeave: () => {
+      keysRef.current[k] = false;
+    },
+    onPointerCancel: () => {
+      keysRef.current[k] = false;
+    },
+    onLostPointerCapture: () => {
+      keysRef.current[k] = false;
+    },
+  });
+  const dBtn =
+    "select-none flex items-center justify-center font-retro text-[15px] w-14 h-14 border-[3px] active:translate-y-[1px]";
+  const dStyle = {
+    borderColor: C.amber,
+    color: C.amber,
+    background: "rgba(9,13,32,0.8)",
+    touchAction: "none" as const,
+  };
+  return (
+    <>
+      <div
+        className="absolute bottom-4 left-4 z-[66] select-none"
+        style={{ touchAction: "none" }}
+      >
+        <div className="grid grid-cols-3 grid-rows-3 gap-1.5">
+          <span />
+          <button className={dBtn} style={dStyle} {...hold("arrowup")}>
+            ▲
+          </button>
+          <span />
+          <button className={dBtn} style={dStyle} {...hold("arrowleft")}>
+            ◀
+          </button>
+          <span />
+          <button className={dBtn} style={dStyle} {...hold("arrowright")}>
+            ▶
+          </button>
+          <span />
+          <button className={dBtn} style={dStyle} {...hold("arrowdown")}>
+            ▼
+          </button>
+          <span />
+        </div>
+      </div>
+      {action && (
+        <div
+          className="absolute bottom-8 right-6 z-[66] select-none"
+          style={{ touchAction: "none" }}
+        >
+          <button
+            className="select-none font-retro text-[11px] w-20 h-20 rounded-full border-[3px] active:translate-y-[1px] flex items-center justify-center text-center leading-tight px-2"
+            style={{
+              borderColor: action.color,
+              color: action.color,
+              background: "rgba(9,13,32,0.8)",
+              touchAction: "none",
+            }}
+            {...hold(action.keyName)}
+          >
+            {action.label}
+          </button>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ===========================================================================
 // SCENE 1, Intro: Sandyx drives UP a road, city blocks scroll past on both sides
 // ===========================================================================
 
@@ -331,7 +438,13 @@ function CityColumn({ side, dur }: { side: "l" | "r"; dur: number }) {
   );
 }
 
-function IntroScene({ onFinish }: { onFinish: () => void }) {
+function IntroScene({
+  onFinish,
+  isTouch,
+}: {
+  onFinish: () => void;
+  isTouch: boolean;
+}) {
   const [stage, setStage] = useState<"drive" | "storm">("drive");
   const [moved, setMoved] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -503,11 +616,24 @@ function IntroScene({ onFinish }: { onFinish: () => void }) {
             }}
           >
             <div className="font-retro text-[10px]" style={{ color: C.amber }}>
-              USE WASD / ARROW KEYS TO DRIVE!
+              {isTouch ? "USE THE PAD TO DRIVE!" : "USE WASD / ARROW KEYS TO DRIVE!"}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Touch D-pad */}
+      {isTouch && stage === "drive" && (
+        <TouchDpad
+          keysRef={keys}
+          onFirstMove={() => {
+            if (!movedRef.current) {
+              movedRef.current = true;
+              setMoved(true);
+            }
+          }}
+        />
+      )}
 
       {/* Sandstorm, rolls DOWN from the top of the screen */}
       <AnimatePresence>
@@ -813,6 +939,22 @@ const STATIONS: MazeStation[] = [
 const PLAYER_START: [number, number] = [6, 5];
 const GHOST_START: [number, number] = [7, 7];
 
+// Every corridor cell except the player start and the station cells gets a pellet.
+function seedPellets(): Set<number> {
+  const occupied = new Set<number>([
+    PLAYER_START[1] * MCOLS + PLAYER_START[0],
+  ]);
+  STATIONS.forEach((s) => occupied.add(s.row * MCOLS + s.col));
+  const set = new Set<number>();
+  for (let r = 0; r < MROWS; r++) {
+    for (let c = 0; c < MCOLS; c++) {
+      if (MAZE[r][c] === "." && !occupied.has(r * MCOLS + c))
+        set.add(r * MCOLS + c);
+    }
+  }
+  return set;
+}
+
 // BFS one step from (sc,sr) toward (gc,gr) through the maze, powers the sand chaser.
 function bfsNextStep(
   sc: number,
@@ -1023,7 +1165,13 @@ const OBJECTIVES: Objective[] = [
   },
 ];
 
-function LabGame({ onSolved }: { onSolved: () => void }) {
+function LabGame({
+  onSolved,
+  isTouch,
+}: {
+  onSolved: () => void;
+  isTouch: boolean;
+}) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const keys = useRef<Record<string, boolean>>({});
@@ -1047,66 +1195,37 @@ function LabGame({ onSolved }: { onSolved: () => void }) {
   const hurtRef = useRef(0);
   const pellets = useRef<Set<number>>(new Set());
   const scoreRef = useRef(0);
-  const hiRef = useRef(0);
 
   const [objIndex, setObjIndex] = useState(0);
   const [moved, setMoved] = useState(false);
   const [solved, setSolved] = useState(false);
   const [pelletsLeft, setPelletsLeft] = useState(0);
   const [score, setScore] = useState(0);
-  const [hiScore, setHiScore] = useState(0);
+  const [objPopup, setObjPopup] = useState(true);
   const movedRef = useRef(false);
 
-  // Persisted arcade high-score (pellets + completed objectives; caught costs points).
+  // Show the current objective as a timed pop-up (auto-dismisses after 7s) whenever
+  // the active objective changes.
   useEffect(() => {
-    try {
-      const stored = Number(
-        window.localStorage.getItem("sandyx-maze-hiscore") || "0",
-      );
-      if (Number.isFinite(stored) && stored > 0) {
-        hiRef.current = stored;
-        setHiScore(stored);
-      }
-    } catch {
-      /* storage unavailable, high-score just won't persist */
-    }
-  }, []);
+    if (solved) return;
+    setObjPopup(true);
+    const id = setTimeout(() => setObjPopup(false), 7000);
+    return () => clearTimeout(id);
+  }, [objIndex, solved]);
 
-  // Award points and keep the (persisted) high-score in sync.
+  // Award points (no persistence, no high-score).
   const bumpScore = useCallback((delta: number) => {
     scoreRef.current = Math.max(0, scoreRef.current + delta);
     setScore(scoreRef.current);
-    if (scoreRef.current > hiRef.current) {
-      hiRef.current = scoreRef.current;
-      setHiScore(scoreRef.current);
-      try {
-        window.localStorage.setItem(
-          "sandyx-maze-hiscore",
-          String(scoreRef.current),
-        );
-      } catch {
-        /* ignore */
-      }
-    }
   }, []);
 
-  // Load Sandyx sprite + seed the pellets (every corridor cell except stations/start).
+  // Load Sandyx sprite + seed the pellets.
   useEffect(() => {
     const img = new Image();
     img.src = "/sandyx.png";
     img.onload = () => (spriteRef.current = img);
 
-    const occupied = new Set<number>([
-      PLAYER_START[1] * MCOLS + PLAYER_START[0],
-    ]);
-    STATIONS.forEach((s) => occupied.add(s.row * MCOLS + s.col));
-    const set = new Set<number>();
-    for (let r = 0; r < MROWS; r++) {
-      for (let c = 0; c < MCOLS; c++) {
-        if (MAZE[r][c] === "." && !occupied.has(r * MCOLS + c))
-          set.add(r * MCOLS + c);
-      }
-    }
+    const set = seedPellets();
     pellets.current = set;
     setPelletsLeft(set.size);
   }, []);
@@ -1252,7 +1371,7 @@ function LabGame({ onSolved }: { onSolved: () => void }) {
           g.x += ((tx - g.x) / gd) * Math.min(gspd * dt, gd);
           g.y += ((ty - g.y) / gd) * Math.min(gspd * dt, gd);
         }
-        // caught → respawn at start (keep progress)
+        // caught → restart from scratch: reset position, objectives, pellets, score
         if (Math.hypot(p.x - g.x, p.y - g.y) < R * 1.5) {
           const [px, py] = cellCenter(...PLAYER_START);
           p.x = px;
@@ -1262,7 +1381,14 @@ function LabGame({ onSolved }: { onSolved: () => void }) {
           g.y = ggy;
           g.tc = -1;
           hurtRef.current = 1;
-          bumpScore(-100);
+          objRef.current = 0;
+          progRef.current = 0;
+          setObjIndex(0);
+          scoreRef.current = 0;
+          setScore(0);
+          const fresh = seedPellets();
+          pellets.current = fresh;
+          setPelletsLeft(fresh.size);
         }
       }
 
@@ -1420,72 +1546,83 @@ function LabGame({ onSolved }: { onSolved: () => void }) {
     >
       <canvas ref={canvasRef} className="block w-full h-full" />
 
-      {/* Objective banner */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 w-[94%] max-w-2xl">
-        <AnimatePresence mode="wait">
-          {!solved && (
-            <motion.div
-              key={objIndex}
-              initial={{ y: -30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -30, opacity: 0 }}
-              className="border-[3px] px-5 py-4 text-center"
+      {/* Objective tracker: compact chips across the top */}
+      <div className="absolute top-3 left-1/2 -translate-x-1/2 z-40 flex gap-1.5 sm:gap-2 px-2 max-w-[96%] pointer-events-none">
+        {OBJECTIVES.map((o, k) => {
+          const done = k < objIndex;
+          const active = k === objIndex && !solved;
+          const col = done
+            ? C.green
+            : active
+              ? C.amber
+              : "rgba(232,236,255,0.5)";
+          return (
+            <div
+              key={k}
+              className="font-retro text-[8px] sm:text-[9px] px-1.5 sm:px-2 py-1.5 border flex items-center gap-1 whitespace-nowrap"
+              style={{
+                borderColor: col,
+                color: col,
+                background: "rgba(9,13,32,0.8)",
+              }}
+            >
+              <span>{done ? "✔" : active ? "▶" : k + 1}</span>
+              <span className="hidden sm:inline">{STATIONS[k].label}</span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Current objective: pop-up window with a 7s countdown bar on top */}
+      <AnimatePresence mode="wait">
+        {objPopup && !solved && (
+          <motion.div
+            key={objIndex}
+            initial={{ y: -24, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -24, opacity: 0 }}
+            className="absolute top-14 sm:top-16 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-md pointer-events-none"
+          >
+            <div className="h-2 w-full" style={{ background: "rgba(0,0,0,0.45)" }}>
+              <motion.div
+                key={`bar-${objIndex}`}
+                className="h-full"
+                style={{ background: C.amber }}
+                initial={{ width: "100%" }}
+                animate={{ width: "0%" }}
+                transition={{ duration: 7, ease: "linear" }}
+              />
+            </div>
+            <div
+              className="border-[3px] border-t-0 px-4 py-3 text-center"
               style={{
                 borderColor: C.amber,
-                background: "rgba(9,13,32,0.94)",
-                boxShadow:
-                  "0 0 18px rgba(255,207,77,0.35), 5px 5px 0 rgba(0,0,0,0.55)",
+                background: "rgba(9,13,32,0.96)",
+                boxShadow: "5px 5px 0 rgba(0,0,0,0.55)",
               }}
             >
               <div
-                className="font-retro text-[10px] mb-2"
+                className="font-retro text-[9px] mb-2"
                 style={{ color: C.amber }}
               >
                 OBJECTIVE {objIndex + 1}/{OBJECTIVES.length}
               </div>
               <div
-                className="font-retro text-[12px] sm:text-[15px]"
+                className="font-retro text-[11px] sm:text-[13px]"
                 style={{ color: C.speech }}
               >
                 {OBJECTIVES[objIndex]?.title}
               </div>
               <div
-                className="font-retro text-[9px] sm:text-[11px] mt-3 leading-[1.9]"
+                className="font-retro text-[9px] sm:text-[10px] mt-2 leading-[1.9]"
                 style={{ color: "#c7d0ff" }}
               >
                 {OBJECTIVES[objIndex]?.hint}
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-      {/* Objective checklist (left) */}
-      <div
-        className="absolute top-24 sm:top-28 left-4 hidden sm:block border-2 p-3"
-        style={{
-          borderColor: "rgba(120,140,220,0.4)",
-          background: "rgba(9,13,32,0.82)",
-        }}
-      >
-        {OBJECTIVES.map((o, k) => (
-          <div
-            key={k}
-            className="font-retro text-[9px] mb-3 last:mb-0 flex items-center gap-2"
-            style={{
-              color:
-                k < objIndex
-                  ? C.green
-                  : k === objIndex
-                    ? C.amber
-                    : "rgba(232,236,255,0.6)",
-            }}
-          >
-            <span>{k < objIndex ? "✔" : k === objIndex ? "▶" : "○"}</span>
-            <span>{o.title}</span>
-          </div>
-        ))}
-      </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Controls hint (top-right), disappears after first move */}
       <AnimatePresence>
@@ -1506,7 +1643,7 @@ function LabGame({ onSolved }: { onSolved: () => void }) {
               className="font-retro text-[10px] leading-[2.1]"
               style={{ color: C.teal }}
             >
-              ARROW KEYS / WASD TO MOVE
+              {isTouch ? "USE THE PAD TO MOVE" : "ARROW KEYS / WASD TO MOVE"}
               <br />
               <span style={{ color: C.sand }}>DODGE THE SAND!</span>
             </div>
@@ -1514,9 +1651,11 @@ function LabGame({ onSolved }: { onSolved: () => void }) {
         )}
       </AnimatePresence>
 
-      {/* Pellet counter (bottom-left) */}
+      {/* Pellet counter (bottom-left on desktop; top-left on touch so the D-pad is clear) */}
       <div
-        className="absolute bottom-4 left-4 border-2 px-3 py-2 flex items-center gap-2"
+        className={`absolute border-2 px-3 py-2 flex items-center gap-2 ${
+          isTouch ? "top-12 left-3" : "bottom-4 left-4"
+        }`}
         style={{ borderColor: C.amber, background: "rgba(9,13,32,0.85)" }}
       >
         <span
@@ -1528,24 +1667,29 @@ function LabGame({ onSolved }: { onSolved: () => void }) {
         </span>
       </div>
 
-      {/* Score + persisted high-score (bottom-right) */}
+      {/* Warning: getting caught restarts the run from scratch (bottom-right) */}
       <div
-        className="absolute bottom-4 right-4 border-2 px-3 py-2 text-right"
-        style={{ borderColor: C.teal, background: "rgba(9,13,32,0.85)" }}
+        className="absolute bottom-4 right-4 border-2 px-3 py-2 max-w-[46%] sm:max-w-[220px]"
+        style={{ borderColor: C.red, background: "rgba(9,13,32,0.85)" }}
       >
-        <div className="font-retro text-[8px] mb-1" style={{ color: C.teal }}>
-          HI{" "}
-          <span style={{ color: C.amber }}>
-            {hiScore.toString().padStart(6, "0")}
-          </span>
-        </div>
-        <div
-          className="font-retro-glow text-[13px]"
-          style={{ color: C.speech }}
-        >
-          {score.toString().padStart(6, "0")}
+        <div className="font-retro text-[8px] leading-[1.8]" style={{ color: C.red }}>
+          CAUGHT BY THE SAND ={" "}
+          <span style={{ color: C.sand }}>RESTART FROM SCRATCH</span>
         </div>
       </div>
+
+      {/* Touch D-pad */}
+      {isTouch && !solved && (
+        <TouchDpad
+          keysRef={keys}
+          onFirstMove={() => {
+            if (!movedRef.current) {
+              movedRef.current = true;
+              setMoved(true);
+            }
+          }}
+        />
+      )}
 
       {/* Solution splash */}
       <AnimatePresence>
@@ -1586,19 +1730,13 @@ function LabGame({ onSolved }: { onSolved: () => void }) {
                 down.
               </div>
               <div
-                className="mt-6 font-retro text-[10px] flex items-center justify-center gap-6"
+                className="mt-6 font-retro text-[10px] flex items-center justify-center"
                 style={{ color: C.speech }}
               >
                 <span>
                   SCORE{" "}
                   <span style={{ color: C.amber }}>
                     {score.toString().padStart(6, "0")}
-                  </span>
-                </span>
-                <span>
-                  HI{" "}
-                  <span style={{ color: C.teal }}>
-                    {hiScore.toString().padStart(6, "0")}
                   </span>
                 </span>
               </div>
@@ -1638,9 +1776,11 @@ const LOCK = 0.9;
 function DroneGame({
   binder,
   onFifteen,
+  isTouch,
 }: {
   binder: number; // 0.4..1.6 strength multiplier from tuning
   onFifteen: () => void;
+  isTouch: boolean;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -1979,7 +2119,7 @@ function DroneGame({
 
       {/* Stat panel */}
       <div
-        className="absolute top-16 left-4 border-[3px] p-4 w-60"
+        className="absolute top-16 left-4 border-[3px] p-3 sm:p-4 w-48 sm:w-60"
         style={{
           borderColor: C.amber,
           background: "rgba(9,13,32,0.92)",
@@ -2037,21 +2177,31 @@ function DroneGame({
         </div>
       </div>
 
-      {/* Controls */}
-      <div
-        className="absolute bottom-4 left-1/2 -translate-x-1/2 border-[3px] px-5 py-3"
-        style={{
-          borderColor: C.teal,
-          background: "rgba(9,13,32,0.92)",
-          boxShadow: "4px 4px 0 rgba(0,0,0,0.5)",
-        }}
-      >
-        <div className="font-retro text-[10px]" style={{ color: C.teal }}>
-          WASD / ARROWS = FLY &nbsp;·&nbsp;{" "}
-          <span className="retro-blink">HOLD SPACE = SPRAY</span> &nbsp;·&nbsp;{" "}
-          <span style={{ color: C.sand }}>BEAT THE SAND GHOST</span>
+      {/* Controls (keyboard hint hidden on touch; the D-pad + SPRAY button replace it) */}
+      {!isTouch && (
+        <div
+          className="absolute bottom-4 left-1/2 -translate-x-1/2 border-[3px] px-5 py-3"
+          style={{
+            borderColor: C.teal,
+            background: "rgba(9,13,32,0.92)",
+            boxShadow: "4px 4px 0 rgba(0,0,0,0.5)",
+          }}
+        >
+          <div className="font-retro text-[10px]" style={{ color: C.teal }}>
+            WASD / ARROWS = FLY &nbsp;·&nbsp;{" "}
+            <span className="retro-blink">HOLD SPACE = SPRAY</span> &nbsp;·&nbsp;{" "}
+            <span style={{ color: C.sand }}>BEAT THE SAND GHOST</span>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Touch D-pad + SPRAY action */}
+      {isTouch && (
+        <TouchDpad
+          keysRef={keys}
+          action={{ label: "SPRAY", keyName: "space", color: C.teal }}
+        />
+      )}
     </div>
   );
 }
@@ -2196,6 +2346,7 @@ export default function SandyxAdventure({
   const [pga, setPga] = useState(65);
   const [ca, setCa] = useState(55);
   const [co2, setCo2] = useState(50);
+  const isTouch = useIsTouch();
 
   const binder = binderStrength(pga, ca, co2);
 
@@ -2259,12 +2410,7 @@ export default function SandyxAdventure({
                   "linear-gradient(180deg, rgba(11,16,38,0.9), transparent)",
               }}
             >
-              <div
-                className="font-retro text-[9px] sm:text-[11px] flex items-center gap-2"
-                style={{ color: C.amber }}
-              >
-                <Volume2 className="w-4 h-4" /> SANDYX vs. THE SANDSTORM
-              </div>
+              <div />
               <div className="flex items-center gap-2">
                 {isStory && (
                   <button
@@ -2294,7 +2440,8 @@ export default function SandyxAdventure({
               </div>
             </div>
 
-            {/* Themed retro cursor (motion-primitives) */}
+            {/* Themed retro cursor (motion-primitives), pointer devices only */}
+            {!isTouch && (
             <Cursor
               className="z-[999]"
               springConfig={{ stiffness: 1100, damping: 34, mass: 0.28 }}
@@ -2322,6 +2469,7 @@ export default function SandyxAdventure({
                 />
               </div>
             </Cursor>
+            )}
 
             {/* Scenes */}
             <AnimatePresence mode="wait">
@@ -2333,7 +2481,10 @@ export default function SandyxAdventure({
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                 >
-                  <IntroScene onFinish={() => setPhase("desert")} />
+                  <IntroScene
+                    onFinish={() => setPhase("desert")}
+                    isTouch={isTouch}
+                  />
                 </motion.div>
               )}
               {phase === "desert" && (
@@ -2355,7 +2506,10 @@ export default function SandyxAdventure({
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                 >
-                  <LabGame onSolved={() => setPhase("deploy-prompt")} />
+                  <LabGame
+                    onSolved={() => setPhase("deploy-prompt")}
+                    isTouch={isTouch}
+                  />
                 </motion.div>
               )}
               {phase === "lab-tune" && (
@@ -2393,6 +2547,7 @@ export default function SandyxAdventure({
                   <DroneGame
                     binder={binder}
                     onFifteen={() => setModelPrompt(true)}
+                    isTouch={isTouch}
                   />
                   {/* Two-button branch after saying "No" to the model prompt */}
                   {droneChoice && (
