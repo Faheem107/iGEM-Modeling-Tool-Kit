@@ -179,21 +179,19 @@ export default function LandingCinematic({
     Math.min(SCENES.length - 1, Math.floor(p * SCENES.length)),
   );
 
-  // The protein spins gently by default and speeds up while the page is scrolling, then eases back.
-  useEffect(() => {
-    if (reduced) return;
-    let idle: ReturnType<typeof setTimeout>;
-    const onScroll = () => {
-      apiRef.current?.setSpinSpeed(1.3);
-      clearTimeout(idle);
-      idle = setTimeout(() => apiRef.current?.setSpinSpeed(0.3), 200);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      clearTimeout(idle);
-    };
-  }, [reduced]);
+  // Scroll-driven 3D feel: the structure gently tilts, scales, and drifts as the
+  // section scrolls past, a calm "3D scroll" effect layered over the slow WebGL
+  // auto-spin. Disabled when the user prefers reduced motion.
+  const heroScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.92, 1.03, 0.97]);
+  const heroRotateY = useTransform(scrollYProgress, [0, 1], [-9, 9]);
+  const heroRotateX = useTransform(scrollYProgress, [0, 0.5, 1], [4, 0, -4]);
+  const heroY = useTransform(scrollYProgress, [0, 0.5, 1], [24, 0, -24]);
+  const glowScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.85, 1.12, 0.9]);
+  const glowOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.5, 1],
+    [0.7, 1, 0.7],
+  );
 
   // Returning from the adventure ("see how we model this") scrolls back to this section's start.
   useEffect(() => {
@@ -224,18 +222,48 @@ export default function LandingCinematic({
         />
 
         <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 items-center">
-          {/* Rotating protein. The wrapper carries the height; the viewer fills it with
-              h-full (passing `absolute inset-0` collapses the viewer root to 0px). */}
-          <div className="order-1 lg:order-none relative h-[34vh] sm:h-[42vh] lg:h-[64vh] w-full">
-            <MolstarViewer
-              url={HERO_STRUCTURE}
-              className="h-full w-full"
-              showControls={false}
-              spinByDefault
-              onReady={(api) => {
-                apiRef.current = api;
-              }}
-            />
+          {/* Rotating protein on an elegant glow stage. The wrapper carries the height
+              and the 3D perspective; the viewer fills it with h-full (passing
+              `absolute inset-0` collapses the viewer root to 0px). */}
+          <div className="order-1 lg:order-none relative h-[40vh] sm:h-[50vh] lg:h-[74vh] w-full [perspective:1400px]">
+            {/* soft accent glow behind the structure (premium biotech stage) */}
+            <motion.div
+              aria-hidden
+              style={reduced ? undefined : { scale: glowScale, opacity: glowOpacity }}
+              className="pointer-events-none absolute inset-0 flex items-center justify-center"
+            >
+              <div
+                className={`h-[72%] w-[72%] rounded-full blur-3xl ${
+                  isLightMode
+                    ? "bg-[radial-gradient(circle,rgba(214,136,74,0.30),rgba(143,179,172,0.14),transparent_72%)]"
+                    : "bg-[radial-gradient(circle,rgba(143,179,172,0.34),rgba(214,136,74,0.16),transparent_72%)]"
+                }`}
+              />
+            </motion.div>
+            <motion.div
+              style={
+                reduced
+                  ? undefined
+                  : {
+                      scale: heroScale,
+                      rotateX: heroRotateX,
+                      rotateY: heroRotateY,
+                      y: heroY,
+                    }
+              }
+              className="absolute inset-0 [transform-style:preserve-3d]"
+            >
+              <MolstarViewer
+                url={HERO_STRUCTURE}
+                className="h-full w-full"
+                showControls={false}
+                spinByDefault
+                emphasis
+                onReady={(api) => {
+                  apiRef.current = api;
+                }}
+              />
+            </motion.div>
           </div>
 
           {/* Narrating panes (cross-faded on scroll) */}

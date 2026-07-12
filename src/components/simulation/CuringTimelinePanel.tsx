@@ -36,7 +36,7 @@ import {
   tooltipStyle,
   Themed,
 } from "./_shared";
-import GlossaryTerm, { GlossaryText } from "../GlossaryTerm";
+import GlossaryTerm from "../GlossaryTerm";
 import {
   curingTimeline,
   PRONG_LABEL,
@@ -123,28 +123,6 @@ export default function CuringTimelinePanel({
           : "bg-gradient-to-br from-[#1c1512] to-teal-950/20 border-slate-800 "
       }`}
     >
-      <div className="flex items-center gap-3 border-b pb-4 border-slate-200/60 dark:border-slate-800">
-        <div
-          className={`p-2.5 rounded-xl ${isLightMode ? "bg-teal-50 text-teal-600" : "bg-teal-950/40 text-teal-400"}`}
-        >
-          <CalendarClock className="w-5 h-5" />
-        </div>
-        <div>
-          <h3
-            className={`text-sm font-black uppercase tracking-wider ${isLightMode ? "text-slate-900" : "text-white"}`}
-          >
-            Curing &amp; Deployment Timeline
-          </h3>
-          <p
-            className={`text-[11px] ${isLightMode ? "text-stone-500" : "text-slate-400"}`}
-          >
-            <GlossaryText max={4}>
-              How the crust cures over the 32 h spray protocol, then weathers
-              until re-application.
-            </GlossaryText>
-          </p>
-        </div>
-      </div>
 
       <ModuleActions moduleId="curing" isLightMode={isLightMode} />
 

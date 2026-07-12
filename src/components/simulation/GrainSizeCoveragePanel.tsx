@@ -20,9 +20,9 @@ import {
   Legend,
   ReferenceLine,
 } from "recharts";
-import { Ruler, ScanLine, TriangleAlert } from "lucide-react";
+import { ScanLine, TriangleAlert } from "lucide-react";
 import { Panel, StatCard, chartColors, tooltipStyle, Themed } from "./_shared";
-import GlossaryTerm, { GlossaryText } from "../GlossaryTerm";
+import GlossaryTerm from "../GlossaryTerm";
 import { ModuleActions } from "./_shared";
 import { grainSizeProfile, PRONG_LABEL, type ProngId } from "../../lib/physics";
 
@@ -76,29 +76,6 @@ export default function GrainSizeCoveragePanel({
           : "bg-gradient-to-br from-[#1c1512] to-teal-950/20 border-slate-800 "
       }`}
     >
-      <div className="flex items-center gap-3 border-b pb-4 border-slate-200/60 dark:border-slate-800">
-        <div
-          className={`p-2.5 rounded-xl ${isLightMode ? "bg-teal-50 text-teal-600" : "bg-teal-950/40 text-teal-400"}`}
-        >
-          <Ruler className="w-5 h-5" />
-        </div>
-        <div>
-          <h3
-            className={`text-sm font-black uppercase tracking-wider ${isLightMode ? "text-slate-900" : "text-white"}`}
-          >
-            Grain-Size Coverage
-          </h3>
-          <p
-            className={`text-[11px] ${isLightMode ? "text-stone-500" : "text-slate-400"}`}
-          >
-            <GlossaryText max={4}>
-              Which grains each binder actually holds across the UAE dune-sand
-              size distribution.
-            </GlossaryText>
-          </p>
-        </div>
-      </div>
-
       <ModuleActions moduleId="grainsize" isLightMode={isLightMode} />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
