@@ -26,6 +26,8 @@ export default function MolstarViewer({
   spinByDefault = true,
   showControls = true,
   emphasis = false,
+  color,
+  baseSpeed = BASE_SPIN_SPEED,
   onReady,
 }: {
   url: string;
@@ -34,9 +36,14 @@ export default function MolstarViewer({
   spinByDefault?: boolean;
   /** Show the spin / reset buttons (hidden when rotation is driven externally). */
   showControls?: boolean;
-  /** Premium hero look: adds a soft edge outline so the structure reads crisply
-   *  on an elegant dark stage (used on the landing page). */
+  /** Premium hero look: soft ambient occlusion + a faint edge so the structure
+   *  reads with depth on an elegant stage (used on the landing page). */
   emphasis?: boolean;
+  /** Recolour the whole structure to a single brand hex (e.g. 0x8fb3ac). When
+   *  omitted, Mol*'s default chain colouring is kept. */
+  color?: number;
+  /** Baseline auto-rotation speed (defaults to the calm 0.12). */
+  baseSpeed?: number;
   /** Receives an imperative handle once the viewer is live. */
   onReady?: (api: MolstarApi) => void;
 }) {
@@ -48,7 +55,10 @@ export default function MolstarViewer({
   const [spinning, setSpinning] = useState(spinByDefault);
   const [error, setError] = useState<string | null>(null);
   // Current spin speed, kept in a ref so reloads re-apply it without a re-render.
-  const spinSpeedRef = useRef(spinByDefault ? BASE_SPIN_SPEED : 0);
+  const spinSpeedRef = useRef(spinByDefault ? baseSpeed : 0);
+  // Brand colour kept in a ref so structure reloads re-apply it without a re-render.
+  const colorRef = useRef(color);
+  colorRef.current = color;
 
   // Apply an auto-rotation speed to the trackball; speed 0 turns it off. The spin params MUST carry
   // an `axis` (the animation loop reads axis[0..2]); omitting it crashes Mol*'s trackball each frame.
@@ -104,26 +114,42 @@ export default function MolstarViewer({
           transparentBackground: true,
           camera: { helper: { axes: { name: "off", params: {} } } },
         });
-        // Premium hero: a soft dark edge outline makes the ribbons read crisply on the
-        // dark stage. Guarded, if this Mol* build shapes the params differently we just
-        // skip it and the structure still renders normally.
+        // Premium hero: soft ambient occlusion for depth (the reference biotech
+        // sites lean on depth, not hard lines) plus a faint edge so the structure
+        // stays crisp against the glow. Guarded, if this Mol* build shapes the
+        // params differently we skip it and the structure still renders normally.
         if (emphasis) {
           try {
             plugin.canvas3d?.setProps({
               postprocessing: {
+                occlusion: {
+                  name: "on",
+                  params: {
+                    samples: 32,
+                    multiScale: { name: "off", params: {} },
+                    radius: 5,
+                    bias: 0.8,
+                    blurKernelSize: 15,
+                    blurDepthBias: 0.5,
+                    resolutionScale: 1,
+                    color: 0x000000,
+                    transparentThreshold: 0.4,
+                  },
+                },
                 outline: {
                   name: "on",
                   params: {
                     scale: 1,
-                    threshold: 0.15,
-                    color: 0x0a0f14,
+                    threshold: 0.33,
+                    color: 0x1a120d,
                     includeTransparent: true,
                   },
                 },
+                shadow: { name: "off", params: {} },
               },
             });
           } catch {
-            /* outline unsupported in this build, ignore */
+            /* postprocessing unsupported in this build, ignore */
           }
         }
 
@@ -177,6 +203,29 @@ export default function MolstarViewer({
           trajectory,
           "default",
         );
+        if (cancelled) return;
+        // Recolour the whole structure to the brand hex, so the protein reads in
+        // the Dunelock palette instead of Mol*'s default chain colour.
+        if (colorRef.current != null) {
+          try {
+            const { Color } = await import(
+              "molstar/lib/mol-util/color/color"
+            );
+            const structures =
+              plugin.managers.structure.hierarchy.current.structures;
+            for (const s of structures) {
+              await plugin.managers.structure.component.updateRepresentationsTheme(
+                s.components,
+                {
+                  color: "uniform",
+                  colorParams: { value: Color(colorRef.current) },
+                },
+              );
+            }
+          } catch {
+            /* recolour unsupported in this build, keep default colours */
+          }
+        }
         if (!cancelled) {
           setLoading(false);
           // plugin.clear() reset the trackball, so re-apply the current spin.
@@ -196,7 +245,7 @@ export default function MolstarViewer({
 
   const toggleSpin = () => {
     if (!pluginRef.current?.canvas3d) return;
-    const nextSpeed = spinning ? 0 : BASE_SPIN_SPEED;
+    const nextSpeed = spinning ? 0 : baseSpeed;
     spinSpeedRef.current = nextSpeed;
     applySpin(nextSpeed);
     setSpinning(nextSpeed > 0);

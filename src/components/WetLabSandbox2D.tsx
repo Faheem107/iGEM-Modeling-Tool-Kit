@@ -846,14 +846,16 @@ export default function WetLabSandbox2D({
                     className={`list-disc list-inside space-y-1 ml-1 ${isLightMode ? "text-stone-600" : "text-slate-500"}`}
                   >
                     <li>
-                      <b>Higher OD600</b> guarantees dense biofilm matrices.
+                      <b>Higher OD600</b> seeds a denser starting population,
+                      which tends to build biofilm faster.
                     </li>
                     <li>
-                      <b>L-Glutamate Precursors</b> map directly to PGA yields.
+                      <b>L-Glutamate precursors</b> feed γ-PGA synthesis and
+                      raise the achievable yield.
                     </li>
                     <li>
-                      <b>Divalent Salinity</b> is critical; calcium acts as the
-                      thermodynamic "glue" crossing PGA carboxyl groups.
+                      <b>Divalent salinity</b> matters: calcium bridges γ-PGA
+                      carboxyl groups, cross-linking the matrix.
                     </li>
                   </ul>
                 </div>
