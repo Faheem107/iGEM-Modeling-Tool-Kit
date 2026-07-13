@@ -51,13 +51,13 @@ export const PRONGS: Prong[] = [
     icon: <Layers className="w-8 h-8 text-dune-teal" />,
     short: "Non-ureolytic MICP biomineralization",
     whatItIs:
-      "Engineering B. subtilis to secrete Carbonic Anhydrase (CA) and anchor it to the cell surface via Sortase-mediated ligation. This enzyme sequesters CO2 and water to form calcium carbonate crystals without producing toxic ammonia.",
+      "Engineering B. subtilis to secrete carbonic anhydrase (CA) and display it on the cell surface via sortase-mediated ligation. CA accelerates the hydration of CO2 to bicarbonate; where calcium is available this shifts the carbonate equilibrium and precipitates calcium carbonate, avoiding the ammonia released by the ureolytic (urease-based) MICP route.",
     modelDoes:
-      "Simulates Sortase anchoring, CA dimerization, and signal-peptide efficiency to predict covalent anchoring and biomineralization rates.",
+      "Simulates sortase anchoring, CA dimerization, and signal-peptide efficiency to estimate covalent surface display and calcium-carbonate precipitation rates.",
     impact:
-      "Cements sand grains together without ammonia, captures CO2, and makes the crust more durable.",
+      "Binds sand grains with calcium-carbonate cement along an ammonia-free route. The model uses the predicted precipitation rate to estimate how much this stiffens the crust.",
     inDesert:
-      "In the sand, the surface-displayed carbonic anhydrase pulls CO₂ from the air and, using calcium already present in desert dust, grows calcium-carbonate cement between grains, hardening the surface into a durable, ammonia-free biocement while locking away carbon.",
+      "In the sand, the surface-displayed carbonic anhydrase speeds CO₂ hydration and, using calcium present in desert dust, drives calcium-carbonate cement between grains, hardening the surface into an ammonia-free biocement.",
   },
   {
     id: 3,

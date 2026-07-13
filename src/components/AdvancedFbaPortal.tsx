@@ -278,7 +278,7 @@ const REACTIONS: Reaction[] = [
     defaultUb: 100,
     subsystem: "tca",
     description:
-      "Major metabolic fork. Generates NADPH and alpha-ketoglutarate, the absolute precursor for PGA polymer.",
+      "Major metabolic fork. Generates NADPH and alpha-ketoglutarate, which is transaminated to the L-glutamate monomer that PGA is polymerised from.",
     leftToRightMap: { icit: -1, akg: 1, nadph: 1, co2: 1 },
   },
   {

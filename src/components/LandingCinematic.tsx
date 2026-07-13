@@ -49,55 +49,56 @@ const SCENES: Scene[] = [
     accentDark: "text-dune-orange",
     paragraphs: [
       <>
-        This project fights wind-driven desert sand erosion. We engineer{" "}
+        This project targets wind-driven desert sand erosion. We engineer{" "}
         <Term k="bacillus-subtilis">
           <i>Bacillus subtilis</i>
         </Term>{" "}
-        to bind and stabilize sandy surfaces.
+        to bind loose sand into a stabilized surface crust.
       </>,
       <>
-        Two engineered prongs do the work: <Term k="gamma-pga">γ-PGA</Term> and
-        carbonic-anhydrase biomineralization. A genetically-encoded{" "}
-        <Term k="kill-switch">kill switch</Term> keeps the strain contained.
+        Two engineered prongs do the work:{" "}
+        <Term k="gamma-pga">γ-PGA</Term> overexpression and carbonic-anhydrase
+        biomineralization. A genetically-encoded{" "}
+        <Term k="kill-switch">kill switch</Term> is modelled for biocontainment.
       </>,
       <>
-        Binding loose sand into a <Term k="gamma-pga">γ-PGA</Term> crust cuts
-        airborne dust and improves air quality.
+        In the model, binding grains into a <Term k="gamma-pga">γ-PGA</Term>{" "}
+        crust is expected to lower dust released from the treated surface.
       </>,
     ],
   },
   {
     title: "How do these models help?",
-    accentLight: "text-teal-700",
-    accentDark: "text-teal-300",
+    accentLight: "text-dune-maroon",
+    accentDark: "text-dune-orange",
     paragraphs: [
       <>
-        These models connect what the bacteria do inside the cell to the effect
-        on the ground.
+        They link what the cell does internally to what happens on the ground,
+        so we can test ideas computationally before committing lab time.
       </>,
       <>
-        Simulate polymer <Term k="cross-linking">cross-linking</Term>, optimize
-        pathways with{" "}
-        <Term k="flux-balance-analysis">flux balance analysis</Term>, and predict
-        how treated sand resists <Term k="aeolian-transport">aeolian</Term> wind
-        stress, before touching a single flask.
+        Simulate polymer <Term k="cross-linking">cross-linking</Term>, explore
+        metabolic trade-offs with{" "}
+        <Term k="flux-balance-analysis">flux balance analysis</Term>, and
+        estimate how a treated surface resists{" "}
+        <Term k="aeolian-transport">aeolian</Term> (wind) shear.
       </>,
     ],
   },
   {
     title: "How to use this toolkit in the lab",
-    accentLight: "text-dune-orange",
+    accentLight: "text-dune-maroon",
     accentDark: "text-dune-orange",
     paragraphs: [
       <>
-        Set your wet lab parameters here: incubation temperature,{" "}
+        Set candidate wet-lab parameters here: incubation temperature,{" "}
         <Term k="precursor">precursor</Term> concentrations, and{" "}
-        <Term k="od600">inoculum</Term> volumes.
+        <Term k="od600">inoculum</Term> density.
       </>,
       <>
-        The outputs guide your setup, so you hit the{" "}
-        <Term k="shear-modulus">shear modulus</Term> and durability you need in
-        your assays.
+        The outputs are estimates to help plan assays and narrow the range you
+        test for <Term k="shear-modulus">shear modulus</Term> and durability.
+        They guide experiments, they do not replace measurement.
       </>,
     ],
   },
@@ -117,25 +118,28 @@ function Pane({
   count: number;
   isLightMode: boolean;
 }) {
-  // Each scene owns a window of scroll; it fades/slides in as that window opens and out as it closes.
+  // Each scene owns a window of scroll and shares the same frame. Panes hand off
+  // sequentially: a pane is fully gone by the time the next begins, so two texts
+  // never occupy the frame at once (the frame is clipped, so the slide reads as a
+  // reel). The fade is quick at the edges with a long readable plateau.
   const span = 1 / count;
   const start = index * span;
-  const inAt = index === 0 ? 0 : start - span * 0.15;
-  const peakA = start + span * 0.18;
-  const peakB = start + span * 0.82;
-  const outAt = index === count - 1 ? 1 : start + span + span * 0.02;
+  const inAt = index === 0 ? 0 : start;
+  const peakA = start + span * 0.16;
+  const peakB = start + span * 0.84;
+  const outAt = index === count - 1 ? 1 : start + span;
 
   const opacity = useTransform(
     progress,
     [inAt, peakA, peakB, outAt],
     [0, 1, 1, 0],
   );
-  const y = useTransform(progress, [inAt, peakA, peakB, outAt], [40, 0, 0, -40]);
+  const y = useTransform(progress, [inAt, peakA, peakB, outAt], [50, 0, 0, -50]);
 
   return (
     <motion.div
       style={{ opacity, y }}
-      className="absolute inset-0 flex flex-col justify-center"
+      className="absolute inset-0 flex flex-col justify-center px-7 sm:px-9 py-8"
     >
       <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] text-dune-ash mb-3">
         {String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
@@ -179,19 +183,28 @@ export default function LandingCinematic({
     Math.min(SCENES.length - 1, Math.floor(p * SCENES.length)),
   );
 
-  // Scroll-driven 3D feel: the structure gently tilts, scales, and drifts as the
-  // section scrolls past, a calm "3D scroll" effect layered over the slow WebGL
-  // auto-spin. Disabled when the user prefers reduced motion.
-  const heroScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.92, 1.03, 0.97]);
-  const heroRotateY = useTransform(scrollYProgress, [0, 1], [-9, 9]);
-  const heroRotateX = useTransform(scrollYProgress, [0, 0.5, 1], [4, 0, -4]);
-  const heroY = useTransform(scrollYProgress, [0, 0.5, 1], [24, 0, -24]);
-  const glowScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.85, 1.12, 0.9]);
+  // Scroll-driven 3D feel: the structure tilts, scales, and drifts as the section
+  // scrolls past, a clearly visible "3D scroll" choreography (à la Isomorphic /
+  // Harmonic) layered over the slow WebGL auto-spin. Disabled under reduced motion.
+  const heroScale = useTransform(
+    scrollYProgress,
+    [0, 0.5, 1],
+    [0.86, 1.16, 1.0],
+  );
+  const heroRotateY = useTransform(scrollYProgress, [0, 1], [-22, 22]);
+  const heroRotateX = useTransform(scrollYProgress, [0, 0.5, 1], [8, 0, -8]);
+  const heroY = useTransform(scrollYProgress, [0, 0.5, 1], [48, 0, -48]);
+  const heroX = useTransform(scrollYProgress, [0, 0.5, 1], [40, 0, 24]);
+  const glowScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1.35, 1.0]);
   const glowOpacity = useTransform(
     scrollYProgress,
     [0, 0.5, 1],
-    [0.7, 1, 0.7],
+    [0.55, 1, 0.75],
   );
+
+  // Deep, saturated teal reads on the warm sand of light mode; a brighter teal
+  // glows on the dark ember stage. Both stay inside the Dunelock palette.
+  const proteinColor = isLightMode ? 0x4f8279 : 0xa6cbc3;
 
   // Returning from the adventure ("see how we model this") scrolls back to this section's start.
   useEffect(() => {
@@ -209,65 +222,80 @@ export default function LandingCinematic({
       className="relative w-full scroll-mt-0"
       style={{ height: "320vh" }}
     >
-      {/* Sticky stage: protein + narrating panes, held in view while the section scrolls past. */}
+      {/* Sticky stage: narrating panes (left) + a large protein that bleeds off the
+          right edge (like Isomorphic / Harmonic), held in view while the section
+          scrolls past. */}
       <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center">
         {/* soft vignette so the text stays legible over the ambient gradient */}
         <div
           aria-hidden
           className={`pointer-events-none absolute inset-0 ${
             isLightMode
-              ? "bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(251,247,240,0.65)_100%)]"
-              : "bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(8,7,6,0.7)_100%)]"
+              ? "bg-[radial-gradient(ellipse_at_60%_50%,transparent_45%,rgba(251,247,240,0.7)_100%)]"
+              : "bg-[radial-gradient(ellipse_at_60%_50%,transparent_38%,rgba(8,7,6,0.78)_100%)]"
           }`}
         />
 
-        <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8 grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 items-center">
-          {/* Rotating protein on an elegant glow stage. The wrapper carries the height
-              and the 3D perspective; the viewer fills it with h-full (passing
-              `absolute inset-0` collapses the viewer root to 0px). */}
-          <div className="order-1 lg:order-none relative h-[40vh] sm:h-[50vh] lg:h-[74vh] w-full [perspective:1400px]">
-            {/* soft accent glow behind the structure (premium biotech stage) */}
-            <motion.div
-              aria-hidden
-              style={reduced ? undefined : { scale: glowScale, opacity: glowOpacity }}
-              className="pointer-events-none absolute inset-0 flex items-center justify-center"
-            >
-              <div
-                className={`h-[72%] w-[72%] rounded-full blur-3xl ${
-                  isLightMode
-                    ? "bg-[radial-gradient(circle,rgba(214,136,74,0.30),rgba(143,179,172,0.14),transparent_72%)]"
-                    : "bg-[radial-gradient(circle,rgba(143,179,172,0.34),rgba(214,136,74,0.16),transparent_72%)]"
-                }`}
-              />
-            </motion.div>
-            <motion.div
-              style={
-                reduced
-                  ? undefined
-                  : {
-                      scale: heroScale,
-                      rotateX: heroRotateX,
-                      rotateY: heroRotateY,
-                      y: heroY,
-                    }
-              }
-              className="absolute inset-0 [transform-style:preserve-3d]"
-            >
-              <MolstarViewer
-                url={HERO_STRUCTURE}
-                className="h-full w-full"
-                showControls={false}
-                spinByDefault
-                emphasis
-                onReady={(api) => {
-                  apiRef.current = api;
-                }}
-              />
-            </motion.div>
-          </div>
+        {/* The protein spans the full stage and drifts off the right edge so it
+            reads as one large hero object, not a thumbnail in a box. */}
+        <div className="absolute inset-0 lg:left-[38%] [perspective:1600px]">
+          {/* Large accent glow behind the structure (the premium biotech "stage").
+              Clearly visible in both themes and pulses/parallaxes on scroll. */}
+          <motion.div
+            aria-hidden
+            style={
+              reduced ? undefined : { scale: glowScale, opacity: glowOpacity }
+            }
+            className="pointer-events-none absolute inset-0 flex items-center justify-center"
+          >
+            <div
+              className={`h-[85%] w-[85%] rounded-full blur-[110px] ${
+                isLightMode
+                  ? "bg-[radial-gradient(circle,rgba(143,179,172,0.55),rgba(214,136,74,0.28),transparent_70%)]"
+                  : "bg-[radial-gradient(circle,rgba(143,179,172,0.5),rgba(214,136,74,0.26),transparent_70%)]"
+              }`}
+            />
+          </motion.div>
+          <motion.div
+            style={
+              reduced
+                ? undefined
+                : {
+                    scale: heroScale,
+                    rotateX: heroRotateX,
+                    rotateY: heroRotateY,
+                    x: heroX,
+                    y: heroY,
+                  }
+            }
+            className="absolute inset-0 [transform-style:preserve-3d]"
+          >
+            <MolstarViewer
+              url={HERO_STRUCTURE}
+              className="h-full w-full"
+              showControls={false}
+              spinByDefault
+              emphasis
+              color={proteinColor}
+              baseSpeed={0.3}
+              onReady={(api) => {
+                apiRef.current = api;
+              }}
+            />
+          </motion.div>
+        </div>
 
-          {/* Narrating panes (cross-faded on scroll) */}
-          <div className="order-2 lg:order-none relative min-h-[260px] sm:min-h-[320px] lg:h-[64vh]">
+        {/* Narrating panes (cross-faded on scroll), framed by a hairline editorial
+            card on the left, the protein glows behind and beside it. */}
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
+          <div className="lg:w-[46%] relative min-h-[300px] sm:min-h-[340px] lg:h-[62vh] overflow-hidden rounded-[16px]">
+            <div
+              className={`absolute inset-0 rounded-[16px] border ${
+                isLightMode
+                  ? "border-dune-maroon/12 bg-dune-paper/45"
+                  : "border-dune-paper/12 bg-[#120d0a]/40"
+              } backdrop-blur-[2px]`}
+            />
             {SCENES.map((s, i) => (
               <Pane
                 key={s.title}

@@ -776,7 +776,7 @@ export default function AeolianWindTunnel({
           </div>
         </div>
 
-        {/* REVOLUTIONARY DIVERSE WORKSPACE CHIP: CHART + SIMULATOR (7 Cols) */}
+        {/* Workspace: chart + simulator (7 cols) */}
         <div className="lg:col-span-7 flex flex-col justify-between gap-6">
           {/* THE CHART VIEWPORTS */}
           <div

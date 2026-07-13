@@ -114,11 +114,13 @@ function AccordionItem({ value, children, className }: AccordionItemProps) {
     >
       {React.Children.map(children, (child) => {
         if (React.isValidElement(child)) {
-          return React.cloneElement(child, {
-            ...child.props,
-            value,
-            expanded: isExpanded,
-          });
+          // cloneElement preserves the child's existing props, so we only pass
+          // the extra ones. Cast to a loose-prop element for React 19's stricter
+          // ReactElement<unknown> typing.
+          return React.cloneElement(
+            child as React.ReactElement<Record<string, unknown>>,
+            { value, expanded: isExpanded },
+          );
         }
         return child;
       })}
