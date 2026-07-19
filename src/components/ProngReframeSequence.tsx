@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "motion/react";
-import { ArrowRight, SkipForward } from "lucide-react";
+import { gsap } from "gsap";
 import { PRONGS, KILL_SWITCH } from "@/src/lib/portalsData";
 
 /**
@@ -22,23 +22,16 @@ import { PRONGS, KILL_SWITCH } from "@/src/lib/portalsData";
  *   7 grow       the two prongs and the kill switch grow larger and clicks turn on; the
  *                "explore the sandbox portals" link appears
  *
- * At most two things move at once. Nothing is clickable until the sequence ends. The animation
- * plays once per entry (a scroll dip does not restart it); it only re-arms after the section
- * fully leaves the viewport, so a scroll away and back, or a refresh, replays it cleanly.
+ * At most two things move at once. Nothing is clickable until the sequence ends.
+ *
+ * The section is PINNED (GSAP ScrollTrigger) and the phases are scrubbed by scroll: the viewport
+ * locks on "The Three Prongs" and the reframe plays forward as you scroll and reverses as you
+ * scroll back, so nobody can slip past a half-played animation. Under reduced motion or on small
+ * screens there is no pin, the finished (two prongs + kill switch) layout is shown outright.
  */
 
 type Phase = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 type ViewTarget = number | "killswitch";
-
-const STEPS: { phase: Phase; delay: number }[] = [
-  { phase: 1, delay: 1000 },
-  { phase: 2, delay: 1200 },
-  { phase: 3, delay: 1300 },
-  { phase: 4, delay: 1200 },
-  { phase: 5, delay: 1400 },
-  { phase: 6, delay: 1400 },
-  { phase: 7, delay: 1100 },
-];
 
 // Smooth motion curves.
 const EASE = [0.22, 1, 0.36, 1] as const; // easeOutQuint-ish for position moves
@@ -105,16 +98,21 @@ function StageCard({
       onClick={onClick}
       className={`group relative flex h-full w-full flex-col items-center justify-center rounded-[8px] border bg-card p-4 text-center transition-shadow duration-300 ${
         compact ? "gap-1.5" : "gap-3"
-      } ${clickable ? "cursor-pointer hover:shadow-xl" : "cursor-default"} ${
-        dimmed ? "opacity-70 grayscale-[0.4]" : ""
-      }`}
+      } ${
+        clickable
+          ? "cursor-pointer ring-1 ring-dune-orange/40 hover:shadow-xl hover:ring-dune-orange"
+          : "cursor-default"
+      } ${dimmed ? "opacity-70 grayscale-[0.4]" : ""}`}
       style={{ borderColor: "var(--border)" }}
     >
-      <span
-        className={`flex items-center justify-center rounded-[6px] bg-secondary p-3 transition-transform duration-300 ${clickable ? "group-hover:scale-105" : ""}`}
-      >
-        {data.icon}
-      </span>
+      {data.icon && (
+        <span
+          className={`grid place-items-center ${compact ? "[&_svg]:h-6 [&_svg]:w-6" : "[&_svg]:h-8 [&_svg]:w-8"}`}
+          aria-hidden
+        >
+          {data.icon}
+        </span>
+      )}
       <h3 className={`font-bold tracking-tight ${compact ? "text-sm" : "text-base leading-tight"}`}>
         {data.title}
       </h3>
@@ -165,54 +163,59 @@ export default function ProngReframeSequence({
   const alg = PRONGS[2];
 
   const stageRef = useRef<HTMLDivElement>(null);
-  const enough = useInView(stageRef, { amount: 0.5 });
+  const started = useInView(stageRef, { amount: 0.45 });
   const anyVisible = useInView(stageRef, { amount: 0 });
+  const armedRef = useRef(true);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
 
   const [phase, setPhase] = useState<Phase>(0);
-  const armedRef = useRef(true);
-  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
-  const clearTimers = () => {
-    timersRef.current.forEach(clearTimeout);
-    timersRef.current = [];
-  };
-
-  // Start the sequence once the stage is halfway on screen, and only if it is armed.
+  // Self-playing sequence: once the stage is on screen it plays the 3 -> 2 + kill
+  // switch reframe on a GSAP timeline (auto, not scroll-scrubbed). It re-arms only
+  // after the stage fully leaves the viewport, so a scroll away and back replays
+  // it cleanly.
   useEffect(() => {
-    if (enough && armedRef.current) {
-      armedRef.current = false;
-      clearTimers();
-      setPhase(0);
-      let acc = 0;
-      for (const step of STEPS) {
-        acc += step.delay;
-        timersRef.current.push(setTimeout(() => setPhase(step.phase), acc));
-      }
+    if (!started || !armedRef.current) return;
+    armedRef.current = false;
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      setPhase(7);
+      return;
     }
-  }, [enough]);
+    const tl = gsap.timeline();
+    // Seconds each phase holds before the next; roughly the old cadence.
+    const holds = [0.9, 1.1, 1.2, 1.1, 1.3, 1.3, 1.0];
+    let acc = 0;
+    for (let i = 0; i < holds.length; i++) {
+      acc += holds[i];
+      tl.call(() => setPhase((i + 1) as Phase), undefined, acc);
+    }
+    tlRef.current = tl;
+    return () => {
+      tl.kill();
+    };
+  }, [started]);
 
-  // Re-arm and reset only once the stage has fully left the viewport (off-screen, so no glitch).
+  // Reset + re-arm once the stage is fully off screen.
   useEffect(() => {
     if (!anyVisible) {
-      clearTimers();
+      tlRef.current?.kill();
       setPhase(0);
       armedRef.current = true;
     }
   }, [anyVisible]);
 
-  useEffect(() => () => clearTimers(), []);
+  const done = phase >= 7;
 
-  // Jump straight to the finished state. Motion tweens every card/branch to its final
-  // position, so the skip is smooth rather than a hard cut.
+  // Skip straight to the finished layout; motion tweens each card to its final
+  // spot so it glides rather than cuts.
   const skip = () => {
-    clearTimers();
+    tlRef.current?.kill();
     setPhase(7);
   };
-
-  const done = phase >= 7;
-  // Skip control: fades in while the sequence is playing and on screen, fades out once it
-  // finishes or the reader scrolls back up (the stage drops below the half-visible mark).
-  const skipVisible = enough && phase < 7;
+  const skipVisible = started && phase < 7;
   const showTwo = phase >= 3;
   const killVisible = phase >= 4;
   const algFinal = phase >= 5;
@@ -241,7 +244,7 @@ export default function ProngReframeSequence({
   } as React.CSSProperties);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 sm:px-8">
+    <div className="mx-auto max-w-5xl px-4 sm:px-8 pt-[8vh] pb-[3vh]">
       {/* Heading: cross-fading Three -> Two */}
       <div className="mb-4 flex items-end justify-between gap-4 border-b border-border pb-4">
         <div className="relative h-10 sm:h-11">
@@ -262,11 +265,19 @@ export default function ProngReframeSequence({
             The Two Prongs
           </motion.h2>
         </div>
-        <span className="hidden text-right text-[11px] font-semibold uppercase tracking-[0.15em] opacity-50 sm:block">
-          plus a genetically
-          <br />
-          encoded kill switch
-        </span>
+        {/* Once the reframe finishes, prompt the reader to open a model. Sits
+            where the old kill-switch caption was. */}
+        <motion.div
+          className="hidden items-center rounded-full border border-dune-orange/40 bg-dune-orange/10 px-4 py-2 sm:flex"
+          initial={false}
+          animate={{ opacity: done ? 1 : 0, y: done ? 0 : 6 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          style={{ pointerEvents: "none" }}
+        >
+          <span className="whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.14em] text-dune-orange">
+            Click a prong to open its model
+          </span>
+        </motion.div>
       </div>
 
       {/* DESKTOP: animated stage */}
@@ -281,7 +292,7 @@ export default function ProngReframeSequence({
           style={{ pointerEvents: skipVisible ? "auto" : "none" }}
           className="absolute right-0 top-0 z-30 inline-flex items-center gap-1.5 rounded-full border border-border bg-card/85 px-3 py-1.5 text-[11px] font-semibold text-dune-ash backdrop-blur transition-colors hover:text-dune-orange"
         >
-          Skip <SkipForward className="h-3.5 w-3.5" />
+          Skip
         </motion.button>
 
         <svg
@@ -444,20 +455,26 @@ export default function ProngReframeSequence({
         </div>
       </div>
 
-      {/* Explore-portals link: only after the sequence finishes */}
+      {/* End CTA: once the sequence finishes, spell out that each card is now a
+          door into its model, so testers are not left guessing what to do. */}
       <motion.div
         initial={false}
         animate={{ opacity: done ? 1 : 0, y: done ? 0 : 8 }}
         transition={{ duration: 0.7 }}
-        className="mt-12 flex justify-center"
+        className="mt-8 flex flex-col items-center gap-3"
         style={{ pointerEvents: done ? "auto" : "none" }}
       >
+        {/* Mobile keeps the prompt here; on sm+ it lives in the heading. */}
+        <div className="inline-flex items-center gap-2 rounded-full border border-dune-orange/40 bg-dune-orange/10 px-5 py-2.5 sm:hidden">
+          <span className="text-sm font-bold uppercase tracking-[0.12em] text-dune-orange">
+            Click a prong to open its model
+          </span>
+        </div>
         <button
           onClick={onExplorePortals}
           className="group inline-flex items-center gap-2 text-sm font-semibold text-dune-ash transition-colors hover:text-dune-orange"
         >
           Or explore the individual sandbox portals
-          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
         </button>
       </motion.div>
     </div>

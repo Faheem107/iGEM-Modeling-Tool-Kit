@@ -1,430 +1,705 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useReducedMotion,
-  type MotionValue,
-} from "motion/react";
-import { Term } from "./GlossaryTerm";
+import { createTimeline, svg, type Timeline } from "animejs";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useTransition, animated } from "@react-spring/web";
+import { motion, AnimatePresence } from "motion/react";
+import { TextEffect } from "@/components/motion-primitives/text-effect";
+import SandParticles from "./dune-story/SandParticles";
 import type { MolstarApi } from "@/components/molstar-viewer";
+import {
+  microGrains,
+  polymerBridges,
+  latticePoints,
+  type Grain,
+} from "@/src/lib/dune-story/geometry";
 
-/**
- * LandingCinematic, scroll-driven story
- * =====================================
- * The three story panes (Project Overview -> How the models help -> Lab usage) are now a
- * scroll-pinned narrative (DESIGN.md §6). A real Mol* protein sits pinned on one side and rotates
- * as you scroll; the text panes cross-fade in sequence driven by scroll progress, over the global
- * Antigravity-style grain-gradient background. Replaces the old auto-advancing carousel, each pane
- * still shows its title exactly once.
- */
-
-// WebGL viewer is browser-only.
+// Mol* is WebGL + heavy; load it client-only and only once the story nears the
+// protein beat (see caMounted below), so it never blocks first paint or SSR.
 const MolstarViewer = dynamic(() => import("@/components/molstar-viewer"), {
   ssr: false,
-  loading: () => (
-    <div className="absolute inset-0 flex items-center justify-center text-sm text-dune-ash">
-      Preparing 3D structure…
-    </div>
-  ),
 });
 
-// A real deposited structure behind the engineered enzymes (CapB, the gamma-PGA synthase subunit).
-const HERO_STRUCTURE = "/pdb/AF-P96736.pdb";
+/**
+ * LandingCinematic: the whole top-of-page as one pinned, scroll-scrubbed shot.
+ * =========================================================================
+ * animejs.com "engine" feel: there is no separate hero and then a story, it is
+ * one continuous pinned canvas from the very top. Beats:
+ *   hero title over the desert -> dive DOWN into the sand -> a grain + a
+ *   B. subtilis cell -> zoom into the carbonic-anhydrase dimer (real 3D, PDB
+ *   1JD0) -> the gamma-PGA polymer locks grain to grain -> pull back to the
+ *   stabilized crust.
+ * Scenes cross-fade over a continuous camera scale, so it reads as one move.
+ *
+ * Motion split: GSAP ScrollTrigger owns the pin + progress; scenes are placed
+ * imperatively per frame (no React re-render); anime.js draws the polymer;
+ * react-spring cross-fades the captions; a Canvas layer carries drifting sand;
+ * Mol* renders the spinning protein.
+ */
 
-interface Scene {
-  title: string;
-  accentLight: string;
-  accentDark: string;
-  paragraphs: React.ReactNode[];
+interface BeatCopy {
+  label: string;
+  line: React.ReactNode;
 }
 
-const SCENES: Scene[] = [
+const BEATS: BeatCopy[] = [
+  { label: "The problem", line: "Loose desert sand lifts and blows away in the wind." },
   {
-    title: "Project Overview",
-    accentLight: "text-dune-maroon",
-    accentDark: "text-dune-orange",
-    paragraphs: [
+    label: "Micro scale",
+    line: (
       <>
-        This project targets wind-driven desert sand erosion. We engineer{" "}
-        <Term k="bacillus-subtilis">
-          <i>Bacillus subtilis</i>
-        </Term>{" "}
-        to bind loose sand into a stabilized surface crust.
-      </>,
-      <>
-        Two engineered prongs do the work:{" "}
-        <Term k="gamma-pga">γ-PGA</Term> overexpression and carbonic-anhydrase
-        biomineralization. A genetically-encoded{" "}
-        <Term k="kill-switch">kill switch</Term> is modelled for biocontainment.
-      </>,
-      <>
-        In the model, binding grains into a <Term k="gamma-pga">γ-PGA</Term>{" "}
-        crust is expected to lower dust released from the treated surface.
-      </>,
-    ],
+        A single grain, and a living <i>Bacillus subtilis</i> cell.
+      </>
+    ),
   },
   {
-    title: "How do these models help?",
-    accentLight: "text-dune-maroon",
-    accentDark: "text-dune-orange",
-    paragraphs: [
+    label: "Carbonic anhydrase",
+    line: (
       <>
-        They link what the cell does internally to what happens on the ground,
-        so we can test ideas computationally before committing lab time.
-      </>,
-      <>
-        Simulate polymer <Term k="cross-linking">cross-linking</Term>, explore
-        metabolic trade-offs with{" "}
-        <Term k="flux-balance-analysis">flux balance analysis</Term>, and
-        estimate how a treated surface resists{" "}
-        <Term k="aeolian-transport">aeolian</Term> (wind) shear.
-      </>,
-    ],
+        A CA dimer on the cell surface grows CaCO<sub>3</sub> cement.
+      </>
+    ),
   },
-  {
-    title: "How to use this toolkit in the lab",
-    accentLight: "text-dune-maroon",
-    accentDark: "text-dune-orange",
-    paragraphs: [
-      <>
-        Set candidate wet-lab parameters here: incubation temperature,{" "}
-        <Term k="precursor">precursor</Term> concentrations, and{" "}
-        <Term k="od600">inoculum</Term> density.
-      </>,
-      <>
-        The outputs are estimates to help plan assays and narrow the range you
-        test for <Term k="shear-modulus">shear modulus</Term> and durability.
-        They guide experiments, they do not replace measurement.
-      </>,
-    ],
-  },
+  { label: "The fix", line: "γ-PGA chains cross-link and lock grain to grain." },
+  { label: "The result", line: "The surface holds together as a stabilized crust." },
 ];
 
-// One text pane, cross-faded over its slice of the scroll.
-function Pane({
-  scene,
-  progress,
-  index,
-  count,
-  isLightMode,
-}: {
-  scene: Scene;
-  progress: MotionValue<number>;
-  index: number;
-  count: number;
-  isLightMode: boolean;
-}) {
-  // Each scene owns a window of scroll and shares the same frame. Panes hand off
-  // sequentially: a pane is fully gone by the time the next begins, so two texts
-  // never occupy the frame at once (the frame is clipped, so the slide reads as a
-  // reel). The fade is quick at the edges with a long readable plateau.
-  const span = 1 / count;
-  const start = index * span;
-  const inAt = index === 0 ? 0 : start;
-  const peakA = start + span * 0.16;
-  const peakB = start + span * 0.84;
-  const outAt = index === count - 1 ? 1 : start + span;
+const C = {
+  sand: "#d6884a",
+  sandDeep: "#b5702f",
+  cured: "#8fb3ac",
+  teal: "#3E8C82",
+  mesh: "#c28a7c",
+};
 
-  const opacity = useTransform(
-    progress,
-    [inAt, peakA, peakB, outAt],
-    [0, 1, 1, 0],
-  );
-  const y = useTransform(progress, [inAt, peakA, peakB, outAt], [50, 0, 0, -50]);
-
-  return (
-    <motion.div
-      style={{ opacity, y }}
-      className="absolute inset-0 flex flex-col justify-center px-7 sm:px-9 py-8"
-    >
-      <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] text-dune-ash mb-3">
-        {String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
-      </span>
-      <h2
-        className={`text-2xl sm:text-4xl font-black uppercase tracking-tight mb-5 font-display ${
-          isLightMode ? scene.accentLight : scene.accentDark
-        }`}
-      >
-        {scene.title}
-      </h2>
-      <div
-        className={`space-y-3 text-sm sm:text-lg leading-relaxed max-w-xl ${
-          isLightMode ? "text-slate-800" : "text-slate-200"
-        }`}
-      >
-        {scene.paragraphs.map((p, i) => (
-          <p key={i}>{p}</p>
-        ))}
-      </div>
-    </motion.div>
-  );
-}
+const smooth = (x: number, a: number, b: number) => {
+  const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
+  return t * t * (3 - 2 * t);
+};
 
 export default function LandingCinematic({
   isLightMode,
+  heroPeek = false,
+  onOpenAdventure,
 }: {
   isLightMode: boolean;
+  heroPeek?: boolean;
+  onOpenAdventure?: () => void;
 }) {
   const sectionRef = useRef<HTMLElement>(null);
-  const apiRef = useRef<MolstarApi | null>(null);
-  const reduced = useReducedMotion();
+  const scopeRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const desertRef = useRef<HTMLDivElement>(null);
+  const descentRef = useRef<HTMLDivElement>(null);
+  const microRef = useRef<HTMLDivElement>(null);
+  const caRef = useRef<HTMLDivElement>(null);
+  const crustRef = useRef<HTMLDivElement>(null);
+  const tlRef = useRef<Timeline | null>(null);
+  const molApiRef = useRef<MolstarApi | null>(null);
+  const progressRef = useRef(0);
 
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
+  const [active, setActive] = useState(0);
+  const [showCaption, setShowCaption] = useState(false);
+  const [staticMode, setStaticMode] = useState(false);
+  const [caMounted, setCaMounted] = useState(false);
 
-  // Active dot: which scene owns the current scroll position.
-  const activeIndex = useTransform(scrollYProgress, (p) =>
-    Math.min(SCENES.length - 1, Math.floor(p * SCENES.length)),
+  const grains = useMemo<Grain[]>(() => microGrains(), []);
+  const bridges = useMemo(() => polymerBridges(grains), [grains]);
+  const lattice = useMemo(
+    () => latticePoints(grains[0].cx, grains[0].cy, grains[0].r),
+    [grains],
   );
 
-  // Scroll-driven 3D feel: the structure tilts, scales, and drifts as the section
-  // scrolls past, a clearly visible "3D scroll" choreography (à la Isomorphic /
-  // Harmonic) layered over the slow WebGL auto-spin. Disabled under reduced motion.
-  const heroScale = useTransform(
-    scrollYProgress,
-    [0, 0.5, 1],
-    [0.86, 1.16, 1.0],
-  );
-  const heroRotateY = useTransform(scrollYProgress, [0, 1], [-22, 22]);
-  const heroRotateX = useTransform(scrollYProgress, [0, 0.5, 1], [8, 0, -8]);
-  const heroY = useTransform(scrollYProgress, [0, 0.5, 1], [48, 0, -48]);
-  const heroX = useTransform(scrollYProgress, [0, 0.5, 1], [40, 0, 24]);
-  const glowScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1.35, 1.0]);
-  const glowOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.5, 1],
-    [0.55, 1, 0.75],
-  );
+  useEffect(() => {
+    const scope = scopeRef.current;
+    const section = sectionRef.current;
+    if (!scope || !section) return;
 
-  // Deep, saturated teal reads on the warm sand of light mode; a brighter teal
-  // glows on the dark ember stage. Both stay inside the Dunelock palette.
-  const proteinColor = isLightMode ? 0x4f8279 : 0xa6cbc3;
+    const wide = window.matchMedia("(min-width: 768px)").matches;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // Returning from the adventure ("see how we model this") scrolls back to this section's start.
+    const bridgeEls = svg.createDrawable(
+      scope.querySelectorAll(".ds-bridge") as never,
+    );
+    const tl = createTimeline({
+      autoplay: false,
+      defaults: { ease: "inOutQuad", duration: 800 },
+    });
+    tl.add(bridgeEls, { draw: ["0 0", "0 1"], duration: 900 }, 0);
+    tl.add(
+      scope.querySelectorAll(".ds-node"),
+      { opacity: [0, 1], scale: [0, 1], duration: 500 },
+      500,
+    );
+    tlRef.current = tl;
+
+    const setLayer = (
+      el: HTMLElement | null,
+      transform: string,
+      opacity: number,
+    ) => {
+      if (!el) return;
+      el.style.transform = transform;
+      el.style.opacity = opacity.toFixed(3);
+    };
+
+    const renderFrame = (p: number) => {
+      progressRef.current = p;
+
+      // Hero title fades out as the dive begins.
+      if (heroRef.current) {
+        const o = 1 - smooth(p, 0.03, 0.1);
+        heroRef.current.style.opacity = o.toFixed(3);
+        heroRef.current.style.pointerEvents = o < 0.05 ? "none" : "auto";
+      }
+
+      // Desert (photo) zooms into the near sand and fades. Low origin so the
+      // camera plunges INTO the surface rather than flying over the dunes.
+      const dive = smooth(p, 0.1, 0.24);
+      setLayer(desertRef.current, `scale(${(1 + dive * 4.4).toFixed(4)})`, 1 - smooth(p, 0.16, 0.27));
+
+      // A brief, light darkening as we pass under the surface (quick pass, not a
+      // black hold, so it never reads as a gap).
+      if (descentRef.current)
+        descentRef.current.style.opacity = (
+          0.62 * smooth(p, 0.13, 0.19) * (1 - smooth(p, 0.2, 0.3))
+        ).toFixed(3);
+
+      // Micro world: settle in, then zoom toward the cell for the CA beat and
+      // pull back for the polymer, then fade to the crust.
+      const microIn = smooth(p, 0.14, 0.3);
+      const caZoom = smooth(p, 0.4, 0.52);
+      const caBack = smooth(p, 0.56, 0.66);
+      const caPeak = caZoom * (1 - caBack);
+      const microOut = smooth(p, 0.8, 0.9);
+      setLayer(
+        microRef.current,
+        `scale(${((2.2 - microIn * 1.2) * (1 + caPeak * 0.9)).toFixed(4)})`,
+        microIn * (1 - microOut) * (1 - 0.62 * caPeak),
+      );
+
+      // Carbonic-anhydrase 3D layer fades in for its beat, then recedes.
+      setLayer(caRef.current, `scale(${(0.86 + caZoom * 0.14).toFixed(4)})`, caPeak);
+      if (!caMounted && p > 0.32) setCaMounted(true);
+      molApiRef.current?.setSpinSpeed(caPeak > 0.4 ? 1.1 : 0.14);
+
+      // Polymer bridges draw over the fix beat.
+      tl.seek(tl.duration * smooth(p, 0.58, 0.78));
+
+      // Crust rises into place and holds.
+      const crustIn = smooth(p, 0.8, 0.94);
+      setLayer(crustRef.current, `scale(${(1.4 - crustIn * 0.4).toFixed(4)})`, crustIn);
+
+      // Caption: hidden during the hero, then tracks the beat.
+      setShowCaption((prev) => {
+        const next = p >= 0.095;
+        return prev === next ? prev : next;
+      });
+      const beat = p < 0.22 ? 0 : p < 0.4 ? 1 : p < 0.58 ? 2 : p < 0.78 ? 3 : 4;
+      setActive((prev) => (prev === beat ? prev : beat));
+    };
+
+    if (!wide || reduce) {
+      tl.seek(tl.duration);
+      setStaticMode(true);
+      setShowCaption(true);
+      setCaMounted(true);
+      renderFrame(0.62);
+      return () => {
+        tl.revert?.();
+        tlRef.current = null;
+      };
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+    renderFrame(0);
+    const st = ScrollTrigger.create({
+      trigger: scope,
+      start: "top top",
+      end: "+=5200",
+      pin: true,
+      pinSpacing: true,
+      scrub: 0.6,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => renderFrame(self.progress),
+    });
+
+    return () => {
+      st.kill();
+      tl.revert?.();
+      tlRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     const h = () => {
-      sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      const el = sectionRef.current;
+      if (!el) return;
+      if (window.__lenis) window.__lenis.scrollTo(el, { duration: 1.2 });
+      else el.scrollIntoView({ behavior: "smooth", block: "start" });
     };
     window.addEventListener("sandyx:overview", h);
     return () => window.removeEventListener("sandyx:overview", h);
   }, []);
 
-  return (
-    <section
-      id="cinematic"
-      ref={sectionRef}
-      className="relative w-full scroll-mt-0"
-      style={{ height: "320vh" }}
-    >
-      {/* Sticky stage: narrating panes (left) + a large protein that bleeds off the
-          right edge (like Isomorphic / Harmonic), held in view while the section
-          scrolls past. */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center">
-        {/* soft vignette so the text stays legible over the ambient gradient */}
-        <div
-          aria-hidden
-          className={`pointer-events-none absolute inset-0 ${
-            isLightMode
-              ? "bg-[radial-gradient(ellipse_at_60%_50%,transparent_45%,rgba(251,247,240,0.7)_100%)]"
-              : "bg-[radial-gradient(ellipse_at_60%_50%,transparent_38%,rgba(8,7,6,0.78)_100%)]"
-          }`}
-        />
+  const transitions = useTransition(active, {
+    keys: active,
+    from: { opacity: 0, y: 26 },
+    enter: { opacity: 1, y: 0 },
+    leave: { opacity: 0, y: -20 },
+    config: { tension: 260, friction: 26 },
+  });
 
-        {/* The protein spans the full stage and drifts off the right edge so it
-            reads as one large hero object, not a thumbnail in a box. */}
-        <div className="absolute inset-0 lg:left-[38%] [perspective:1600px]">
-          {/* Large accent glow behind the structure (the premium biotech "stage").
-              Clearly visible in both themes and pulses/parallaxes on scroll. */}
-          <motion.div
+  return (
+    <section id="cinematic" ref={sectionRef} className="relative w-full scroll-mt-0">
+      <div
+        ref={scopeRef}
+        className={`relative min-h-screen w-full overflow-hidden ${
+          isLightMode ? "bg-[#e9c99a]" : "bg-[#0b0908]"
+        }`}
+      >
+        {/* --- SCENE 1: desert (photo) --- */}
+        <div
+          ref={desertRef}
+          className="absolute inset-0 will-change-transform"
+          style={{ transformOrigin: "52% 82%" }}
+        >
+          <img
+            src="/landing/hf-desert.png"
+            alt=""
+            draggable={false}
+            className="h-full w-full object-cover"
+          />
+          {/* legibility + theme scrim over the photo */}
+          <div
             aria-hidden
-            style={
-              reduced ? undefined : { scale: glowScale, opacity: glowOpacity }
-            }
-            className="pointer-events-none absolute inset-0 flex items-center justify-center"
-          >
-            <div
-              className={`h-[85%] w-[85%] rounded-full blur-[110px] ${
-                isLightMode
-                  ? "bg-[radial-gradient(circle,rgba(143,179,172,0.55),rgba(214,136,74,0.28),transparent_70%)]"
-                  : "bg-[radial-gradient(circle,rgba(143,179,172,0.5),rgba(214,136,74,0.26),transparent_70%)]"
-              }`}
-            />
-          </motion.div>
-          <motion.div
-            style={
-              reduced
-                ? undefined
-                : {
-                    scale: heroScale,
-                    rotateX: heroRotateX,
-                    rotateY: heroRotateY,
-                    x: heroX,
-                    y: heroY,
-                  }
-            }
-            className="absolute inset-0 [transform-style:preserve-3d]"
-          >
-            <MolstarViewer
-              url={HERO_STRUCTURE}
-              className="h-full w-full"
-              showControls={false}
-              spinByDefault
-              emphasis
-              color={proteinColor}
-              baseSpeed={0.3}
-              onReady={(api) => {
-                apiRef.current = api;
-              }}
-            />
-          </motion.div>
+            className={`absolute inset-0 ${
+              isLightMode
+                ? "bg-gradient-to-b from-transparent via-transparent to-[#e9c99a]/70"
+                : "bg-gradient-to-b from-[#0b0908]/35 via-transparent to-[#0b0908]/85"
+            }`}
+          />
         </div>
 
-        {/* Narrating panes (cross-faded on scroll), framed by a hairline editorial
-            card on the left, the protein glows behind and beside it. */}
-        <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8">
-          <div className="lg:w-[46%] relative min-h-[300px] sm:min-h-[340px] lg:h-[62vh] overflow-hidden rounded-[16px]">
-            <div
-              className={`absolute inset-0 rounded-[16px] border ${
-                isLightMode
-                  ? "border-dune-maroon/12 bg-dune-paper/45"
-                  : "border-dune-paper/12 bg-[#120d0a]/40"
-              } backdrop-blur-[2px]`}
-            />
-            {SCENES.map((s, i) => (
-              <Pane
-                key={s.title}
-                scene={s}
-                progress={scrollYProgress}
-                index={i}
-                count={SCENES.length}
-                isLightMode={isLightMode}
+        {/* --- SCENE 2-4: micro world + polymer --- */}
+        <div
+          ref={microRef}
+          className="absolute inset-0 will-change-transform"
+          style={{ transformOrigin: "center", opacity: 0 }}
+        >
+          <MicroScene
+            isLightMode={isLightMode}
+            grains={grains}
+            bridges={bridges}
+            lattice={lattice}
+          />
+        </div>
+
+        {/* --- SCENE 3: carbonic-anhydrase dimer (real 3D) --- */}
+        <div
+          ref={caRef}
+          className="absolute inset-0 flex items-center justify-center will-change-transform"
+          style={{ transformOrigin: "center", opacity: 0 }}
+        >
+          <div className="relative h-[76%] w-[76%] max-w-[820px]">
+            {caMounted && (
+              <MolstarViewer
+                url="/pdb/1JD0.pdb"
+                emphasis
+                showControls={false}
+                color={0x8fb3ac}
+                baseSpeed={0.14}
+                className="h-full w-full"
+                onReady={(api) => {
+                  molApiRef.current = api;
+                }}
               />
-            ))}
+            )}
           </div>
         </div>
 
-        {/* Progress dots */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2.5">
-          {SCENES.map((_, i) => (
-            <Dot key={i} index={i} active={activeIndex} />
-          ))}
+        {/* --- SCENE 5: stabilized crust --- */}
+        <div
+          ref={crustRef}
+          className="absolute inset-0 will-change-transform"
+          style={{ transformOrigin: "center", opacity: 0 }}
+        >
+          <CrustScene isLightMode={isLightMode} />
         </div>
+
+        {/* descent darkening (going under the surface) */}
+        <div
+          ref={descentRef}
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-[4] bg-[#0b0705]"
+          style={{ opacity: 0 }}
+        />
+
+        {/* drifting sand atmosphere */}
+        <SandParticles
+          progressRef={progressRef}
+          isLightMode={isLightMode}
+          className="pointer-events-none absolute inset-0 z-[5]"
+        />
+
+        {/* --- HERO OVERLAY (beat 0) --- */}
+        {!staticMode && (
+          <div
+            ref={heroRef}
+            className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 text-center"
+          >
+            <div className="mx-auto mt-[-6vh] flex w-full max-w-[1100px] flex-col items-center">
+              <div className="relative flex flex-col items-center">
+                <AnimatePresence>
+                  {heroPeek && (
+                    <motion.button
+                      type="button"
+                      onClick={onOpenAdventure}
+                      initial={{ y: 120, opacity: 0, scale: 0.7 }}
+                      animate={{ y: 0, opacity: 1, scale: 1 }}
+                      exit={{ y: 120, opacity: 0 }}
+                      transition={{ type: "spring", stiffness: 240, damping: 17 }}
+                      className="group absolute -top-[74px] left-1/2 z-30 flex -translate-x-1/2 cursor-pointer flex-col items-center"
+                      aria-label="Click Sandyx to play the interactive story"
+                    >
+                      <motion.span
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.55 }}
+                        className="absolute -top-9 z-20 whitespace-nowrap rounded-full bg-dune-orange px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-[#241c19] md:text-[11px]"
+                      >
+                        Click me to fight sandstorms!
+                      </motion.span>
+                      <motion.img
+                        src="/sandyx.png"
+                        alt="Sandyx"
+                        draggable={false}
+                        className="w-24 object-contain drop-shadow-xl transition-transform duration-300 group-hover:scale-110 md:w-28"
+                        animate={{ rotate: [0, -4, 4, 0] }}
+                        transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+                      />
+                    </motion.button>
+                  )}
+                </AnimatePresence>
+                <span className="relative z-10 mb-6 block text-sm font-bold uppercase tracking-[0.2em] text-dune-orange md:text-base">
+                  NYUAD iGEM 2026
+                </span>
+              </div>
+              <TextEffect
+                as="h1"
+                per="line"
+                preset="fade-in-blur"
+                speedReveal={1.2}
+                className={`mb-4 whitespace-pre-line font-display text-2xl font-extrabold uppercase leading-[1.1] tracking-tight md:text-4xl lg:text-5xl ${
+                  isLightMode
+                    ? "text-dune-maroon drop-shadow-[0_2px_14px_rgba(255,255,255,0.5)]"
+                    : "text-white drop-shadow-[0_2px_18px_rgba(0,0,0,0.55)]"
+                }`}
+              >
+                {"iGEM Modeling Toolkit To\nStudy Sand Stabilization"}
+              </TextEffect>
+              <TextEffect
+                as="p"
+                per="word"
+                preset="fade"
+                delay={0.6}
+                className={`mx-auto max-w-3xl text-base font-medium leading-relaxed md:text-lg lg:text-xl ${
+                  isLightMode
+                    ? "text-dune-maroon/85 drop-shadow-[0_1px_8px_rgba(255,255,255,0.5)]"
+                    : "text-white/90 drop-shadow-[0_1px_10px_rgba(0,0,0,0.5)]"
+                }`}
+              >
+                Explore our simulated two-pronged engineered solution, plus a
+                genetically-encoded kill switch, to tackle wind-driven sand movement
+              </TextEffect>
+            </div>
+            <div
+              className={`absolute bottom-10 left-1/2 flex -translate-x-1/2 flex-col items-center gap-3 ${
+                isLightMode ? "text-dune-maroon/75" : "text-white/80"
+              }`}
+            >
+              <span className="text-xs font-bold uppercase tracking-[0.3em]">
+                Scroll to learn more
+              </span>
+              <div className="relative h-9 w-px overflow-hidden bg-current/25">
+                <motion.div
+                  animate={{ y: ["-100%", "140%"] }}
+                  transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
+                  className="absolute inset-x-0 top-0 h-3 bg-current"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Captions + rail (react-spring), or static list on mobile. */}
+        {staticMode ? (
+          <div className="relative z-10 mx-auto flex min-h-screen max-w-6xl items-end px-4 pb-14">
+            <div
+              className={`w-full rounded-[16px] border p-6 backdrop-blur-[3px] ${
+                isLightMode
+                  ? "border-dune-maroon/12 bg-dune-paper/80"
+                  : "border-dune-paper/12 bg-[#120d0a]/78"
+              }`}
+            >
+              <ol
+                className={`space-y-4 ${isLightMode ? "text-dune-maroon" : "text-dune-paper"}`}
+              >
+                {BEATS.map((b, i) => (
+                  <li key={i}>
+                    <div className="text-[11px] font-bold uppercase tracking-[0.24em] text-dune-orange">
+                      {b.label}
+                    </div>
+                    <p className="text-lg font-medium leading-snug">{b.line}</p>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        ) : (
+          <div
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-10 transition-opacity duration-300"
+            style={{ opacity: showCaption ? 1 : 0 }}
+          >
+            <div className="mx-auto max-w-6xl px-5 pb-14 sm:px-8">
+              <div className="relative h-28 max-w-xl">
+                {transitions((style, i) => (
+                  <animated.div style={style} className="absolute inset-x-0 bottom-0">
+                    <div className="mb-2 text-[11px] font-bold uppercase tracking-[0.28em] text-dune-orange">
+                      {BEATS[i].label}
+                    </div>
+                    <p
+                      className={`font-display text-2xl font-black leading-tight tracking-tight sm:text-4xl ${
+                        isLightMode ? "text-dune-maroon" : "text-dune-paper"
+                      }`}
+                    >
+                      {BEATS[i].line}
+                    </p>
+                  </animated.div>
+                ))}
+              </div>
+              <div className="mt-5 flex items-center gap-2.5">
+                {BEATS.map((_, i) => (
+                  <span
+                    key={i}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      i === active ? "w-8 bg-dune-orange" : "w-2 bg-dune-ash/45"
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
 }
 
-function Dot({
-  index,
-  active,
+// ---------------------------------------------------------------------------
+// Micro world: photo backdrop + SVG grains, a cell, crystal lattice, polymer.
+// ---------------------------------------------------------------------------
+function MicroScene({
+  isLightMode,
+  grains,
+  bridges,
+  lattice,
 }: {
-  index: number;
-  active: MotionValue<number>;
+  isLightMode: boolean;
+  grains: Grain[];
+  bridges: ReturnType<typeof polymerBridges>;
+  lattice: { x: number; y: number }[];
 }) {
-  const opacity = useTransform(active, (a) => (a === index ? 1 : 0.35));
-  const scale = useTransform(active, (a) => (a === index ? 1.35 : 1));
+  const hero = grains[0];
   return (
-    <motion.span
-      style={{ opacity, scale }}
-      className="w-2.5 h-2.5 rounded-full bg-dune-orange block"
-    />
+    <div className="relative h-full w-full">
+      <img
+        src="/landing/hf-micro.png"
+        alt=""
+        draggable={false}
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      <div
+        aria-hidden
+        className={`absolute inset-0 ${
+          isLightMode ? "bg-[#dfeee9]/55" : "bg-[#05100e]/45"
+        }`}
+      />
+      <svg
+        viewBox="0 0 1200 800"
+        preserveAspectRatio="xMidYMid slice"
+        className="absolute inset-0 h-full w-full"
+        aria-hidden
+      >
+        <defs>
+          <radialGradient id="ds-grain" cx="38%" cy="34%" r="75%">
+            <stop offset="0%" stopColor="#e6b579" />
+            <stop offset="60%" stopColor={C.sand} />
+            <stop offset="100%" stopColor={C.sandDeep} />
+          </radialGradient>
+          <clipPath id="ds-hero-clip">
+            <path d={hero.path} />
+          </clipPath>
+        </defs>
+
+        <g fill="none" stroke={C.mesh} strokeWidth="5" strokeLinecap="round">
+          {bridges.map((b, i) => (
+            <path key={i} className="ds-bridge" d={b.path} opacity={0.9} />
+          ))}
+        </g>
+
+        <g>
+          {grains.map((g, i) => (
+            <path
+              key={i}
+              d={g.path}
+              fill="url(#ds-grain)"
+              stroke={C.sandDeep}
+              strokeWidth="1.5"
+              opacity={0.98}
+            />
+          ))}
+        </g>
+
+        <g clipPath="url(#ds-hero-clip)" opacity={isLightMode ? 0.4 : 0.5}>
+          {lattice.map((p, i) => (
+            <circle key={i} cx={p.x} cy={p.y} r="3" fill="#fff3d8" opacity="0.7" />
+          ))}
+          {lattice.map((p, i) =>
+            i % 2 === 0 ? (
+              <line
+                key={`l${i}`}
+                x1={p.x}
+                y1={p.y}
+                x2={p.x + 44}
+                y2={p.y}
+                stroke="#fff3d8"
+                strokeWidth="1"
+                opacity="0.3"
+              />
+            ) : null,
+          )}
+        </g>
+
+        <g>
+          {bridges.map((b, i) => (
+            <g key={i}>
+              <circle
+                className="ds-node"
+                cx={b.ax}
+                cy={b.ay}
+                r="8"
+                fill={C.cured}
+                style={{ opacity: 0, transformBox: "fill-box", transformOrigin: "center" }}
+              />
+              <circle
+                className="ds-node"
+                cx={b.bx}
+                cy={b.by}
+                r="8"
+                fill={C.cured}
+                style={{ opacity: 0, transformBox: "fill-box", transformOrigin: "center" }}
+              />
+            </g>
+          ))}
+        </g>
+
+        {/* B. subtilis cell (rod) */}
+        <g transform="translate(600 410) rotate(-18)">
+          <rect
+            x="-92"
+            y="-30"
+            width="184"
+            height="60"
+            rx="30"
+            fill={isLightMode ? "#5fa89b" : "#6fbdae"}
+            stroke={C.teal}
+            strokeWidth="4"
+            opacity="0.96"
+          />
+          <ellipse cx="-30" cy="0" rx="26" ry="15" fill={C.teal} opacity="0.55" />
+          <ellipse cx="38" cy="-2" rx="22" ry="13" fill={C.teal} opacity="0.5" />
+        </g>
+      </svg>
+    </div>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Branch-split connector, grows from the centre into three roots above the prong cards.
+// Stabilized crust (pull back out).
 // ---------------------------------------------------------------------------
-export function BranchConnector({
-  isLightMode: _isLightMode,
-}: {
-  isLightMode: boolean;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start 0.9", "end 0.55"],
-  });
-  const draw = useTransform(scrollYProgress, [0, 1], [0, 1]);
-  const nodeOpacity = useTransform(scrollYProgress, [0.6, 1], [0, 1]);
-
-  // Three sibling branches fan out from a single junction node at (500, 66). The middle branch is
-  // drawn on the SAME footing as the left/right ones (its own path + end node) so all three read as
-  // limbs of one tree rather than the trunk merely continuing straight down to the centre card.
-  const branches = [
-    "M500 66 C500 132, 210 118, 167 196", // left
-    "M500 66 L500 196", // middle
-    "M500 66 C500 132, 790 118, 833 196", // right
-  ];
+function CrustScene({ isLightMode }: { isLightMode: boolean }) {
+  const cols = 16;
+  const rows = 4;
+  const x0 = 120;
+  const x1 = 1080;
+  const y0 = 560;
+  const y1 = 700;
+  const nodes: { x: number; y: number }[] = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      nodes.push({
+        x: Math.round(x0 + (c / (cols - 1)) * (x1 - x0)),
+        y: Math.round(y0 + (r / (rows - 1)) * (y1 - y0)),
+      });
+    }
+  }
   return (
-    <div ref={ref} className="relative w-full h-24 sm:h-32 -mb-2">
-      <svg
-        viewBox="0 0 1000 200"
-        preserveAspectRatio="none"
-        className="w-full h-full overflow-visible"
-      >
-        <defs>
-          {/* userSpaceOnUse so the gradient still resolves on the perfectly vertical middle
- branch, an objectBoundingBox gradient is degenerate on a zero-width line and would
- render it invisible (which is why the middle prong had no branch before). */}
-          <linearGradient
-            id="branchGrad"
-            gradientUnits="userSpaceOnUse"
-            x1="500"
-            y1="0"
-            x2="500"
-            y2="200"
-          >
-            <stop offset="0%" stopColor="#d6884a" />
-            <stop offset="100%" stopColor="#c28a7c" />
-          </linearGradient>
-        </defs>
-        {/* trunk */}
-        <motion.path
-          d="M500 0 L500 66"
-          fill="none"
-          stroke="url(#branchGrad)"
-          strokeWidth="3.5"
-          strokeLinecap="round"
-          style={{ pathLength: draw }}
-        />
-        {/* three sibling branches (left, MIDDLE, right), all identical treatment */}
-        {branches.map((d, i) => (
-          <motion.path
-            key={i}
-            d={d}
-            fill="none"
-            stroke="url(#branchGrad)"
-            strokeWidth="3"
-            strokeLinecap="round"
-            style={{ pathLength: draw }}
-          />
+    <svg
+      viewBox="0 0 1200 800"
+      preserveAspectRatio="xMidYMid slice"
+      className="h-full w-full"
+      aria-hidden
+    >
+      <defs>
+        <linearGradient id="ds-sky2" x1="0" y1="0" x2="0" y2="1">
+          {isLightMode ? (
+            <>
+              <stop offset="0%" stopColor="#eaf3f0" />
+              <stop offset="60%" stopColor="#f4e7cf" />
+              <stop offset="100%" stopColor="#e2c793" />
+            </>
+          ) : (
+            <>
+              <stop offset="0%" stopColor="#101a17" />
+              <stop offset="60%" stopColor="#241a12" />
+              <stop offset="100%" stopColor="#33251a" />
+            </>
+          )}
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="1200" height="800" fill="url(#ds-sky2)" />
+      <line x1="0" y1="540" x2="1200" y2="540" stroke={C.cured} strokeWidth="1.5" opacity="0.5" />
+      <g stroke={C.cured} strokeWidth="2" opacity="0.5">
+        {nodes.map((n, i) => {
+          const right = i % cols < cols - 1 ? nodes[i + 1] : null;
+          const down = i + cols < nodes.length ? nodes[i + cols] : null;
+          return (
+            <g key={i}>
+              {right && <line x1={n.x} y1={n.y} x2={right.x} y2={right.y} />}
+              {down && <line x1={n.x} y1={n.y} x2={down.x} y2={down.y} />}
+            </g>
+          );
+        })}
+      </g>
+      <g>
+        {nodes.map((n, i) => (
+          <circle key={i} cx={n.x} cy={n.y} r="7" fill={C.cured} opacity="0.92" />
         ))}
-        {/* junction node where the trunk splits, makes the split read as a tree fork */}
-        <motion.circle
-          cx={500}
-          cy={66}
-          r={7}
-          fill="#d6884a"
-          style={{ opacity: nodeOpacity }}
-        />
-        {/* leaf node at the head of each branch (over each prong card) */}
-        {[167, 500, 833].map((x, i) => (
-          <motion.circle
-            key={i}
-            cx={x}
-            cy={196}
-            r={6}
-            fill="#c28a7c"
-            style={{ opacity: nodeOpacity }}
-          />
-        ))}
-      </svg>
-    </div>
+      </g>
+      <image
+        href="/sandyx.png"
+        x="556"
+        y="410"
+        width="110"
+        height="130"
+        preserveAspectRatio="xMidYMax meet"
+      />
+    </svg>
   );
 }
