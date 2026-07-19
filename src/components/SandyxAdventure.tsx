@@ -2392,8 +2392,12 @@ export default function SandyxAdventure({
     setDroneChoice(false);
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    // Halt Lenis smooth scroll so its wheel handling doesn't run under the
+    // full-screen game (the game owns wheel/keys for its own scenes).
+    window.__lenis?.stop();
     return () => {
       document.body.style.overflow = prev;
+      window.__lenis?.start();
       // The Cursor primitive hides the native cursor; make sure it comes back.
       document.body.style.cursor = "";
     };
@@ -2409,7 +2413,32 @@ export default function SandyxAdventure({
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
+  // Tell the persistent site chrome (theme toggle + home logo) to step aside
+  // while the full-screen game is open, so it does not sit over the game's own
+  // exit button in the top-right corner.
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent("sandyx:game", { detail: { open } }),
+    );
+  }, [open]);
+
   const isStory = phase === "intro" || phase === "storm" || phase === "desert";
+
+  // Nobody should be forced to win a mini-game to move on. The top-bar skip is
+  // always available and jumps to the next meaningful beat for the current
+  // phase, so the story, the lab maze and the drone run can each be bypassed.
+  // (The deploy / model prompts are their own choice overlays, so no skip there.)
+  const canSkip = phase !== "deploy-prompt";
+  const skipLabel = isStory ? "SKIP STORY" : "SKIP GAME";
+  const skip = () => {
+    if (isStory) setPhase("lab");
+    else if (phase === "lab") setPhase("deploy-prompt");
+    else if (phase === "lab-tune") {
+      setDroneChoice(false);
+      setModelPrompt(false);
+      setPhase("drone");
+    } else if (phase === "drone") setModelPrompt(true);
+  };
 
   return (
     <AnimatePresence>
@@ -2436,9 +2465,10 @@ export default function SandyxAdventure({
               boxShadow: "0 0 0 4px #1a1200, 0 30px 80px rgba(0,0,0,0.7)",
             }}
           >
-            {/* Top bar */}
+            {/* Top bar. Sits above the deploy / model prompt overlays (z-70/80)
+                so the exit button is always reachable. */}
             <div
-              className="absolute top-0 left-0 right-0 z-[60] flex items-center justify-between px-3 py-2"
+              className="absolute top-0 left-0 right-0 z-[90] flex items-center justify-between px-3 py-2"
               style={{
                 background:
                   "linear-gradient(180deg, rgba(11,16,38,0.9), transparent)",
@@ -2446,9 +2476,9 @@ export default function SandyxAdventure({
             >
               <div />
               <div className="flex items-center gap-2">
-                {isStory && (
+                {canSkip && (
                   <button
-                    onClick={() => setPhase("lab")}
+                    onClick={skip}
                     className="btn-colored font-retro text-[9px] sm:text-[10px] px-3 py-2.5 border-2 flex items-center gap-1.5"
                     style={{
                       borderColor: C.ink,
@@ -2456,7 +2486,7 @@ export default function SandyxAdventure({
                       background: "rgba(0,0,0,0.45)",
                     }}
                   >
-                    <SkipForward className="w-3.5 h-3.5" /> SKIP STORY
+                    <SkipForward className="w-3.5 h-3.5" /> {skipLabel}
                   </button>
                 )}
                 <button

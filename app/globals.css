@@ -240,6 +240,59 @@ input[type="checkbox"] {
   cursor: pointer;
 }
 
+/* ---- Custom cursor (ring + dot), pointer devices only ---- */
+html.has-cursor,
+html.has-cursor * {
+  cursor: none !important;
+}
+.cursor-ring,
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  will-change: transform, opacity;
+  transition: opacity 0.25s ease;
+}
+.cursor-ring {
+  width: 34px;
+  height: 34px;
+  border: 1.5px solid var(--dune-orange);
+  border-radius: 9999px;
+  transition:
+    width 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2),
+    height 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2),
+    background-color 0.22s ease,
+    opacity 0.25s ease;
+}
+.cursor-ring.cur-grow {
+  width: 54px;
+  height: 54px;
+  background: color-mix(in srgb, var(--dune-orange) 14%, transparent);
+}
+.cursor-ring.cur-down {
+  width: 24px;
+  height: 24px;
+  background: color-mix(in srgb, var(--dune-orange) 22%, transparent);
+}
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--dune-orange);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cursor-ring,
+  .cursor-dot {
+    display: none;
+  }
+  html.has-cursor,
+  html.has-cursor * {
+    cursor: auto !important;
+  }
+}
+
 /* ---- Sandyx toolkit: smooth scrolling, hidden scrollbars, motion safety ---- */
 html {
   scroll-behavior: smooth;

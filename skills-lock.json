@@ -6,6 +6,12 @@
       "sourceType": "github",
       "skillPath": "skills/manimce-best-practices/SKILL.md",
       "computedHash": "b39acc1024b23c39cfdb187659c2d046277fb030767bbca3a0a3b22bbcf780fb"
+    },
+    "svg-art": {
+      "source": "kv0906/cc-skills",
+      "sourceType": "github",
+      "skillPath": "svg-art-skill/SKILL.md",
+      "computedHash": "356a500cf848e1229758271608f3956773cf89afb5bc367fc559b204f4d53640"
     }
   }
 }

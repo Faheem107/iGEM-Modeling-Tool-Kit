@@ -6,13 +6,15 @@ const ThemeContext = createContext<{
   isLightMode: boolean;
   setIsLightMode: (val: boolean) => void;
 }>({
-  isLightMode: true, // Set to true by default
+  isLightMode: false, // Dark mode is the default
   setIsLightMode: () => {},
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // Initialize state to true so the site loads in Light Mode instantly
-  const [isLightMode, setIsLightMode] = useState(true);
+  // Initialize to dark so the site loads in Dark Mode instantly. The <html> tag
+  // in app/layout.tsx also ships the `dark` class so the first server paint is
+  // dark (no light flash before hydration).
+  const [isLightMode, setIsLightMode] = useState(false);
 
   return (
     <ThemeContext.Provider value={{ isLightMode, setIsLightMode }}>

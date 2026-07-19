@@ -79,6 +79,7 @@ export default function MolstarViewer({
   useEffect(() => {
     let disposed = false;
     let canvas: HTMLCanvasElement | null = null;
+    let resizeObs: ResizeObserver | null = null;
     (async () => {
       try {
         const [{ PluginContext }, { DefaultPluginSpec }] = await Promise.all([
@@ -153,6 +154,19 @@ export default function MolstarViewer({
           }
         }
 
+        // Keep the structure framed when the viewport (and thus the canvas box)
+        // changes size, e.g. a window resize or a mobile orientation flip.
+        if (typeof ResizeObserver !== "undefined" && containerRef.current) {
+          let rafId = 0;
+          resizeObs = new ResizeObserver(() => {
+            cancelAnimationFrame(rafId);
+            rafId = requestAnimationFrame(() =>
+              pluginRef.current?.canvas3d?.requestCameraReset(),
+            );
+          });
+          resizeObs.observe(containerRef.current);
+        }
+
         pluginRef.current = plugin;
         setReady(true);
         onReady?.({
@@ -169,6 +183,7 @@ export default function MolstarViewer({
 
     return () => {
       disposed = true;
+      resizeObs?.disconnect();
       try {
         pluginRef.current?.dispose();
       } catch {
@@ -228,6 +243,10 @@ export default function MolstarViewer({
         }
         if (!cancelled) {
           setLoading(false);
+          // Refit the camera to the freshly loaded structure so it is framed
+          // consistently regardless of the container's size or any CSS
+          // transform on an ancestor (the landing hero scales/rotates the box).
+          plugin.canvas3d?.requestCameraReset();
           // plugin.clear() reset the trackball, so re-apply the current spin.
           applySpin(spinSpeedRef.current);
         }
