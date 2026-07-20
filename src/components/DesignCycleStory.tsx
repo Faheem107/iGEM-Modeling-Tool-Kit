@@ -311,33 +311,67 @@ export default function DesignCycleStory({
             ))}
           </g>
 
-          {/* three prong nodes (beat 2), rise in, in the open right area */}
+          {/* three prong tiles (beat 2): clear, labelled cards so "three prongs"
+              actually reads as three named routes, not faint dots. */}
           <g ref={prongsRef}>
-            {[770, 945].map((x, i) => (
+            {[
+              { x: 700, label: "γ-PGA" },
+              { x: 905, label: "CA · MICP" },
+            ].map((p, i) => (
               <g
                 key={i}
                 className="dcs-prong"
                 style={{ opacity: 0, transformBox: "fill-box", transformOrigin: "center" }}
               >
-                <circle cx={x} cy={270} r={32} fill="none" stroke={C.node} strokeWidth={4} />
-                <circle cx={x} cy={270} r={9} fill={C.node} />
+                <rect
+                  x={p.x - 92}
+                  y={226}
+                  width={184}
+                  height={92}
+                  rx={14}
+                  fill="rgba(214,136,74,0.12)"
+                  stroke={C.node}
+                  strokeWidth={3}
+                />
+                <circle cx={p.x - 60} cy={272} r={16} fill={C.node} />
+                <text x={p.x - 60} y={279} textAnchor="middle" fontSize={19} fontWeight={800} fill="#1a120c">
+                  {i + 1}
+                </text>
+                <text x={p.x + 26} y={279} textAnchor="middle" fontSize={20} fontWeight={700} fill={C.node}>
+                  {p.label}
+                </text>
               </g>
             ))}
-            {/* alginate node (crossed + dimmed at the pivot) */}
+            {/* alginate tile (crossed + dimmed at the pivot) */}
             <g
               ref={algRef}
               className="dcs-prong"
               style={{ opacity: 0, transformBox: "fill-box", transformOrigin: "center" }}
             >
-              <circle cx={1120} cy={270} r={32} fill="none" stroke={C.node} strokeWidth={4} />
-              <circle cx={1120} cy={270} r={9} fill={C.node} />
+              <rect
+                x={1110 - 92}
+                y={226}
+                width={184}
+                height={92}
+                rx={14}
+                fill="rgba(214,136,74,0.12)"
+                stroke={C.node}
+                strokeWidth={3}
+              />
+              <circle cx={1110 - 60} cy={272} r={16} fill={C.node} />
+              <text x={1110 - 60} y={279} textAnchor="middle" fontSize={19} fontWeight={800} fill="#1a120c">
+                3
+              </text>
+              <text x={1110 + 24} y={279} textAnchor="middle" fontSize={20} fontWeight={700} fill={C.node}>
+                Alginate
+              </text>
             </g>
           </g>
 
-          {/* cross over the alginate node (beat 3) */}
+          {/* cross over the alginate tile (beat 3) */}
           <g ref={crossRef} style={{ opacity: 0 }} stroke={C.cross} strokeWidth={5} strokeLinecap="round">
-            <path d="M1096 246 L1144 294" />
-            <path d="M1144 246 L1096 294" />
+            <path d="M1030 232 L1190 312" />
+            <path d="M1190 232 L1030 312" />
           </g>
 
           {/* kill-switch shield (beat 3), centred in the right field */}

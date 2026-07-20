@@ -35,7 +35,9 @@ type ViewTarget = number | "killswitch";
 
 // Smooth motion curves.
 const EASE = [0.22, 1, 0.36, 1] as const; // easeOutQuint-ish for position moves
-const SPRING = { type: "spring" as const, stiffness: 120, damping: 18 };
+const SPRING = { type: "spring" as const, stiffness: 210, damping: 22 };
+// Shared position-move duration, kept short so the reframe feels snappy.
+const MOVE = 0.65;
 
 // Coordinate system (SVG userSpace 1000 x 600, stretched to the stage). Cards are positioned by
 // the same fractions so branch heads and card centres line up at any stage width.
@@ -198,8 +200,9 @@ export default function ProngReframeSequence({
       return;
     }
     const tl = gsap.timeline();
-    // Seconds each phase holds before the next; roughly the old cadence.
-    const holds = [0.9, 1.1, 1.2, 1.1, 1.3, 1.3, 1.0];
+    // Seconds each phase holds before the next. Tight, so the whole reframe
+    // plays in ~4s and never drags.
+    const holds = [0.5, 0.55, 0.6, 0.55, 0.65, 0.6, 0.5];
     let acc = 0;
     for (let i = 0; i < holds.length; i++) {
       acc += holds[i];
@@ -329,7 +332,7 @@ export default function ProngReframeSequence({
             fill="#d6884a"
             initial={false}
             animate={{ cx: node.x, cy: node.y, opacity: retracted && !regrown ? 0.45 : 1 }}
-            transition={{ duration: 1, ease: EASE }}
+            transition={{ duration: MOVE, ease: EASE }}
           />
 
           {/* three initial branches: draw in, then retract at phase 2 */}
@@ -344,7 +347,7 @@ export default function ProngReframeSequence({
               vectorEffect="non-scaling-stroke"
               initial={{ pathLength: 0 }}
               animate={{ pathLength: retracted ? 0 : 1 }}
-              transition={{ duration: retracted ? 0.9 : 1.1, ease: "easeInOut", delay: retracted ? (2 - i) * 0.08 : 0.15 + i * 0.1 }}
+              transition={{ duration: retracted ? 0.5 : 0.6, ease: "easeInOut", delay: retracted ? (2 - i) * 0.05 : 0.08 + i * 0.06 }}
             />
           ))}
 
@@ -360,7 +363,7 @@ export default function ProngReframeSequence({
               vectorEffect="non-scaling-stroke"
               initial={{ pathLength: 0 }}
               animate={{ pathLength: regrown ? 1 : 0 }}
-              transition={{ duration: 1, ease: "easeInOut", delay: i * 0.12 }}
+              transition={{ duration: 0.55, ease: "easeInOut", delay: i * 0.08 }}
             />
           ))}
 
@@ -375,7 +378,7 @@ export default function ProngReframeSequence({
               fill="#c28a7c"
               initial={false}
               animate={{ cx: pp.x, cy: pp.y, opacity: regrown ? 1 : phase < 2 ? 1 : 0 }}
-              transition={{ duration: 1, ease: EASE }}
+              transition={{ duration: MOVE, ease: EASE }}
             />
           ))}
 
@@ -391,7 +394,7 @@ export default function ProngReframeSequence({
             markerEnd="url(#reframeArrowHead)"
             initial={{ pathLength: 0, opacity: 0 }}
             animate={{ pathLength: phase >= 3 ? 1 : 0, opacity: arrowVisible ? 1 : 0 }}
-            transition={{ pathLength: { duration: 1.1, ease: "easeInOut" }, opacity: { duration: 0.7, ease: "easeInOut" } }}
+            transition={{ pathLength: { duration: 0.6, ease: "easeInOut" }, opacity: { duration: 0.4, ease: "easeInOut" } }}
           />
         </svg>
 
@@ -401,7 +404,7 @@ export default function ProngReframeSequence({
           style={cardBox(250, 176)}
           initial={false}
           animate={{ x: px(p1c.x), y: p1c.y, scale: trioScale }}
-          transition={{ x: { duration: 1.2, ease: EASE }, y: { duration: 1.2, ease: EASE }, scale: SPRING }}
+          transition={{ x: { duration: MOVE, ease: EASE }, y: { duration: MOVE, ease: EASE }, scale: SPRING }}
         >
           <StageCard data={cardP1} clickable={done} onClick={() => onView(1)} />
         </motion.div>
@@ -412,7 +415,7 @@ export default function ProngReframeSequence({
           style={cardBox(250, 176)}
           initial={false}
           animate={{ x: px(p2c.x), y: p2c.y, scale: trioScale }}
-          transition={{ x: { duration: 1.2, ease: EASE }, y: { duration: 1.2, ease: EASE }, scale: SPRING }}
+          transition={{ x: { duration: MOVE, ease: EASE }, y: { duration: MOVE, ease: EASE }, scale: SPRING }}
         >
           <StageCard data={cardP2} clickable={done} onClick={() => onView(2)} />
         </motion.div>
@@ -429,10 +432,10 @@ export default function ProngReframeSequence({
             opacity: killVisible ? 1 : 0,
           }}
           transition={{
-            x: { duration: 1.2, ease: EASE },
-            y: { duration: 1.2, ease: EASE },
-            scale: killVisible ? SPRING : { duration: 0.5 },
-            opacity: { duration: 0.7, ease: "easeOut" },
+            x: { duration: MOVE, ease: EASE },
+            y: { duration: MOVE, ease: EASE },
+            scale: killVisible ? SPRING : { duration: 0.4 },
+            opacity: { duration: 0.45, ease: "easeOut" },
           }}
         >
           <StageCard data={cardKill} clickable={done} onClick={() => onView("killswitch")} />
@@ -444,7 +447,7 @@ export default function ProngReframeSequence({
           style={cardBox(230, 162)}
           initial={false}
           animate={{ x: px(algc.x), y: algc.y, scale: algFinal ? 0.8 : 1 }}
-          transition={{ x: { duration: 1.3, ease: EASE }, y: { duration: 1.3, ease: EASE }, scale: { duration: 1.3, ease: EASE } }}
+          transition={{ x: { duration: MOVE, ease: EASE }, y: { duration: MOVE, ease: EASE }, scale: { duration: MOVE, ease: EASE } }}
         >
           <StageCard data={cardAlg} crossed={phase >= 1} dimmed={phase >= 1} clickable={done} onClick={() => onView(3)} />
         </motion.div>

@@ -7,9 +7,9 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTransition, animated } from "@react-spring/web";
 import { motion, AnimatePresence } from "motion/react";
-import { GrainGradient } from "@paper-design/shaders-react";
 import { TextEffect } from "@/components/motion-primitives/text-effect";
 import SandParticles from "./dune-story/SandParticles";
+import { duneGradient, grainOverlayStyle } from "@/src/lib/grain";
 import type { MolstarApi } from "@/components/molstar-viewer";
 import {
   microGrains,
@@ -259,6 +259,26 @@ export default function LandingCinematic({
     return () => window.removeEventListener("sandyx:overview", h);
   }, []);
 
+  // Warm the WebGL protein viewer while the browser is idle after load, so its
+  // one-time init happens over the static hero instead of freezing a frame mid
+  // scroll when the reader first reaches the protein beat.
+  useEffect(() => {
+    const warm = () => setCaMounted(true);
+    const ric = (
+      window as unknown as {
+        requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+        cancelIdleCallback?: (id: number) => void;
+      }
+    ).requestIdleCallback;
+    const id = ric ? ric(warm, { timeout: 2500 }) : window.setTimeout(warm, 1800);
+    return () => {
+      const cic = (window as unknown as { cancelIdleCallback?: (id: number) => void })
+        .cancelIdleCallback;
+      if (ric && cic) cic(id);
+      else clearTimeout(id);
+    };
+  }, []);
+
   const transitions = useTransition(active, {
     keys: active,
     from: { opacity: 0, y: 26 },
@@ -281,21 +301,15 @@ export default function LandingCinematic({
           className="absolute inset-0 will-change-transform"
           style={{ transformOrigin: "52% 82%" }}
         >
-          {/* Dune backdrop: the warm grain gradient from the earlier landing
-              (no photo to load), so it scales with the dive. */}
-          <GrainGradient
-            style={{ height: "100%", width: "100%" }}
-            colorBack={isLightMode ? "#e9c99a" : "#0b0908"}
-            softness={0.82}
-            intensity={isLightMode ? 0.34 : 0.5}
-            noise={0}
-            shape="corners"
-            colors={
-              isLightMode
-                ? ["#E7D2A9", "#EBDFC4", "#DFC79E"]
-                : ["#4A3320", "#2E2114", "#43301E"]
-            }
-          />
+          {/* Dune backdrop: warm CSS grain (no WebGL, no photo), so it scales
+              with the dive and never jitters. */}
+          <div
+            aria-hidden
+            className="absolute inset-0"
+            style={{ background: duneGradient(isLightMode) }}
+          >
+            <div className="absolute inset-0" style={grainOverlayStyle(isLightMode)} />
+          </div>
           {/* CSS depth gradient over the grain: darker toward the edges, clear
               in the middle so the title reads. */}
           <div
