@@ -17,8 +17,9 @@ export function GradientBackground() {
     setMounted(true);
   }, []);
 
-  // Keep the first paint dark to avoid a light flash before the theme resolves.
-  const light = mounted ? isLightMode : false;
+  // Keep the first paint light (the default) to avoid a dark flash before the
+  // theme resolves.
+  const light = mounted ? isLightMode : true;
 
   return (
     <div

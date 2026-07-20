@@ -13,8 +13,24 @@ out/
 next-env.d.ts
 tsconfig.tsbuildinfo
 
-# Local-only project notes (kept off GitHub)
+# Local-only project notes & references (kept on disk, kept off GitHub)
 CLAUDE.md
+DESIGN.md
+PARAMETER_AUDIT_AND_PRESENTATION.md
+Research Table iGEM 2026*.md
+Toolkit in layman's terminology.md
+modeling_subteam_theory.md
+script.txt
+skills-lock.json
+manim_videos/README.md
+project reframe/
+docs/
+
+# AI assistant skills / config (kept local only)
+.agents/
+.claude/skills/
+.claude/RESPONSIBLE_AI_USE.md
+cobrapy/
 
 # Manim render artifacts (source scenes are kept; rendered media is regenerated)
 manim_videos/media/
