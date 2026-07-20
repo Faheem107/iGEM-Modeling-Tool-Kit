@@ -8,6 +8,7 @@ import LandingCinematic from "@/src/components/LandingCinematic";
 import DesignCycleStory from "@/src/components/DesignCycleStory";
 import ProngReframeSequence from "@/src/components/ProngReframeSequence";
 import SandyxAdventure from "@/src/components/SandyxAdventure";
+import { GlossaryText } from "@/src/components/GlossaryTerm";
 import { PRONGS, KILL_SWITCH } from "@/src/lib/portalsData";
 
 type ViewTarget = number | "killswitch";
@@ -174,7 +175,9 @@ export default function LandingView() {
                       </div>
                       <ol className="space-y-2.5 list-decimal pl-5 text-sm leading-relaxed opacity-90">
                         {activeProng.whyDropped.map((r, i) => (
-                          <li key={i}>{r}</li>
+                          <li key={i}>
+                            <GlossaryText>{r}</GlossaryText>
+                          </li>
                         ))}
                       </ol>
                       <p className="mt-3 text-xs italic opacity-70">
@@ -268,7 +271,7 @@ function ModalBlock({
       <p
         className={`text-base leading-relaxed opacity-90 ${bold ? "font-medium" : ""}`}
       >
-        {body}
+        <GlossaryText>{body}</GlossaryText>
       </p>
     </div>
   );

@@ -623,6 +623,10 @@ export const ALIASES: Record<string, string> = {
   "shear modulus": "shear-modulus",
   gs: "shear-modulus",
   "aeolian transport": "aeolian-transport",
+  // Hyphenated spellings used in the landing copy, routed to the same entries so
+  // they auto-underline like the space forms.
+  "carbonic-anhydrase": "carbonic-anhydrase",
+  "sodium-alginate": "sodium-alginate",
   "cross-linking": "cross-linking",
   crosslinking: "cross-linking",
   k_cat: "k-cat",

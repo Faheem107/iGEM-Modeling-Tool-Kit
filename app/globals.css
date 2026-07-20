@@ -256,9 +256,9 @@ html.has-cursor * {
   transition: opacity 0.25s ease;
 }
 .cursor-ring {
-  width: 34px;
-  height: 34px;
-  border: 1.5px solid var(--dune-orange);
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--dune-orange);
   border-radius: 9999px;
   transition:
     width 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2),
@@ -267,18 +267,18 @@ html.has-cursor * {
     opacity 0.25s ease;
 }
 .cursor-ring.cur-grow {
-  width: 54px;
-  height: 54px;
-  background: color-mix(in srgb, var(--dune-orange) 14%, transparent);
+  width: 32px;
+  height: 32px;
+  background: color-mix(in srgb, var(--dune-orange) 12%, transparent);
 }
 .cursor-ring.cur-down {
-  width: 24px;
-  height: 24px;
-  background: color-mix(in srgb, var(--dune-orange) 22%, transparent);
+  width: 16px;
+  height: 16px;
+  background: color-mix(in srgb, var(--dune-orange) 20%, transparent);
 }
 .cursor-dot {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
   border-radius: 9999px;
   background: var(--dune-orange);
 }

@@ -146,8 +146,6 @@ function StageCard({
   );
 }
 
-const xPct = (x: number) => `${(x / 1000) * 100}%`;
-const yPct = (y: number) => `${(y / 600) * 100}%`;
 
 export default function ProngReframeSequence({
   isLightMode,
@@ -169,6 +167,21 @@ export default function ProngReframeSequence({
   const tlRef = useRef<gsap.core.Timeline | null>(null);
 
   const [phase, setPhase] = useState<Phase>(0);
+
+  // Stage is a fixed 600px tall (so the 0..600 coordinate space maps 1:1 to px)
+  // and full width, so we only measure the width to place cards with a
+  // compositor-only transform instead of animating left/top (layout + paint).
+  const [stageW, setStageW] = useState(960);
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
+    const update = () => setStageW(el.clientWidth || 960);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  const px = (x: number) => (x / 1000) * stageW;
 
   // Self-playing sequence: once the stage is on screen it plays the 3 -> 2 + kill
   // switch reframe on a GSAP timeline (auto, not scroll-scrubbed). It re-arms only
@@ -236,12 +249,16 @@ export default function ProngReframeSequence({
   const cardAlg: CardData = { title: alg.title, short: "Sodium Alginate, not pursued", icon: alg.icon };
   const cardKill: CardData = { title: KILL_SWITCH.title, short: KILL_SWITCH.short, icon: KILL_SWITCH.icon };
 
+  // Anchor the card at the stage origin and centre it with static margins, so
+  // the only thing that animates is the transform (x/y), never left/top.
   const cardBox = (w: number, h: number): React.CSSProperties => ({
     width: w,
     height: h,
-    translateX: "-50%",
-    translateY: "-50%",
-  } as React.CSSProperties);
+    left: 0,
+    top: 0,
+    marginLeft: -w / 2,
+    marginTop: -h / 2,
+  });
 
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-8 pt-[8vh] pb-[3vh]">
@@ -265,19 +282,6 @@ export default function ProngReframeSequence({
             The Two Prongs
           </motion.h2>
         </div>
-        {/* Once the reframe finishes, prompt the reader to open a model. Sits
-            where the old kill-switch caption was. */}
-        <motion.div
-          className="hidden items-center rounded-full border border-dune-orange/40 bg-dune-orange/10 px-4 py-2 sm:flex"
-          initial={false}
-          animate={{ opacity: done ? 1 : 0, y: done ? 0 : 6 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          style={{ pointerEvents: "none" }}
-        >
-          <span className="whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.14em] text-dune-orange">
-            Click a prong to open its model
-          </span>
-        </motion.div>
       </div>
 
       {/* DESKTOP: animated stage */}
@@ -387,8 +391,8 @@ export default function ProngReframeSequence({
           className="absolute"
           style={cardBox(250, 176)}
           initial={false}
-          animate={{ left: xPct(p1c.x), top: yPct(p1c.y), scale: trioScale }}
-          transition={{ left: { duration: 1.2, ease: EASE }, top: { duration: 1.2, ease: EASE }, scale: SPRING }}
+          animate={{ x: px(p1c.x), y: p1c.y, scale: trioScale }}
+          transition={{ x: { duration: 1.2, ease: EASE }, y: { duration: 1.2, ease: EASE }, scale: SPRING }}
         >
           <StageCard data={cardP1} clickable={done} onClick={() => onView(1)} />
         </motion.div>
@@ -398,8 +402,8 @@ export default function ProngReframeSequence({
           className="absolute"
           style={cardBox(250, 176)}
           initial={false}
-          animate={{ left: xPct(p2c.x), top: yPct(p2c.y), scale: trioScale }}
-          transition={{ left: { duration: 1.2, ease: EASE }, top: { duration: 1.2, ease: EASE }, scale: SPRING }}
+          animate={{ x: px(p2c.x), y: p2c.y, scale: trioScale }}
+          transition={{ x: { duration: 1.2, ease: EASE }, y: { duration: 1.2, ease: EASE }, scale: SPRING }}
         >
           <StageCard data={cardP2} clickable={done} onClick={() => onView(2)} />
         </motion.div>
@@ -410,14 +414,14 @@ export default function ProngReframeSequence({
           style={cardBox(258, 178)}
           initial={false}
           animate={{
-            left: xPct(killc.x),
-            top: yPct(killc.y),
+            x: px(killc.x),
+            y: killc.y,
             scale: killVisible ? trioScale : 0.82,
             opacity: killVisible ? 1 : 0,
           }}
           transition={{
-            left: { duration: 1.2, ease: EASE },
-            top: { duration: 1.2, ease: EASE },
+            x: { duration: 1.2, ease: EASE },
+            y: { duration: 1.2, ease: EASE },
             scale: killVisible ? SPRING : { duration: 0.5 },
             opacity: { duration: 0.7, ease: "easeOut" },
           }}
@@ -430,8 +434,8 @@ export default function ProngReframeSequence({
           className="absolute z-10"
           style={cardBox(230, 162)}
           initial={false}
-          animate={{ left: xPct(algc.x), top: yPct(algc.y), scale: algFinal ? 0.8 : 1 }}
-          transition={{ left: { duration: 1.3, ease: EASE }, top: { duration: 1.3, ease: EASE }, scale: { duration: 1.3, ease: EASE } }}
+          animate={{ x: px(algc.x), y: algc.y, scale: algFinal ? 0.8 : 1 }}
+          transition={{ x: { duration: 1.3, ease: EASE }, y: { duration: 1.3, ease: EASE }, scale: { duration: 1.3, ease: EASE } }}
         >
           <StageCard data={cardAlg} crossed={phase >= 1} dimmed={phase >= 1} clickable={done} onClick={() => onView(3)} />
         </motion.div>
@@ -464,12 +468,6 @@ export default function ProngReframeSequence({
         className="mt-8 flex flex-col items-center gap-3"
         style={{ pointerEvents: done ? "auto" : "none" }}
       >
-        {/* Mobile keeps the prompt here; on sm+ it lives in the heading. */}
-        <div className="inline-flex items-center gap-2 rounded-full border border-dune-orange/40 bg-dune-orange/10 px-5 py-2.5 sm:hidden">
-          <span className="text-sm font-bold uppercase tracking-[0.12em] text-dune-orange">
-            Click a prong to open its model
-          </span>
-        </div>
         <button
           onClick={onExplorePortals}
           className="group inline-flex items-center gap-2 text-sm font-semibold text-dune-ash transition-colors hover:text-dune-orange"

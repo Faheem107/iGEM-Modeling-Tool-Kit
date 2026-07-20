@@ -65,13 +65,21 @@ export default function SmoothScroll() {
     const raf1 = requestAnimationFrame(() =>
       requestAnimationFrame(() => ScrollTrigger.refresh()),
     );
+    // Debounce resize so a burst (window drag, devtools open) does not re-measure
+    // every pinned trigger many times mid-scroll, which is a visible lag source.
+    let resizeTimer: number | undefined;
+    const onResize = () => {
+      if (resizeTimer) window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(refresh, 160);
+    };
     window.addEventListener("load", refresh);
-    window.addEventListener("resize", refresh);
+    window.addEventListener("resize", onResize);
 
     return () => {
       cancelAnimationFrame(raf1);
+      if (resizeTimer) window.clearTimeout(resizeTimer);
       window.removeEventListener("load", refresh);
-      window.removeEventListener("resize", refresh);
+      window.removeEventListener("resize", onResize);
       gsap.ticker.remove(onRaf);
       lenis.destroy();
       if (window.__lenis === lenis) delete window.__lenis;
