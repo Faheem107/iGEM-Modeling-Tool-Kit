@@ -282,6 +282,15 @@ export default function ProngReframeSequence({
             The Two Prongs
           </motion.h2>
         </div>
+        {/* Plain, boxless prompt once the reframe finishes. */}
+        <motion.span
+          className="hidden whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.14em] text-dune-orange sm:block"
+          initial={false}
+          animate={{ opacity: done ? 1 : 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
+          Click on the prongs to proceed to modeling
+        </motion.span>
       </div>
 
       {/* DESKTOP: animated stage */}
@@ -468,6 +477,10 @@ export default function ProngReframeSequence({
         className="mt-8 flex flex-col items-center gap-3"
         style={{ pointerEvents: done ? "auto" : "none" }}
       >
+        {/* Boxless prompt on mobile; on sm+ it lives in the heading. */}
+        <span className="text-xs font-bold uppercase tracking-[0.12em] text-dune-orange sm:hidden">
+          Click on the prongs to proceed to modeling
+        </span>
         <button
           onClick={onExplorePortals}
           className="group inline-flex items-center gap-2 text-sm font-semibold text-dune-ash transition-colors hover:text-dune-orange"

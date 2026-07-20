@@ -185,13 +185,14 @@ export default function LandingCinematic({
 
       // Carbonic-anhydrase 3D layer fades in for its beat, then recedes.
       setLayer(caRef.current, `scale(${(0.86 + caZoom * 0.14).toFixed(4)})`, caPeak);
-      // Mount the WebGL viewer only inside its beat and unmount once past it, so
-      // no live GL context keeps rendering during the hero, the crust, or a
-      // scroll back up (the old code latched it on and never released it).
+      // Mount the WebGL viewer once as we approach the protein beat and keep it
+      // mounted. Turning the spin OFF when the beat is off-screen lets Mol* idle
+      // with no render loop, so we avoid both the always-spinning cost of the
+      // original and the ~400ms freeze of remounting the GL context on every pass.
+      if (!caMounted && p > 0.28) setCaMounted(true);
       const inCaBeat = p > 0.34 && p < 0.72;
-      setCaMounted((prev) => (prev === inCaBeat ? prev : inCaBeat));
-      if (inCaBeat && molApiRef.current) {
-        const speed = caPeak > 0.4 ? 1.1 : 0.14;
+      if (molApiRef.current) {
+        const speed = inCaBeat ? (caPeak > 0.4 ? 1.1 : 0.14) : 0;
         if (speed !== lastSpinRef.current) {
           molApiRef.current.setSpinSpeed(speed);
           lastSpinRef.current = speed;
@@ -257,15 +258,6 @@ export default function LandingCinematic({
     window.addEventListener("sandyx:overview", h);
     return () => window.removeEventListener("sandyx:overview", h);
   }, []);
-
-  // When the CA viewer unmounts, drop the stale API handle and reset the spin
-  // memo so a fresh mount re-syncs cleanly.
-  useEffect(() => {
-    if (!caMounted) {
-      molApiRef.current = null;
-      lastSpinRef.current = -1;
-    }
-  }, [caMounted]);
 
   const transitions = useTransition(active, {
     keys: active,
@@ -384,6 +376,7 @@ export default function LandingCinematic({
         <SandParticles
           progressRef={progressRef}
           isLightMode={isLightMode}
+          fadeWithDive
           className="pointer-events-none absolute inset-0 z-[5]"
         />
 
