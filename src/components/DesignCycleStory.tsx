@@ -218,6 +218,9 @@ export default function DesignCycleStory({
       end: "+=4500",
       pin: true,
       pinSpacing: true,
+      // Apply the pin slightly early to avoid a one-frame flash at the top
+      // boundary when scrolling up out of the pinned range.
+      anticipatePin: 1,
       // Smoothing lag: the timeline eases toward the scroll position instead of
       // hard-snapping. This is what stops the reverse-play "breaks" when you fling
       // back up to this section from lower on the page. invalidateOnRefresh
@@ -402,10 +405,10 @@ export default function DesignCycleStory({
         <div className="relative z-10 mx-auto w-full max-w-6xl px-5 sm:px-8">
           <div className="max-w-xl">
             <div
-              className={`rounded-[16px] border p-6 sm:p-8 backdrop-blur-[2px] ${
+              className={`rounded-[16px] border p-6 sm:p-8 ${
                 isLightMode
-                  ? "border-dune-maroon/12 bg-dune-paper/55"
-                  : "border-dune-paper/12 bg-[#120d0a]/50"
+                  ? "border-dune-maroon/12 bg-dune-paper/80"
+                  : "border-dune-paper/12 bg-[#120d0a]/78"
               }`}
             >
               <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] text-dune-ash">

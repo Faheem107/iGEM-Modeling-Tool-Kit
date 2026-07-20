@@ -235,6 +235,9 @@ export default function LandingCinematic({
       pin: true,
       pinSpacing: true,
       scrub: 0.6,
+      // Apply the pin a touch early so the fixed<->static swap at the top
+      // boundary does not flash the hero out for a frame when scrolling up.
+      anticipatePin: 1,
       invalidateOnRefresh: true,
       onUpdate: (self) => renderFrame(self.progress),
     });
@@ -433,10 +436,16 @@ export default function LandingCinematic({
                 per="line"
                 preset="fade-in-blur"
                 speedReveal={1.2}
+                // text-shadow (paint) instead of drop-shadow (a compositing
+                // filter). A filter on text inside the transformed pin can drop
+                // out for a frame while the pin animates; text-shadow does not.
+                style={{
+                  textShadow: isLightMode
+                    ? "0 2px 14px rgba(255,255,255,0.5)"
+                    : "0 2px 18px rgba(0,0,0,0.55)",
+                }}
                 className={`mb-4 whitespace-pre-line font-display text-2xl font-extrabold uppercase leading-[1.1] tracking-tight md:text-4xl lg:text-5xl ${
-                  isLightMode
-                    ? "text-dune-maroon drop-shadow-[0_2px_14px_rgba(255,255,255,0.5)]"
-                    : "text-white drop-shadow-[0_2px_18px_rgba(0,0,0,0.55)]"
+                  isLightMode ? "text-dune-maroon" : "text-white"
                 }`}
               >
                 {"iGEM Modeling Toolkit To\nStudy Sand Stabilization"}
@@ -446,10 +455,13 @@ export default function LandingCinematic({
                 per="word"
                 preset="fade"
                 delay={0.6}
+                style={{
+                  textShadow: isLightMode
+                    ? "0 1px 8px rgba(255,255,255,0.5)"
+                    : "0 1px 10px rgba(0,0,0,0.5)",
+                }}
                 className={`mx-auto max-w-3xl text-base font-medium leading-relaxed md:text-lg lg:text-xl ${
-                  isLightMode
-                    ? "text-dune-maroon/85 drop-shadow-[0_1px_8px_rgba(255,255,255,0.5)]"
-                    : "text-white/90 drop-shadow-[0_1px_10px_rgba(0,0,0,0.5)]"
+                  isLightMode ? "text-dune-maroon/85" : "text-white/90"
                 }`}
               >
                 Explore our simulated two-pronged engineered solution, plus a
