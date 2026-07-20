@@ -40,3 +40,6 @@ manim_videos/pdb/
 manim_videos/__pycache__/
 __pycache__/
 *.pyc
+
+# Playwright MCP artifacts
+.playwright-mcp/
