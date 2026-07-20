@@ -46,7 +46,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark ${lexend.variable} ${superDream.variable} ${pressStart.variable} antialiased`}
+      className={`${lexend.variable} ${superDream.variable} ${pressStart.variable} antialiased`}
       suppressHydrationWarning
     >
       <body className="antialiased bg-transparent select-none relative overflow-x-hidden min-h-screen font-sans">

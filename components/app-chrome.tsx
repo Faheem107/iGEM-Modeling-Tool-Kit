@@ -4,9 +4,65 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Sun, Moon } from "lucide-react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTheme } from "@/components/theme-context";
 import GlobalSandyx from "@/src/components/GlobalSandyx";
 import CustomCursor from "@/src/components/CustomCursor";
+
+/**
+ * Smoothly scroll to a target that sits above one or more pinned, scroll-scrubbed
+ * sections (the cinematic story and the design cycle).
+ *
+ * Those sections use a scrub *lag* (`scrub: 0.6`) so manual scrolling feels
+ * eased. But when we drive a long programmatic jump to the top, that lag makes
+ * each pinned timeline ease toward the moving scroll position a beat behind it,
+ * so the sections visibly rewind to their first step out of sync with the page,
+ * which reads as "the story resets, THEN the page scrolls". We remove the lag
+ * only for the duration of the trip: on every frame we snap each scrub tween to
+ * completion so the pinned timelines track the scroll exactly, then let the
+ * normal easing resume once we arrive.
+ */
+function smoothNavTo(target: number | HTMLElement, offset = 0) {
+  const lenis =
+    typeof window !== "undefined" ? window.__lenis : undefined;
+
+  const settleScrubs = () => {
+    ScrollTrigger.getAll().forEach((st) => {
+      const tw = (
+        st as unknown as { getTween?: () => gsap.core.Tween | undefined }
+      ).getTween?.();
+      if (tw) tw.progress(1);
+    });
+  };
+
+  if (!lenis) {
+    if (typeof target === "number")
+      window.scrollTo({ top: target, behavior: "smooth" });
+    else target.scrollIntoView({ behavior: "smooth" });
+    return;
+  }
+
+  let active = true;
+  const sync = () => {
+    if (!active) return;
+    settleScrubs();
+    requestAnimationFrame(sync);
+  };
+  requestAnimationFrame(sync);
+
+  lenis.scrollTo(target, {
+    offset,
+    duration: 0.9,
+    onComplete: () => {
+      active = false;
+      // Final settle so the pinned sections land exactly on their start frame
+      // (ScrollTrigger only re-renders on movement, so nudge it once more).
+      ScrollTrigger.update();
+      settleScrubs();
+    },
+  });
+}
 
 // Minimal, toolkit-relevant landing nav (animejs.com-style). Each link scrolls
 // to a section on the landing page.
@@ -54,18 +110,14 @@ export function AppChrome() {
   }, []);
 
   const scrolled = showTop;
-  const scrollTop = () =>
-    window.__lenis
-      ? window.__lenis.scrollTo(0, { duration: 1 })
-      : window.scrollTo({ top: 0, behavior: "smooth" });
+  const scrollTop = () => smoothNavTo(0);
   const scrollToId = (sel: string) => {
     const el = document.querySelector(sel);
     if (!el) return;
-    // A bounded eased duration keeps the trip predictable, so scrolling up from
-    // far down the page past a pinned section reads as one smooth glide.
-    if (window.__lenis)
-      window.__lenis.scrollTo(el as HTMLElement, { offset: -70, duration: 1.1 });
-    else (el as HTMLElement).scrollIntoView({ behavior: "smooth" });
+    // #cinematic is the very top of the page (the pinned hero). Its own offset
+    // would leave the reader a sliver below the true top, so treat it as 0.
+    if (sel === "#cinematic") return smoothNavTo(0);
+    smoothNavTo(el as HTMLElement, -70);
   };
 
   return (
