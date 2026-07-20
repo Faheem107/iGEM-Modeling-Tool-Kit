@@ -1,12 +1,15 @@
 "use client";
 
-import { GrainGradient } from "@paper-design/shaders-react";
-// We MUST import from your context, not "next-themes"
 import { useTheme } from "@/components/theme-context";
 import { useEffect, useState } from "react";
+import { duneGradient, grainOverlayStyle } from "@/src/lib/grain";
 
+/**
+ * Site-wide warm backdrop. Pure CSS (a dune gradient + a static noise overlay),
+ * so there is no WebGL context or animation loop to jitter or eat frames. Fixed
+ * behind all content.
+ */
 export function GradientBackground() {
-  // Grab your exact toggle state
   const { isLightMode } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -14,29 +17,16 @@ export function GradientBackground() {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
-    return <div className="fixed inset-0 -z-10 bg-transparent" />;
-  }
+  // Keep the first paint dark to avoid a light flash before the theme resolves.
+  const light = mounted ? isLightMode : false;
 
   return (
-    <div className="fixed inset-0 -z-10 bg-transparent">
-      <GrainGradient
-        // The 'key' forces the WebGL canvas to completely rebuild when you toggle the theme, guaranteeing the color change.
-        key={isLightMode ? "light" : "dark"}
-        style={{ height: "100%", width: "100%" }}
-        colorBack={isLightMode ? "#FAF4EA" : "#080706"}
-        softness={0.82}
-        intensity={isLightMode ? 0.34 : 0.5}
-        noise={0}
-        shape="corners"
-        colors={
-          isLightMode
-            ? // warm sand tones that sit under the desert scenes instead of fighting them
-              ["#E7D2A9", "#EBDFC4", "#DFC79E"]
-            : // deep warm ember in the corners for dark mode
-              ["#4A3320", "#2E2114", "#43301E"]
-        }
-      />
+    <div
+      className="fixed inset-0 -z-10"
+      style={{ background: duneGradient(light) }}
+      aria-hidden
+    >
+      <div className="absolute inset-0" style={grainOverlayStyle(light)} />
     </div>
   );
 }
