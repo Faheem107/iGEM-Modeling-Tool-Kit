@@ -31,29 +31,29 @@ interface Beat {
 
 const BEATS: Beat[] = [
   {
-    label: "Where we started",
+    label: "We started with a question",
     title: "Wind moves the sand",
-    body: "Loose desert grains lift and drift with the wind. We wanted a living surface treatment that binds those grains into a stable crust, so the first job was to describe the problem in numbers a model could work with.",
+    body: "We asked how a living surface treatment could bind loose desert grains into a stable crust. Before writing any model, we turned that question into numbers: grain sizes, wind speeds, and the strength a crust would need to hold.",
   },
   {
-    label: "The first design",
+    label: "We sketched the routes",
     title: "Three prongs",
-    body: "We began with three routes to a crust: γ-PGA overexpression, carbonic-anhydrase biomineralization, and a sodium-alginate binder. Each one became a module we could simulate on its own.",
+    body: "We designed three biological routes to that crust and gave each its own model: γ-PGA overexpression, carbonic-anhydrase biomineralization, and a sodium-alginate binder. Modeling them apart let us judge them on the same terms.",
   },
   {
-    label: "What we learned",
+    label: "We tested and learned",
     title: "Two prongs and a kill switch",
-    body: "Alginate did not hold up as a prong, so we dropped it and added a genetically encoded kill switch for biocontainment. The plan became two engineered prongs plus a safety brake.",
+    body: "When we simulated the three, alginate did not hold up, so we cut it. We added a genetically encoded kill switch for biocontainment. Our plan settled into two engineered prongs plus a safety brake.",
   },
   {
-    label: "Where it is now",
-    title: "The model links cell to crust",
-    body: "We simulate polymer cross-linking, weigh metabolic trade-offs with flux balance analysis, and estimate how a treated surface resists wind shear. In the model the grains lock into a cured crust.",
+    label: "We built the model",
+    title: "From cell to crust",
+    body: "We now link the biology to the crust: metabolism through flux balance analysis, polymer cross-linking, and how a treated surface resists wind shear. Each module feeds the next, so we can trace one grain from cell to cured crust.",
   },
   {
-    label: "What comes next",
+    label: "We keep iterating",
     title: "From bench to field",
-    body: "The outputs point to the assays worth running and the field scale to aim for. The toolkit is built to keep growing as real measurements come back from the lab.",
+    body: "The model tells us which assays are worth running and what field scale to aim for. As real measurements come back from the lab, we feed them in and the toolkit keeps improving.",
   },
 ];
 
@@ -220,10 +220,9 @@ export default function DesignCycleStory({
       pinSpacing: true,
       // Smoothing lag: the timeline eases toward the scroll position instead of
       // hard-snapping. This is what stops the reverse-play "breaks" when you fling
-      // back up to this section from lower on the page. anticipatePin avoids the
-      // one-frame jump as the pin engages; invalidateOnRefresh re-measures cleanly.
+      // back up to this section from lower on the page. invalidateOnRefresh
+      // re-measures cleanly on resize.
       scrub: 0.6,
-      anticipatePin: 1,
       invalidateOnRefresh: true,
       onUpdate: (self) => {
         progressRef.current = self.progress;
