@@ -1,0 +1,132 @@
+- generic [active] [ref=f5e1]:
+  - generic [ref=f5e2]:
+    - navigation [ref=f5e3]:
+      - generic [ref=f5e4]:
+        - button "Dunelock, back to top" [ref=f5e5]:
+          - generic [ref=f5e6]: Dunelock
+        - generic [ref=f5e7]:
+          - button "Story" [ref=f5e8]
+          - button "Design" [ref=f5e9]
+          - button "Prongs" [ref=f5e10]
+          - button "Switch to dark theme" [ref=f5e11]
+    - main [ref=f5e14]:
+      - generic [ref=f5e16]:
+        - generic [ref=f5e18]:
+          - generic [ref=f5e229]:
+            - generic [ref=f5e230]:
+              - generic [ref=f5e231]: NYUAD iGEM 2026
+              - heading "iGEM Modeling Toolkit To Study Sand Stabilization" [level=1] [ref=f5e233]:
+                - generic [ref=f5e234]: iGEM Modeling Toolkit To
+                - generic [ref=f5e235]: Study Sand Stabilization
+              - paragraph [ref=f5e236]:
+                - generic [ref=f5e237]: Explore our simulated two-pronged engineered solution, plus a genetically-encoded kill switch, to tackle wind-driven sand movement
+                - generic [ref=f5e238]: Explore
+                - generic [ref=f5e240]: our
+                - generic [ref=f5e242]: simulated
+                - generic [ref=f5e244]: two-pronged
+                - generic [ref=f5e246]: engineered
+                - generic [ref=f5e248]: solution,
+                - generic [ref=f5e250]: plus
+                - generic [ref=f5e252]: a
+                - generic [ref=f5e254]: genetically-encoded
+                - generic [ref=f5e256]: kill
+                - generic [ref=f5e258]: switch,
+                - generic [ref=f5e260]: to
+                - generic [ref=f5e262]: tackle
+                - generic [ref=f5e264]: wind-driven
+                - generic [ref=f5e266]: sand
+                - generic [ref=f5e268]: movement
+            - generic [ref=f5e269]: Scroll to learn more
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic: The problem
+                  - paragraph: Loose desert sand lifts and blows away in the wind.
+                - generic:
+                  - generic: Micro scale
+                  - paragraph: A single grain, and a living Bacillus subtilis cell.
+                - generic:
+                  - generic: Carbonic anhydrase
+                  - paragraph:
+                    - text: A CA dimer on the cell surface grows CaCO
+                    - subscript: "3"
+                    - text: cement.
+                - generic:
+                  - generic: The fix
+                  - paragraph: γ-PGA chains cross-link and lock grain to grain.
+                - generic:
+                  - generic: The result
+                  - paragraph: The surface holds together as a stabilized crust.
+        - generic [ref=f5e274]:
+          - img:
+            - generic:
+              - generic:
+                - generic: "1"
+                - generic: γ-PGA
+              - generic:
+                - generic: "2"
+                - generic: CA · MICP
+              - generic:
+                - generic: "3"
+                - generic: Alginate
+          - generic [ref=f5e277]:
+            - text: Engineering Design Cycle
+            - generic [ref=f5e278]: We started with a question
+            - generic [ref=f5e279]:
+              - generic [ref=f5e280]:
+                - heading "Wind moves the sand" [level=2] [ref=f5e281]
+                - paragraph [ref=f5e282]: "We asked how a living surface treatment could bind loose desert grains into a stable crust. Before writing any model, we turned that question into numbers: grain sizes, wind speeds, and the strength a crust would need to hold."
+              - generic [ref=f5e283]:
+                - heading [level=2] [ref=f5e284]: Three prongs
+                - paragraph [ref=f5e285]:
+                  - generic [ref=f5e286]:
+                    - text: "We designed three biological routes to that crust and gave each its own model:"
+                    - button [ref=f5e287]: γ-PGA
+                    - text: overexpression,
+                    - button [ref=f5e288]: carbonic-anhydrase
+                    - text: biomineralization, and a
+                    - button [ref=f5e289]: sodium-alginate
+                    - text: binder. Modeling them apart let us judge them on the same terms.
+              - generic [ref=f5e290]:
+                - heading [level=2] [ref=f5e291]: Two prongs and a kill switch
+                - paragraph [ref=f5e292]:
+                  - generic [ref=f5e293]:
+                    - text: When we simulated the three, alginate did not hold up, so we cut it. We added a genetically encoded
+                    - button [ref=f5e294]: kill switch
+                    - text: for biocontainment. Our plan settled into two engineered prongs plus a safety brake.
+              - generic [ref=f5e295]:
+                - heading [level=2] [ref=f5e296]: From cell to crust
+                - paragraph [ref=f5e297]:
+                  - generic [ref=f5e298]:
+                    - text: "We now link the biology to the crust: metabolism through"
+                    - button [ref=f5e299]: flux balance analysis
+                    - text: ", polymer"
+                    - button [ref=f5e300]: cross-linking
+                    - text: ", and how a treated surface resists wind shear. Each module feeds the next, so we can trace one grain from cell to cured crust."
+              - generic [ref=f5e301]:
+                - heading [level=2] [ref=f5e302]: From bench to field
+                - paragraph [ref=f5e303]: The model tells us which assays are worth running and what field scale to aim for. As real measurements come back from the lab, we feed them in and the toolkit keeps improving.
+        - generic [ref=f5e311]:
+          - generic [ref=f5e312]:
+            - generic:
+              - heading "The Three Prongs" [level=2] [ref=f5e313]
+              - heading "The Two Prongs" [level=2] [ref=f5e314]
+            - generic [ref=f5e315]: Click on the prongs to proceed to modeling
+          - generic [ref=f5e316]:
+            - button "Skip"
+            - button [disabled] [ref=f5e318]:
+              - heading "Polymer Overexpression" [level=3] [ref=f5e323]
+              - paragraph [ref=f5e324]: Gamma-PGA bio-adhesive matrix
+            - button [disabled] [ref=f5e326]:
+              - heading "Carbonic Anhydrase & Sortase" [level=3] [ref=f5e332]
+              - paragraph [ref=f5e333]: Non-ureolytic MICP biomineralization
+            - button [disabled] [ref=f5e335]:
+              - heading "Biocontainment Kill Switch" [level=3] [ref=f5e339]
+              - paragraph [ref=f5e340]: MazE/MazF control of the engineered population
+            - button [disabled] [ref=f5e342]:
+              - heading "Sodium Alginate" [level=3] [ref=f5e347]
+              - paragraph [ref=f5e348]: Sodium Alginate, not pursued
+          - generic:
+            - button "Or explore the individual sandbox portals"
+  - alert [ref=f5e349]

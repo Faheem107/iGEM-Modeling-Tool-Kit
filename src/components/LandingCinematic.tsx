@@ -5,7 +5,6 @@ import dynamic from "next/dynamic";
 import { createTimeline, svg, type Timeline } from "animejs";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useTransition, animated } from "@react-spring/web";
 import { motion, AnimatePresence } from "motion/react";
 import { TextEffect } from "@/components/motion-primitives/text-effect";
 import SandParticles from "./dune-story/SandParticles";
@@ -279,14 +278,6 @@ export default function LandingCinematic({
     };
   }, []);
 
-  const transitions = useTransition(active, {
-    keys: active,
-    from: { opacity: 0, y: 26 },
-    enter: { opacity: 1, y: 0 },
-    leave: { opacity: 0, y: -20 },
-    config: { tension: 260, friction: 26 },
-  });
-
   return (
     <section id="cinematic" ref={sectionRef} className="relative w-full scroll-mt-0">
       <div
@@ -514,20 +505,28 @@ export default function LandingCinematic({
             style={{ opacity: showCaption ? 1 : 0 }}
           >
             <div className="mx-auto max-w-6xl px-5 pb-14 sm:px-8">
+              {/* Stacked opacity cross-fade: only the active beat is shown, so a
+                  fast scroll (or a jump to the top) can never pile up several
+                  half-faded captions on top of each other. */}
               <div className="relative h-28 max-w-xl">
-                {transitions((style, i) => (
-                  <animated.div style={style} className="absolute inset-x-0 bottom-0">
+                {BEATS.map((b, i) => (
+                  <div
+                    key={i}
+                    className="absolute inset-x-0 bottom-0 transition-opacity duration-300"
+                    style={{ opacity: i === active ? 1 : 0 }}
+                    aria-hidden={i !== active}
+                  >
                     <div className="mb-2 text-[11px] font-bold uppercase tracking-[0.28em] text-dune-orange">
-                      {BEATS[i].label}
+                      {b.label}
                     </div>
                     <p
                       className={`font-display text-2xl font-black leading-tight tracking-tight sm:text-4xl ${
                         isLightMode ? "text-dune-maroon" : "text-dune-paper"
                       }`}
                     >
-                      {BEATS[i].line}
+                      {b.line}
                     </p>
-                  </animated.div>
+                  </div>
                 ))}
               </div>
               <div className="mt-5 flex items-center gap-2.5">
