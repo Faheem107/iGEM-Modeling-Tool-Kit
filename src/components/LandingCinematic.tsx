@@ -7,6 +7,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTransition, animated } from "@react-spring/web";
 import { motion, AnimatePresence } from "motion/react";
+import { GrainGradient } from "@paper-design/shaders-react";
 import { TextEffect } from "@/components/motion-primitives/text-effect";
 import SandParticles from "./dune-story/SandParticles";
 import type { MolstarApi } from "@/components/molstar-viewer";
@@ -99,6 +100,7 @@ export default function LandingCinematic({
   const crustRef = useRef<HTMLDivElement>(null);
   const tlRef = useRef<Timeline | null>(null);
   const molApiRef = useRef<MolstarApi | null>(null);
+  const lastSpinRef = useRef<number>(-1);
   const progressRef = useRef(0);
 
   const [active, setActive] = useState(0);
@@ -183,8 +185,18 @@ export default function LandingCinematic({
 
       // Carbonic-anhydrase 3D layer fades in for its beat, then recedes.
       setLayer(caRef.current, `scale(${(0.86 + caZoom * 0.14).toFixed(4)})`, caPeak);
-      if (!caMounted && p > 0.32) setCaMounted(true);
-      molApiRef.current?.setSpinSpeed(caPeak > 0.4 ? 1.1 : 0.14);
+      // Mount the WebGL viewer only inside its beat and unmount once past it, so
+      // no live GL context keeps rendering during the hero, the crust, or a
+      // scroll back up (the old code latched it on and never released it).
+      const inCaBeat = p > 0.34 && p < 0.72;
+      setCaMounted((prev) => (prev === inCaBeat ? prev : inCaBeat));
+      if (inCaBeat && molApiRef.current) {
+        const speed = caPeak > 0.4 ? 1.1 : 0.14;
+        if (speed !== lastSpinRef.current) {
+          molApiRef.current.setSpinSpeed(speed);
+          lastSpinRef.current = speed;
+        }
+      }
 
       // Polymer bridges draw over the fix beat.
       tl.seek(tl.duration * smooth(p, 0.58, 0.78));
@@ -223,7 +235,6 @@ export default function LandingCinematic({
       pin: true,
       pinSpacing: true,
       scrub: 0.6,
-      anticipatePin: 1,
       invalidateOnRefresh: true,
       onUpdate: (self) => renderFrame(self.progress),
     });
@@ -247,6 +258,15 @@ export default function LandingCinematic({
     return () => window.removeEventListener("sandyx:overview", h);
   }, []);
 
+  // When the CA viewer unmounts, drop the stale API handle and reset the spin
+  // memo so a fresh mount re-syncs cleanly.
+  useEffect(() => {
+    if (!caMounted) {
+      molApiRef.current = null;
+      lastSpinRef.current = -1;
+    }
+  }, [caMounted]);
+
   const transitions = useTransition(active, {
     keys: active,
     from: { opacity: 0, y: 26 },
@@ -269,13 +289,33 @@ export default function LandingCinematic({
           className="absolute inset-0 will-change-transform"
           style={{ transformOrigin: "52% 82%" }}
         >
-          <img
-            src="/landing/hf-desert.png"
-            alt=""
-            draggable={false}
-            className="h-full w-full object-cover"
+          {/* Dune backdrop: the warm grain gradient from the earlier landing
+              (no photo to load), so it scales with the dive. */}
+          <GrainGradient
+            style={{ height: "100%", width: "100%" }}
+            colorBack={isLightMode ? "#e9c99a" : "#0b0908"}
+            softness={0.82}
+            intensity={isLightMode ? 0.34 : 0.5}
+            noise={0}
+            shape="corners"
+            colors={
+              isLightMode
+                ? ["#E7D2A9", "#EBDFC4", "#DFC79E"]
+                : ["#4A3320", "#2E2114", "#43301E"]
+            }
           />
-          {/* legibility + theme scrim over the photo */}
+          {/* CSS depth gradient over the grain: darker toward the edges, clear
+              in the middle so the title reads. */}
+          <div
+            aria-hidden
+            className="absolute inset-0"
+            style={{
+              background: isLightMode
+                ? "radial-gradient(120% 90% at 50% 14%, rgba(244,220,174,0) 34%, rgba(214,167,101,0.34) 78%, rgba(181,112,47,0.5) 100%)"
+                : "radial-gradient(120% 95% at 50% 10%, rgba(42,29,19,0) 26%, rgba(18,11,8,0.5) 70%, rgba(11,9,8,0.82) 100%)",
+            }}
+          />
+          {/* legibility + theme scrim over the backdrop */}
           <div
             aria-hidden
             className={`absolute inset-0 ${
@@ -518,17 +558,16 @@ function MicroScene({
   const hero = grains[0];
   return (
     <div className="relative h-full w-full">
-      <img
-        src="/landing/hf-micro.png"
-        alt=""
-        draggable={false}
-        className="absolute inset-0 h-full w-full object-cover"
-      />
+      {/* Micro-field backdrop, pure CSS. A soft teal well so the grains and
+          cell read with depth, no image to load. */}
       <div
         aria-hidden
-        className={`absolute inset-0 ${
-          isLightMode ? "bg-[#dfeee9]/55" : "bg-[#05100e]/45"
-        }`}
+        className="absolute inset-0"
+        style={{
+          background: isLightMode
+            ? "radial-gradient(100% 80% at 50% 42%, #eaf5f1 0%, #cfe6df 55%, #a7cabf 100%)"
+            : "radial-gradient(100% 80% at 50% 42%, #0d2420 0%, #081714 55%, #04100e 100%)",
+        }}
       />
       <svg
         viewBox="0 0 1200 800"

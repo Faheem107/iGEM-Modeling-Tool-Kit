@@ -45,6 +45,11 @@ export default function SandParticles({
     let h = 0;
     let dpr = 1;
     let particles: Particle[] = [];
+    // Grains grouped by depth so we can draw a whole depth in one path + one
+    // fill instead of setting fillStyle and filling per grain (420 -> ~6 per
+    // frame), which is the difference between smooth and janky at the hero.
+    const BUCKETS = 6;
+    let buckets: Particle[][] = [];
 
     const build = () => {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -55,9 +60,10 @@ export default function SandParticles({
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       // Fewer on small / coarse devices; scale with area otherwise.
       const target = coarse ? 90 : Math.min(420, Math.round((w * h) / 3400));
+      buckets = Array.from({ length: BUCKETS }, () => []);
       particles = Array.from({ length: target }, (_, i) => {
         const z = Math.random();
-        return {
+        const pt: Particle = {
           x: Math.random() * w,
           y: Math.random() * h,
           z,
@@ -65,11 +71,18 @@ export default function SandParticles({
           drift: (Math.random() - 0.5) * 0.4,
           seed: i * 12.9898,
         };
+        buckets[Math.min(BUCKETS - 1, Math.floor(z * BUCKETS))].push(pt);
+        return pt;
       });
     };
 
     build();
-    const onResize = () => build();
+    // Debounce so a resize burst does not rebuild the field many times.
+    let resizeTimer: number | undefined;
+    const onResize = () => {
+      if (resizeTimer) window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(build, 160);
+    };
     window.addEventListener("resize", onResize);
 
     // grain colour per theme (warm sand vs pale ember dust)
@@ -94,6 +107,7 @@ export default function SandParticles({
         return;
       }
 
+      // Advance every grain, then draw one path per depth bucket.
       for (const pt of particles) {
         // Drift right + gentle vertical sway; near grains move faster (parallax).
         pt.x += wind * (0.3 + pt.z * 1.3);
@@ -102,10 +116,19 @@ export default function SandParticles({
         if (pt.x < -6) pt.x = w + 6;
         if (pt.y > h + 6) pt.y = -6;
         if (pt.y < -6) pt.y = h + 6;
-        const a = (0.12 + pt.z * 0.5) * vis;
-        ctx.beginPath();
+      }
+      for (let b = 0; b < BUCKETS; b++) {
+        const bucket = buckets[b];
+        if (bucket.length === 0) continue;
+        // Representative depth for the bucket drives one shared alpha.
+        const z = (b + 0.5) / BUCKETS;
+        const a = (0.12 + z * 0.5) * vis;
         ctx.fillStyle = `rgba(${rgb}, ${a.toFixed(3)})`;
-        ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2);
+        ctx.beginPath();
+        for (const pt of bucket) {
+          ctx.moveTo(pt.x + pt.size, pt.y);
+          ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2);
+        }
         ctx.fill();
       }
       raf = requestAnimationFrame(render);
@@ -115,6 +138,7 @@ export default function SandParticles({
 
     return () => {
       cancelAnimationFrame(raf);
+      if (resizeTimer) window.clearTimeout(resizeTimer);
       window.removeEventListener("resize", onResize);
     };
   }, [isLightMode, progressRef]);

@@ -5,6 +5,7 @@ import { createTimeline, svg, stagger, type Timeline } from "animejs";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SandParticles from "./dune-story/SandParticles";
+import { GlossaryText } from "@/src/components/GlossaryTerm";
 
 /**
  * DesignCycleStory: the scroll-scrubbed "Engineering Design Cycle" story.
@@ -398,7 +399,7 @@ export default function DesignCycleStory({
                           isLightMode ? "text-slate-800" : "text-slate-200"
                         }`}
                       >
-                        {b.body}
+                        <GlossaryText>{b.body}</GlossaryText>
                       </p>
                     </li>
                   ))}
@@ -430,7 +431,7 @@ export default function DesignCycleStory({
                             isLightMode ? "text-slate-800" : "text-slate-200"
                           }`}
                         >
-                          {b.body}
+                          <GlossaryText>{b.body}</GlossaryText>
                         </p>
                       </div>
                     ))}
