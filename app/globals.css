@@ -131,6 +131,39 @@
   letter-spacing: -0.01em;
 }
 
+/* ---- Hero copy entrance ----
+ * A one-time, smooth rise + fade for the hero label / title / subtitle. Pure
+ * CSS so it runs on its own timeline, independent of React re-renders, and can
+ * never get stuck half-played the way a per-segment JS reveal could. The
+ * resting state is opacity:1, and the animation only fills forwards, so once it
+ * finishes (or if reduced motion skips it) the text is simply shown. It plays
+ * once on mount and never replays, so scrolling the hero away and back never
+ * re-triggers it. No filter/blur (kept purely to opacity + transform) so it
+ * cannot interact with the pinned section's compositing. */
+@keyframes hero-text-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.hero-reveal {
+  animation: hero-text-in 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: transform, opacity;
+}
+.hero-reveal-1 {
+  animation-delay: 0.08s;
+}
+.hero-reveal-2 {
+  animation-delay: 0.24s;
+}
+.hero-reveal-3 {
+  animation-delay: 0.42s;
+}
+
 /* Tabular numbers everywhere numbers are shown in the UI chrome */
 .tabular-nums, [class*="tabular"] {
   font-variant-numeric: tabular-nums;
