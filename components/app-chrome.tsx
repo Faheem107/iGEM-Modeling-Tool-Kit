@@ -166,11 +166,17 @@ export function AppChrome() {
                 gameOpen ? "pointer-events-none opacity-0" : "opacity-100"
               }`}
             >
+              {/* Solid translucent bar, no backdrop-blur. A backdrop-filter over
+                  the pinned hero (whose layers are transformed every frame with
+                  will-change) re-rasterizes constantly and flickers, so we use a
+                  plain background colour that fades in with a transition instead
+                  of popping on at the scroll threshold. */}
               <div
-                className={`mx-auto flex max-w-6xl items-center justify-between px-5 sm:px-8 py-3 ${
+                className={`mx-auto flex max-w-6xl items-center justify-between px-5 sm:px-8 py-3 transition-colors duration-500 ${
                   scrolled
-                    ? "backdrop-blur-md " +
-                      (isLightMode ? "bg-dune-paper/70" : "bg-[#0d0a08]/60")
+                    ? isLightMode
+                      ? "bg-dune-paper/90"
+                      : "bg-[#0d0a08]/90"
                     : "bg-transparent"
                 }`}
               >
