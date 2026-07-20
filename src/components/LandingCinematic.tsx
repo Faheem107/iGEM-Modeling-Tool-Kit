@@ -6,7 +6,6 @@ import { createTimeline, svg, type Timeline } from "animejs";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion, AnimatePresence } from "motion/react";
-import { TextEffect } from "@/components/motion-primitives/text-effect";
 import SandParticles from "./dune-story/SandParticles";
 import { duneGradient, grainOverlayStyle } from "@/src/lib/grain";
 import type { MolstarApi } from "@/components/molstar-viewer";
@@ -431,14 +430,15 @@ export default function LandingCinematic({
                   NYUAD iGEM 2026
                 </span>
               </div>
-              <TextEffect
-                as="h1"
-                per="line"
-                preset="fade-in-blur"
-                speedReveal={1.2}
-                // text-shadow (paint) instead of drop-shadow (a compositing
-                // filter). A filter on text inside the transformed pin can drop
-                // out for a frame while the pin animates; text-shadow does not.
+              {/* Plain, always-painted hero copy. It used to use a per-segment
+                  framer-motion reveal (AnimatePresence + blur), which could get
+                  stuck in its hidden/blurred state during the re-render storm of
+                  a fast programmatic scroll to the top, so the title/subtitle
+                  vanished while the (plain) Sandyx button kept showing. Static
+                  text has no animation state to get stuck, so it is always
+                  visible whenever the hero is. text-shadow (paint) not
+                  drop-shadow (a compositing filter that can drop out mid-pin). */}
+              <h1
                 style={{
                   textShadow: isLightMode
                     ? "0 2px 14px rgba(255,255,255,0.5)"
@@ -449,12 +449,8 @@ export default function LandingCinematic({
                 }`}
               >
                 {"iGEM Modeling Toolkit To\nStudy Sand Stabilization"}
-              </TextEffect>
-              <TextEffect
-                as="p"
-                per="word"
-                preset="fade"
-                delay={0.6}
+              </h1>
+              <p
                 style={{
                   textShadow: isLightMode
                     ? "0 1px 8px rgba(255,255,255,0.5)"
@@ -466,7 +462,7 @@ export default function LandingCinematic({
               >
                 Explore our simulated two-pronged engineered solution, plus a
                 genetically-encoded kill switch, to tackle wind-driven sand movement
-              </TextEffect>
+              </p>
             </div>
             <div
               className={`absolute bottom-10 left-1/2 flex -translate-x-1/2 flex-col items-center gap-3 ${
