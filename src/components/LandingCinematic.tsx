@@ -426,7 +426,7 @@ export default function LandingCinematic({
                     </motion.button>
                   )}
                 </AnimatePresence>
-                <span className="relative z-10 mb-6 block text-sm font-bold uppercase tracking-[0.2em] text-dune-orange md:text-base">
+                <span className="hero-reveal hero-reveal-1 relative z-10 mb-6 block text-sm font-bold uppercase tracking-[0.2em] text-dune-orange md:text-base">
                   NYUAD iGEM 2026
                 </span>
               </div>
@@ -444,7 +444,7 @@ export default function LandingCinematic({
                     ? "0 2px 14px rgba(255,255,255,0.5)"
                     : "0 2px 18px rgba(0,0,0,0.55)",
                 }}
-                className={`mb-4 whitespace-pre-line font-display text-2xl font-extrabold uppercase leading-[1.1] tracking-tight md:text-4xl lg:text-5xl ${
+                className={`hero-reveal hero-reveal-2 mb-4 whitespace-pre-line font-display text-2xl font-extrabold uppercase leading-[1.1] tracking-tight md:text-4xl lg:text-5xl ${
                   isLightMode ? "text-dune-maroon" : "text-white"
                 }`}
               >
@@ -456,7 +456,7 @@ export default function LandingCinematic({
                     ? "0 1px 8px rgba(255,255,255,0.5)"
                     : "0 1px 10px rgba(0,0,0,0.5)",
                 }}
-                className={`mx-auto max-w-3xl text-base font-medium leading-relaxed md:text-lg lg:text-xl ${
+                className={`hero-reveal hero-reveal-3 mx-auto max-w-3xl text-base font-medium leading-relaxed md:text-lg lg:text-xl ${
                   isLightMode ? "text-dune-maroon/85" : "text-white/90"
                 }`}
               >
