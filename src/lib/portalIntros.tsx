@@ -1,4 +1,11 @@
-import { Workflow, Bug, Dna, FlaskConical, ShieldAlert } from "lucide-react";
+import {
+  Workflow,
+  Bug,
+  Dna,
+  FlaskConical,
+  ShieldAlert,
+  Waves,
+} from "lucide-react";
 import type { ReactNode } from "react";
 import { PRONGS } from "./portalsData";
 
@@ -18,7 +25,7 @@ export interface PortalIntroContent {
 }
 
 export const PORTAL_INTROS: Record<
-  "pipeline" | "wet-lab" | "protein",
+  "pipeline" | "wet-lab" | "protein" | "xanthan-flow",
   PortalIntroContent
 > = {
   pipeline: {
@@ -75,6 +82,25 @@ export const PORTAL_INTROS: Record<
       {
         label: "What we plan to model",
         body: "Thermal stability of the enzyme, the fraction of protein that stays correctly folded and active across the desert's temperature swings.",
+      },
+    ],
+  },
+  "xanthan-flow": {
+    storageKey: "portal-intro:xanthan-flow",
+    title: "Xanthan Gum Flow Model",
+    icon: <Waves className="w-7 h-7 text-sky-500" />,
+    steps: [
+      {
+        label: "What it is",
+        body: "A power-law (Ostwald–de Waele) rheology model for how a xanthan gum solution, the shear-thinning carrier fluid used to pump the biopolymer mix, moves through the tubing that delivers it to the dune.",
+      },
+      {
+        label: "What it does",
+        body: "It relates mean flow speed to the pressure drop across a straight cylindrical tube, and shows how diluting the gum with water changes both numbers, using the consistency index K and flow-behaviour index n measured for the solution.",
+      },
+      {
+        label: "What we plan to model",
+        body: "The pressure required to hit a target flow speed (or vice versa), how strongly dilution loosens the flow, and whether the flow stays laminar via the Metzner–Reed Reynolds number.",
       },
     ],
   },
