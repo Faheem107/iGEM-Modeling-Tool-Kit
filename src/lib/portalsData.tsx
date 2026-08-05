@@ -9,6 +9,7 @@ import {
   Wind,
   Flame,
   Coins,
+  Waves,
 } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -137,6 +138,15 @@ export const PORTAL_CARDS: PortalCard[] = [
     desc: "Explore structural molecular dynamics and thermal decay.",
     grad: "from-dune-rose/20 via-dune-rose/5 to-transparent",
     ring: "text-dune-rose",
+  },
+  {
+    id: "xanthan-flow",
+    href: "/portal/xanthan-flow",
+    icon: <Waves className="w-6 h-6 text-sky-500" />,
+    title: "Xanthan Flow Model",
+    desc: "Power-law rheology of xanthan gum through the delivery tubing.",
+    grad: "from-sky-500/20 via-sky-500/5 to-transparent",
+    ring: "text-sky-500",
   },
 ];
 
