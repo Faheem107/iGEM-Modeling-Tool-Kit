@@ -28,8 +28,7 @@ docs/
 
 # AI assistant skills / config (kept local only)
 .agents/
-.claude/skills/
-.claude/RESPONSIBLE_AI_USE.md
+.claude/
 cobrapy/
 
 # Manim render artifacts (source scenes are kept; rendered media is regenerated)
