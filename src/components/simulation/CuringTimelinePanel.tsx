@@ -117,10 +117,10 @@ export default function CuringTimelinePanel({
 
   return (
     <div
-      className={`p-6 rounded-2xl border space-y-6 transition-colors duration-300 ${
+      className={`p-6 rounded-[6px] border space-y-6 transition-colors duration-300 ${
         isLightMode
-          ? "bg-gradient-to-br from-white to-teal-50/40 border-teal-200 "
-          : "bg-gradient-to-br from-[#1c1512] to-teal-950/20 border-slate-800 "
+          ? "bg-white/70 border-dune-teal "
+          : "bg-card/70 border-border "
       }`}
     >
 
@@ -132,7 +132,7 @@ export default function CuringTimelinePanel({
           label="Time to mature"
           value={timeline.hoursToMature.toFixed(0)}
           unit="h"
-          accent={isLightMode ? "text-teal-700" : "text-teal-400"}
+          accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
           sub="to 95% of full strength"
         />
         <StatCard
@@ -140,7 +140,7 @@ export default function CuringTimelinePanel({
           label="Early strength @8 h"
           value={(timeline.earlyAgeFraction * 100).toFixed(0)}
           unit="%"
-          accent={isLightMode ? "text-amber-700" : "text-amber-400"}
+          accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
           sub="of mature, at 1st re-spray"
         />
         <StatCard
@@ -152,11 +152,11 @@ export default function CuringTimelinePanel({
           accent={
             meetsDesign
               ? isLightMode
-                ? "text-teal-700"
-                : "text-teal-400"
+                ? "text-dune-teal"
+                : "text-dune-teal"
               : isLightMode
-                ? "text-rose-600"
-                : "text-rose-400"
+                ? "text-dune-rose"
+                : "text-dune-rose"
           }
           sub={`design ${designWind} m/s`}
         />
@@ -167,11 +167,11 @@ export default function CuringTimelinePanel({
           accent={
             timeline.survivesToScheduledReapply
               ? isLightMode
-                ? "text-teal-700"
-                : "text-teal-400"
+                ? "text-dune-teal"
+                : "text-dune-teal"
               : isLightMode
-                ? "text-rose-600"
-                : "text-rose-400"
+                ? "text-dune-rose"
+                : "text-dune-rose"
           }
           sub={`protocol: ${timeline.scheduledReapplyMonths.toFixed(0)} mo cadence`}
         />
@@ -189,7 +189,7 @@ export default function CuringTimelinePanel({
           isLightMode={isLightMode}
           right={
             <span
-              className={`text-[10px] font-mono ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+              className={`text-[10px] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
             >
               0–48 h
             </span>
@@ -254,7 +254,7 @@ export default function CuringTimelinePanel({
             </AreaChart>
           </ResponsiveContainer>
           <p
-            className={`mt-2 text-[10px] leading-relaxed ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+            className={`mt-2 text-[10px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             Dashed lines are the protocol spray times (0/8/16/24/32 h). Alginate
             gels on contact, γ-PGA sets within hours, and MICP calcite ripens
@@ -269,7 +269,7 @@ export default function CuringTimelinePanel({
           isLightMode={isLightMode}
           right={
             <span
-              className={`text-[10px] font-mono ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+              className={`text-[10px] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
             >
               months
             </span>
@@ -348,7 +348,7 @@ export default function CuringTimelinePanel({
           </ResponsiveContainer>
           <Slider
             isLightMode={isLightMode}
-            accent="accent-rose-500"
+            accent="accent-dune-rose"
             label={<>Design survival wind</>}
             value={designWind}
             min={12}
@@ -362,18 +362,18 @@ export default function CuringTimelinePanel({
       </div>
 
       <div
-        className={`p-3 rounded-xl border text-[11px] flex items-start gap-2 ${
+        className={`p-3 rounded-[6px] border text-[11px] flex items-start gap-2 ${
           !meetsDesign
             ? isLightMode
-              ? "bg-rose-50 text-rose-800 border-rose-200"
-              : "bg-rose-950/20 text-rose-300 border-rose-900/40"
+              ? "bg-dune-rose text-dune-rose border-dune-rose"
+              : "bg-dune-rose/20 text-dune-rose border-dune-rose/40"
             : timeline.survivesToScheduledReapply
               ? isLightMode
-                ? "bg-teal-50 text-teal-800 border-teal-200"
-                : "bg-teal-950/20 text-teal-300 border-teal-900/40"
+                ? "bg-dune-teal text-dune-teal border-dune-teal"
+                : "bg-dune-teal/20 text-dune-teal border-dune-teal/40"
               : isLightMode
-                ? "bg-amber-50 text-amber-800 border-amber-200"
-                : "bg-amber-950/20 text-amber-300 border-amber-900/40"
+                ? "bg-dune-orange text-dune-orange border-dune-orange"
+                : "bg-dune-orange/20 text-dune-orange border-dune-orange/40"
         }`}
       >
         {meetsDesign && timeline.survivesToScheduledReapply ? (

@@ -53,7 +53,7 @@ export const PRONGS: Record<ProngId, ProngMeta> = {
     bacterial: true,
     strengthMetric: "shearModulus",
     icon: Sparkles,
-    accent: "text-amber-500",
+    accent: "text-dune-orange",
   },
   2: {
     id: 2,
@@ -62,7 +62,7 @@ export const PRONGS: Record<ProngId, ProngMeta> = {
     bacterial: true,
     strengthMetric: "UCS",
     icon: Layers,
-    accent: "text-emerald-500",
+    accent: "text-dune-teal",
   },
   3: {
     id: 3,
@@ -71,7 +71,7 @@ export const PRONGS: Record<ProngId, ProngMeta> = {
     bacterial: false,
     strengthMetric: "shearModulus",
     icon: ShieldCheck,
-    accent: "text-rose-500",
+    accent: "text-dune-rose",
   },
 };
 

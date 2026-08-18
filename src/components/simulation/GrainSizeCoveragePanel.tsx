@@ -70,10 +70,10 @@ export default function GrainSizeCoveragePanel({
 
   return (
     <div
-      className={`p-6 rounded-2xl border space-y-6 transition-colors duration-300 ${
+      className={`p-6 rounded-[6px] border space-y-6 transition-colors duration-300 ${
         isLightMode
-          ? "bg-gradient-to-br from-white to-teal-50/40 border-teal-200 "
-          : "bg-gradient-to-br from-[#1c1512] to-teal-950/20 border-slate-800 "
+          ? "bg-white/70 border-dune-teal "
+          : "bg-card/70 border-border "
       }`}
     >
       <ModuleActions moduleId="grainsize" isLightMode={isLightMode} />
@@ -85,7 +85,7 @@ export default function GrainSizeCoveragePanel({
           value={(profile.boundMassFraction * 100).toFixed(0)}
           unit="%"
           emphasize
-          accent={isLightMode ? "text-teal-700" : "text-teal-400"}
+          accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
           sub="of site PSD held"
         />
         <StatCard
@@ -93,7 +93,7 @@ export default function GrainSizeCoveragePanel({
           label="MICP sweet-spot"
           value={(profile.micpEfficiencyMean * 100).toFixed(0)}
           unit="%"
-          accent={isLightMode ? "text-teal-700" : "text-teal-400"}
+          accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
           sub="mean CaCO₃ efficiency"
         />
         <StatCard
@@ -101,7 +101,7 @@ export default function GrainSizeCoveragePanel({
           label="Weakest band"
           value={`${profile.weakestDiameter.toFixed(0)}`}
           unit="µm"
-          accent={isLightMode ? "text-amber-700" : "text-amber-400"}
+          accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
           sub={`${(profile.weakestCoverage * 100).toFixed(0)}% coverage`}
         />
         <StatCard
@@ -109,7 +109,7 @@ export default function GrainSizeCoveragePanel({
           label="Site D₅₀"
           value={profile.d50.toFixed(0)}
           unit="µm"
-          accent={isLightMode ? "text-slate-700" : "text-slate-300"}
+          accent={isLightMode ? "text-foreground" : "text-foreground"}
           sub="median grain size"
         />
       </div>
@@ -205,7 +205,7 @@ export default function GrainSizeCoveragePanel({
           </ComposedChart>
         </ResponsiveContainer>
         <p
-          className={`mt-2 text-[10px] leading-relaxed ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+          className={`mt-2 text-[10px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           Dashed lines are each binder's per-grain effectiveness; the solid band
           is the union (a grain is held if <b>any</b> mechanism binds it: 1 −
@@ -215,14 +215,14 @@ export default function GrainSizeCoveragePanel({
       </Panel>
 
       <div
-        className={`p-3 rounded-xl border text-[11px] flex items-start gap-2 ${
+        className={`p-3 rounded-[6px] border text-[11px] flex items-start gap-2 ${
           multi
             ? isLightMode
-              ? "bg-teal-50 text-teal-800 border-teal-200"
-              : "bg-teal-950/20 text-teal-300 border-teal-900/40"
+              ? "bg-dune-teal text-dune-teal border-dune-teal"
+              : "bg-dune-teal/20 text-dune-teal border-dune-teal/40"
             : isLightMode
-              ? "bg-amber-50 text-amber-800 border-amber-200"
-              : "bg-amber-950/20 text-amber-300 border-amber-900/40"
+              ? "bg-dune-orange text-dune-orange border-dune-orange"
+              : "bg-dune-orange/20 text-dune-orange border-dune-orange/40"
         }`}
       >
         <TriangleAlert className="w-4 h-4 shrink-0 mt-0.5" />

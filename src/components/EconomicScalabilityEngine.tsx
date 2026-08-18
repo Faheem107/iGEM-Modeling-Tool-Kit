@@ -130,7 +130,7 @@ export default function EconomicScalabilityEngine({
         <div className="space-y-4">
           <Slider
             isLightMode={isLightMode}
-            accent="accent-amber-500"
+            accent="accent-dune-orange"
             label="Stabilization area"
             value={targetArea}
             min={1}
@@ -143,7 +143,7 @@ export default function EconomicScalabilityEngine({
           {selected.includes(1) && (
             <Slider
               isLightMode={isLightMode}
-              accent="accent-teal-500"
+              accent="accent-dune-teal"
               label="γ-PGA loading density"
               value={pgaDensity}
               min={0.5}
@@ -162,7 +162,7 @@ export default function EconomicScalabilityEngine({
           isLightMode={isLightMode}
           label="All-in cost / ha"
           value={`$${Math.round(cost.costPerHa).toLocaleString()}`}
-          accent={isLightMode ? "text-amber-700" : "text-amber-400"}
+          accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
           emphasize
           sub={combinationLabel(selected)}
         />
@@ -170,7 +170,7 @@ export default function EconomicScalabilityEngine({
           isLightMode={isLightMode}
           label="Total project cost"
           value={`$${Math.round(cost.totalCost).toLocaleString()}`}
-          accent={isLightMode ? "text-stone-700" : "text-slate-200"}
+          accent={isLightMode ? "text-foreground" : "text-foreground"}
           sub={`${targetArea} ha + capex`}
         />
         <StatCard
@@ -185,11 +185,11 @@ export default function EconomicScalabilityEngine({
           accent={
             savingsVsChemical > 0
               ? isLightMode
-                ? "text-teal-700"
-                : "text-teal-400"
+                ? "text-dune-teal"
+                : "text-dune-teal"
               : isLightMode
-                ? "text-rose-600"
-                : "text-rose-400"
+                ? "text-dune-rose"
+                : "text-dune-rose"
           }
         />
         <StatCard
@@ -200,11 +200,11 @@ export default function EconomicScalabilityEngine({
           accent={
             cost.co2Total <= 0
               ? isLightMode
-                ? "text-teal-700"
-                : "text-teal-400"
+                ? "text-dune-teal"
+                : "text-dune-teal"
               : isLightMode
-                ? "text-stone-600"
-                : "text-slate-400"
+                ? "text-muted-foreground"
+                : "text-muted-foreground"
           }
           sub={cost.co2Total < 0 ? "sequestered" : "neutral"}
         />
@@ -216,10 +216,10 @@ export default function EconomicScalabilityEngine({
 
   return (
     <div
-      className={`grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 rounded-2xl border transition-colors ${
+      className={`grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 rounded-[6px] border transition-colors ${
         isLightMode
-          ? "bg-[#fdfaf3] border-amber-900/10 shadow-[0_4px_24px_rgba(139,94,26,0.06)]"
-          : "bg-[#1c1512] border-slate-800 "
+          ? "bg-[#fdfaf3] border-dune-orange/10 shadow-[0_4px_24px_rgba(139,94,26,0.06)]"
+          : "bg-[#1c1512] border-border "
       }`}
     >
       <div className="lg:col-span-5 space-y-5">{controls}</div>
@@ -231,7 +231,7 @@ export default function EconomicScalabilityEngine({
           isLightMode={isLightMode}
           right={
             <span
-              className={`text-[10px] font-mono ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+              className={`text-[10px] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
             >
               USD · log scale
             </span>
@@ -282,9 +282,9 @@ export default function EconomicScalabilityEngine({
             </BarChart>
           </ResponsiveContainer>
           <p
-            className={`mt-1 text-[10px] flex items-center gap-1.5 ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+            className={`mt-1 text-[10px] flex items-center gap-1.5 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
-            <Award className="w-3 h-3 text-amber-500" /> Indigo = your selected
+            <Award className="w-3 h-3 text-dune-orange" /> Indigo = your selected
             combination. Every biological combination sits far below the
             conventional chemical (blue) and concrete (red) baselines.
           </p>
@@ -308,22 +308,22 @@ export default function EconomicScalabilityEngine({
               return (
                 <div
                   key={p}
-                  className={`flex items-center justify-between p-3 rounded-xl border ${isLightMode ? "bg-white border-amber-900/10" : "bg-[#181210] border-slate-850"}`}
+                  className={`flex items-center justify-between p-3 rounded-[6px] border ${isLightMode ? "bg-white border-dune-orange/10" : "bg-[#181210] border-border"}`}
                 >
                   <div className="min-w-0">
                     <span
-                      className={`text-xs font-bold ${isLightMode ? "text-stone-800" : "text-slate-200"}`}
+                      className={`text-xs font-bold ${isLightMode ? "text-foreground" : "text-foreground"}`}
                     >
                       {label}
                     </span>
                     <span
-                      className={`block text-[10px] ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+                      className={`block text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                     >
                       {note}
                     </span>
                   </div>
                   <span
-                    className={`font-mono font-black text-sm shrink-0 ${isLightMode ? "text-amber-700" : "text-amber-400"}`}
+                    className={`font-mono font-black text-sm shrink-0 ${isLightMode ? "text-dune-orange" : "text-dune-orange"}`}
                   >
                     ${Math.round(single.opexPerHa).toLocaleString()}/ha
                   </span>
@@ -331,7 +331,7 @@ export default function EconomicScalabilityEngine({
               );
             })}
             <p
-              className={`text-[10px] ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+              className={`text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
             >
               Plus a shared ${Math.round(cost.applicationPerHa)}/ha
               field-application pass

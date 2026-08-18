@@ -99,10 +99,10 @@ export default function CompositeSynthesisPanel({
 
   return (
     <div
-      className={`p-6 rounded-2xl border space-y-6 transition-colors duration-300 ${
+      className={`p-6 rounded-[6px] border space-y-6 transition-colors duration-300 ${
         isLightMode
-          ? "bg-gradient-to-br from-white to-amber-50/40 border-amber-200 "
-          : "bg-gradient-to-br from-[#1c1512] to-amber-950/20 border-slate-800 "
+          ? "bg-white/70 border-dune-orange "
+          : "bg-card/70 border-border "
       }`}
     >
       <ModuleActions moduleId="composite" isLightMode={isLightMode} />
@@ -113,7 +113,7 @@ export default function CompositeSynthesisPanel({
           label="Additive cohesion"
           value={toMilli(comp.additiveCohesion).toFixed(1)}
           unit="mN/m"
-          accent={isLightMode ? "text-slate-700" : "text-slate-300"}
+          accent={isLightMode ? "text-foreground" : "text-foreground"}
           sub="Σ individual"
         />
         <StatCard
@@ -124,11 +124,11 @@ export default function CompositeSynthesisPanel({
           accent={
             comp.interactionCohesion >= 0
               ? isLightMode
-                ? "text-teal-700"
-                : "text-teal-400"
+                ? "text-dune-teal"
+                : "text-dune-teal"
               : isLightMode
-                ? "text-rose-600"
-                : "text-rose-400"
+                ? "text-dune-rose"
+                : "text-dune-rose"
           }
           sub={comp.interactionCohesion >= 0 ? "synergistic" : "competitive"}
         />
@@ -138,7 +138,7 @@ export default function CompositeSynthesisPanel({
           value={toMilli(comp.totalCohesion).toFixed(1)}
           unit="mN/m"
           emphasize
-          accent={isLightMode ? "text-amber-700" : "text-amber-400"}
+          accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
           sub="→ feeds wind threshold"
         />
         <StatCard
@@ -149,11 +149,11 @@ export default function CompositeSynthesisPanel({
           accent={
             synergyPct >= 0
               ? isLightMode
-                ? "text-teal-700"
-                : "text-teal-400"
+                ? "text-dune-teal"
+                : "text-dune-teal"
               : isLightMode
-                ? "text-rose-600"
-                : "text-rose-400"
+                ? "text-dune-rose"
+                : "text-dune-rose"
           }
           sub="vs simple sum"
         />
@@ -172,7 +172,7 @@ export default function CompositeSynthesisPanel({
       >
         {interactions.length === 0 ? (
           <p
-            className={`text-[11px] ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+            className={`text-[11px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             No cross-prong interactions for this combination.
           </p>
@@ -189,17 +189,17 @@ export default function CompositeSynthesisPanel({
               const tone =
                 e.kind === "synergy"
                   ? isLightMode
-                    ? "text-teal-700 bg-teal-50 border-teal-200"
-                    : "text-teal-300 bg-teal-950/20 border-teal-900/40"
+                    ? "text-dune-teal bg-dune-teal border-dune-teal"
+                    : "text-dune-teal bg-dune-teal/20 border-dune-teal/40"
                   : e.kind === "burden"
                     ? isLightMode
-                      ? "text-amber-700 bg-amber-50 border-amber-200"
-                      : "text-amber-300 bg-amber-950/20 border-amber-900/40"
+                      ? "text-dune-orange bg-dune-orange border-dune-orange"
+                      : "text-dune-orange bg-dune-orange/20 border-dune-orange/40"
                     : isLightMode
-                      ? "text-rose-700 bg-rose-50 border-rose-200"
-                      : "text-rose-300 bg-rose-950/20 border-rose-900/40";
+                      ? "text-dune-rose bg-dune-rose border-dune-rose"
+                      : "text-dune-rose bg-dune-rose/20 border-dune-rose/40";
               return (
-                <div key={i} className={`p-3 rounded-xl border ${tone}`}>
+                <div key={i} className={`p-3 rounded-[6px] border ${tone}`}>
                   <div className="flex items-center justify-between gap-3 mb-1">
                     <span className="flex items-center gap-1.5 text-[11px] font-bold">
                       <Icon className="w-3.5 h-3.5" />
@@ -212,7 +212,7 @@ export default function CompositeSynthesisPanel({
                     </span>
                   </div>
                   <p
-                    className={`text-[10px] leading-relaxed ${isLightMode ? "text-stone-600" : "text-slate-400"}`}
+                    className={`text-[10px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                   >
                     {e.description}
                   </p>
@@ -220,7 +220,7 @@ export default function CompositeSynthesisPanel({
               );
             })}
             <p
-              className={`text-[10px] leading-relaxed pt-1 ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+              className={`text-[10px] leading-relaxed pt-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
             >
               Competition (Ca²⁺) and metabolic burden are applied to each
               prong's cohesion <b>before</b> the synergy term above, so the
@@ -279,7 +279,7 @@ export default function CompositeSynthesisPanel({
             </RadarChart>
           </ResponsiveContainer>
           <div
-            className={`mt-2 p-2.5 rounded-lg text-[11px] flex items-center gap-2 ${isLightMode ? "bg-amber-50 text-amber-800" : "bg-amber-950/20 text-amber-300"}`}
+            className={`mt-2 p-2.5 rounded-[4px] text-[11px] flex items-center gap-2 ${isLightMode ? "bg-dune-orange text-dune-orange" : "bg-dune-orange/20 text-dune-orange"}`}
           >
             <ShieldAlert className="w-4 h-4 shrink-0" />
             <span>
@@ -330,7 +330,7 @@ export default function CompositeSynthesisPanel({
             </BarChart>
           </ResponsiveContainer>
           <p
-            className={`mt-2 text-[10px] leading-relaxed ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+            className={`mt-2 text-[10px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             Each binder reduces to an interparticle cohesion (γ-PGA &amp;
             alginate via shear modulus G; CaCO₃ via UCS). The combined radar

@@ -142,11 +142,11 @@ export const PORTAL_CARDS: PortalCard[] = [
   {
     id: "xanthan-flow",
     href: "/portal/xanthan-flow",
-    icon: <Waves className="w-6 h-6 text-sky-500" />,
+    icon: <Waves className="w-6 h-6 text-dune-teal" />,
     title: "Xanthan Flow Model",
     desc: "Power-law rheology of xanthan gum through the delivery tubing.",
-    grad: "from-sky-500/20 via-sky-500/5 to-transparent",
-    ring: "text-sky-500",
+    grad: "from-dune-teal/20 via-dune-teal/5 to-transparent",
+    ring: "text-dune-teal",
   },
 ];
 

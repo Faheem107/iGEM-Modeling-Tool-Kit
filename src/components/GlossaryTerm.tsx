@@ -134,7 +134,7 @@ function VideoPanel({
   }, [id]);
 
   return (
-    <div className="relative aspect-video w-full rounded-2xl overflow-hidden border border-black/10 bg-black ">
+    <div className="relative aspect-video w-full rounded-[6px] overflow-hidden border border-black/10 bg-black ">
       {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
       <video
         key={id}
@@ -166,14 +166,14 @@ function VideoPanel({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
             className={`absolute inset-0 flex flex-col items-center justify-center gap-3 text-center ${
-              isLightMode ? "bg-slate-900" : "bg-slate-950"
+              isLightMode ? "bg-dune-basalt" : "bg-dune-basalt"
             }`}
           >
             <motion.img
               src="/sandyx.png"
               alt="Sandyx"
               draggable={false}
-              className="w-20 h-20 object-contain drop-shadow-lg"
+              className="w-20 h-20 object-contain drop-"
               animate={{ y: [0, -8, 0] }}
               transition={{
                 duration: 1.6,
@@ -181,13 +181,13 @@ function VideoPanel({
                 ease: "easeInOut",
               }}
             />
-            <div className="flex items-center gap-2 text-slate-200">
-              <Loader2 className="w-4 h-4 animate-spin text-rose-400" />
+            <div className="flex items-center gap-2 text-foreground">
+              <Loader2 className="w-4 h-4 animate-spin text-dune-rose" />
               <span className="text-sm font-bold">
                 Please wait, loading the animation…
               </span>
             </div>
-            <span className="text-[11px] text-slate-400">
+            <span className="text-[11px] text-muted-foreground">
               Sandyx is fetching the explainer for you.
             </span>
           </motion.div>
@@ -248,7 +248,7 @@ function CodePanel({
     <div>
       <div className="flex items-center justify-between gap-2 mb-2">
         <span
-          className={`text-[11px] font-mono ${isLightMode ? "text-slate-500" : "text-slate-400"}`}
+          className={`text-[11px] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           {filename}
         </span>
@@ -258,8 +258,8 @@ function CodePanel({
             disabled={!code}
             className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1.5 rounded-[3px] border transition-colors disabled:opacity-50 ${
               isLightMode
-                ? "border-slate-300 text-slate-600 hover:bg-slate-100"
-                : "border-white/15 text-slate-300 hover:bg-white/10"
+                ? "border-border text-muted-foreground hover:bg-muted"
+                : "border-white/15 text-foreground hover:bg-white/10"
             }`}
           >
             {copied ? (
@@ -279,20 +279,20 @@ function CodePanel({
         </div>
       </div>
       <div
-        className={`rounded-2xl border overflow-hidden ${
-          isLightMode ? "border-slate-200 bg-slate-950" : "border-white/10 bg-slate-950"
+        className={`rounded-[6px] border overflow-hidden ${
+          isLightMode ? "border-border bg-dune-basalt" : "border-white/10 bg-dune-basalt"
         }`}
       >
         {code === null && !failed ? (
-          <div className="flex items-center gap-2 p-4 text-sm text-slate-400">
+          <div className="flex items-center gap-2 p-4 text-sm text-muted-foreground">
             <Loader2 className="w-4 h-4 animate-spin" /> Loading code…
           </div>
         ) : failed ? (
-          <div className="p-4 text-sm text-slate-400">
+          <div className="p-4 text-sm text-muted-foreground">
             Could not load the script. Use the Download button to fetch it directly.
           </div>
         ) : (
-          <pre className="max-h-[42vh] overflow-auto no-scrollbar p-4 text-[11.5px] leading-relaxed text-slate-100">
+          <pre className="max-h-[42vh] overflow-auto no-scrollbar p-4 text-[11.5px] leading-relaxed text-foreground">
             <code>{code}</code>
           </pre>
         )}
@@ -343,7 +343,7 @@ function SandyxOverlay({
     >
       <motion.div
         aria-hidden
-        className={`absolute inset-0 ${isLightMode ? "bg-white/40" : "bg-slate-950/45"}`}
+        className={`absolute inset-0 ${isLightMode ? "bg-white/40" : "bg-dune-basalt/45"}`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -367,8 +367,8 @@ function SandyxOverlay({
         transition={DIALOG_SPRING}
         className={`relative w-full ${maxWidthClass} ${scroll ? "max-h-[88vh] overflow-y-auto no-scrollbar" : "overflow-hidden"} rounded-3xl border ${
           isLightMode
-            ? "bg-white/90 border-white/70 text-slate-900"
-            : "bg-slate-900/85 border-white/10 text-slate-100"
+            ? "bg-white/90 border-white/70 text-foreground"
+            : "bg-dune-basalt/85 border-white/10 text-foreground"
         }`}
         style={{
           backdropFilter: "blur(24px) saturate(1.4)",
@@ -517,8 +517,8 @@ export const GlossaryProvider: React.FC<{
                 isLightMode={isLightMode}
                 ariaLabel={entry.title}
                 maxWidthClass="max-w-md"
-                glowA="bg-teal-400/20"
-                glowB="bg-amber-400/20"
+                glowA="bg-dune-teal/20"
+                glowB="bg-dune-orange/20"
               >
                 <div className="relative p-6 sm:p-7">
                   <div className="flex items-start justify-between gap-3 mb-3">
@@ -532,8 +532,8 @@ export const GlossaryProvider: React.FC<{
                       <span
                         className={`text-[10px] font-black uppercase tracking-[0.15em] px-2 py-1 rounded-full ${
                           isLightMode
-                            ? "bg-teal-100 text-teal-800"
-                            : "bg-teal-500/15 text-teal-300"
+                            ? "bg-dune-teal text-dune-teal"
+                            : "bg-dune-teal/15 text-dune-teal"
                         }`}
                       >
                         {entry.category}
@@ -544,8 +544,8 @@ export const GlossaryProvider: React.FC<{
                       aria-label="Close explanation"
                       className={`shrink-0 flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full border transition-colors ${
                         isLightMode
-                          ? "border-slate-300 text-slate-600 hover:bg-slate-100"
-                          : "border-white/15 text-slate-300 hover:bg-white/10"
+                          ? "border-border text-muted-foreground hover:bg-muted"
+                          : "border-white/15 text-foreground hover:bg-white/10"
                       }`}
                     >
                       <X className="w-3.5 h-3.5" /> Close
@@ -568,7 +568,7 @@ export const GlossaryProvider: React.FC<{
                     speedReveal={2.2}
                     delay={0.12}
                     className={`text-sm leading-relaxed ${
-                      isLightMode ? "text-slate-700" : "text-slate-300"
+                      isLightMode ? "text-foreground" : "text-foreground"
                     }`}
                   >
                     {entry.plain}
@@ -576,13 +576,13 @@ export const GlossaryProvider: React.FC<{
 
                   {entry.derivation && (
                     <div
-                      className={`mt-4 pt-3 border-t ${isLightMode ? "border-slate-200" : "border-white/10"}`}
+                      className={`mt-4 pt-3 border-t ${isLightMode ? "border-border" : "border-white/10"}`}
                     >
                       <h4 className="text-[10px] font-black uppercase tracking-[0.15em] text-dune-orange mb-1.5">
                         How we got it
                       </h4>
                       <p
-                        className={`text-[13px] leading-relaxed ${isLightMode ? "text-slate-700" : "text-slate-300"}`}
+                        className={`text-[13px] leading-relaxed ${isLightMode ? "text-foreground" : "text-foreground"}`}
                       >
                         {entry.derivation}
                       </p>
@@ -620,8 +620,8 @@ export const GlossaryProvider: React.FC<{
                     <p
                       className={`mt-4 pt-3 border-t text-[11px] font-mono ${
                         isLightMode
-                          ? "border-slate-200 text-slate-500"
-                          : "border-white/10 text-slate-500"
+                          ? "border-border text-muted-foreground"
+                          : "border-white/10 text-muted-foreground"
                       }`}
                     >
                       Appears in · {entry.module}
@@ -646,8 +646,8 @@ export const GlossaryProvider: React.FC<{
                 ariaLabel={`${math.title}, mathematics`}
                 maxWidthClass="max-w-lg"
                 scroll
-                glowA="bg-amber-400/20"
-                glowB="bg-teal-400/20"
+                glowA="bg-dune-orange/20"
+                glowB="bg-dune-teal/20"
               >
                 <div className="relative p-6 sm:p-7">
                   <div className="flex items-start justify-between gap-3 mb-3">
@@ -661,8 +661,8 @@ export const GlossaryProvider: React.FC<{
                       <span
                         className={`text-[10px] font-black uppercase tracking-[0.15em] px-2 py-1 rounded-full ${
                           isLightMode
-                            ? "bg-amber-100 text-amber-800"
-                            : "bg-amber-500/15 text-amber-300"
+                            ? "bg-dune-orange text-dune-orange"
+                            : "bg-dune-orange/15 text-dune-orange"
                         }`}
                       >
                         The Math
@@ -673,8 +673,8 @@ export const GlossaryProvider: React.FC<{
                       aria-label="Close mathematics"
                       className={`shrink-0 flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full border transition-colors ${
                         isLightMode
-                          ? "border-slate-300 text-slate-600 hover:bg-slate-100"
-                          : "border-white/15 text-slate-300 hover:bg-white/10"
+                          ? "border-border text-muted-foreground hover:bg-muted"
+                          : "border-white/15 text-foreground hover:bg-white/10"
                       }`}
                     >
                       <X className="w-3.5 h-3.5" /> Close
@@ -689,7 +689,7 @@ export const GlossaryProvider: React.FC<{
                     per="word"
                     preset="fade-in-blur"
                     speedReveal={2.2}
-                    className={`text-sm leading-relaxed mb-5 ${isLightMode ? "text-slate-700" : "text-slate-300"}`}
+                    className={`text-sm leading-relaxed mb-5 ${isLightMode ? "text-foreground" : "text-foreground"}`}
                   >
                     {math.intro}
                   </TextEffect>
@@ -698,17 +698,17 @@ export const GlossaryProvider: React.FC<{
                     {math.blocks.map((b, i) => (
                       <div
                         key={i}
-                        className={`rounded-2xl border p-4 ${
+                        className={`rounded-[6px] border p-4 ${
                           isLightMode
-                            ? "bg-white/70 border-slate-200"
-                            : "bg-slate-950/50 border-white/10"
+                            ? "bg-white/70 border-border"
+                            : "bg-dune-basalt/50 border-white/10"
                         }`}
                       >
                         <div className="overflow-x-auto no-scrollbar text-[15px]">
                           <Katex tex={b.tex} />
                         </div>
                         <p
-                          className={`mt-2.5 text-xs leading-relaxed ${isLightMode ? "text-slate-600" : "text-slate-400"}`}
+                          className={`mt-2.5 text-xs leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                         >
                           {b.caption}
                         </p>
@@ -734,8 +734,8 @@ export const GlossaryProvider: React.FC<{
                 ariaLabel={`${video.title}, video explanation`}
                 maxWidthClass="max-w-2xl"
                 scroll
-                glowA="bg-rose-400/20"
-                glowB="bg-amber-400/20"
+                glowA="bg-dune-rose/20"
+                glowB="bg-dune-orange/20"
               >
                 <div className="relative p-6 sm:p-7">
                   <div className="flex items-start justify-between gap-3 mb-3">
@@ -749,8 +749,8 @@ export const GlossaryProvider: React.FC<{
                       <span
                         className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.15em] px-2 py-1 rounded-full ${
                           isLightMode
-                            ? "bg-rose-100 text-rose-800"
-                            : "bg-rose-500/15 text-rose-300"
+                            ? "bg-dune-rose text-dune-rose"
+                            : "bg-dune-rose/15 text-dune-rose"
                         }`}
                       >
                         <PlayCircle className="w-3.5 h-3.5" /> Video Explanation
@@ -761,8 +761,8 @@ export const GlossaryProvider: React.FC<{
                       aria-label="Close video"
                       className={`shrink-0 flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full border transition-colors ${
                         isLightMode
-                          ? "border-slate-300 text-slate-600 hover:bg-slate-100"
-                          : "border-white/15 text-slate-300 hover:bg-white/10"
+                          ? "border-border text-muted-foreground hover:bg-muted"
+                          : "border-white/15 text-foreground hover:bg-white/10"
                       }`}
                     >
                       <X className="w-3.5 h-3.5" /> Close
@@ -777,14 +777,14 @@ export const GlossaryProvider: React.FC<{
                     <VideoPanel id={activeVideoId} isLightMode={isLightMode} />
                   ) : (
                     <div
-                      className={`rounded-2xl border border-dashed p-6 text-center ${
+                      className={`rounded-[6px] border border-dashed p-6 text-center ${
                         isLightMode
-                          ? "border-rose-300/60 bg-rose-50/50 text-slate-600"
-                          : "border-rose-400/30 bg-rose-500/5 text-slate-300"
+                          ? "border-dune-rose/60 bg-dune-rose/50 text-muted-foreground"
+                          : "border-dune-rose/30 bg-dune-rose/5 text-foreground"
                       }`}
                     >
                       <PlayCircle
-                        className={`w-8 h-8 mx-auto mb-2 ${isLightMode ? "text-rose-500" : "text-rose-400"}`}
+                        className={`w-8 h-8 mx-auto mb-2 ${isLightMode ? "text-dune-rose" : "text-dune-rose"}`}
                       />
                       <p className="text-sm font-semibold">
                         Animation rendering soon
@@ -802,12 +802,12 @@ export const GlossaryProvider: React.FC<{
                     per="word"
                     preset="fade-in-blur"
                     speedReveal={2.4}
-                    className={`mt-4 text-sm leading-relaxed ${isLightMode ? "text-slate-700" : "text-slate-300"}`}
+                    className={`mt-4 text-sm leading-relaxed ${isLightMode ? "text-foreground" : "text-foreground"}`}
                   >
                     {video.plain}
                   </TextEffect>
                   <p
-                    className={`mt-3 pt-3 border-t text-[11px] font-mono ${isLightMode ? "border-slate-200 text-slate-500" : "border-white/10 text-slate-500"}`}
+                    className={`mt-3 pt-3 border-t text-[11px] font-mono ${isLightMode ? "border-border text-muted-foreground" : "border-white/10 text-muted-foreground"}`}
                   >
                     {video.length} · narrated · subtitles included
                   </p>
@@ -830,8 +830,8 @@ export const GlossaryProvider: React.FC<{
                 ariaLabel={`Sources for ${activeSourcesId}`}
                 maxWidthClass="max-w-lg"
                 scroll
-                glowA="bg-amber-400/20"
-                glowB="bg-teal-400/20"
+                glowA="bg-dune-orange/20"
+                glowB="bg-dune-teal/20"
               >
                 <div className="relative p-6 sm:p-7">
                   <div className="flex items-start justify-between gap-3 mb-3">
@@ -845,8 +845,8 @@ export const GlossaryProvider: React.FC<{
                       <span
                         className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.15em] px-2 py-1 rounded-full ${
                           isLightMode
-                            ? "bg-amber-100 text-amber-800"
-                            : "bg-amber-500/15 text-amber-300"
+                            ? "bg-dune-orange text-dune-orange"
+                            : "bg-dune-orange/15 text-dune-orange"
                         }`}
                       >
                         <BookText className="w-3.5 h-3.5" /> Sources
@@ -857,8 +857,8 @@ export const GlossaryProvider: React.FC<{
                       aria-label="Close sources"
                       className={`shrink-0 flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full border transition-colors ${
                         isLightMode
-                          ? "border-slate-300 text-slate-600 hover:bg-slate-100"
-                          : "border-white/15 text-slate-300 hover:bg-white/10"
+                          ? "border-border text-muted-foreground hover:bg-muted"
+                          : "border-white/15 text-foreground hover:bg-white/10"
                       }`}
                     >
                       <X className="w-3.5 h-3.5" /> Close
@@ -870,7 +870,7 @@ export const GlossaryProvider: React.FC<{
                     per="word"
                     preset="fade-in-blur"
                     speedReveal={2.2}
-                    className={`text-sm leading-relaxed mb-5 ${isLightMode ? "text-slate-700" : "text-slate-300"}`}
+                    className={`text-sm leading-relaxed mb-5 ${isLightMode ? "text-foreground" : "text-foreground"}`}
                   >
                     {sources.intro}
                   </TextEffect>
@@ -879,25 +879,25 @@ export const GlossaryProvider: React.FC<{
                     {sources.sources.map((s, i) => (
                       <li
                         key={i}
-                        className={`rounded-2xl border p-4 flex gap-3 ${
+                        className={`rounded-[6px] border p-4 flex gap-3 ${
                           isLightMode
-                            ? "bg-white/70 border-slate-200"
-                            : "bg-slate-950/50 border-white/10"
+                            ? "bg-white/70 border-border"
+                            : "bg-dune-basalt/50 border-white/10"
                         }`}
                       >
                         <FileText
                           className={`w-4 h-4 mt-0.5 shrink-0 ${
                             s.kind === "internal"
                               ? isLightMode
-                                ? "text-teal-600"
-                                : "text-teal-400"
+                                ? "text-dune-teal"
+                                : "text-dune-teal"
                               : s.kind === "model"
                                 ? isLightMode
-                                  ? "text-amber-600"
-                                  : "text-amber-400"
+                                  ? "text-dune-orange"
+                                  : "text-dune-orange"
                                 : isLightMode
-                                  ? "text-amber-600"
-                                  : "text-amber-400"
+                                  ? "text-dune-orange"
+                                  : "text-dune-orange"
                           }`}
                         />
                         <div className="min-w-0">
@@ -908,8 +908,8 @@ export const GlossaryProvider: React.FC<{
                               rel="noopener noreferrer"
                               className={`group/src inline-flex items-baseline gap-1 text-[13px] font-bold leading-snug underline decoration-dotted underline-offset-2 transition-colors ${
                                 isLightMode
-                                  ? "text-amber-700 hover:text-amber-900 decoration-amber-400"
-                                  : "text-amber-300 hover:text-amber-100 decoration-amber-400/60"
+                                  ? "text-dune-orange hover:text-dune-orange decoration-dune-orange"
+                                  : "text-dune-orange hover:text-dune-orange decoration-dune-orange/60"
                               }`}
                             >
                               <span>{s.label}</span>
@@ -919,15 +919,15 @@ export const GlossaryProvider: React.FC<{
                               className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full ${
                                 s.kind === "internal"
                                   ? isLightMode
-                                    ? "bg-teal-100 text-teal-700"
-                                    : "bg-teal-500/15 text-teal-300"
+                                    ? "bg-dune-teal text-dune-teal"
+                                    : "bg-dune-teal/15 text-dune-teal"
                                   : s.kind === "model"
                                     ? isLightMode
-                                      ? "bg-amber-100 text-amber-700"
-                                      : "bg-amber-500/15 text-amber-300"
+                                      ? "bg-dune-orange text-dune-orange"
+                                      : "bg-dune-orange/15 text-dune-orange"
                                     : isLightMode
-                                      ? "bg-amber-100 text-amber-700"
-                                      : "bg-amber-500/15 text-amber-300"
+                                      ? "bg-dune-orange text-dune-orange"
+                                      : "bg-dune-orange/15 text-dune-orange"
                               }`}
                             >
                               {s.kind === "internal"
@@ -938,7 +938,7 @@ export const GlossaryProvider: React.FC<{
                             </span>
                           </div>
                           <p
-                            className={`mt-1 text-xs leading-relaxed ${isLightMode ? "text-slate-600" : "text-slate-400"}`}
+                            className={`mt-1 text-xs leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                           >
                             {s.detail}
                           </p>
@@ -948,7 +948,7 @@ export const GlossaryProvider: React.FC<{
                   </ol>
 
                   <p
-                    className={`mt-4 pt-3 border-t text-[11px] leading-relaxed ${isLightMode ? "border-slate-200 text-slate-500" : "border-white/10 text-slate-500"}`}
+                    className={`mt-4 pt-3 border-t text-[11px] leading-relaxed ${isLightMode ? "border-border text-muted-foreground" : "border-white/10 text-muted-foreground"}`}
                   >
                     These are the model&apos;s grounding references, drawn from
                     the calibration provenance in the code. Each title links out
@@ -974,8 +974,8 @@ export const GlossaryProvider: React.FC<{
                 ariaLabel={`${code.title}, code and preliminary plots`}
                 maxWidthClass="max-w-3xl"
                 scroll
-                glowA="bg-teal-400/20"
-                glowB="bg-amber-400/20"
+                glowA="bg-dune-teal/20"
+                glowB="bg-dune-orange/20"
               >
                 <div className="relative p-6 sm:p-7">
                   <div className="flex items-start justify-between gap-3 mb-3">
@@ -989,8 +989,8 @@ export const GlossaryProvider: React.FC<{
                       <span
                         className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.15em] px-2 py-1 rounded-full ${
                           isLightMode
-                            ? "bg-teal-100 text-teal-800"
-                            : "bg-teal-500/15 text-teal-300"
+                            ? "bg-dune-teal text-dune-teal"
+                            : "bg-dune-teal/15 text-dune-teal"
                         }`}
                       >
                         <Code2 className="w-3.5 h-3.5" /> Code &amp; Plots
@@ -1001,8 +1001,8 @@ export const GlossaryProvider: React.FC<{
                       aria-label="Close code"
                       className={`shrink-0 flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full border transition-colors ${
                         isLightMode
-                          ? "border-slate-300 text-slate-600 hover:bg-slate-100"
-                          : "border-white/15 text-slate-300 hover:bg-white/10"
+                          ? "border-border text-muted-foreground hover:bg-muted"
+                          : "border-white/15 text-foreground hover:bg-white/10"
                       }`}
                     >
                       <X className="w-3.5 h-3.5" /> Close
@@ -1017,12 +1017,12 @@ export const GlossaryProvider: React.FC<{
                     per="word"
                     preset="fade-in-blur"
                     speedReveal={2.2}
-                    className={`text-sm leading-relaxed mb-4 ${isLightMode ? "text-slate-700" : "text-slate-300"}`}
+                    className={`text-sm leading-relaxed mb-4 ${isLightMode ? "text-foreground" : "text-foreground"}`}
                   >
                     {code.intro}
                   </TextEffect>
                   <p
-                    className={`mb-4 text-[11px] font-mono ${isLightMode ? "text-slate-500" : "text-slate-500"}`}
+                    className={`mb-4 text-[11px] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                   >
                     {code.language}
                   </p>
@@ -1040,10 +1040,10 @@ export const GlossaryProvider: React.FC<{
                     {code.plots.map((pl, i) => (
                       <figure
                         key={i}
-                        className={`rounded-2xl border overflow-hidden ${
+                        className={`rounded-[6px] border overflow-hidden ${
                           isLightMode
-                            ? "bg-white/70 border-slate-200"
-                            : "bg-slate-950/50 border-white/10"
+                            ? "bg-white/70 border-border"
+                            : "bg-dune-basalt/50 border-white/10"
                         }`}
                       >
                         <img
@@ -1055,8 +1055,8 @@ export const GlossaryProvider: React.FC<{
                         <figcaption
                           className={`px-4 py-2.5 text-xs leading-relaxed border-t ${
                             isLightMode
-                              ? "border-slate-200 text-slate-600"
-                              : "border-white/10 text-slate-400"
+                              ? "border-border text-muted-foreground"
+                              : "border-white/10 text-muted-foreground"
                           }`}
                         >
                           {pl.caption}
@@ -1066,7 +1066,7 @@ export const GlossaryProvider: React.FC<{
                   </div>
 
                   <p
-                    className={`mt-4 pt-3 border-t text-[11px] leading-relaxed ${isLightMode ? "border-slate-200 text-slate-500" : "border-white/10 text-slate-500"}`}
+                    className={`mt-4 pt-3 border-t text-[11px] leading-relaxed ${isLightMode ? "border-border text-muted-foreground" : "border-white/10 text-muted-foreground"}`}
                   >
                     This script ports the module&apos;s physics from the toolkit
                     source; running it reproduces the plots above. Every constant
@@ -1130,9 +1130,9 @@ export const Term: React.FC<TermProps> = ({ k, term, children, className }) => {
       title={`${resolved.entry.title}, tap or drop Sandyx for an explanation`}
       className={`sandyx-term cursor-help underline decoration-dotted decoration-2 underline-offset-2 font-semibold transition-colors duration-150 rounded px-0.5 -mx-0.5 py-1 -my-1 ${
         isLightMode
-          ? "decoration-teal-500/70 text-slate-900 hover:text-teal-700"
-          : "decoration-teal-300/70 text-slate-100 hover:text-teal-300"
-      } ${isHovered ? (isLightMode ? "bg-teal-200/70 text-teal-900" : "bg-teal-400/25 text-teal-100") : ""} ${
+          ? "decoration-dune-teal/70 text-foreground hover:text-dune-teal"
+          : "decoration-dune-teal/70 text-foreground hover:text-dune-teal"
+      } ${isHovered ? (isLightMode ? "bg-dune-teal/70 text-dune-teal" : "bg-dune-teal/25 text-dune-teal") : ""} ${
         className || ""
       }`}
     >

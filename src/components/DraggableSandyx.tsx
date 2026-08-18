@@ -178,7 +178,7 @@ export default function DraggableSandyx({ size, className }: Props) {
           : { duration: 3.5, repeat: Infinity, ease: "easeInOut" }
       }
       style={{ width: size, height: "auto", touchAction: "none" }}
-      className={`object-contain select-none cursor-grab drop-shadow-xl active:cursor-grabbing ${className || ""}`}
+      className={`object-contain select-none cursor-grab drop- active:cursor-grabbing ${className || ""}`}
     />
   );
 }

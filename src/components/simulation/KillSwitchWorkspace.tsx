@@ -118,53 +118,34 @@ export default function KillSwitchWorkspace({ isLightMode, onBack }: Props) {
   }, []);
 
   return (
-    <div className="pt-6 pb-24 px-4 md:px-8 max-w-[1600px] mx-auto">
+    <div className="mx-auto max-w-[1500px] px-5 pb-32 pt-28 sm:px-8">
       {/* Header / summary banner */}
-      <div
-        className={`p-6 rounded-2xl border mb-8 transition-colors ${isLightMode ? "bg-white border-amber-900/10" : "bg-[#1c1512] border-slate-800/80"}`}
-      >
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <button
-              onClick={onBack}
-              className={`mb-3 flex items-center gap-2 px-3 py-1.5 text-xs font-bold rounded-xl transition ${isLightMode ? "bg-stone-100 hover:bg-stone-200 text-stone-700" : "bg-slate-900/80 hover:bg-slate-800 text-slate-300"}`}
-            >
-              <ArrowLeft className="w-4 h-4" /> Back to Landing
-            </button>
-            <h1
-              className={`flex items-center gap-2 text-xl md:text-2xl font-extrabold tracking-tight ${isLightMode ? "text-amber-950" : "text-white"}`}
-            >
-              <ShieldAlert className="w-6 h-6 text-dune-orange" />
-              Biocontainment Kill Switch
-            </h1>
-            <div className="flex flex-wrap items-center gap-2 mt-2">
-              <span
-                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${isLightMode ? "bg-stone-50 border-stone-200 text-stone-700" : "bg-slate-900/60 border-slate-700 text-slate-200"}`}
-              >
-                <ShieldAlert className="w-3.5 h-3.5 text-dune-orange" /> Biosafety
-                element
-              </span>
-              <span
-                className={`text-[11px] ml-1 ${isLightMode ? "text-stone-400" : "text-slate-500"}`}
-              >
-                · {SECTIONS.length} modules
-              </span>
-            </div>
-            <p
-              className={`mt-3 max-w-3xl text-sm ${isLightMode ? "text-stone-600" : "text-slate-400"}`}
-            >
-              <GlossaryText>
-                The biosafety element for the two engineered prongs. It controls
-                the population with a MazE/MazF toxin and antitoxin circuit,
-                contains gene transfer to wild microbes, and clears dormant
-                spores. This is modelled on its own.
-              </GlossaryText>
-            </p>
-          </div>
-        </div>
+      <div className="mb-12 border-b border-border pb-8">
+        <button
+          onClick={onBack}
+          className="caption mb-6 inline-flex items-center gap-2 transition-colors hover:text-foreground"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" /> Back to the models
+        </button>
+        <h1 className="flex items-center gap-2.5 text-[length:var(--text-h1)] text-foreground">
+          <ShieldAlert className="h-6 w-6 shrink-0 text-dune-orange" />
+          Biocontainment Kill Switch
+        </h1>
+        <p className="caption mt-3 flex flex-wrap items-center gap-x-3">
+          <span>Biosafety element</span>
+          <span className="opacity-60">{SECTIONS.length} modules</span>
+        </p>
+        <p className="mt-4 max-w-[70ch] text-[0.9375rem] leading-relaxed text-muted-foreground">
+          <GlossaryText>
+            The biosafety element for the two engineered prongs. It controls
+            the population with a MazE/MazF toxin and antitoxin circuit,
+            contains gene transfer to wild microbes, and clears dormant
+            spores. This is modelled on its own.
+          </GlossaryText>
+        </p>
 
         {/* Headline stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
+        <div className="mt-8 grid grid-cols-2 gap-x-8 gap-y-6 md:grid-cols-4">
           <HeadlineStat
             isLightMode={isLightMode}
             icon={Skull}
@@ -249,32 +230,20 @@ function SectionHeader({
   scale: string;
 }) {
   return (
-    <div className="flex items-center gap-3 mb-3">
-      <div
-        className={`flex items-center justify-center w-8 h-8 rounded-lg shrink-0 ${isLightMode ? "bg-amber-50 text-amber-600" : "bg-amber-950/40 text-amber-400"}`}
-      >
-        <Icon className="w-4 h-4" />
+    // Matches the simulation workspace: index and scale as captions above the
+    // title, no icon chip and no pill badge.
+    <div className="mb-5 border-b border-border pb-4">
+      <div className="caption mb-2 flex items-center gap-3">
+        <span>{String(index + 1).padStart(2, "0")}</span>
+        <span className="opacity-60">{scale}</span>
       </div>
-      <div className="min-w-0">
-        <h2
-          className={`text-sm font-black uppercase tracking-wide truncate ${isLightMode ? "text-slate-900" : "text-white"}`}
-        >
-          <span className="opacity-40 mr-1.5">
-            {String(index + 1).padStart(2, "0")}
-          </span>
-          {title}
-        </h2>
-        <p
-          className={`text-[11px] ${isLightMode ? "text-stone-500" : "text-slate-400"}`}
-        >
-          <GlossaryText max={4}>{blurb}</GlossaryText>
-        </p>
-      </div>
-      <span
-        className={`ml-auto text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border ${isLightMode ? "border-stone-200 text-stone-500" : "border-slate-700 text-slate-400"}`}
-      >
-        {scale}
-      </span>
+      <h2 className="flex items-center gap-2 text-[length:var(--text-h3)] text-foreground">
+        <Icon className="h-4 w-4 shrink-0 text-dune-orange" />
+        {title}
+      </h2>
+      <p className="mt-1.5 max-w-[70ch] text-[0.875rem] leading-snug text-muted-foreground">
+        <GlossaryText max={4}>{blurb}</GlossaryText>
+      </p>
     </div>
   );
 }
@@ -295,22 +264,20 @@ function HeadlineStat({
   emphasize?: boolean;
 }) {
   return (
-    <div
-      className={`p-3 rounded-[4px] border ${emphasize ? (isLightMode ? "bg-amber-50/60 border-amber-200" : "bg-amber-950/20 border-amber-900/40") : isLightMode ? "bg-[#fcfaf4] border-amber-900/10" : "bg-[#181210] border-border"}`}
-    >
-      <span
-        className={`flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider mb-1 ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
-      >
-        <Icon className="w-3 h-3 shrink-0" /> {label}
+    // A figure on a rule, matching the simulation workspace.
+    <div className={`border-t pt-3 ${emphasize ? "border-dune-orange" : "border-border"}`}>
+      <span className="caption mb-2 flex items-center gap-1.5">
+        <Icon className="h-3 w-3 shrink-0" /> {label}
       </span>
-      <div className="flex items-baseline gap-1">
+      <div className="flex items-baseline gap-1.5">
         <span
-          className={`font-black text-lg ${emphasize ? (isLightMode ? "text-amber-700" : "text-amber-400") : isLightMode ? "text-slate-800" : "text-slate-200"}`}
+          className={`tabular-nums ${emphasize ? "text-3xl text-dune-orange" : "text-2xl text-foreground"}`}
+          style={{ fontVariationSettings: '"wght" 620' }}
         >
           {value}
         </span>
         <span
-          className={`text-[10px] font-mono ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+          className={`text-[10px] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           {unit}
         </span>

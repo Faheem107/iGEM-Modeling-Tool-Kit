@@ -8,7 +8,7 @@
  * companion rail (a mascot + a module "tree" that fills in as you scroll).
  */
 
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { motion } from "motion/react";
 import { ArrowLeft, Wind, ShieldCheck, Gauge, Ban } from "lucide-react";
 
@@ -418,79 +418,85 @@ export default function SimulationWorkspace({
     ],
   );
 
+  // Deep links from the model index arrive as /model?prongs=1#mod-metabolic.
+  // The target section is not in the document on first paint: several modules
+  // are dynamically imported and all of them mount inside an error boundary,
+  // so the browser's own hash handling finds nothing and gives up. Resolve it
+  // ourselves once the section actually exists.
+  useEffect(() => {
+    const id = window.location.hash.slice(1);
+    if (!id.startsWith("mod-")) return;
+    let raf = 0;
+    let found = 0;
+    const deadline = performance.now() + 2500;
+    const settle = () => {
+      const el = document.getElementById(id);
+      if (el) {
+        const y = el.getBoundingClientRect().top + window.scrollY - 96;
+        if (Math.abs(y - window.scrollY) > 2) {
+          if (window.__lenis)
+            window.__lenis.scrollTo(y, { immediate: true, force: true });
+          else window.scrollTo(0, y);
+        }
+        found++;
+      }
+      // Keep correcting for a beat after the first hit: the modules ABOVE this
+      // one are still mounting (several are dynamically imported), and every
+      // one of them that appears pushes the target further down the page.
+      if (performance.now() < deadline && found < 90)
+        raf = requestAnimationFrame(settle);
+    };
+    raf = requestAnimationFrame(settle);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  // The index and the scale label live in the rail, so position carries them
+  // instead of an icon chip and a pill badge.
   const sectionHeader = (m: ModuleMeta, index: number) => (
-    <div className="flex items-center gap-3 mb-3">
-      <div
-        className={`flex items-center justify-center w-8 h-8 rounded-lg shrink-0 ${isLightMode ? "bg-amber-50 text-amber-600" : "bg-amber-950/40 text-amber-400"}`}
-      >
-        <m.icon className="w-4 h-4" />
+    <div className="mb-5 border-b border-border pb-4">
+      <div className="caption mb-2 flex items-center gap-3">
+        <span>{String(index + 1).padStart(2, "0")}</span>
+        <span className="opacity-60">{m.scale}</span>
       </div>
-      <div className="min-w-0">
-        <h2
-          className={`text-sm font-black uppercase tracking-wide truncate ${isLightMode ? "text-slate-900" : "text-white"}`}
-        >
-          <span className="opacity-40 mr-1.5">
-            {String(index + 1).padStart(2, "0")}
-          </span>
-          {m.title}
-        </h2>
-        <p
-          className={`text-[11px] ${isLightMode ? "text-stone-500" : "text-slate-400"}`}
-        >
-          <GlossaryText max={4}>{m.blurb}</GlossaryText>
-        </p>
-      </div>
-      <span
-        className={`ml-auto text-[9px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border ${isLightMode ? "border-stone-200 text-stone-500" : "border-slate-700 text-slate-400"}`}
-      >
-        {m.scale}
-      </span>
+      <h2 className="flex items-center gap-2 text-[length:var(--text-h3)] text-foreground">
+        <m.icon className="h-4 w-4 shrink-0 text-dune-teal" />
+        {m.title}
+      </h2>
+      <p className="mt-1.5 max-w-[70ch] text-[0.875rem] leading-snug text-muted-foreground">
+        <GlossaryText max={4}>{m.blurb}</GlossaryText>
+      </p>
     </div>
   );
 
   return (
-    <div className="pt-6 pb-24 px-4 md:px-8 max-w-[1600px] mx-auto">
+    <div className="mx-auto max-w-[1500px] px-5 pb-32 pt-28 sm:px-8">
       {/* Header / summary banner */}
-      <div
-        className={`p-6 rounded-2xl border mb-8 transition-colors ${isLightMode ? "bg-white border-amber-900/10 " : "bg-[#1c1512] border-slate-800/80 "}`}
-      >
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <button
-              onClick={onBack}
-              className={`mb-3 flex items-center gap-2 px-3 py-1.5 text-xs font-bold rounded-xl transition ${isLightMode ? "bg-stone-100 hover:bg-stone-200 text-stone-700" : "bg-slate-900/80 hover:bg-slate-800 text-slate-300"}`}
-            >
-              <ArrowLeft className="w-4 h-4" /> Back to Landing
-            </button>
-            <h1
-              className={`text-xl md:text-2xl font-extrabold tracking-tight ${isLightMode ? "text-amber-950" : "text-white"}`}
-            >
-              Tailored Simulation, {combinationLabel(prongs)}
-            </h1>
-            <div className="flex flex-wrap items-center gap-2 mt-2">
-              {prongs.map((p) => {
-                const P = PRONGS[p];
-                const Icon = P.icon;
-                return (
-                  <span
-                    key={p}
-                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${isLightMode ? "bg-stone-50 border-stone-200 text-stone-700" : "bg-slate-900/60 border-slate-700 text-slate-200"}`}
-                  >
-                    <Icon className={`w-3.5 h-3.5 ${P.accent}`} /> {P.title}
-                  </span>
-                );
-              })}
-              <span
-                className={`text-[11px] ml-1 ${isLightMode ? "text-stone-400" : "text-slate-500"}`}
-              >
-                · {modules.length} modules
+      <div className="mb-12 border-b border-border pb-8">
+        <button
+          onClick={onBack}
+          className="caption mb-6 inline-flex items-center gap-2 transition-colors hover:text-foreground"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" /> Back to the models
+        </button>
+        <h1 className="text-[length:var(--text-h1)] text-foreground">
+          {combinationLabel(prongs)}
+        </h1>
+        <p className="caption mt-3 flex flex-wrap items-center gap-x-3 gap-y-1">
+          {prongs.map((p) => {
+            const P = PRONGS[p];
+            const Icon = P.icon;
+            return (
+              <span key={p} className="inline-flex items-center gap-1.5">
+                <Icon className="h-3 w-3 text-dune-teal" />
+                {P.title}
               </span>
-            </div>
-          </div>
-        </div>
+            );
+          })}
+          <span className="opacity-60">{modules.length} modules</span>
+        </p>
 
         {/* Headline macro result */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
+        <div className="mt-8 grid grid-cols-2 gap-x-8 gap-y-6 md:grid-cols-4">
           <HeadlineStat
             isLightMode={isLightMode}
             icon={Wind}
@@ -562,20 +568,14 @@ export default function SimulationWorkspace({
 function AlginateRationaleBanner({ isLightMode }: { isLightMode: boolean }) {
   const reasons = PRONG_COPY.find((p) => p.id === 3)?.whyDropped ?? [];
   return (
-    <div
-      className={`mb-8 rounded-2xl border p-5 md:p-6 ${isLightMode ? "border-rose-200 bg-rose-50/60" : "border-rose-900/40 bg-rose-950/15"}`}
-    >
-      <div
-        className={`mb-2 flex items-center gap-2 ${isLightMode ? "text-rose-700" : "text-rose-300"}`}
-      >
-        <Ban className="h-4 w-4 shrink-0" />
-        <h2 className="text-sm font-black uppercase tracking-wide">
-          Sodium Alginate, modelled for comparison, not deployed as a prong
+    <div className="mb-12 border-t border-dune-rose pt-5">
+      <div className="mb-3 flex items-center gap-2 text-dune-rose">
+        <Ban className="h-3.5 w-3.5 shrink-0" />
+        <h2 className="caption text-dune-rose">
+          Modelled for comparison, not deployed as a prong
         </h2>
       </div>
-      <p
-        className={`mb-3 text-[13px] leading-relaxed ${isLightMode ? "text-rose-900/80" : "text-rose-100/70"}`}
-      >
+      <p className="mb-3 max-w-[70ch] text-[0.875rem] leading-relaxed text-muted-foreground">
         Alginate was originally scoped as a third prong (an externally applied
         binder). We kept it fully modelled here so its trade-offs stay
         quantifiable, but it is <strong>not</strong> part of the deployed design.
@@ -583,9 +583,7 @@ function AlginateRationaleBanner({ isLightMode }: { isLightMode: boolean }) {
         genetically-encoded kill switch. We did not proceed with it as a prong
         because:
       </p>
-      <ol
-        className={`list-decimal space-y-1.5 pl-5 text-[13px] leading-relaxed ${isLightMode ? "text-rose-900/80" : "text-rose-100/70"}`}
-      >
+      <ol className="max-w-[70ch] list-decimal space-y-1.5 pl-5 text-[0.875rem] leading-relaxed text-muted-foreground">
         {reasons.map((r, i) => (
           <li key={i}>{r}</li>
         ))}
@@ -612,24 +610,21 @@ function HeadlineStat({
   emphasize?: boolean;
 }) {
   return (
-    <div
-      className={`p-3 rounded-[4px] border ${emphasize ? (isLightMode ? "bg-amber-50/60 border-amber-200" : "bg-amber-950/20 border-amber-900/40") : isLightMode ? "bg-[#fcfaf4] border-amber-900/10" : "bg-[#181210] border-border"}`}
-    >
-      <span
-        className={`flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider mb-1 ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
-      >
-        <Icon className="w-3 h-3 shrink-0" />{" "}
+    // A figure on a rule. The emphasised one takes the accent rule and a larger
+    // number rather than a tinted box.
+    <div className={`border-t pt-3 ${emphasize ? "border-dune-orange" : "border-border"}`}>
+      <span className="caption mb-2 flex items-center gap-1.5">
+        <Icon className="h-3 w-3 shrink-0" />
         {termKey ? <Term k={termKey}>{label}</Term> : label}
       </span>
-      <div className="flex items-baseline gap-1">
+      <div className="flex items-baseline gap-1.5">
         <span
-          className={`font-black text-lg ${emphasize ? (isLightMode ? "text-amber-700" : "text-amber-400") : isLightMode ? "text-slate-800" : "text-slate-200"}`}
+          className={`tabular-nums ${emphasize ? "text-3xl text-dune-orange" : "text-2xl text-foreground"}`}
+          style={{ fontVariationSettings: '"wght" 620' }}
         >
           {value}
         </span>
-        <span
-          className={`text-[10px] font-mono ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
-        >
+        <span className="font-mono text-[10px] text-muted-foreground">
           {unit}
         </span>
       </div>

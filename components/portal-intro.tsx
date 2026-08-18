@@ -63,25 +63,28 @@ export function PortalIntro({ content }: { content: PortalIntroContent }) {
             exit={{ scale: 0.96, opacity: 0, y: 20 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-2xl p-8 md:p-10 rounded-[4px] relative bg-popover text-popover-foreground border border-border"
+            className="plate-solid relative w-full max-w-2xl p-8 text-popover-foreground md:p-10"
           >
             <button
               onClick={enter}
               aria-label="Close and enter"
-              className="absolute top-6 right-6 p-2 rounded-[3px] transition-colors bg-secondary hover:brightness-95"
+              className="absolute right-6 top-6 rounded-[4px] border border-border p-1.5 text-muted-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
             >
-              <X className="w-5 h-5" />
+              <X className="h-4 w-4" />
             </button>
 
-            <div className="mb-6 inline-block p-4 rounded-[4px] bg-secondary">
-              {content.icon}
-            </div>
+            <span className="caption mb-4 flex items-center gap-2 text-dune-orange">
+              <span className="[&_svg]:h-3.5 [&_svg]:w-3.5" aria-hidden>
+                {content.icon}
+              </span>
+              Before you start
+            </span>
 
             <TextEffect
               as="h2"
               per="word"
               preset="fade-in-blur"
-              className="text-3xl font-extrabold mb-8 tracking-tight"
+              className="mb-8 text-[length:var(--text-h1)]"
             >
               {content.title}
             </TextEffect>
@@ -95,16 +98,14 @@ export function PortalIntro({ content }: { content: PortalIntroContent }) {
                   transition={{ delay: 0.15 + i * 0.12, duration: 0.4 }}
                 >
                   <div className="flex items-baseline gap-3 mb-1.5">
-                    <span className="text-xs font-bold tabular-nums opacity-40">
+                    <span className="caption tabular-nums opacity-50">
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <h4
-                      className={`text-xs font-bold uppercase tracking-[0.15em] ${STEP_ACCENTS[i]}`}
-                    >
+                    <h4 className={`caption ${STEP_ACCENTS[i]}`}>
                       {step.label}
                     </h4>
                   </div>
-                  <p className="text-base leading-relaxed opacity-90 pl-8">
+                  <p className="pl-8 text-[0.9375rem] leading-relaxed text-muted-foreground">
                     {step.body}
                   </p>
                 </motion.li>
@@ -112,7 +113,7 @@ export function PortalIntro({ content }: { content: PortalIntroContent }) {
             </ol>
 
             <div className="mt-9 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <label className="flex items-center gap-2 text-sm opacity-70 cursor-pointer select-none">
+              <label className="flex cursor-pointer select-none items-center gap-2 text-[0.875rem] text-muted-foreground">
                 <input
                   type="checkbox"
                   checked={dontShow}
@@ -123,9 +124,9 @@ export function PortalIntro({ content }: { content: PortalIntroContent }) {
               </label>
               <button
                 onClick={enter}
-                className="px-8 py-3 rounded-[3px] bg-primary text-primary-foreground font-bold uppercase tracking-[0.15em] text-sm transition-opacity hover:opacity-90 flex items-center justify-center gap-2"
+                className="caption flex items-center justify-center gap-2 border border-border px-6 py-3 text-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
               >
-                Enter <ArrowRight className="w-4 h-4" />
+                Enter <ArrowRight className="h-3.5 w-3.5" />
               </button>
             </div>
           </motion.div>

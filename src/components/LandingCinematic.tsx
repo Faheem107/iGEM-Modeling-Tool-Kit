@@ -4,8 +4,10 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { createTimeline, svg, type Timeline } from "animejs";
 import { gsap } from "gsap";
+import StoryEscape, { skipToModels } from "@/src/components/landing/StoryEscape";
+import { storyPinLength } from "@/src/lib/scrollRestore";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import SandParticles from "./dune-story/SandParticles";
 import { duneGradient, grainOverlayStyle } from "@/src/lib/grain";
 import type { MolstarApi } from "@/components/molstar-viewer";
@@ -81,11 +83,9 @@ const smooth = (x: number, a: number, b: number) => {
 
 export default function LandingCinematic({
   isLightMode,
-  heroPeek = false,
   onOpenAdventure,
 }: {
   isLightMode: boolean;
-  heroPeek?: boolean;
   onOpenAdventure?: () => void;
 }) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -230,10 +230,10 @@ export default function LandingCinematic({
     const st = ScrollTrigger.create({
       trigger: scope,
       start: "top top",
-            // Pin length. Every beat is keyed to normalised progress, so this scales the
-      // whole story uniformly. Kept short enough that a reader reaches the prongs
-      // and the exposure modules without a long scroll.
-      end: "+=3100",
+      // Pin length. Every beat is keyed to normalised progress, so this scales
+      // the whole story uniformly rather than dropping any of it. A repeat
+      // visit in the same session gets the recap length.
+      end: storyPinLength(3100, 1400),
       pin: true,
       pinSpacing: true,
       scrub: 0.6,
@@ -291,6 +291,10 @@ export default function LandingCinematic({
           isLightMode ? "bg-[#e9c99a]" : "bg-[#0b0908]"
         }`}
       >
+        {/* Skip / Escape / progress rule. Inside the pinned scope so it stays
+            fixed with the story and disappears with it. */}
+        {!staticMode && <StoryEscape progressRef={progressRef} />}
+
         {/* --- SCENE 1: desert (photo) --- */}
         <div
           ref={desertRef}
@@ -390,97 +394,81 @@ export default function LandingCinematic({
           className="pointer-events-none absolute inset-0 z-[5]"
         />
 
-        {/* --- HERO OVERLAY (beat 0) --- */}
+        {/* --- HERO OVERLAY (beat 0) ---
+            Left-aligned on the site measure rather than centred in the middle
+            of the frame, so it shares an edge with every other page. Two plain
+            text affordances instead of a button: one into the models, one into
+            the story. Sandyx moves off the headline to a third quiet link. */}
         {!staticMode && (
           <div
             ref={heroRef}
-            className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 text-center"
+            className="absolute inset-0 z-20 flex items-center px-5 sm:px-8"
           >
-            <div className="mx-auto mt-[-6vh] flex w-full max-w-[1100px] flex-col items-center">
-              <div className="relative flex flex-col items-center">
-                <AnimatePresence>
-                  {heroPeek && (
-                    <motion.button
-                      type="button"
-                      onClick={onOpenAdventure}
-                      initial={{ y: 120, opacity: 0, scale: 0.7 }}
-                      animate={{ y: 0, opacity: 1, scale: 1 }}
-                      exit={{ y: 120, opacity: 0 }}
-                      transition={{ type: "spring", stiffness: 240, damping: 17 }}
-                      className="group absolute -top-[74px] left-1/2 z-30 flex -translate-x-1/2 cursor-pointer flex-col items-center"
-                      aria-label="Click Sandyx to play the interactive story"
-                    >
-                      <motion.span
-                        initial={{ opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.55 }}
-                        className="absolute -top-9 z-20 whitespace-nowrap rounded-full bg-dune-orange px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-[#241c19] md:text-[11px]"
-                      >
-                        Click me to fight sandstorms!
-                      </motion.span>
-                      <motion.img
-                        src="/sandyx.png"
-                        alt="Sandyx"
-                        draggable={false}
-                        className="w-24 object-contain drop-shadow-xl transition-transform duration-300 group-hover:scale-110 md:w-28"
-                        animate={{ rotate: [0, -4, 4, 0] }}
-                        transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
-                      />
-                    </motion.button>
-                  )}
-                </AnimatePresence>
-                <span className="hero-reveal hero-reveal-1 relative z-10 mb-6 block text-sm font-bold uppercase tracking-[0.2em] text-dune-orange md:text-base">
-                  NYUAD iGEM 2026
-                </span>
-              </div>
+            <div className="mx-auto w-full max-w-6xl">
+              <span className="hero-reveal hero-reveal-1 caption mb-6 block text-dune-orange">
+                NYUAD iGEM 2026
+              </span>
               {/* Plain, always-painted hero copy. It used to use a per-segment
                   framer-motion reveal (AnimatePresence + blur), which could get
                   stuck in its hidden/blurred state during the re-render storm of
-                  a fast programmatic scroll to the top, so the title/subtitle
-                  vanished while the (plain) Sandyx button kept showing. Static
-                  text has no animation state to get stuck, so it is always
-                  visible whenever the hero is. text-shadow (paint) not
+                  a fast programmatic scroll to the top, so the title vanished
+                  while the Sandyx button kept showing. Static text has no
+                  animation state to get stuck. text-shadow (paint) not
                   drop-shadow (a compositing filter that can drop out mid-pin). */}
               <h1
                 style={{
                   textShadow: isLightMode
-                    ? "0 2px 14px rgba(255,255,255,0.5)"
-                    : "0 2px 18px rgba(0,0,0,0.55)",
+                    ? "0 2px 14px rgba(255,255,255,0.45)"
+                    : "0 2px 18px rgba(0,0,0,0.5)",
                 }}
-                className={`hero-reveal hero-reveal-2 mb-4 whitespace-pre-line font-display text-2xl font-extrabold uppercase leading-[1.1] tracking-tight md:text-4xl lg:text-5xl ${
-                  isLightMode ? "text-dune-maroon" : "text-white"
+                className={`hero-reveal hero-reveal-2 max-w-[16ch] text-[length:var(--text-display)] leading-[0.98] ${
+                  isLightMode ? "text-dune-maroon" : "text-dune-paper"
                 }`}
               >
-                {"iGEM Modeling Toolkit To\nStudy Sand Stabilization"}
+                Locking down the dunes
               </h1>
               <p
                 style={{
                   textShadow: isLightMode
-                    ? "0 1px 8px rgba(255,255,255,0.5)"
-                    : "0 1px 10px rgba(0,0,0,0.5)",
+                    ? "0 1px 8px rgba(255,255,255,0.45)"
+                    : "0 1px 10px rgba(0,0,0,0.45)",
                 }}
-                className={`hero-reveal hero-reveal-3 mx-auto max-w-3xl text-base font-medium leading-relaxed md:text-lg lg:text-xl ${
-                  isLightMode ? "text-dune-maroon/85" : "text-white/90"
+                className={`hero-reveal hero-reveal-3 mt-6 max-w-[46ch] text-[length:var(--text-lede)] leading-relaxed ${
+                  isLightMode ? "text-dune-maroon/85" : "text-dune-paper/85"
                 }`}
               >
-                Explore our simulated two-pronged engineered solution, plus a
-                genetically-encoded kill switch, to tackle wind-driven sand movement
+                A modelling toolkit for a two-pronged engineered crust, plus a
+                genetically-encoded kill switch, against wind-driven sand.
               </p>
-            </div>
-            <div
-              className={`absolute bottom-10 left-1/2 flex -translate-x-1/2 flex-col items-center gap-3 ${
-                isLightMode ? "text-dune-maroon/75" : "text-white/80"
-              }`}
-            >
-              <span className="text-xs font-bold uppercase tracking-[0.3em]">
-                Scroll to learn more
-              </span>
-              <div className="relative h-9 w-px overflow-hidden bg-current/25">
-                <motion.div
-                  animate={{ y: ["-100%", "140%"] }}
-                  transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
-                  className="absolute inset-x-0 top-0 h-3 bg-current"
-                />
+
+              <div
+                className={`hero-reveal hero-reveal-3 mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 ${
+                  isLightMode ? "text-dune-maroon" : "text-dune-paper"
+                }`}
+              >
+                <button
+                  type="button"
+                  onClick={skipToModels}
+                  className="caption rule-link text-current"
+                >
+                  Explore the models
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    window.scrollBy({ top: window.innerHeight, behavior: "smooth" })
+                  }
+                  className="caption rule-link text-current"
+                >
+                  Watch the story
+                </button>
+                <button
+                  type="button"
+                  onClick={onOpenAdventure}
+                  className="caption rule-link text-current opacity-70 transition-opacity hover:opacity-100"
+                >
+                  Play as Sandyx
+                </button>
               </div>
             </div>
           </div>

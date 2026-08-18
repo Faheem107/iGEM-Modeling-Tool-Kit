@@ -88,7 +88,7 @@ export const PORTAL_INTROS: Record<
   "xanthan-flow": {
     storageKey: "portal-intro:xanthan-flow",
     title: "Xanthan Gum Flow Model",
-    icon: <Waves className="w-7 h-7 text-sky-500" />,
+    icon: <Waves className="w-7 h-7 text-dune-teal" />,
     steps: [
       {
         label: "What it is",

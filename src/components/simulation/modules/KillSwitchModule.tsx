@@ -101,11 +101,11 @@ export default function KillSwitchModule({ isLightMode }: Themed) {
               className={`flex items-center gap-1.5 rounded-[4px] border px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider transition-colors ${
                 active
                   ? isLightMode
-                    ? "border-amber-300 bg-amber-50 text-amber-800"
-                    : "border-amber-900/50 bg-amber-500/10 text-amber-300"
+                    ? "border-dune-orange bg-dune-orange text-dune-orange"
+                    : "border-dune-orange/50 bg-dune-orange/10 text-dune-orange"
                   : isLightMode
-                    ? "border-stone-200 bg-white text-stone-500 hover:bg-stone-50"
-                    : "border-slate-800 bg-[#1c1512] text-slate-400 hover:bg-slate-900/50"
+                    ? "border-border bg-white text-muted-foreground hover:bg-background"
+                    : "border-border bg-[#1c1512] text-muted-foreground hover:bg-dune-basalt/50"
               }`}
             >
               <Icon className="h-3.5 w-3.5" /> {t.label}
@@ -158,12 +158,12 @@ export function DynamicsTab({ isLightMode }: Themed) {
         <Panel title="Kill trigger" icon={Syringe} isLightMode={isLightMode}>
           <div className="space-y-4">
             <label className="flex items-center justify-between gap-2 text-[11px] font-semibold">
-              <span className={isLightMode ? "text-stone-700" : "text-slate-300"}>
+              <span className={isLightMode ? "text-foreground" : "text-foreground"}>
                 Add aTc trigger
               </span>
               <button
                 onClick={() => set({ induce: !p.induce })}
-                className={`relative h-6 w-11 rounded-full transition-colors ${p.induce ? "bg-dune-orange" : isLightMode ? "bg-stone-300" : "bg-slate-700"}`}
+                className={`relative h-6 w-11 rounded-full transition-colors ${p.induce ? "bg-dune-orange" : isLightMode ? "bg-muted" : "bg-muted"}`}
                 aria-pressed={p.induce}
               >
                 <span
@@ -173,7 +173,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
             </label>
             <Slider
               isLightMode={isLightMode}
-              accent="accent-amber-500"
+              accent="accent-dune-orange"
               label="aTc concentration"
               value={p.atc}
               min={0}
@@ -185,7 +185,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
             />
             <Slider
               isLightMode={isLightMode}
-              accent="accent-amber-500"
+              accent="accent-dune-orange"
               label="Trigger time"
               value={p.induceAt}
               min={0}
@@ -202,7 +202,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
           <div className="space-y-4">
             <Slider
               isLightMode={isLightMode}
-              accent="accent-teal-500"
+              accent="accent-dune-teal"
               label="Plasmid loss / generation"
               value={p.plasmidLossPerGen}
               min={0}
@@ -214,7 +214,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
             />
             <Slider
               isLightMode={isLightMode}
-              accent="accent-teal-500"
+              accent="accent-dune-teal"
               label="Generation time"
               value={p.genTime}
               min={0.4}
@@ -226,7 +226,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
             />
             <Slider
               isLightMode={isLightMode}
-              accent="accent-rose-500"
+              accent="accent-dune-rose"
               label="Antitoxin lability (δ_A)"
               value={p.deltaA}
               min={0.3}
@@ -310,7 +310,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
             label="Time to 3-log kill"
             value={tKill === null ? ", " : tKill.toFixed(1)}
             unit={tKill === null ? "" : "h"}
-            accent={isLightMode ? "text-rose-700" : "text-rose-400"}
+            accent={isLightMode ? "text-dune-rose" : "text-dune-rose"}
             emphasize
             sub={tKill === null ? "not reached in 48 h" : "99.9% cleared"}
           />
@@ -319,19 +319,19 @@ export function DynamicsTab({ isLightMode }: Themed) {
             label="Viability @ 48 h"
             value={finalLog.toFixed(1)}
             unit="log"
-            accent={isLightMode ? "text-amber-700" : "text-amber-400"}
+            accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
           />
           <StatCard
             isLightMode={isLightMode}
             label="Plasmid @ 24 h"
             value={`${(plasmid24 * 100).toFixed(0)}`}
             unit="%"
-            accent={isLightMode ? "text-teal-700" : "text-teal-400"}
+            accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
             sub="antitoxin source"
           />
         </div>
 
-        <p className={`text-[10px] leading-relaxed ${isLightMode ? "text-stone-500" : "text-slate-500"}`}>
+        <p className={`text-[10px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
           <GlossaryText>
             Two independent kill modes: the aTc trigger over-produces MazF on demand, while plasmid
             dilution slowly removes the antitoxin so the strain self-limits even with no inducer.
@@ -388,7 +388,7 @@ export function HgtTab({ isLightMode }: Themed) {
             />
             <Slider
               isLightMode={isLightMode}
-              accent="accent-amber-500"
+              accent="accent-dune-orange"
               label="Payload/toxin expression coupling"
               value={p.payloadExpression}
               min={0.4}
@@ -400,7 +400,7 @@ export function HgtTab({ isLightMode }: Themed) {
             />
             <Slider
               isLightMode={isLightMode}
-              accent="accent-teal-500"
+              accent="accent-dune-teal"
               label="Chromosome-fragment acquisition"
               value={p.chromFragFreq}
               min={0}
@@ -412,7 +412,7 @@ export function HgtTab({ isLightMode }: Themed) {
             />
             <Slider
               isLightMode={isLightMode}
-              accent="accent-rose-500"
+              accent="accent-dune-rose"
               label="Cognate-carrier recipients"
               value={p.cognateRecipients}
               min={0}
@@ -433,7 +433,7 @@ export function HgtTab({ isLightMode }: Themed) {
             label="Containment efficiency"
             value={`${(r.containmentEfficiency * 100).toFixed(1)}`}
             unit="%"
-            accent={isLightMode ? "text-teal-700" : "text-teal-400"}
+            accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
             emphasize
             sub="recipients that self-eliminate"
           />
@@ -441,7 +441,7 @@ export function HgtTab({ isLightMode }: Themed) {
             isLightMode={isLightMode}
             label="Escape / exposure"
             value={r.escapePerExposure.toExponential(1)}
-            accent={isLightMode ? "text-rose-700" : "text-rose-400"}
+            accent={isLightMode ? "text-dune-rose" : "text-dune-rose"}
             sub="HGT freq × escape prob."
           />
         </div>
@@ -474,7 +474,7 @@ export function HgtTab({ isLightMode }: Themed) {
                   className="inline-block h-2.5 w-2.5 rounded-sm"
                   style={{ background: ["#ef4444", "#f59e0b", "#94a3b8"][i] }}
                 />
-                <span className={isLightMode ? "text-stone-600" : "text-slate-400"}>
+                <span className={isLightMode ? "text-muted-foreground" : "text-muted-foreground"}>
                   {x.name}, {x.pct}%
                 </span>
               </div>
@@ -482,7 +482,7 @@ export function HgtTab({ isLightMode }: Themed) {
           </div>
         </Panel>
 
-        <p className={`text-[10px] leading-relaxed ${isLightMode ? "text-stone-500" : "text-slate-500"}`}>
+        <p className={`text-[10px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
           <GlossaryText>
             The plasmid carries an E. coli MazF linked to the biofilm payload; a wild recipient
             gets the toxin but not the cognate E. coli MazE, so it self-eliminates. Splitting and
@@ -527,7 +527,7 @@ export function SporeTab({ isLightMode }: Themed) {
             />
             <Slider
               isLightMode={isLightMode}
-              accent="accent-teal-500"
+              accent="accent-dune-teal"
               label="Distinct germinants"
               value={p.distinctGerminants}
               min={1}
@@ -538,7 +538,7 @@ export function SporeTab({ isLightMode }: Themed) {
             />
             <Slider
               isLightMode={isLightMode}
-              accent="accent-amber-500"
+              accent="accent-dune-orange"
               label="Germination per round (single)"
               value={p.baseGerminationPerRound}
               min={0.2}
@@ -549,7 +549,7 @@ export function SporeTab({ isLightMode }: Themed) {
             />
             <Slider
               isLightMode={isLightMode}
-              accent="accent-rose-500"
+              accent="accent-dune-rose"
               label="Superdormant floor"
               value={p.superdormantFloor}
               min={0}
@@ -561,7 +561,7 @@ export function SporeTab({ isLightMode }: Themed) {
             />
             <Slider
               isLightMode={isLightMode}
-              accent="accent-rose-500"
+              accent="accent-dune-rose"
               label="Re-sporulation"
               value={p.resporulation}
               min={0}
@@ -573,7 +573,7 @@ export function SporeTab({ isLightMode }: Themed) {
             />
             <Slider
               isLightMode={isLightMode}
-              accent="accent-teal-500"
+              accent="accent-dune-teal"
               label="Rounds"
               value={p.rounds}
               min={1}
@@ -607,7 +607,7 @@ export function SporeTab({ isLightMode }: Themed) {
             label="Total log-reduction"
             value={totalLog.toFixed(1)}
             unit="log"
-            accent={isLightMode ? "text-teal-700" : "text-teal-400"}
+            accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
             emphasize
           />
           <StatCard
@@ -615,12 +615,12 @@ export function SporeTab({ isLightMode }: Themed) {
             label="Residual viable spores"
             value={`${(residual * 100).toExponential(1)}`}
             unit="%"
-            accent={isLightMode ? "text-rose-700" : "text-rose-400"}
+            accent={isLightMode ? "text-dune-rose" : "text-dune-rose"}
             sub="of the original load"
           />
         </div>
 
-        <p className={`text-[10px] leading-relaxed ${isLightMode ? "text-stone-500" : "text-slate-500"}`}>
+        <p className={`text-[10px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
           <GlossaryText>
             MazF needs active translation, so it cannot touch a dormant spore, the spore must be
             germinated first. gerB* and multiple germinants wake more spores each round, but a
@@ -676,23 +676,23 @@ export function StructuresTab({ isLightMode }: Themed) {
               className={`w-full rounded-[5px] border p-3 text-left transition-colors ${
                 active
                   ? isLightMode
-                    ? "border-amber-300 bg-amber-50"
-                    : "border-amber-900/50 bg-amber-500/10"
+                    ? "border-dune-orange bg-dune-orange"
+                    : "border-dune-orange/50 bg-dune-orange/10"
                   : isLightMode
-                    ? "border-stone-200 bg-white hover:bg-stone-50"
-                    : "border-slate-800 bg-[#1c1512] hover:bg-slate-900/50"
+                    ? "border-border bg-white hover:bg-background"
+                    : "border-border bg-[#1c1512] hover:bg-dune-basalt/50"
               }`}
             >
-              <span className={`block text-[13px] font-bold ${isLightMode ? "text-stone-800" : "text-slate-200"}`}>
+              <span className={`block text-[13px] font-bold ${isLightMode ? "text-foreground" : "text-foreground"}`}>
                 {st.label}
               </span>
-              <span className={`block font-mono text-[10px] ${isLightMode ? "text-stone-500" : "text-slate-500"}`}>
+              <span className={`block font-mono text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
                 {st.sub}
               </span>
             </button>
           );
         })}
-        <p className={`text-[11px] leading-relaxed ${isLightMode ? "text-stone-600" : "text-slate-400"}`}>
+        <p className={`text-[11px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
           {s.desc}
         </p>
       </div>
@@ -700,7 +700,7 @@ export function StructuresTab({ isLightMode }: Themed) {
         <div className="relative h-[360px] w-full overflow-hidden rounded-[6px] border border-border bg-black/5 dark:bg-black/30">
           <MolstarViewer key={s.file} url={s.file} className="absolute inset-0 h-full w-full" />
         </div>
-        <p className={`mt-2 text-[10px] ${isLightMode ? "text-stone-500" : "text-slate-500"}`}>
+        <p className={`mt-2 text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
           Real experimental coordinates served from <code>/public/pdb</code>. Drag to rotate; scroll to zoom.
         </p>
       </div>
@@ -721,11 +721,11 @@ function Toggle({
   return (
     <div>
       <label className="flex items-center justify-between gap-2 text-[11px] font-semibold">
-        <span className={isLightMode ? "text-stone-700" : "text-slate-300"}>{label}</span>
+        <span className={isLightMode ? "text-foreground" : "text-foreground"}>{label}</span>
         <button
           onClick={onToggle}
           aria-pressed={on}
-          className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${on ? "bg-dune-teal" : isLightMode ? "bg-stone-300" : "bg-slate-700"}`}
+          className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${on ? "bg-dune-teal" : isLightMode ? "bg-muted" : "bg-muted"}`}
         >
           <span
             className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${on ? "left-[22px]" : "left-0.5"}`}
@@ -733,7 +733,7 @@ function Toggle({
         </button>
       </label>
       {hint && (
-        <span className={`mt-1 block text-[9px] ${isLightMode ? "text-stone-400" : "text-slate-500"}`}>
+        <span className={`mt-1 block text-[9px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
           <GlossaryText max={3}>{hint}</GlossaryText>
         </span>
       )}

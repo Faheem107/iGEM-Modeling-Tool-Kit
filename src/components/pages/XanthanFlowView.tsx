@@ -80,7 +80,7 @@ function logspace(min: number, max: number, count: number): number[] {
 }
 
 function formatDuration(seconds: number): string {
-  if (!isFinite(seconds)) return "—";
+  if (!isFinite(seconds)) return "n/a";
   if (seconds >= 60) return `${(seconds / 60).toFixed(1)} min`;
   if (seconds >= 1) return `${seconds.toFixed(1)} s`;
   return `${seconds.toFixed(2)} s`;
@@ -194,15 +194,15 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
     <div className="space-y-6">
       {/* Header banner, same pattern as the other modules (icon + title + subtitle). */}
       <div
-        className={`p-4 rounded-xl border flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors duration-300 ${
+        className={`p-4 rounded-[6px] border flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors duration-300 ${
           isLightMode
-            ? "bg-sky-50 border-sky-900/10"
-            : "bg-[#0f1a1e] border-slate-800"
+            ? "bg-dune-teal border-dune-teal/10"
+            : "bg-[#0f1a1e] border-border"
         }`}
       >
         <div className="flex items-center gap-3">
           <div
-            className={`p-2 rounded-lg ${isLightMode ? "bg-sky-100 text-sky-700" : "bg-sky-950/50 text-sky-300 border border-sky-900/50"}`}
+            className={`p-2 rounded-[4px] ${isLightMode ? "bg-dune-teal text-dune-teal" : "bg-dune-teal/50 text-dune-teal border border-dune-teal/50"}`}
           >
             <Waves className="w-5 h-5" />
           </div>
@@ -211,7 +211,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
               Xanthan Gum Flow Model
             </h1>
             <p
-              className={`text-[11px] mt-0.5 max-w-2xl ${isLightMode ? "text-stone-600" : "text-slate-400"}`}
+              className={`text-[11px] mt-0.5 max-w-2xl ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
             >
               Power-law pipe flow for the shear-thinning carrier fluid, mean
               speed ↔ pressure drop through a {TUBE.diameter * 100} cm
@@ -226,21 +226,21 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
             label="Diameter"
             value={(TUBE.diameter * 100).toFixed(0)}
             unit="cm"
-            accent={isLightMode ? "text-sky-700" : "text-sky-400"}
+            accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
           />
           <StatCard
             isLightMode={isLightMode}
             label="Length"
             value={(TUBE.length * 100).toFixed(0)}
             unit="cm"
-            accent={isLightMode ? "text-sky-700" : "text-sky-400"}
+            accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
           />
           <StatCard
             isLightMode={isLightMode}
             label="Flow regime"
             value="Laminar"
             sub="power-law fluid"
-            accent={isLightMode ? "text-sky-700" : "text-sky-400"}
+            accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
           />
         </div>
       </div>
@@ -248,7 +248,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
       {/* 1. Problem setup */}
       <Panel title="1 · Problem Setup" icon={Ruler} isLightMode={isLightMode}>
         <p
-          className={`text-[12px] leading-relaxed mb-4 ${isLightMode ? "text-stone-700" : "text-slate-300"}`}
+          className={`text-[12px] leading-relaxed mb-4 ${isLightMode ? "text-foreground" : "text-foreground"}`}
         >
           Xanthan gum solutions are strongly{" "}
           <b>shear-thinning</b> (pseudoplastic): their apparent viscosity
@@ -265,7 +265,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
             label="Diameter D"
             value={TUBE.diameter.toFixed(3)}
             unit="m"
-            accent={isLightMode ? "text-stone-700" : "text-slate-200"}
+            accent={isLightMode ? "text-foreground" : "text-foreground"}
             sub={`R = ${TUBE.radius.toFixed(3)} m`}
           />
           <StatCard
@@ -273,14 +273,14 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
             label="Length L"
             value={TUBE.length.toFixed(2)}
             unit="m"
-            accent={isLightMode ? "text-stone-700" : "text-slate-200"}
+            accent={isLightMode ? "text-foreground" : "text-foreground"}
           />
           <StatCard
             isLightMode={isLightMode}
             label="Geometry"
             value="Straight"
             sub="cylindrical tube"
-            accent={isLightMode ? "text-stone-700" : "text-slate-200"}
+            accent={isLightMode ? "text-foreground" : "text-foreground"}
           />
         </div>
       </Panel>
@@ -295,7 +295,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           <Katex tex="\tau = K\,\dot{\gamma}^{\,n}" />
         </div>
         <p
-          className={`text-[12px] leading-relaxed mb-4 ${isLightMode ? "text-stone-700" : "text-slate-300"}`}
+          className={`text-[12px] leading-relaxed mb-4 ${isLightMode ? "text-foreground" : "text-foreground"}`}
         >
           <b>K</b> [Pa·s<sup>n</sup>] is the <b>consistency index</b> (a
           viscosity-like scale factor); <b>n</b> [dimensionless] is the{" "}
@@ -312,7 +312,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
             label="n (behaviour index)"
             value={BASE_XANTHAN.n0.toFixed(3)}
             emphasize
-            accent={isLightMode ? "text-sky-700" : "text-sky-400"}
+            accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
             sub="shear-thinning"
           />
           <StatCard
@@ -321,18 +321,18 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
             value={BASE_XANTHAN.K0.toFixed(2)}
             unit={`Pa s^${BASE_XANTHAN.n0}`}
             emphasize
-            accent={isLightMode ? "text-sky-700" : "text-sky-400"}
+            accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
           />
           <StatCard
             isLightMode={isLightMode}
             label="ρ (density)"
             value={BASE_XANTHAN.rho.toFixed(0)}
             unit="kg/m³"
-            accent={isLightMode ? "text-stone-700" : "text-slate-200"}
+            accent={isLightMode ? "text-foreground" : "text-foreground"}
           />
         </div>
         <p
-          className={`text-[10px] leading-relaxed ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+          className={`text-[10px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           Replace these three numbers with a rheometer measurement (or the
           manufacturer's data sheet) of your actual solution, everything
@@ -348,7 +348,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
         isLightMode={isLightMode}
       >
         <p
-          className={`text-[12px] leading-relaxed mb-3 ${isLightMode ? "text-stone-700" : "text-slate-300"}`}
+          className={`text-[12px] leading-relaxed mb-3 ${isLightMode ? "text-foreground" : "text-foreground"}`}
         >
           Assuming steady, laminar, fully developed, incompressible,
           isothermal flow driven by a pressure drop ΔP over length L, a force
@@ -357,20 +357,20 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
         </p>
         <div className="grid sm:grid-cols-2 gap-3 mb-3">
           <div
-            className={`p-3 rounded-[4px] border flex flex-col items-center gap-1 ${isLightMode ? "border-amber-900/10 bg-[#fcfaf5]" : "border-border bg-[#1c1512]"}`}
+            className={`p-3 rounded-[4px] border flex flex-col items-center gap-1 ${isLightMode ? "border-dune-orange/10 bg-[#fcfaf5]" : "border-border bg-[#1c1512]"}`}
           >
             <span
-              className={`text-[9px] font-bold uppercase tracking-wider ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+              className={`text-[9px] font-bold uppercase tracking-wider ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
             >
               Mean speed from ΔP
             </span>
             <Katex tex="V=\dfrac{nR}{3n+1}\left(\dfrac{\Delta P\,R}{2KL}\right)^{1/n}" />
           </div>
           <div
-            className={`p-3 rounded-[4px] border flex flex-col items-center gap-1 ${isLightMode ? "border-amber-900/10 bg-[#fcfaf5]" : "border-border bg-[#1c1512]"}`}
+            className={`p-3 rounded-[4px] border flex flex-col items-center gap-1 ${isLightMode ? "border-dune-orange/10 bg-[#fcfaf5]" : "border-border bg-[#1c1512]"}`}
           >
             <span
-              className={`text-[9px] font-bold uppercase tracking-wider ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+              className={`text-[9px] font-bold uppercase tracking-wider ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
             >
               Pressure drop from V
             </span>
@@ -395,7 +395,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           </div>
         </MathDisclosure>
         <p
-          className={`text-[11px] leading-relaxed mt-3 ${isLightMode ? "text-stone-600" : "text-slate-400"}`}
+          className={`text-[11px] leading-relaxed mt-3 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           The flow is <b>nonlinear</b>: ΔP ∝ V<sup>n</sup> with n ≈{" "}
           {BASE_XANTHAN.n0}, so doubling the speed increases the required
@@ -421,7 +421,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
               (BASE_XANTHAN.n0 * TUBE.radius)
             ).toFixed(0)}
             unit="m⁻¹"
-            accent={isLightMode ? "text-stone-700" : "text-slate-200"}
+            accent={isLightMode ? "text-foreground" : "text-foreground"}
           />
           <StatCard
             isLightMode={isLightMode}
@@ -431,14 +431,14 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
               TUBE.radius
             ).toFixed(1)}
             unit="Pa"
-            accent={isLightMode ? "text-stone-700" : "text-slate-200"}
+            accent={isLightMode ? "text-foreground" : "text-foreground"}
           />
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-[11px] border-collapse">
             <thead>
               <tr
-                className={`text-left uppercase tracking-wider text-[9px] font-bold ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+                className={`text-left uppercase tracking-wider text-[9px] font-bold ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
               >
                 <th className="py-1.5 pr-3">V [cm/s]</th>
                 <th className="py-1.5 pr-3">ΔP [Pa]</th>
@@ -449,7 +449,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
               {sampleTable.map((row) => (
                 <tr
                   key={row.vCm}
-                  className={`border-t ${isLightMode ? "border-amber-900/10" : "border-border"}`}
+                  className={`border-t ${isLightMode ? "border-dune-orange/10" : "border-border"}`}
                 >
                   <td className="py-1.5 pr-3 font-mono">
                     {row.vCm.toFixed(1)}
@@ -466,7 +466,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           </table>
         </div>
         <p
-          className={`text-[10px] mt-2 leading-relaxed ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+          className={`text-[10px] mt-2 leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           Despite a 20× speed-up from 0.5 to 10 cm/s, the required pressure
           only about doubles ({sampleTable[0].dP.toFixed(0)} →{" "}
@@ -526,7 +526,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           </LineChart>
         </ResponsiveContainer>
         <p
-          className={`mt-2 text-[10px] leading-relaxed ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+          className={`mt-2 text-[10px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           The strongly sublinear (concave) shape is the hallmark of
           shear-thinning flow: large increases in speed require only modest
@@ -542,7 +542,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
         isLightMode={isLightMode}
       >
         <p
-          className={`text-[12px] leading-relaxed mb-3 ${isLightMode ? "text-stone-700" : "text-slate-300"}`}
+          className={`text-[12px] leading-relaxed mb-3 ${isLightMode ? "text-foreground" : "text-foreground"}`}
         >
           Let φ = c/c₀ ∈ [0,1] be the concentration fraction relative to the
           undiluted 1% w/w base (φ = 1 undiluted, φ = 0.5 a 1:1 dilution, φ =
@@ -550,12 +550,12 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
         </p>
         <div className="grid sm:grid-cols-2 gap-3 mb-3">
           <div
-            className={`p-3 rounded-[4px] border flex flex-col items-center gap-1 ${isLightMode ? "border-amber-900/10 bg-[#fcfaf5]" : "border-border bg-[#1c1512]"}`}
+            className={`p-3 rounded-[4px] border flex flex-col items-center gap-1 ${isLightMode ? "border-dune-orange/10 bg-[#fcfaf5]" : "border-border bg-[#1c1512]"}`}
           >
             <Katex tex="K(\varphi)=K_w+(K_0-K_w)\varphi^{\alpha}" />
           </div>
           <div
-            className={`p-3 rounded-[4px] border flex flex-col items-center gap-1 ${isLightMode ? "border-amber-900/10 bg-[#fcfaf5]" : "border-border bg-[#1c1512]"}`}
+            className={`p-3 rounded-[4px] border flex flex-col items-center gap-1 ${isLightMode ? "border-dune-orange/10 bg-[#fcfaf5]" : "border-border bg-[#1c1512]"}`}
           >
             <Katex tex="n(\varphi)=1-(1-n_0)\varphi^{\beta}" />
           </div>
@@ -566,27 +566,27 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
             label="Kw (water)"
             value={DILUTION.Kw.toFixed(3)}
             unit="Pa s"
-            accent={isLightMode ? "text-stone-700" : "text-slate-200"}
+            accent={isLightMode ? "text-foreground" : "text-foreground"}
           />
           <StatCard
             isLightMode={isLightMode}
             label="α (K exponent)"
             value={DILUTION.alpha.toFixed(1)}
-            accent={isLightMode ? "text-stone-700" : "text-slate-200"}
+            accent={isLightMode ? "text-foreground" : "text-foreground"}
             sub="K falls faster than linear"
           />
           <StatCard
             isLightMode={isLightMode}
             label="β (n exponent)"
             value={DILUTION.beta.toFixed(1)}
-            accent={isLightMode ? "text-stone-700" : "text-slate-200"}
+            accent={isLightMode ? "text-foreground" : "text-foreground"}
             sub="n rises slower than linear"
           />
           <StatCard
             isLightMode={isLightMode}
             label="Halving K"
             value={`≈${Math.pow(2, DILUTION.alpha).toFixed(1)}×`}
-            accent={isLightMode ? "text-sky-700" : "text-sky-400"}
+            accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
             sub="per halved concentration"
           />
         </div>
@@ -594,7 +594,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           <table className="w-full text-[11px] border-collapse">
             <thead>
               <tr
-                className={`text-left uppercase tracking-wider text-[9px] font-bold ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+                className={`text-left uppercase tracking-wider text-[9px] font-bold ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
               >
                 <th className="py-1.5 pr-3">Concentration φ</th>
                 <th className="py-1.5 pr-3">K [Pa sⁿ]</th>
@@ -608,7 +608,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
               {dilutionTable.map((row) => (
                 <tr
                   key={row.level}
-                  className={`border-t ${isLightMode ? "border-amber-900/10" : "border-border"}`}
+                  className={`border-t ${isLightMode ? "border-dune-orange/10" : "border-border"}`}
                 >
                   <td className="py-1.5 pr-3 font-mono">
                     {pctLabel(row.level)}
@@ -628,7 +628,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           </table>
         </div>
         <p
-          className={`text-[10px] leading-relaxed ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+          className={`text-[10px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           Values at a fixed applied pressure of 100 Pa. Because K falls
           steeply with dilution while n rises toward 1, speed is extremely
@@ -647,10 +647,10 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           <h3
             className={`text-xs font-extrabold uppercase tracking-wider flex items-center gap-2 ${isLightMode ? "text-dune-maroon" : "text-dune-paper"}`}
           >
-            <Gauge className="w-4 h-4 text-sky-500" /> Interactive Calculator
+            <Gauge className="w-4 h-4 text-dune-teal" /> Interactive Calculator
           </h3>
           <p
-            className={`text-[11px] leading-relaxed ${isLightMode ? "text-stone-600" : "text-slate-400"}`}
+            className={`text-[11px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             The write-up notes a static document "cannot include interactive
             sliders", pick a concentration and applied pressure below to
@@ -663,7 +663,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
             max={1}
             step={0.01}
             isLightMode={isLightMode}
-            accent="accent-sky-500"
+            accent="accent-dune-teal"
             format={(v) => pctLabel(v)}
             onChange={setPhi}
           />
@@ -675,7 +675,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
             step={5}
             unit="Pa"
             isLightMode={isLightMode}
-            accent="accent-sky-500"
+            accent="accent-dune-teal"
             onChange={setAppliedPressure}
           />
           <div className="grid grid-cols-2 gap-3">
@@ -684,13 +684,13 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
               label="K(φ)"
               value={liveParams.K.toFixed(3)}
               unit="Pa sⁿ"
-              accent={isLightMode ? "text-sky-700" : "text-sky-400"}
+              accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
             />
             <StatCard
               isLightMode={isLightMode}
               label="n(φ)"
               value={liveParams.n.toFixed(3)}
-              accent={isLightMode ? "text-sky-700" : "text-sky-400"}
+              accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
             />
             <StatCard
               isLightMode={isLightMode}
@@ -698,20 +698,20 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
               value={liveSpeedCm.toFixed(2)}
               unit="cm/s"
               emphasize
-              accent={isLightMode ? "text-stone-800" : "text-slate-100"}
+              accent={isLightMode ? "text-foreground" : "text-foreground"}
             />
             <StatCard
               isLightMode={isLightMode}
               label="Flow rate Q"
               value={liveFlowRate.toFixed(1)}
               unit="mL/min"
-              accent={isLightMode ? "text-stone-800" : "text-slate-100"}
+              accent={isLightMode ? "text-foreground" : "text-foreground"}
             />
             <StatCard
               isLightMode={isLightMode}
               label="Transit time"
               value={formatDuration(liveTransit)}
-              accent={isLightMode ? "text-stone-800" : "text-slate-100"}
+              accent={isLightMode ? "text-foreground" : "text-foreground"}
             />
             <StatCard
               isLightMode={isLightMode}
@@ -720,11 +720,11 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
               accent={
                 liveLaminar
                   ? isLightMode
-                    ? "text-emerald-700"
-                    : "text-emerald-400"
+                    ? "text-dune-teal"
+                    : "text-dune-teal"
                   : isLightMode
-                    ? "text-rose-700"
-                    : "text-rose-400"
+                    ? "text-dune-rose"
+                    : "text-dune-rose"
               }
               sub={liveLaminar ? "laminar" : "check: near/above 2100"}
             />
@@ -734,7 +734,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           <h3
             className={`text-xs font-extrabold uppercase tracking-wider flex items-center gap-2 ${isLightMode ? "text-dune-maroon" : "text-dune-paper"}`}
           >
-            <Droplets className="w-4 h-4 text-sky-500" /> ΔP vs. V by
+            <Droplets className="w-4 h-4 text-dune-teal" /> ΔP vs. V by
             Concentration
           </h3>
           <ResponsiveContainer width="100%" height={300}>
@@ -807,7 +807,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
             </LineChart>
           </ResponsiveContainer>
           <p
-            className={`text-[10px] leading-relaxed ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+            className={`text-[10px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             Dashed lines are the five reference concentrations (mirrors the
             write-up's Figure 1); the bold amber line is your slider's live
@@ -824,7 +824,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
         isLightMode={isLightMode}
       >
         <p
-          className={`text-[12px] leading-relaxed mb-3 ${isLightMode ? "text-stone-700" : "text-slate-300"}`}
+          className={`text-[12px] leading-relaxed mb-3 ${isLightMode ? "text-foreground" : "text-foreground"}`}
         >
           The derivation assumes laminar flow, checked with the Metzner–Reed
           generalized Reynolds number for power-law fluids:
@@ -833,7 +833,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           <Katex tex="Re_{MR}=\dfrac{\rho\,V^{2-n}D^{n}}{8^{\,n-1}K\left(\dfrac{3n+1}{4n}\right)^{n}}" />
         </div>
         <p
-          className={`text-[11px] leading-relaxed ${isLightMode ? "text-stone-600" : "text-slate-400"}`}
+          className={`text-[11px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           As with Newtonian pipe flow, Re<sub>MR</sub> ≲{" "}
           {RE_LAMINAR_LIMIT} is a reasonable laminar cutoff. At the flow
@@ -844,7 +844,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           those results should be verified experimentally. Your current
           slider setting gives Re<sub>MR</sub> ≈{" "}
           <b>{liveRe < 1 ? liveRe.toExponential(1) : liveRe.toFixed(0)}</b> (
-          {liveLaminar ? "laminar" : "check — near/above the cutoff"}).
+          {liveLaminar ? "laminar" : "check, near or above the cutoff"}).
         </p>
       </Panel>
 
@@ -855,7 +855,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
         isLightMode={isLightMode}
       >
         <ol
-          className={`list-decimal list-inside space-y-2 text-[12px] leading-relaxed ${isLightMode ? "text-stone-700" : "text-slate-300"}`}
+          className={`list-decimal list-inside space-y-2 text-[12px] leading-relaxed ${isLightMode ? "text-foreground" : "text-foreground"}`}
         >
           <li>
             Measure or look up K, n, and ρ for the actual xanthan gum
@@ -876,8 +876,8 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
         <div
           className={`mt-4 p-3 rounded-[4px] border text-[11px] flex items-start gap-2 ${
             isLightMode
-              ? "bg-amber-50 text-amber-800 border-amber-200"
-              : "bg-amber-950/20 text-amber-300 border-amber-900/40"
+              ? "bg-dune-orange text-dune-orange border-dune-orange"
+              : "bg-dune-orange/20 text-dune-orange border-dune-orange/40"
           }`}
         >
           <TriangleAlert className="w-4 h-4 shrink-0 mt-0.5" />

@@ -469,10 +469,10 @@ export default function CrossLinkingBiophysics({
 
   return (
     <div
-      className={`grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 rounded-xl border transition-all duration-300 ${
+      className={`grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 rounded-[6px] border transition-all duration-300 ${
         isLightMode
-          ? "bg-[#fdfaf3] border-amber-900/10 shadow-[0_4px_24px_rgba(139,94,26,0.06)]"
-          : "bg-[#1c1512] border-slate-800 "
+          ? "bg-[#fdfaf3] border-dune-orange/10 shadow-[0_4px_24px_rgba(139,94,26,0.06)]"
+          : "bg-[#1c1512] border-border "
       }`}
       id="crosslinking-biophysics-panel"
     >
@@ -482,53 +482,53 @@ export default function CrossLinkingBiophysics({
 
       {/* Parameter Controls Panel */}
       <div
-        className={`lg:col-span-12 xl:col-span-5 p-5 rounded-xl border transition-colors duration-300 ${isLightMode ? "bg-white border-amber-900/10" : "bg-[#1c1512] border-slate-800/80"} space-y-5 flex flex-col justify-between`}
+        className={`lg:col-span-12 xl:col-span-5 p-5 rounded-[6px] border transition-colors duration-300 ${isLightMode ? "bg-white border-dune-orange/10" : "bg-[#1c1512] border-border"} space-y-5 flex flex-col justify-between`}
       >
         <div className="space-y-4">
           {/* Module Header */}
           <div
-            className={`flex justify-between items-center pb-3 border-b ${isLightMode ? "border-amber-905_10" : "border-slate-800"}`}
+            className={`flex justify-between items-center pb-3 border-b ${isLightMode ? "border-amber-905_10" : "border-border"}`}
           >
             <h3
-              className={`text-xs font-black uppercase tracking-wider flex items-center gap-2 font-mono ${isLightMode ? "text-amber-950" : "text-slate-100"}`}
+              className={`text-xs font-black uppercase tracking-wider flex items-center gap-2 font-mono ${isLightMode ? "text-dune-orange" : "text-foreground"}`}
             >
               <Layers
-                className={`w-5 h-5 ${isLightMode ? "text-teal-600" : "text-teal-400"}`}
+                className={`w-5 h-5 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
               />
               Bio-cementation{" "}
               <GlossaryTerm term="cross-linking">Cross-Link</GlossaryTerm>{" "}
               Settings
             </h3>
             <div
-              className={`flex gap-1.5 p-1 rounded border ${isLightMode ? "bg-amber-50/50 border-amber-900/10" : "bg-[#1c1512] border-slate-800"}`}
+              className={`flex gap-1.5 p-1 rounded border ${isLightMode ? "bg-dune-orange/50 border-dune-orange/10" : "bg-[#1c1512] border-border"}`}
             >
               <button
                 onClick={() => handlePreset("day")}
                 className={`px-2 py-1 text-[9px] font-mono font-bold rounded flex items-center gap-1 cursor-pointer transition ${
                   activePreset === "day"
                     ? isLightMode
-                      ? "bg-white text-teal-800 border border-amber-900/15 "
-                      : "bg-[#152e3d] text-teal-400 border border-teal-850"
+                      ? "bg-white text-dune-teal border border-dune-orange/15 "
+                      : "bg-[#152e3d] text-dune-teal border border-dune-teal"
                     : isLightMode
-                      ? "text-amber-800/50 hover:text-amber-850"
-                      : "text-slate-500 hover:text-slate-300"
+                      ? "text-dune-orange/50 hover:text-dune-orange"
+                      : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <Sun className="w-3 h-3 text-amber-500" /> Day
+                <Sun className="w-3 h-3 text-dune-orange" /> Day
               </button>
               <button
                 onClick={() => handlePreset("night")}
                 className={`px-2 py-1 text-[9px] font-mono font-bold rounded flex items-center gap-1 cursor-pointer transition ${
                   activePreset === "night"
                     ? isLightMode
-                      ? "bg-white text-teal-800 border border-amber-900/15 "
-                      : "bg-[#152e3d] text-teal-400 border border-teal-850"
+                      ? "bg-white text-dune-teal border border-dune-orange/15 "
+                      : "bg-[#152e3d] text-dune-teal border border-dune-teal"
                     : isLightMode
-                      ? "text-amber-800/50 hover:text-amber-850"
-                      : "text-slate-500 hover:text-slate-300"
+                      ? "text-dune-orange/50 hover:text-dune-orange"
+                      : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <Moon className="w-3 h-3 text-teal-500 animate-pulse" /> Night
+                <Moon className="w-3 h-3 text-dune-teal" /> Night
               </button>
             </div>
           </div>
@@ -537,14 +537,14 @@ export default function CrossLinkingBiophysics({
           <div className="space-y-4">
             {/* Universal Linkage toggle with cyan outline */}
             <div
-              className={`p-3.5 rounded-lg text-xs ${isLightMode ? "bg-teal-50/45 border border-teal-200" : "bg-teal-950/10 border border-teal-900/35"}`}
+              className={`p-3.5 rounded-[4px] text-xs ${isLightMode ? "bg-dune-teal/45 border border-dune-teal" : "bg-dune-teal/10 border border-dune-teal/35"}`}
             >
               <label className="flex items-center justify-between cursor-pointer">
                 <span
-                  className={`flex items-center gap-1.5 font-bold font-sans ${isLightMode ? "text-teal-800" : "text-teal-400"}`}
+                  className={`flex items-center gap-1.5 font-bold font-sans ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
                 >
                   <Link2
-                    className={`w-4 h-4 animate-pulse ${isLightMode ? "text-teal-600" : "text-teal-500"}`}
+                    className={`w-4 h-4 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
                   />
                   Interconnect With Secretion Yield
                 </span>
@@ -552,17 +552,17 @@ export default function CrossLinkingBiophysics({
                   type="checkbox"
                   checked={isLinked}
                   onChange={(e) => setIsLinked(e.target.checked)}
-                  className="rounded accent-teal-500 w-4 h-4 cursor-pointer"
+                  className="rounded accent-dune-teal w-4 h-4 cursor-pointer"
                 />
               </label>
               <p
-                className={`text-[10px] mt-2 font-sans leading-relaxed ${isLightMode ? "text-stone-600 font-medium" : "text-slate-400"}`}
+                className={`text-[10px] mt-2 font-sans leading-relaxed ${isLightMode ? "text-muted-foreground font-medium" : "text-muted-foreground"}`}
               >
                 When checked, local biopolymer density (
                 <code
                   className={
                     isLightMode
-                      ? "text-teal-700 font-mono font-bold"
+                      ? "text-dune-teal font-mono font-bold"
                       : "text-[#cf9d90]"
                   }
                 >
@@ -575,15 +575,15 @@ export default function CrossLinkingBiophysics({
 
             <div>
               <div
-                className={`flex justify-between text-[11px] mb-1 ${isLightMode ? "text-stone-700" : "text-slate-400"}`}
+                className={`flex justify-between text-[11px] mb-1 ${isLightMode ? "text-foreground" : "text-muted-foreground"}`}
               >
                 <span className="font-semibold">
                   Soil Cation Saturation (
                   <code
                     className={
                       isLightMode
-                        ? "text-teal-700 font-mono font-bold"
-                        : "text-teal-800 font-mono"
+                        ? "text-dune-teal font-mono font-bold"
+                        : "text-dune-teal font-mono"
                     }
                   >
                     [Ca²⁺]
@@ -591,7 +591,7 @@ export default function CrossLinkingBiophysics({
                   )
                 </span>
                 <span
-                  className={`font-mono px-1.5 py-0.5 rounded text-[10px] ${isLightMode ? "bg-teal-50 border border-teal-200 text-teal-800 font-bold" : "bg-teal-950/40 border border-teal-900/40 text-teal-400"}`}
+                  className={`font-mono px-1.5 py-0.5 rounded text-[10px] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/40 border border-dune-teal/40 text-dune-teal"}`}
                 >
                   {params.ion_conc.toFixed(1)} mol/m³
                 </span>
@@ -609,10 +609,10 @@ export default function CrossLinkingBiophysics({
                   }));
                   setActivePreset("custom");
                 }}
-                className={`w-full h-1.5 rounded accent-teal-500 cursor-ew-resize ${isLightMode ? "bg-stone-200" : ""}`}
+                className={`w-full h-1.5 rounded accent-dune-teal cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
               />
               <span
-                className={`text-[9px] block mt-1 ${isLightMode ? "text-stone-400" : "text-slate-500"}`}
+                className={`text-[9px] block mt-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
               >
                 Divalent calcium ions act as molecular anchors bridging separate
                 strands.
@@ -621,15 +621,15 @@ export default function CrossLinkingBiophysics({
 
             <div>
               <div
-                className={`flex justify-between text-[11px] mb-1 ${isLightMode ? "text-stone-700" : "text-slate-400"}`}
+                className={`flex justify-between text-[11px] mb-1 ${isLightMode ? "text-foreground" : "text-muted-foreground"}`}
               >
                 <span className="font-semibold">
                   Disassociation Aff. Constant (
                   <code
                     className={
                       isLightMode
-                        ? "text-amber-700 font-mono font-bold"
-                        : "text-amber-800"
+                        ? "text-dune-orange font-mono font-bold"
+                        : "text-dune-orange"
                     }
                   >
                     Kd
@@ -637,7 +637,7 @@ export default function CrossLinkingBiophysics({
                   )
                 </span>
                 <span
-                  className={`font-mono px-1.5 py-0.5 rounded text-[10px] ${isLightMode ? "bg-amber-50 border border-amber-200 text-amber-800 font-bold" : "bg-amber-950/30 border border-amber-900/45 text-amber-440"}`}
+                  className={`font-mono px-1.5 py-0.5 rounded text-[10px] ${isLightMode ? "bg-dune-orange border border-dune-orange text-dune-orange font-bold" : "bg-dune-orange/30 border border-dune-orange/45 text-dune-orange"}`}
                 >
                   {params.Kd.toFixed(1)} mol/m³
                 </span>
@@ -652,10 +652,10 @@ export default function CrossLinkingBiophysics({
                   setParams((p) => ({ ...p, Kd: parseFloat(e.target.value) }));
                   setActivePreset("custom");
                 }}
-                className={`w-full h-1.5 rounded accent-amber-500 cursor-ew-resize ${isLightMode ? "bg-stone-200" : ""}`}
+                className={`w-full h-1.5 rounded accent-dune-orange cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
               />
               <span
-                className={`text-[9px] block mt-1 ${isLightMode ? "text-stone-400" : "text-slate-500"}`}
+                className={`text-[9px] block mt-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
               >
                 Represents binding tightness. Lower values increase chelation
                 network rigidity.
@@ -664,14 +664,14 @@ export default function CrossLinkingBiophysics({
 
             <div>
               <div
-                className={`flex justify-between text-[11px] mb-1 ${isLightMode ? "text-stone-700" : "text-slate-400"}`}
+                className={`flex justify-between text-[11px] mb-1 ${isLightMode ? "text-foreground" : "text-muted-foreground"}`}
               >
                 <span className="font-semibold">
                   Polymer Matrix Concentration (
                   <code
                     className={
                       isLightMode
-                        ? "text-teal-700 font-mono font-bold"
+                        ? "text-dune-teal font-mono font-bold"
                         : "text-[#cf9d90] font-mono"
                     }
                   >
@@ -680,17 +680,17 @@ export default function CrossLinkingBiophysics({
                   )
                 </span>
                 <span
-                  className={`font-mono px-1.5 py-0.5 rounded text-[10px] ${isLightMode ? "bg-teal-50 border border-teal-200 text-teal-800 font-bold" : "bg-teal-950/30 border border-teal-900/30 text-[#cf9d90]"}`}
+                  className={`font-mono px-1.5 py-0.5 rounded text-[10px] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/30 border border-dune-teal/30 text-[#cf9d90]"}`}
                 >
                   {effectiveRhoPolymer.toFixed(2)} kg/m³
                 </span>
               </div>
               {isLinked ? (
                 <div
-                  className={`py-2.5 px-3 rounded text-[10px] border font-mono flex items-center gap-1.5 animate-pulse ${
+                  className={`py-2.5 px-3 rounded text-[10px] border font-mono flex items-center gap-1.5 ${
                     isLightMode
-                      ? "bg-teal-50/55 border-teal-200 text-teal-800 font-bold "
-                      : "bg-slate-900/45 text-[#cf9d90] border-teal-900/20"
+                      ? "bg-dune-teal/55 border-dune-teal text-dune-teal font-bold "
+                      : "bg-dune-basalt/45 text-[#cf9d90] border-dune-teal/20"
                   }`}
                 >
                   <span>Dynamic Feed: Math.min(8.0, 0.1 + PGA * 0.04)</span>
@@ -709,22 +709,22 @@ export default function CrossLinkingBiophysics({
                     }));
                     setActivePreset("custom");
                   }}
-                  className={`w-full h-1.5 rounded accent-teal-500 cursor-ew-resize ${isLightMode ? "bg-stone-200" : ""}`}
+                  className={`w-full h-1.5 rounded accent-dune-teal cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
                 />
               )}
             </div>
 
             <div>
               <div
-                className={`flex justify-between text-[11px] mb-1 ${isLightMode ? "text-stone-700" : "text-slate-400"}`}
+                className={`flex justify-between text-[11px] mb-1 ${isLightMode ? "text-foreground" : "text-muted-foreground"}`}
               >
                 <span className="font-semibold">
                   Environmental Temp (
                   <code
                     className={
                       isLightMode
-                        ? "text-rose-700 font-mono font-bold"
-                        : "text-rose-400 font-mono"
+                        ? "text-dune-rose font-mono font-bold"
+                        : "text-dune-rose font-mono"
                     }
                   >
                     T
@@ -732,7 +732,7 @@ export default function CrossLinkingBiophysics({
                   )
                 </span>
                 <span
-                  className={`font-mono px-1.5 py-0.5 rounded text-[10px] ${isLightMode ? "bg-rose-50 border border-rose-200 text-rose-800 font-bold" : "bg-rose-950/30 border border-rose-900/40 text-rose-400"}`}
+                  className={`font-mono px-1.5 py-0.5 rounded text-[10px] ${isLightMode ? "bg-dune-rose border border-dune-rose text-dune-rose font-bold" : "bg-dune-rose/30 border border-dune-rose/40 text-dune-rose"}`}
                 >
                   {params.temperature.toFixed(1)} K (
                   {(params.temperature - 273.15).toFixed(1)}°C)
@@ -751,18 +751,18 @@ export default function CrossLinkingBiophysics({
                   }));
                   setActivePreset("custom");
                 }}
-                className={`w-full h-1.5 rounded accent-rose-500 cursor-ew-resize ${isLightMode ? "bg-stone-200" : ""}`}
+                className={`w-full h-1.5 rounded accent-dune-rose cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
               />
             </div>
           </div>
         </div>
 
         <div
-          className={`grid grid-cols-2 gap-3 pt-3 border-t ${isLightMode ? "border-amber-900/10" : "border-slate-900"}`}
+          className={`grid grid-cols-2 gap-3 pt-3 border-t ${isLightMode ? "border-dune-orange/10" : "border-border"}`}
         >
           <div>
             <label
-              className={`text-[9px] mb-1 block font-mono ${isLightMode ? "text-stone-500 font-bold" : "text-slate-500"}`}
+              className={`text-[9px] mb-1 block font-mono ${isLightMode ? "text-muted-foreground font-bold" : "text-muted-foreground"}`}
             >
               CROSS-LINK WT (Mx)
             </label>
@@ -780,14 +780,14 @@ export default function CrossLinkingBiophysics({
               }
               className={`w-full p-1.5 border rounded text-xs font-mono outline-none ${
                 isLightMode
-                  ? "bg-[#fdfaf3] border-amber-900/15 text-stone-900 focus:border-teal-600"
-                  : "bg-[#1c1512] border-slate-850 text-white focus:border-teal-500"
+                  ? "bg-[#fdfaf3] border-dune-orange/15 text-foreground focus:border-dune-teal"
+                  : "bg-[#1c1512] border-border text-foreground focus:border-dune-teal"
               }`}
             />
           </div>
           <div>
             <label
-              className={`text-[9px] mb-1 block font-mono ${isLightMode ? "text-stone-500 font-bold" : "text-slate-500"}`}
+              className={`text-[9px] mb-1 block font-mono ${isLightMode ? "text-muted-foreground font-bold" : "text-muted-foreground"}`}
             >
               POLYMER LENGTH (Mn)
             </label>
@@ -805,8 +805,8 @@ export default function CrossLinkingBiophysics({
               }
               className={`w-full p-1.5 border rounded text-xs font-mono outline-none ${
                 isLightMode
-                  ? "bg-[#fdfaf3] border-amber-900/15 text-stone-900 focus:border-teal-600"
-                  : "bg-[#1c1512] border-slate-850 text-white focus:border-teal-500"
+                  ? "bg-[#fdfaf3] border-dune-orange/15 text-foreground focus:border-dune-teal"
+                  : "bg-[#1c1512] border-border text-foreground focus:border-dune-teal"
               }`}
             />
           </div>
@@ -815,27 +815,27 @@ export default function CrossLinkingBiophysics({
 
       {/* Larger, Stunning Real-Time Visuals Viewport */}
       <div
-        className={`lg:col-span-12 xl:col-span-7 p-5 rounded-xl border flex flex-col justify-between space-y-4 transition-colors duration-300 ${
+        className={`lg:col-span-12 xl:col-span-7 p-5 rounded-[6px] border flex flex-col justify-between space-y-4 transition-colors duration-300 ${
           isLightMode
-            ? "bg-white border-amber-900/10"
-            : "bg-[#1c1512] border-slate-800/80"
+            ? "bg-white border-dune-orange/10"
+            : "bg-[#1c1512] border-border"
         }`}
       >
         <div>
           <h3
             className={`text-sm font-black uppercase tracking-wider flex items-center gap-2 font-mono pb-2 border-b ${
               isLightMode
-                ? "text-amber-900 border-amber-900/10"
-                : "text-slate-200 border-slate-800/40"
+                ? "text-dune-orange border-dune-orange/10"
+                : "text-foreground border-border"
             }`}
           >
             <Sparkles
-              className={`w-5 h-5 animate-pulse ${isLightMode ? "text-amber-600" : "text-amber-400"}`}
+              className={`w-5 h-5 ${isLightMode ? "text-dune-orange" : "text-dune-orange"}`}
             />
             Quartz/SiO₂ Sand Gels Undergoing Coordinate Chelation
           </h3>
           <p
-            className={`text-xs leading-relaxed max-w-2xl mt-2 font-sans ${isLightMode ? "text-stone-600 font-medium" : "text-slate-400"}`}
+            className={`text-xs leading-relaxed max-w-2xl mt-2 font-sans ${isLightMode ? "text-muted-foreground font-medium" : "text-muted-foreground"}`}
           >
             <strong>How Bio-gelling works simply:</strong> The bacteria-produced{" "}
             <strong>γ-PGA polymeric adhesive</strong> contains repeating
@@ -850,10 +850,10 @@ export default function CrossLinkingBiophysics({
             {/* Realtime Canvas Box (LARGER VIEWPORT) */}
             <div className="md:col-span-8 flex justify-center">
               <div
-                className={`border rounded-lg overflow-hidden relative w-full max-w-[550px] group transition-colors ${
+                className={`border rounded-[4px] overflow-hidden relative w-full max-w-[550px] group transition-colors ${
                   isLightMode
-                    ? "border-amber-900/15 bg-[#fdfaf3]"
-                    : "border-slate-800 bg-[#04060a]"
+                    ? "border-dune-orange/15 bg-[#fdfaf3]"
+                    : "border-border bg-[#04060a]"
                 }`}
               >
                 <canvas
@@ -867,8 +867,8 @@ export default function CrossLinkingBiophysics({
                 <div
                   className={`absolute top-2.5 left-2.5 px-2.5 py-1 rounded text-[9px] font-mono tracking-wider border uppercase transition pointer-events-none group-hover:opacity-100 ${
                     isLightMode
-                      ? "bg-white/95 border-amber-900/15 text-amber-700 "
-                      : "bg-black/85 border-slate-800 text-amber-300 opacity-0"
+                      ? "bg-white/95 border-dune-orange/15 text-dune-orange "
+                      : "bg-black/85 border-border text-dune-orange opacity-0"
                   }`}
                 >
                   Hover cursor to shift 3D parallax layers
@@ -878,15 +878,15 @@ export default function CrossLinkingBiophysics({
 
             {/* Biophysics Dashboard numbers */}
             <div
-              className={`md:col-span-4 space-y-4 font-mono text-xs p-4 rounded-xl shadow self-stretch flex flex-col justify-between transition-colors ${
+              className={`md:col-span-4 space-y-4 font-mono text-xs p-4 rounded-[6px] shadow self-stretch flex flex-col justify-between transition-colors ${
                 isLightMode
-                  ? "bg-[#fcfaf4] border border-amber-900/10"
-                  : "bg-[#181210] border border-slate-850 shadow"
+                  ? "bg-[#fcfaf4] border border-dune-orange/10"
+                  : "bg-[#181210] border border-border shadow"
               }`}
             >
               <div>
                 <span
-                  className={`text-[9px] font-black tracking-wider block uppercase mb-3 ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+                  className={`text-[9px] font-black tracking-wider block uppercase mb-3 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                 >
                   Live Gel Readout
                 </span>
@@ -894,12 +894,12 @@ export default function CrossLinkingBiophysics({
                 <div className="space-y-4">
                   <div>
                     <span
-                      className={`block text-[9px] mb-0.5 ${isLightMode ? "text-stone-500 font-bold" : "text-slate-500"}`}
+                      className={`block text-[9px] mb-0.5 ${isLightMode ? "text-muted-foreground font-bold" : "text-muted-foreground"}`}
                     >
                       SATURATION DENSITY (θ)
                     </span>
                     <span
-                      className={`font-extrabold text-sm ${isLightMode ? "text-teal-700" : "text-[#8fb3ac]"}`}
+                      className={`font-extrabold text-sm ${isLightMode ? "text-dune-teal" : "text-[#8fb3ac]"}`}
                     >
                       {(results.theta * 100).toFixed(1)}%
                     </span>
@@ -907,7 +907,7 @@ export default function CrossLinkingBiophysics({
 
                   <div>
                     <span
-                      className={`block text-[9px] mb-0.5 ${isLightMode ? "text-stone-500 font-bold" : "text-slate-500"}`}
+                      className={`block text-[9px] mb-0.5 ${isLightMode ? "text-muted-foreground font-bold" : "text-muted-foreground"}`}
                     >
                       PEPTIDIC CROSSLINKS
                     </span>
@@ -920,12 +920,12 @@ export default function CrossLinkingBiophysics({
 
                   <div>
                     <span
-                      className={`block text-[9px] mb-0.5 font-sans ${isLightMode ? "text-stone-500 font-bold" : "text-slate-500"}`}
+                      className={`block text-[9px] mb-0.5 font-sans ${isLightMode ? "text-muted-foreground font-bold" : "text-muted-foreground"}`}
                     >
                       SHEAR STIFFNESS (Gs)
                     </span>
                     <span
-                      className={`font-black text-sm ${isLightMode ? "text-amber-700" : "text-amber-400"}`}
+                      className={`font-black text-sm ${isLightMode ? "text-dune-orange" : "text-dune-orange"}`}
                     >
                       {results.G.toFixed(1)} Pa
                     </span>
@@ -936,12 +936,12 @@ export default function CrossLinkingBiophysics({
               <div
                 className={`pt-2.5 border-t leading-normal text-[10px] font-sans flex gap-1.5 items-start ${
                   isLightMode
-                    ? "border-amber-900/10 text-stone-600 font-medium"
-                    : "border-slate-900 text-slate-400"
+                    ? "border-dune-orange/10 text-muted-foreground font-medium"
+                    : "border-border text-muted-foreground"
                 }`}
               >
                 <Info
-                  className={`w-4 h-4 shrink-0 ${isLightMode ? "text-teal-700" : "text-[#8fb3ac]"}`}
+                  className={`w-4 h-4 shrink-0 ${isLightMode ? "text-dune-teal" : "text-[#8fb3ac]"}`}
                 />
                 <span>
                   An elevated Shear G ratio protects sand bed structures from

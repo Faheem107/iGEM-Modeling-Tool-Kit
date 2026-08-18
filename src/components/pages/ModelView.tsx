@@ -8,6 +8,7 @@ import SimulationWorkspace from "@/src/components/simulation/SimulationWorkspace
 import KillSwitchWorkspace from "@/src/components/simulation/KillSwitchWorkspace";
 import { parseProngsParam } from "@/src/lib/portalsData";
 import type { ProngId } from "@/src/lib/prongs";
+import { markReturnToModels } from "@/src/lib/scrollRestore";
 
 export default function ModelView() {
   const router = useRouter();
@@ -21,7 +22,12 @@ export default function ModelView() {
         <PortalIntro content={KILL_SWITCH_INTRO} />
         <KillSwitchWorkspace
           isLightMode={isLightMode}
-          onBack={() => router.push("/")}
+          onBack={() => {
+            markReturnToModels();
+            // scroll: false, or Next jumps the landing to the top after mount
+            // and undoes the restore.
+            router.push("/", { scroll: false });
+          }}
         />
       </>
     );
@@ -35,7 +41,12 @@ export default function ModelView() {
       <SimulationWorkspace
         selectedProngs={prongs}
         isLightMode={isLightMode}
-        onBack={() => router.push("/")}
+        onBack={() => {
+          markReturnToModels();
+          // scroll: false, or Next jumps the landing to the top after mount
+          // and undoes the restore.
+          router.push("/", { scroll: false });
+        }}
       />
     </>
   );

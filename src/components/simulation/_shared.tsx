@@ -22,28 +22,28 @@ export interface Themed {
 // enters the viewport (DESIGN.md §6). amount is kept small so panels taller than
 // the viewport still trigger.
 const revealProps = {
-  initial: { opacity: 0, y: 24, scale: 0.985 },
-  whileInView: { opacity: 1, y: 0, scale: 1 },
+  initial: { opacity: 0, y: 22 },
+  whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, amount: 0.12 },
-  transition: { duration: 0.6, ease: "easeOut" as const },
+  transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const },
 };
 
 /** recharts color tokens for a given theme. */
 export const chartColors = (light: boolean) => ({
-  grid: light ? "#e7e0cf" : "#3a2f29",
-  axis: light ? "#78716c" : "#8a7e75",
+  grid: light ? "#e0d3c1" : "#3a2f29",
+  axis: light ? "#6f6157" : "#8a7e75",
   tooltipBg: light ? "#ffffff" : "#1c1512",
-  tooltipBorder: light ? "#e7e5e4" : "#43362e",
-  text: light ? "#1c1917" : "#f3e9db",
+  tooltipBorder: light ? "#e0d3c1" : "#43362e",
+  text: light ? "#2a1a16" : "#f3e9db",
 });
 
 export const tooltipStyle = (light: boolean) => ({
-  backgroundColor: light ? "rgba(255,255,255,0.97)" : "rgba(10,15,24,0.97)",
-  border: `1px solid ${light ? "#e7e5e4" : "#43362e"}`,
-  borderRadius: 4,
+  backgroundColor: light ? "rgba(255,255,255,0.97)" : "rgba(28,21,18,0.97)",
+  border: `1px solid ${light ? "#e0d3c1" : "#43362e"}`,
+  borderRadius: 3,
   fontSize: 11,
   fontFamily: "var(--font-lexend), system-ui, sans-serif",
-  color: light ? "#1c1917" : "#f3e9db",
+  color: light ? "#2a1a16" : "#f3e9db",
 });
 
 export function Panel({
@@ -63,15 +63,13 @@ export function Panel({
   return (
     <motion.div
       {...revealProps}
-      className={`p-5 rounded-[6px] border border-border transition-colors duration-300 ${
-        isLightMode ? "bg-white" : "bg-card"
+      className={`rounded-[6px] border border-border p-5 transition-colors duration-300 ${
+        isLightMode ? "bg-white/70" : "bg-card/70"
       } ${className}`}
     >
-      <div className="flex items-center justify-between mb-4 gap-3">
-        <h3
-          className={`text-xs font-extrabold uppercase tracking-wider flex items-center gap-2 ${isLightMode ? "text-dune-maroon" : "text-dune-paper"}`}
-        >
-          {Icon && <Icon className="w-4 h-4 text-dune-teal" />}
+      <div className="mb-4 flex items-center justify-between gap-3 border-b border-border pb-3">
+        <h3 className="caption flex items-center gap-2 text-foreground">
+          {Icon && <Icon className="h-3.5 w-3.5 text-dune-teal" />}
           {title}
         </h3>
         {right}
@@ -90,7 +88,7 @@ export function Slider({
   unit,
   onChange,
   isLightMode,
-  accent = "accent-teal-500",
+  accent = "accent-dune-teal",
   hint,
   format,
 }: Themed & {
@@ -107,19 +105,10 @@ export function Slider({
 }) {
   return (
     <div>
-      <div className="flex justify-between items-center text-[11px] mb-1">
-        <span
-          className={`font-semibold ${isLightMode ? "text-stone-700" : "text-slate-300"}`}
-        >
-          {label}
-        </span>
-        <span
-          className={`font-mono px-1.5 py-0.5 rounded text-[10px] border ${
-            isLightMode
-              ? "bg-stone-50 border-stone-200 text-stone-800 font-bold"
-              : "bg-slate-900/60 border-slate-800 text-slate-200"
-          }`}
-        >
+      <div className="mb-1.5 flex items-center justify-between gap-3 text-[11px]">
+        <span className="font-medium text-foreground">{label}</span>
+        {/* The value is information, not a badge: mono and tabular, no chip. */}
+        <span className="font-mono text-[10px] tabular-nums text-muted-foreground">
           {format ? format(value) : value}
           {unit ? ` ${unit}` : ""}
         </span>
@@ -131,11 +120,11 @@ export function Slider({
         step={step}
         value={value}
         onChange={(e) => onChange(parseFloat(e.target.value))}
-        className={`w-full h-1.5 rounded cursor-ew-resize ${accent} ${isLightMode ? "bg-stone-200" : "bg-slate-800"}`}
+        className={`w-full ${accent}`}
       />
       {hint && (
         <span
-          className={`text-[9px] block mt-1 ${isLightMode ? "text-stone-400" : "text-slate-500"}`}
+          className="mt-1.5 block text-[10px] leading-snug text-muted-foreground opacity-80"
         >
           <GlossaryText max={3}>{hint}</GlossaryText>
         </span>
@@ -161,36 +150,29 @@ export function StatCard({
   emphasize?: boolean;
 }) {
   return (
+    // A figure on a rule, not a tile. The emphasised one is marked by a heavier
+    // top rule and a larger number, never by a ring or a fill.
     <div
-      className={`p-3 rounded-[4px] border ${
-        isLightMode
-          ? "bg-[#fcfaf4] border-amber-900/10"
-          : "bg-[#181210] border-border"
-      } ${emphasize ? "ring-1 ring-inset " + (isLightMode ? "ring-amber-300/40" : "ring-teal-900/40") : ""}`}
+      className={`border-t pt-2.5 ${
+        emphasize ? "border-dune-orange" : "border-border"
+      }`}
     >
-      <span
-        className={`block text-[9px] font-bold uppercase tracking-wider mb-1 ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
-      >
-        {label}
-      </span>
-      <div className="flex items-baseline gap-1">
+      <span className="caption mb-1.5 block">{label}</span>
+      <div className="flex items-baseline gap-1.5">
         <span
-          className={`font-black ${emphasize ? "text-lg" : "text-sm"} ${accent}`}
+          className={`tabular-nums ${emphasize ? "text-2xl" : "text-lg"} ${accent}`}
+          style={{ fontVariationSettings: '"wght" 620' }}
         >
           {value}
         </span>
         {unit && (
-          <span
-            className={`text-[10px] font-mono ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
-          >
+          <span className="font-mono text-[10px] text-muted-foreground">
             {unit}
           </span>
         )}
       </div>
       {sub && (
-        <span
-          className={`block text-[9px] mt-0.5 ${isLightMode ? "text-stone-400" : "text-slate-500"}`}
-        >
+        <span className="mt-1 block text-[10px] leading-snug text-muted-foreground">
           {sub}
         </span>
       )}
@@ -207,15 +189,11 @@ export function MathDisclosure({
   const [open, setOpen] = useState(false);
   return (
     <div
-      className={`rounded-[4px] border overflow-hidden ${isLightMode ? "border-amber-900/10 bg-[#fcfaf5]" : "border-border bg-[#1c1512]"}`}
+      className="overflow-hidden rounded-[4px] border border-border"
     >
       <button
         onClick={() => setOpen((o) => !o)}
-        className={`w-full flex items-center justify-between px-4 py-2 text-[10px] font-mono font-bold uppercase tracking-wider ${
-          isLightMode
-            ? "text-stone-600 hover:bg-stone-100"
-            : "text-slate-400 hover:bg-slate-900/50"
-        }`}
+        className="caption flex w-full items-center justify-between px-4 py-2.5 transition-colors hover:text-foreground"
       >
         <span className="flex items-center gap-1.5">
           <Sigma className="w-3.5 h-3.5" /> {label}
@@ -226,11 +204,7 @@ export function MathDisclosure({
       </button>
       {open && (
         <div
-          className={`px-4 py-3 text-[11px] leading-relaxed font-mono border-t ${
-            isLightMode
-              ? "border-amber-900/10 text-stone-700"
-              : "border-border text-slate-300"
-          }`}
+          className="border-t border-border px-4 py-3 font-mono text-[11px] leading-relaxed text-foreground"
         >
           {children}
         </div>
@@ -251,8 +225,6 @@ function ModuleToggle({
   icon: Icon,
   label,
   onOpen,
-  ringLight,
-  ringDark,
   hovered,
   className = "",
 }: Themed & {
@@ -265,8 +237,6 @@ function ModuleToggle({
   icon: LucideIcon;
   label: string;
   onOpen: () => void;
-  ringLight: string;
-  ringDark: string;
   hovered: boolean;
   className?: string;
 }) {
@@ -277,11 +247,10 @@ function ModuleToggle({
       {...attrs}
       onClick={onOpen}
       title={`${label}, click, or drop Sandyx here`}
-      className={`w-full min-w-0 flex flex-col items-center justify-center gap-1.5 px-2 py-3.5 rounded-[4px] border text-[11px] font-mono font-bold uppercase tracking-wider transition-colors ${
-        isLightMode
-          ? "border-amber-900/10 bg-[#fcfaf5] text-stone-600 hover:bg-stone-100"
-          : "border-border bg-[#1c1512] text-slate-400 hover:bg-slate-900/50"
-      } ${hovered ? (isLightMode ? `ring-2 ${ringLight}` : `ring-2 ${ringDark}`) : ""} ${className}`}
+      // Sandyx hover is marked by the edge taking the accent, not by a ring.
+      className={`caption flex w-full min-w-0 flex-col items-center justify-center gap-2 rounded-[4px] border px-2 py-3.5 transition-colors hover:border-dune-orange hover:text-dune-orange ${
+        hovered ? "border-dune-orange text-dune-orange" : "border-border"
+      } ${className}`}
     >
       <Icon className="w-4 h-4 shrink-0" />
       <span className="text-center leading-tight whitespace-normal break-words">
@@ -309,8 +278,6 @@ export function ShowMathToggle({
       icon={Sigma}
       label="Show the Math"
       onOpen={() => openMath(moduleId)}
-      ringLight="ring-amber-400/60 bg-amber-50"
-      ringDark="ring-amber-400/50 bg-amber-500/10"
       hovered={hoverId === moduleId}
       className={className}
     />
@@ -335,8 +302,6 @@ export function VideoExplanationToggle({
       icon={PlayCircle}
       label="Video Explanation"
       onOpen={() => openVideo(moduleId)}
-      ringLight="ring-rose-400/60 bg-rose-50"
-      ringDark="ring-rose-400/50 bg-rose-500/10"
       hovered={hoverId === moduleId}
       className={className}
     />
@@ -361,8 +326,6 @@ export function SourcesToggle({
       icon={BookText}
       label="Sources"
       onOpen={() => openSources(moduleId)}
-      ringLight="ring-amber-400/60 bg-amber-50"
-      ringDark="ring-amber-400/50 bg-amber-500/10"
       hovered={hoverId === moduleId}
       className={className}
     />
@@ -387,8 +350,6 @@ export function CodePlotsToggle({
       icon={Code2}
       label="Code & Plots"
       onOpen={() => openCode(moduleId)}
-      ringLight="ring-teal-400/60 bg-teal-50"
-      ringDark="ring-teal-400/50 bg-teal-500/10"
       hovered={hoverId === moduleId}
       className={className}
     />
@@ -409,9 +370,7 @@ export function ModuleActions({
   return (
     <div className={className}>
       <p
-        className={`mb-1.5 flex items-center gap-1.5 text-[10px] font-semibold ${
-          isLightMode ? "text-stone-500" : "text-slate-500"
-        }`}
+        className="caption mb-2 flex items-center gap-2"
       >
         <img
           src="/sandyx.png"
@@ -445,8 +404,8 @@ export function ModuleShell({
   return (
     <motion.div
       {...revealProps}
-      className={`grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 rounded-[6px] border border-border transition-colors duration-300 ${
-        isLightMode ? "bg-[#fdfaf3]" : "bg-card"
+      className={`grid grid-cols-1 gap-8 rounded-[6px] border border-border p-6 transition-colors duration-300 lg:grid-cols-12 ${
+        isLightMode ? "bg-white/60" : "bg-card/60"
       }`}
     >
       <div className="lg:col-span-5 space-y-5">{controls}</div>
