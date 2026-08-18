@@ -215,7 +215,9 @@ export default function DesignCycleStory({
       start: "top top",
       // Longer travel (~900px/beat) so a small scroll no longer jumps between
       // beats; the scrub smoothing keeps it from feeling heavy.
-      end: "+=4500",
+            // Pin length, see the note in LandingCinematic: normalised progress, so this
+      // is a uniform speed-up rather than a change to any beat.
+      end: "+=2700",
       pin: true,
       pinSpacing: true,
       // Apply the pin slightly early to avoid a one-frame flash at the top

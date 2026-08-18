@@ -230,7 +230,10 @@ export default function LandingCinematic({
     const st = ScrollTrigger.create({
       trigger: scope,
       start: "top top",
-      end: "+=5200",
+            // Pin length. Every beat is keyed to normalised progress, so this scales the
+      // whole story uniformly. Kept short enough that a reader reaches the prongs
+      // and the exposure modules without a long scroll.
+      end: "+=3100",
       pin: true,
       pinSpacing: true,
       scrub: 0.6,
