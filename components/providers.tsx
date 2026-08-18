@@ -6,6 +6,7 @@ import { GlossaryProvider } from "@/src/components/GlossaryTerm";
 import { ToolkitProvider } from "@/components/toolkit-provider";
 import { AppChrome } from "@/components/app-chrome";
 import SmoothScroll from "@/src/components/SmoothScroll";
+import { PointerProvider } from "@/src/lib/motion/pointer";
 
 /**
  * Client-side provider stack + persistent chrome that wraps every route. The
@@ -26,6 +27,7 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <GlossaryProvider isLightMode={isLightMode}>
       <ToolkitProvider>
+        <PointerProvider>
         <div
           className={`min-h-screen font-sans relative ${
             isLightMode
@@ -37,6 +39,7 @@ export function Providers({ children }: { children: ReactNode }) {
           <AppChrome />
           <main className="relative min-h-screen">{children}</main>
         </div>
+        </PointerProvider>
       </ToolkitProvider>
     </GlossaryProvider>
   );

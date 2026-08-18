@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import { useTheme } from "@/components/theme-context";
 import LandingCinematic from "@/src/components/LandingCinematic";
 import DesignCycleStory from "@/src/components/DesignCycleStory";
@@ -10,6 +10,8 @@ import ProngReframeSequence from "@/src/components/ProngReframeSequence";
 import SandyxAdventure from "@/src/components/SandyxAdventure";
 import { GlossaryText } from "@/src/components/GlossaryTerm";
 import { PRONGS, KILL_SWITCH } from "@/src/lib/portalsData";
+import ExposureEntry from "@/src/components/exposure/ExposureEntry";
+import CompactModal from "@/src/components/CompactModal";
 
 type ViewTarget = number | "killswitch";
 
@@ -97,144 +99,72 @@ export default function LandingView() {
         />
       </div>
 
+      {/* --- DOORWAY: the two exposure modules and the business model. Sits
+          directly under the prong row so it reads as the next step. --- */}
+      <ExposureEntry />
+
       {/* --- PRONG / KILL-SWITCH INFORMATION MODAL --- */}
-      <AnimatePresence>
-        {(activeProng || showingKill) && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/55"
-            onClick={() => setViewing(null)}
+      <CompactModal
+        open={Boolean(activeProng || showingKill)}
+        onClose={() => setViewing(null)}
+        eyebrow={
+          showingKill
+            ? "Replaces the applied alginate prong"
+            : activeProng?.whyDropped
+              ? "Modelled for comparison, not carried forward"
+              : "Prong"
+        }
+        title={showingKill ? KILL_SWITCH.title : (activeProng?.title ?? "")}
+        tabs={
+          showingKill
+            ? [
+                { id: "what", label: "What it is", body: <Body text={KILL_SWITCH.whatItIs} /> },
+                { id: "model", label: "Model", body: <Body text={KILL_SWITCH.modelDoes} /> },
+                { id: "impact", label: "Impact", body: <Body text={KILL_SWITCH.impact} /> },
+              ]
+            : activeProng
+              ? [
+                  { id: "what", label: "What it is", body: <Body text={activeProng.whatItIs} /> },
+                  { id: "model", label: "Model", body: <Body text={activeProng.modelDoes} /> },
+                  { id: "impact", label: "Impact", body: <Body text={activeProng.impact} /> },
+                  ...(activeProng.whyDropped
+                    ? [
+                        {
+                          id: "why",
+                          label: "Why not",
+                          body: (
+                            <ol className="list-decimal space-y-2 pl-4 text-sm leading-relaxed text-muted-foreground">
+                              {activeProng.whyDropped.map((r, i) => (
+                                <li key={i}>
+                                  <GlossaryText>{r}</GlossaryText>
+                                </li>
+                              ))}
+                            </ol>
+                          ),
+                        },
+                      ]
+                    : []),
+                ]
+              : []
+        }
+        footer={
+          <button
+            onClick={() => {
+              if (showingKill) {
+                setViewing(null);
+                router.push("/model?view=killswitch");
+              } else if (activeProng) {
+                const id = activeProng.id;
+                setViewing(null);
+                goToModel([id]);
+              }
+            }}
+            className="w-full rounded-[4px] bg-primary px-4 py-2.5 text-xs font-bold uppercase tracking-[0.1em] text-primary-foreground transition-opacity hover:opacity-90"
           >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-2xl max-h-[88vh] overflow-y-auto p-8 md:p-10 rounded-[4px] relative bg-popover text-popover-foreground border border-border"
-            >
-              <button
-                onClick={() => setViewing(null)}
-                aria-label="Close"
-                className="absolute top-6 right-6 px-3 h-8 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] transition-colors bg-secondary hover:brightness-95"
-              >
-                Close
-              </button>
-
-              {showingKill ? (
-                <>
-                  <h2 className="text-3xl font-extrabold mb-2 tracking-tight">
-                    {KILL_SWITCH.title}
-                  </h2>
-                  <p className="text-sm font-semibold text-dune-orange mb-8 uppercase tracking-[0.12em]">
-                    The third element, replaces the applied alginate prong
-                  </p>
-                  <div className="space-y-6">
-                    <ModalBlock
-                      accent="text-dune-orange"
-                      label="What it is"
-                      body={KILL_SWITCH.whatItIs}
-                    />
-                    <ModalBlock
-                      accent="text-dune-teal"
-                      label="What the model does"
-                      body={KILL_SWITCH.modelDoes}
-                    />
-                    <ModalBlock
-                      accent="text-dune-rose"
-                      label="Impact"
-                      body={KILL_SWITCH.impact}
-                      bold
-                    />
-                  </div>
-                  <div className="mt-8 flex flex-wrap gap-3">
-                    <button
-                      onClick={() => {
-                        setViewing(null);
-                        router.push(`/model?view=killswitch`);
-                      }}
-                      className="px-6 py-3 bg-primary text-primary-foreground font-bold rounded-[3px] uppercase tracking-[0.12em] text-sm transition-opacity hover:opacity-90 flex items-center gap-2"
-                    >
-                      Open the kill switch model
-                    </button>
-                  </div>
-                </>
-              ) : activeProng ? (
-                <>
-                  <h2 className="text-3xl font-extrabold mb-8 tracking-tight">
-                    {activeProng.title}
-                  </h2>
-
-                  {activeProng.whyDropped && (
-                    <div className="mb-8 rounded-[4px] border border-dune-rose/40 bg-dune-rose/5 p-5">
-                      <div className="mb-3 flex items-center gap-2 text-dune-rose">
-                        <span className="text-xs font-bold uppercase tracking-[0.15em]">
-                          Why we did not proceed with it as a prong
-                        </span>
-                      </div>
-                      <ol className="space-y-2.5 list-decimal pl-5 text-sm leading-relaxed opacity-90">
-                        {activeProng.whyDropped.map((r, i) => (
-                          <li key={i}>
-                            <GlossaryText>{r}</GlossaryText>
-                          </li>
-                        ))}
-                      </ol>
-                      <p className="mt-3 text-xs italic opacity-70">
-                        It is still fully modelled here for comparison, you can
-                        open it in the model workspace below.
-                      </p>
-                    </div>
-                  )}
-
-                  <div className="space-y-6">
-                    <ModalBlock
-                      accent="text-dune-orange"
-                      label="What it is"
-                      body={activeProng.whatItIs}
-                    />
-                    <ModalBlock
-                      accent="text-dune-teal"
-                      label="What the model does"
-                      body={activeProng.modelDoes}
-                    />
-                    <ModalBlock
-                      accent="text-dune-rose"
-                      label="Impact"
-                      body={activeProng.impact}
-                      bold
-                    />
-                  </div>
-
-                  <div className="mt-8 flex flex-wrap gap-3">
-                    <button
-                      onClick={() => {
-                        const id = activeProng.id;
-                        setViewing(null);
-                        goToModel([id]);
-                      }}
-                      className="px-6 py-3 bg-primary text-primary-foreground font-bold rounded-[3px] uppercase tracking-[0.12em] text-sm transition-opacity hover:opacity-90 flex items-center gap-2"
-                    >
-                      Simulate this prong
-                    </button>
-                    {activeProng.id !== 3 && (
-                      <button
-                        onClick={() => {
-                          setViewing(null);
-                          goToModel([1, 2]);
-                        }}
-                        className="px-6 py-3 bg-secondary font-bold rounded-[3px] uppercase tracking-[0.12em] text-sm transition-colors hover:brightness-95"
-                      >
-                        Both prongs together
-                      </button>
-                    )}
-                  </div>
-                </>
-              ) : null}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            {showingKill ? "Open the kill switch model" : "Simulate this prong"}
+          </button>
+        }
+      />
 
       {/* --- SANDYX ADVENTURE (full-screen story + retro arcade) --- */}
       <SandyxAdventure
@@ -250,29 +180,10 @@ export default function LandingView() {
   );
 }
 
-function ModalBlock({
-  accent,
-  label,
-  body,
-  bold,
-}: {
-  accent: string;
-  label: string;
-  body: string;
-  bold?: boolean;
-}) {
+function Body({ text }: { text: string }) {
   return (
-    <div>
-      <h4
-        className={`text-xs font-bold uppercase tracking-[0.15em] mb-2 ${accent}`}
-      >
-        {label}
-      </h4>
-      <p
-        className={`text-base leading-relaxed opacity-90 ${bold ? "font-medium" : ""}`}
-      >
-        <GlossaryText>{body}</GlossaryText>
-      </p>
-    </div>
+    <p className="text-sm leading-relaxed text-muted-foreground">
+      <GlossaryText>{text}</GlossaryText>
+    </p>
   );
 }
