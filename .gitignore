@@ -18,6 +18,7 @@ CLAUDE.md
 DESIGN.md
 PARAMETER_AUDIT_AND_PRESENTATION.md
 Research Table iGEM 2026*.md
+Business team plan.md
 Toolkit in layman's terminology.md
 modeling_subteam_theory.md
 script.txt
@@ -42,3 +43,17 @@ __pycache__/
 
 # Playwright MCP artifacts
 .playwright-mcp/
+
+# Credentials, never commit. Real keys live outside the repo in ~/.cdsapirc and ~/.netrc
+.cdsapirc
+.netrc
+.edl_token
+*.pem
+*secret*
+*credential*
+
+# Literature and source data kept on disk, kept off GitHub.
+# references/ holds publisher PDFs from paywalled journals (Wiley, Springer, Elsevier).
+# Committing them to a public repo would redistribute copyrighted material.
+# Everything the build needs is regenerated into public/data/ by scripts/.
+references/

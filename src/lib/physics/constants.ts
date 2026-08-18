@@ -139,12 +139,23 @@ export const AEOLIAN_CALIB = {
     "Wind-tunnel threshold u*t vs grain size on UNTREATED sand; fit A.",
     [0.08, 0.14],
   ),
-  /** Friction-to-freestream ratio u* : U∞ (surface roughness dependent). */
+  /**
+   * Friction-to-freestream ratio u* : U (surface roughness dependent).
+   *
+   * REFERENCE HEIGHT: 10 m. This is not optional metadata, the value is
+   * meaningless without it. Solving kappa/ln(z/z0) = 0.03 with the Rub al Khali
+   * roughness (z0 = d/30, d = 363.5 um from Benaafi et al. Table 1) gives
+   * z = 7.5 m, and evaluating the log law at 10 m gives 0.0294. The ratio is
+   * height dependent:
+   *     0.6 m -> 0.0370   2 m -> 0.0333   10 m -> 0.0294   50 m -> 0.0263
+   * ERA5 and the Open-Meteo wind are both 10 m, so 0.03 is the right pairing.
+   * If a 2 m or 50 m wind source is ever substituted, this constant must change.
+   */
   uStarRatio: calib(
     0.03,
     "dimensionless",
-    "log-law over desert sand roughness",
-    "Pitot/hot-wire profile in the wind tunnel; u* from log-law fit.",
+    "log-law over desert sand roughness, 10 m reference height",
+    "Pitot/hot-wire profile in the wind tunnel; u* from log-law fit at 10 m.",
     [0.02, 0.06],
   ),
   /** Bagnold saltation mass-flux coefficient C (grain sorting dependent). */

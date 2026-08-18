@@ -1,0 +1,81 @@
+{
+  "provenance": {
+    "source": "ISRIC SoilGrids v2.0 REST API, property=clay, depth=0-5cm, value=mean",
+    "units": "returned g/kg with d_factor 10, converted to percent here",
+    "licence": "CC BY 4.0, ISRIC World Soil Information",
+    "consumer": "Chappell et al. 2024 GRL Eq 3, alpha = 10^(0.134*clay - 6.0)",
+    "warning": "SoilGrids is an ML prediction, not a measurement, and desert training coverage is sparse. Values near 20% over UAE dune fields contradict Benaafi et al.'s quartz-arenite petrography and sit at the Eq 3 validity cap. Cross-check before use."
+  },
+  "points": [
+    {
+      "name": "Al-Dhafra Solar",
+      "lon": 54.5169,
+      "lat": 24.1409,
+      "kind": "target",
+      "clay_percent": 20.0,
+      "sand_percent": 43.3,
+      "alpha_per_m": 0.00047863009232263854,
+      "at_or_over_eq3_cap": true
+    },
+    {
+      "name": "MBR Solar Park",
+      "lon": 55.441,
+      "lat": 24.7318,
+      "kind": "target",
+      "clay_percent": 20.4,
+      "sand_percent": 48.3,
+      "alpha_per_m": 0.00047863009232263854,
+      "at_or_over_eq3_cap": true
+    },
+    {
+      "name": "Noor Abu Dhabi",
+      "lon": 55.4446,
+      "lat": 24.5448,
+      "kind": "target",
+      "clay_percent": 14.6,
+      "sand_percent": 61.9,
+      "alpha_per_m": 9.04482149047591e-05,
+      "at_or_over_eq3_cap": false
+    },
+    {
+      "name": "Shams 1",
+      "lon": 53.7146,
+      "lat": 23.5699,
+      "kind": "target",
+      "clay_percent": 12.5,
+      "sand_percent": 66.3,
+      "alpha_per_m": 4.731512589614803e-05,
+      "at_or_over_eq3_cap": false
+    },
+    {
+      "name": "Rub al Khali interior",
+      "lon": 53.0,
+      "lat": 22.5,
+      "kind": "hotspot",
+      "clay_percent": 16.2,
+      "sand_percent": 58.8,
+      "alpha_per_m": 0.00014818355175164307,
+      "at_or_over_eq3_cap": false
+    },
+    {
+      "name": "Liwa dune belt",
+      "lon": 53.8,
+      "lat": 23.1,
+      "kind": "hotspot",
+      "clay_percent": 16.6,
+      "sand_percent": 54.0,
+      "alpha_per_m": 0.0001676486266073898,
+      "at_or_over_eq3_cap": false
+    },
+    {
+      "name": "Tigris-Euphrates plain",
+      "lon": 45.0,
+      "lat": 31.0,
+      "kind": "hotspot",
+      "clay_percent": 33.7,
+      "sand_percent": 25.3,
+      "alpha_per_m": 0.00047863009232263854,
+      "at_or_over_eq3_cap": true
+    }
+  ]
+}
