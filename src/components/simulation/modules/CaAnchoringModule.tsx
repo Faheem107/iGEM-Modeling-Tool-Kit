@@ -96,13 +96,13 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
       >
         <div className="space-y-4">
           <span
-            className={`text-[10px] font-bold uppercase tracking-wider ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+            className={`text-[10px] font-bold uppercase tracking-wider ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             Shared (Sec pathway physiology)
           </span>
           <Slider
             isLightMode={isLightMode}
-            accent="accent-teal-500"
+            accent="accent-dune-teal"
             label="Signal-peptide export"
             value={exportEff}
             min={0}
@@ -114,7 +114,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
           />
           <Slider
             isLightMode={isLightMode}
-            accent="accent-amber-500"
+            accent="accent-dune-orange"
             label="CA dimerization"
             value={dimerEff}
             min={0}
@@ -125,16 +125,16 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
             hint="pNPA esterase assay, active CA requires dimers."
           />
           <div
-            className={`pt-2 border-t ${isLightMode ? "border-amber-900/10" : "border-slate-800"}`}
+            className={`pt-2 border-t ${isLightMode ? "border-dune-orange/10" : "border-border"}`}
           />
           <span
-            className={`text-[10px] font-bold uppercase tracking-wider ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+            className={`text-[10px] font-bold uppercase tracking-wider ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             Route-specific anchoring
           </span>
           <Slider
             isLightMode={isLightMode}
-            accent="accent-teal-500"
+            accent="accent-dune-teal"
             label="Sortase ligation"
             value={sortaseEff}
             min={0}
@@ -146,7 +146,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
           />
           <Slider
             isLightMode={isLightMode}
-            accent="accent-amber-500"
+            accent="accent-dune-orange"
             label="LytE-CWBD binding"
             value={motifEff}
             min={0}
@@ -160,28 +160,28 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
       </Panel>
 
       <div
-        className={`p-4 rounded-2xl border flex items-center gap-3 ${
+        className={`p-4 rounded-[6px] border flex items-center gap-3 ${
           isLightMode
-            ? "bg-teal-50/60 border-teal-200"
-            : "bg-teal-950/15 border-teal-900/40"
+            ? "bg-dune-teal/60 border-dune-teal"
+            : "bg-dune-teal/15 border-dune-teal/40"
         }`}
       >
         <CheckCircle2
-          className={`w-7 h-7 shrink-0 ${isLightMode ? "text-teal-600" : "text-teal-400"}`}
+          className={`w-7 h-7 shrink-0 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
         />
         <div>
           <span
-            className={`block text-[9px] font-bold uppercase tracking-wider ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+            className={`block text-[9px] font-bold uppercase tracking-wider ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             Recommended route
           </span>
           <span
-            className={`font-black text-sm ${isLightMode ? "text-teal-800" : "text-teal-300"}`}
+            className={`font-black text-sm ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
           >
             {recommend}
           </span>
           <span
-            className={`block text-[10px] font-mono mt-0.5 ${isLightMode ? "text-stone-600" : "text-slate-400"}`}
+            className={`block text-[10px] font-mono mt-0.5 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             {(best * 100).toFixed(1)}% functional CA displayed
           </span>
@@ -257,7 +257,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
           label="Sortase overall"
           value={(sortaseDisplay * 100).toFixed(1)}
           unit="%"
-          accent={isLightMode ? "text-teal-700" : "text-teal-400"}
+          accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
           emphasize={sortaseDisplay >= motifDisplay}
         />
         <StatCard
@@ -265,14 +265,14 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
           label="Binding motif overall"
           value={(motifDisplay * 100).toFixed(1)}
           unit="%"
-          accent={isLightMode ? "text-amber-700" : "text-amber-400"}
+          accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
           emphasize={motifDisplay > sortaseDisplay}
         />
       </div>
       <p
-        className={`text-[10px] flex items-start gap-1.5 ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+        className={`text-[10px] flex items-start gap-1.5 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
       >
-        <Link2 className="w-3.5 h-3.5 text-teal-500 mt-0.5 shrink-0" />
+        <Link2 className="w-3.5 h-3.5 text-dune-teal mt-0.5 shrink-0" />
         <GlossaryText>
           Display efficiency is the product of three independent steps, export
           times dimerization times anchoring, so the chain is only as strong as

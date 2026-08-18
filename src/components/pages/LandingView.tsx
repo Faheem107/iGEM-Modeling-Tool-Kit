@@ -6,12 +6,13 @@ import { motion } from "motion/react";
 import { useTheme } from "@/components/theme-context";
 import LandingCinematic from "@/src/components/LandingCinematic";
 import DesignCycleStory from "@/src/components/DesignCycleStory";
-import ProngReframeSequence from "@/src/components/ProngReframeSequence";
+import ProngConstellation from "@/src/components/landing/ProngConstellation";
 import SandyxAdventure from "@/src/components/SandyxAdventure";
 import { GlossaryText } from "@/src/components/GlossaryTerm";
 import { PRONGS, KILL_SWITCH } from "@/src/lib/portalsData";
 import ExposureEntry from "@/src/components/exposure/ExposureEntry";
 import CompactModal from "@/src/components/CompactModal";
+import { restoreLandingScroll } from "@/src/lib/scrollRestore";
 
 type ViewTarget = number | "killswitch";
 
@@ -21,22 +22,19 @@ export default function LandingView() {
 
   const [viewing, setViewing] = useState<ViewTarget | null>(null);
   const [showAdventure, setShowAdventure] = useState(false);
-  const [heroPeek, setHeroPeek] = useState(false);
 
-  useEffect(() => {
-    const t = setTimeout(() => setHeroPeek(true), 1000);
-    return () => clearTimeout(t);
-  }, []);
-
-  // Always open the landing at the top (the hero beat of the pinned story).
-  // Browsers restore the last scroll position on reload, which would drop the
-  // reader mid-story where the scene scale transforms are part-way through their
-  // curve. Pin restoration to manual and jump to the top on mount.
+  // A fresh load opens at the top (the hero beat of the pinned story): browsers
+  // would otherwise restore a mid-story position where the scene transforms are
+  // part-way through their curve. But coming BACK from a module lands on the
+  // model index instead, so nobody has to re-scroll the whole cinematic to
+  // reach the simulations again. restoreLandingScroll waits for the pinned
+  // spacers to exist before it moves, see src/lib/scrollRestore.ts.
   useEffect(() => {
     const prev = history.scrollRestoration;
     history.scrollRestoration = "manual";
-    window.scrollTo(0, 0);
+    const cleanup = restoreLandingScroll();
     return () => {
+      cleanup();
       history.scrollRestoration = prev;
     };
   }, []);
@@ -83,21 +81,18 @@ export default function LandingView() {
           hero section and no gap. --- */}
       <LandingCinematic
         isLightMode={isLightMode}
-        heroPeek={heroPeek}
         onOpenAdventure={() => setShowAdventure(true)}
       />
 
       {/* --- ENGINEERING DESIGN CYCLE: scroll-scrubbed 5-beat story --- */}
       <DesignCycleStory isLightMode={isLightMode} />
 
-      {/* --- THE PRONGS: 3 → 2 + kill-switch reframe animation --- */}
-      <div id="prongs" className="pt-[4vh] scroll-mt-20">
-        <ProngReframeSequence
-          isLightMode={isLightMode}
-          onView={(t) => setViewing(t)}
-          onExplorePortals={() => router.push("/portals")}
-        />
-      </div>
+      {/* --- THE PRONGS + THE MODEL INDEX: the 3 → 2 + kill-switch reframe,
+          told in type and hairlines, with every model listed underneath. --- */}
+      <ProngConstellation
+        onView={(t) => setViewing(t)}
+        onExplorePortals={() => router.push("/portals")}
+      />
 
       {/* --- DOORWAY: the two exposure modules and the business model. Sits
           directly under the prong row so it reads as the next step. --- */}
@@ -159,7 +154,7 @@ export default function LandingView() {
                 goToModel([id]);
               }
             }}
-            className="w-full rounded-[4px] bg-primary px-4 py-2.5 text-xs font-bold uppercase tracking-[0.1em] text-primary-foreground transition-opacity hover:opacity-90"
+            className="caption w-full border border-border py-3 text-center text-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
           >
             {showingKill ? "Open the kill switch model" : "Simulate this prong"}
           </button>

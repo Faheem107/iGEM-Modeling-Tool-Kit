@@ -40,10 +40,10 @@ export default class ModuleErrorBoundary extends React.Component<Props, State> {
     const { isLightMode, label } = this.props;
     return (
       <div
-        className={`p-6 rounded-2xl border flex flex-col items-start gap-3 ${
+        className={`p-6 rounded-[6px] border flex flex-col items-start gap-3 ${
           isLightMode
-            ? "bg-amber-50/70 border-amber-200 text-amber-900"
-            : "bg-amber-950/20 border-amber-900/40 text-amber-200"
+            ? "bg-dune-orange/70 border-dune-orange text-dune-orange"
+            : "bg-dune-orange/20 border-dune-orange/40 text-dune-orange"
         }`}
       >
         <div className="flex items-center gap-2">
@@ -58,10 +58,10 @@ export default class ModuleErrorBoundary extends React.Component<Props, State> {
         </p>
         <button
           onClick={this.reset}
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition ${
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-[6px] text-xs font-bold transition ${
             isLightMode
-              ? "bg-amber-100 hover:bg-amber-200 text-amber-900"
-              : "bg-amber-900/40 hover:bg-amber-900/60 text-amber-100"
+              ? "bg-dune-orange hover:bg-dune-orange text-dune-orange"
+              : "bg-dune-orange/40 hover:bg-dune-orange/60 text-dune-orange"
           }`}
         >
           <RotateCcw className="w-3.5 h-3.5" /> Try again

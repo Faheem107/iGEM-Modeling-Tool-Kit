@@ -9,12 +9,14 @@ import { ThemeProvider } from "@/components/theme-context";
 import { GradientBackground } from "@/components/gradient-background";
 import { Providers } from "@/components/providers";
 
-// Body / UI, Lexend across weights (see DESIGN.md §2)
+// Body / UI, Lexend loaded as a VARIABLE font (no `weight` array). The weight
+// axis is animated on hover across the site (.wght-link / .wght-head), which
+// only works on the variable file, static instances make
+// font-variation-settings inert.
 const lexend = Lexend({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-lexend",
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
 // Display / headings, Super Dream, the rounded retro face that matches the

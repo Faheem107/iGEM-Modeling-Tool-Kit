@@ -3,6 +3,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createTimeline, svg, stagger, type Timeline } from "animejs";
 import { gsap } from "gsap";
+import StoryEscape from "@/src/components/landing/StoryEscape";
+import { storyPinLength } from "@/src/lib/scrollRestore";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SandParticles from "./dune-story/SandParticles";
 import { GlossaryText } from "@/src/components/GlossaryTerm";
@@ -215,9 +217,9 @@ export default function DesignCycleStory({
       start: "top top",
       // Longer travel (~900px/beat) so a small scroll no longer jumps between
       // beats; the scrub smoothing keeps it from feeling heavy.
-            // Pin length, see the note in LandingCinematic: normalised progress, so this
-      // is a uniform speed-up rather than a change to any beat.
-      end: "+=2700",
+      // Pin length, see the note in LandingCinematic: normalised progress, so
+      // this is a uniform speed-up rather than a change to any beat.
+      end: storyPinLength(2700, 1200),
       pin: true,
       pinSpacing: true,
       // Apply the pin slightly early to avoid a one-frame flash at the top
@@ -250,6 +252,11 @@ export default function DesignCycleStory({
         ref={stageRef}
         className="relative flex min-h-screen w-full flex-col overflow-hidden py-20 md:justify-center md:py-0"
       >
+        {/* Skip / Escape / progress rule, inside the pinned stage. */}
+        {!staticMode && (
+          <StoryEscape progressRef={progressRef} label="Skip to the models" />
+        )}
+
         {/* Ambient drifting sand, consistent with the dune story. */}
         <SandParticles
           progressRef={progressRef}
@@ -434,7 +441,7 @@ export default function DesignCycleStory({
                       </h3>
                       <p
                         className={`text-sm leading-relaxed ${
-                          isLightMode ? "text-slate-800" : "text-slate-200"
+                          isLightMode ? "text-foreground" : "text-foreground"
                         }`}
                       >
                         <GlossaryText>{b.body}</GlossaryText>
@@ -466,7 +473,7 @@ export default function DesignCycleStory({
                         </h2>
                         <p
                           className={`text-sm sm:text-lg leading-relaxed ${
-                            isLightMode ? "text-slate-800" : "text-slate-200"
+                            isLightMode ? "text-foreground" : "text-foreground"
                           }`}
                         >
                           <GlossaryText>{b.body}</GlossaryText>

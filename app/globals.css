@@ -45,6 +45,41 @@
   --radius: 0.25rem;
   --radius-crisp: 3px;
   --shadow-flat: 0 1px 0 rgba(0, 0, 0, 0.04);
+
+  /* ---- Layout / surface tokens (see DESIGN.md §17) ----
+   * --rail is the reserved left gutter that carries indices, dates and scale
+   * labels. Content sits in the 1fr column beside it, so every list on the site
+   * shares one hard left edge. --wash is a bare RGB triple, not a colour, so the
+   * selection highlight and the pointer glow can each set their own alpha. */
+  --rail: 8.5rem;
+  --wash: 214 136 74;
+  --plate: rgb(255 255 255 / 0.55);
+  --plate-border: rgb(42 26 22 / 0.1);
+
+  /* ---- Fluid type scale ---- */
+  --text-caption: 0.6875rem;
+  --text-micro: 0.8125rem;
+  --text-body: 1.0625rem;
+  --text-lede: clamp(1.0625rem, 1.4vw, 1.1875rem);
+  --text-h3: clamp(1.125rem, 1.6vw, 1.3125rem);
+  --text-h2: clamp(1.5rem, 2.6vw, 2rem);
+  --text-h1: clamp(2rem, 4.6vw, 3.25rem);
+  --text-display: clamp(2.75rem, 8vw, 6rem);
+
+  /* ---- Weight axes, each paired to its tracking ----
+   * Lexend sets optically heavier than a normal grotesque, so body sits at 340
+   * rather than 400. Never change a weight without checking its tracking. */
+  --wght-h1: 640;
+  --wght-h2: 600;
+  --wght-h3: 560;
+  --wght-lede: 320;
+  --wght-body: 340;
+  --wght-caption: 520;
+  --wght-strong: 620;
+  --track-h1: -0.02em;
+  --track-h2: -0.015em;
+  --track-h3: -0.01em;
+  --track-caption: 0.14em;
 }
 
 .dark {
@@ -74,6 +109,8 @@
   --chart-3: var(--dune-rose);
   --chart-4: #d9b48c;
   --chart-5: #a88f6f;
+  --plate: rgb(46 38 34 / 0.5);
+  --plate-border: rgb(243 233 219 / 0.11);
 }
 
 @theme inline {
@@ -124,6 +161,106 @@
   * {
     @apply border-border outline-ring/50;
   }
+
+  /* Lexend is loaded as a variable font, so weight is an axis we animate rather
+   * than a set of discrete faces. font-synthesis-weight is off so the browser
+   * never fakes a weight we did not ask for, which would jump on hover. */
+  body {
+    font-size: var(--text-body);
+    line-height: 1.65;
+    font-variation-settings: "wght" var(--wght-body);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    line-height: 1.12;
+    text-wrap: balance;
+  }
+  h1 {
+    font-variation-settings: "wght" var(--wght-h1);
+    letter-spacing: var(--track-h1);
+  }
+  h2 {
+    font-variation-settings: "wght" var(--wght-h2);
+    letter-spacing: var(--track-h2);
+  }
+  h3,
+  h4 {
+    font-variation-settings: "wght" var(--wght-h3);
+    letter-spacing: var(--track-h3);
+  }
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: rgb(var(--wash) / 0.28);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+}
+
+
+/* Range inputs: a hairline track with a small accent thumb, so a slider reads
+   as a control on a rule rather than a filled bar. */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  height: 1rem;
+  cursor: ew-resize;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 1px;
+  background: var(--border);
+}
+input[type="range"]::-moz-range-track {
+  height: 1px;
+  background: var(--border);
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 11px;
+  height: 11px;
+  margin-top: -5px;
+  border-radius: 999px;
+  background: var(--accent);
+  border: none;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  background: var(--accent);
+  border: none;
+}
+
+/* The rail grid: metadata right-aligned into a fixed gutter, content in 1fr.
+ * Every list on the site shares this, so they all keep one hard left edge. */
+.rail-row {
+  display: grid;
+  gap: 0.5rem 2rem;
+}
+@media (min-width: 768px) {
+  .rail-row {
+    grid-template-columns: var(--rail) 1fr;
+  }
+  .rail-row > :first-child {
+    text-align: right;
+  }
+}
+.rail-row-tight {
+  display: grid;
+  gap: 0.25rem 1.25rem;
+  grid-template-columns: 2.5rem 1fr;
 }
 
 /* Everything is Lexend by default (via --font-sans on <body>); its weight scales
@@ -374,6 +511,17 @@ html {
   html.has-custom-cursor * {
     cursor: auto !important;
   }
+
+  /* Reduced motion is a real kill switch here, not a hint. The scroll stories,
+     the reframe and every reveal render their finished state outright. */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -398,15 +546,43 @@ html {
     border-radius: 6px;
   }
 
-  /* The utility register: a plate caption, a figure number, an evidence grade. */
+  /* The utility register: a plate caption, a figure number, an evidence grade,
+     a module index, a scale label. One size, one weight, one tracking. */
   .caption {
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.14em;
+    font-size: var(--text-caption);
+    font-variation-settings: "wght" var(--wght-caption);
+    letter-spacing: var(--track-caption);
     text-transform: uppercase;
     color: var(--muted-foreground);
     line-height: 1.4;
   }
+
+  /* Text thickens under the pointer instead of changing colour. Because this
+     animates a variable axis and not `font-weight`, nothing reflows and the
+     neighbouring rows do not shift. data-active reuses the hover end state, so
+     the current item and the hovered item look identical. */
+  .wght-link {
+    font-variation-settings: "wght" var(--wght-body);
+    color: var(--muted-foreground);
+    transition:
+      font-variation-settings 0.25s ease,
+      color 0.25s ease;
+  }
+
+  .wght-link:hover,
+  .wght-link:focus-visible,
+  .wght-link[data-active="true"] {
+    font-variation-settings: "wght" var(--wght-strong);
+    color: var(--foreground);
+  }
+
+  .wght-head {
+    transition: font-variation-settings 0.25s ease;
+  }
+  h1.wght-head:hover { font-variation-settings: "wght" 760; }
+  h2.wght-head:hover { font-variation-settings: "wght" 720; }
+  h3.wght-head:hover,
+  h4.wght-head:hover { font-variation-settings: "wght" 680; }
 
   /* Hover is a change of weight and edge, never a lift or a shadow. */
   .plate-interactive {
@@ -421,17 +597,27 @@ html {
     background: color-mix(in srgb, var(--card) 78%, transparent);
   }
 
-  /* Solid underline means this navigates. Dotted is reserved for a gloss. */
+  /* Solid underline means this navigates. Dotted is reserved for a gloss.
+     The rule draws out from the leading edge rather than fading in, so the
+     direction of the gesture matches the direction of reading. */
   .rule-link {
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.22em;
-    text-decoration-color: color-mix(in srgb, var(--accent) 60%, transparent);
-    transition: text-decoration-color 0.25s ease, color 0.25s ease;
+    position: relative;
+    transition: color 0.25s ease;
   }
 
-  .rule-link:hover {
-    color: var(--accent);
-    text-decoration-color: var(--accent);
+  .rule-link::after {
+    content: "";
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: currentColor;
+    transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .rule-link:hover::after,
+  .rule-link:focus-visible::after {
+    width: 100%;
   }
 }

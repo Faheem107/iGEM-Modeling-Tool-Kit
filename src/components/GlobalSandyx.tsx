@@ -69,15 +69,15 @@ export default function GlobalSandyx({
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25 }}
-                className={`mb-1 max-w-[140px] text-center text-[9.5px] font-semibold leading-tight px-2.5 py-1 rounded-2xl border ${
+                className={`mb-1 max-w-[140px] text-center text-[9.5px] font-semibold leading-tight px-2.5 py-1 rounded-[6px] border ${
                   isLightMode
-                    ? "bg-white/85 border-teal-200 text-slate-600"
-                    : "bg-slate-900/85 border-teal-500/25 text-slate-300"
+                    ? "bg-white/85 border-dune-teal text-muted-foreground"
+                    : "bg-dune-basalt/85 border-dune-teal/25 text-foreground"
                 }`}
                 style={{ backdropFilter: "blur(8px)" }}
               >
                 Drop me at any{" "}
-                <span className="text-teal-500 underline decoration-dotted">
+                <span className="text-dune-teal underline decoration-dotted">
                   underlined
                 </span>{" "}
                 word!

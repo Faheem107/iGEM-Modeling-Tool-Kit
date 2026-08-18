@@ -120,25 +120,25 @@ export default function ProteinThermalDecay({
 
   return (
     <div
-      className={`p-5 rounded-xl border transition-all duration-300 font-sans ${
+      className={`p-5 rounded-[6px] border transition-all duration-300 font-sans ${
         isLightMode
-          ? "bg-[#fcfaf5] border-amber-900/10"
-          : "bg-[#1c1512] border-slate-850/90"
+          ? "bg-[#fcfaf5] border-dune-orange/10"
+          : "bg-[#1c1512] border-border"
       }`}
       id="protein-thermal-decay-frame"
     >
       {/* Title block */}
       <div className="flex items-center gap-3 mb-5">
         <div
-          className={`p-2 rounded-lg ${isLightMode ? "bg-amber-100 text-amber-800" : "bg-amber-950/45 text-amber-400"}`}
+          className={`p-2 rounded-[4px] ${isLightMode ? "bg-dune-orange text-dune-orange" : "bg-dune-orange/45 text-dune-orange"}`}
         >
-          <Thermometer className="w-5 h-5 animate-pulse" />
+          <Thermometer className="w-5 h-5" />
         </div>
         <div>
           <h3 className="text-sm font-black uppercase tracking-wider font-mono">
             Protein Conformational &amp; Thermal Decay
           </h3>
-          <p className="text-[10px] text-slate-500 mt-0.5">
+          <p className="text-[10px] text-muted-foreground mt-0.5">
             Thermodynamic folding state f_folded mapping of sandy soil
             biopolymers.
           </p>
@@ -153,13 +153,13 @@ export default function ProteinThermalDecay({
         {/* Sliders Control Panel */}
         <div className="md:col-span-5 space-y-4">
           <div
-            className={`p-4 rounded-lg border space-y-4 ${
+            className={`p-4 rounded-[4px] border space-y-4 ${
               isLightMode
-                ? "bg-amber-50/50 border-amber-900/5"
-                : "bg-[#1c1512]/60 border-slate-900"
+                ? "bg-dune-orange/50 border-dune-orange/5"
+                : "bg-[#1c1512]/60 border-border"
             }`}
           >
-            <h4 className="text-[11px] font-extrabold uppercase tracking-widest text-[#a5b4fc] font-mono flex items-center gap-1.5 pb-1 border-b border-dashed border-slate-800">
+            <h4 className="text-[11px] font-extrabold uppercase tracking-widest text-[#a5b4fc] font-mono flex items-center gap-1.5 pb-1 border-b border-dashed border-border">
               <Compass className="w-3.5 h-3.5" /> Soil Micro-Climate Inputs
             </h4>
 
@@ -167,11 +167,11 @@ export default function ProteinThermalDecay({
             <div className="space-y-1">
               <div className="flex justify-between text-[11px]">
                 <span className="font-semibold flex items-center gap-1">
-                  <Thermometer className="w-3 h-3 text-red-505" /> Target
+                  <Thermometer className="w-3 h-3 text-dune-maroon" /> Target
                   Temperature:
                 </span>
                 <span
-                  className={`font-mono font-bold ${temperature >= 45 ? "text-rose-500" : "text-teal-500"}`}
+                  className={`font-mono font-bold ${temperature >= 45 ? "text-dune-rose" : "text-dune-teal"}`}
                 >
                   {temperature.toFixed(1)} °C
                 </span>
@@ -183,7 +183,7 @@ export default function ProteinThermalDecay({
                 step="0.5"
                 value={temperature}
                 onChange={(e) => setTemperature(parseFloat(e.target.value))}
-                className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                className="w-full h-1 bg-card rounded-[4px] appearance-none cursor-pointer accent-dune-orange"
               />
             </div>
 
@@ -191,9 +191,9 @@ export default function ProteinThermalDecay({
             <div className="space-y-1">
               <div className="flex justify-between text-[11px]">
                 <span className="font-semibold flex items-center gap-1">
-                  <Droplet className="w-3 h-3 text-teal-400" /> Soil pH Level:
+                  <Droplet className="w-3 h-3 text-dune-teal" /> Soil pH Level:
                 </span>
-                <span className="font-mono font-bold text-teal-400">
+                <span className="font-mono font-bold text-dune-teal">
                   {pH.toFixed(2)}
                 </span>
               </div>
@@ -204,7 +204,7 @@ export default function ProteinThermalDecay({
                 step="0.1"
                 value={pH}
                 onChange={(e) => setPh(parseFloat(e.target.value))}
-                className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-teal-450"
+                className="w-full h-1 bg-card rounded-[4px] appearance-none cursor-pointer accent-dune-teal"
               />
             </div>
 
@@ -212,10 +212,10 @@ export default function ProteinThermalDecay({
             <div className="space-y-1">
               <div className="flex justify-between text-[11px]">
                 <span className="font-semibold flex items-center gap-1">
-                  <Percent className="w-3 h-3 text-teal-400" /> Ground
+                  <Percent className="w-3 h-3 text-dune-teal" /> Ground
                   Salinity/Ions:
                 </span>
-                <span className="font-mono font-bold text-teal-400">
+                <span className="font-mono font-bold text-dune-teal">
                   {salinity.toFixed(2)} %
                 </span>
               </div>
@@ -226,33 +226,33 @@ export default function ProteinThermalDecay({
                 step="0.1"
                 value={salinity}
                 onChange={(e) => setSalinity(parseFloat(e.target.value))}
-                className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-teal-405"
+                className="w-full h-1 bg-card rounded-[4px] appearance-none cursor-pointer accent-dune-teal"
               />
             </div>
           </div>
 
           {/* Current Denaturation Properties readout info */}
           <div
-            className={`p-4 rounded-lg border text-xs space-y-2 ${
+            className={`p-4 rounded-[4px] border text-xs space-y-2 ${
               isLightMode
-                ? "bg-[#f8f5ee] border-amber-900/10"
-                : "bg-[#080d16] border-slate-900/60"
+                ? "bg-[#f8f5ee] border-dune-orange/10"
+                : "bg-[#080d16] border-border"
             }`}
           >
             <div className="flex justify-between items-center text-[11px]">
-              <span className="text-slate-400 uppercase font-mono text-[9px]">
+              <span className="text-muted-foreground uppercase font-mono text-[9px]">
                 Operative Melting Point $T_m$:
               </span>
-              <span className="font-mono font-bold text-slate-200">
+              <span className="font-mono font-bold text-foreground">
                 {operativeT_melting.toFixed(2)} °C
               </span>
             </div>
             <div className="flex justify-between items-center text-[11px]">
-              <span className="text-slate-400 uppercase font-mono text-[9px]">
+              <span className="text-muted-foreground uppercase font-mono text-[9px]">
                 Folding Half-Life State:
               </span>
               <span
-                className={`font-mono font-extrabold ${foldedPercentage < 50 ? "text-red-400" : "text-teal-400"}`}
+                className={`font-mono font-extrabold ${foldedPercentage < 50 ? "text-dune-maroon" : "text-dune-teal"}`}
               >
                 {foldedPercentage.toFixed(1)} % folded
               </span>
@@ -264,15 +264,15 @@ export default function ProteinThermalDecay({
         <div className="md:col-span-7 flex flex-col justify-between">
           {/* Live Folded State Plot */}
           <div
-            className={`p-3.5 rounded-lg border ${
+            className={`p-3.5 rounded-[4px] border ${
               isLightMode
-                ? "bg-[#fbf9f4] border-amber-900/5"
-                : "bg-[#020408]/90 border-slate-900"
+                ? "bg-[#fbf9f4] border-dune-orange/5"
+                : "bg-[#020408]/90 border-border"
             }`}
           >
-            <div className="flex justify-between items-center mb-2 text-[10px] font-mono uppercase text-slate-500">
+            <div className="flex justify-between items-center mb-2 text-[10px] font-mono uppercase text-muted-foreground">
               <span className="flex items-center gap-1">
-                <Activity className="w-3.5 h-3.5 text-rose-500" />{" "}
+                <Activity className="w-3.5 h-3.5 text-dune-rose" />{" "}
                 <GlossaryTerm term="folding-curve">
                   Operative Folding Curve
                 </GlossaryTerm>
@@ -451,24 +451,24 @@ export default function ProteinThermalDecay({
           {/* Actionable Warning Box Panel */}
           <div className="mt-3">
             {foldedPercentage < 50 ? (
-              <div className="p-3 bg-red-950/20 border border-red-900/60 rounded-lg flex items-start gap-2.5 text-[11px] text-red-400 animate-pulse">
-                <AlertTriangle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+              <div className="p-3 bg-dune-maroon/20 border border-dune-maroon/60 rounded-[4px] flex items-start gap-2.5 text-[11px] text-dune-maroon">
+                <AlertTriangle className="w-4 h-4 text-dune-maroon shrink-0 mt-0.5" />
                 <div>
                   <strong className="font-black uppercase tracking-wider block mb-0.5">
                     Critical Thermophilic Integrity Loss!
                   </strong>
                   Severe local micro-climate triggers protein denaturation. The
                   cross-linked biofilm protection coefficient drops by{" "}
-                  <span className="font-bold font-mono text-white text-xs">
+                  <span className="font-bold font-mono text-foreground text-xs">
                     {((1.0 - viabilityMultiplier) * 100).toFixed(0)}%
                   </span>
                   .
                 </div>
               </div>
             ) : (
-              <div className="p-3 bg-teal-950/15 border border-teal-900/40 rounded-lg flex items-start gap-2.5 text-[11px] text-teal-400">
+              <div className="p-3 bg-dune-teal/15 border border-dune-teal/40 rounded-[4px] flex items-start gap-2.5 text-[11px] text-dune-teal">
                 <Sparkles
-                  className="w-4 h-4 text-teal-500 shrink-0 mt-0.5 animate-spin"
+                  className="w-4 h-4 text-dune-teal shrink-0 mt-0.5 animate-spin"
                   style={{ animationDuration: "10s" }}
                 />
                 <div>

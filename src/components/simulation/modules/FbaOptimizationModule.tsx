@@ -596,7 +596,7 @@ export default function FbaOptimizationModule({
         <div className="space-y-4">
           <Slider
             isLightMode={isLightMode}
-            accent="accent-amber-500"
+            accent="accent-dune-orange"
             label="Glucose uptake bound"
             value={glucoseUb}
             min={2}
@@ -608,7 +608,7 @@ export default function FbaOptimizationModule({
           />
           <Slider
             isLightMode={isLightMode}
-            accent="accent-teal-500"
+            accent="accent-dune-teal"
             label="O₂ uptake bound"
             value={o2Ub}
             min={0}
@@ -620,18 +620,18 @@ export default function FbaOptimizationModule({
           />
           <div>
             <span
-              className={`text-[11px] font-semibold block mb-1.5 ${isLightMode ? "text-stone-700" : "text-slate-300"}`}
+              className={`text-[11px] font-semibold block mb-1.5 ${isLightMode ? "text-foreground" : "text-foreground"}`}
             >
               Objective cᵀv
             </span>
             <div
-              className={`flex gap-1 p-1 rounded-lg border ${isLightMode ? "bg-stone-50 border-stone-200" : "bg-slate-900 border-slate-800"}`}
+              className={`flex gap-1 p-1 rounded-[4px] border ${isLightMode ? "bg-background border-border" : "bg-dune-basalt border-border"}`}
             >
               {objButtons.map(([k, lbl]) => (
                 <button
                   key={k}
                   onClick={() => setObjective(k)}
-                  className={`flex-1 py-1.5 rounded-md text-[11px] font-bold transition ${objective === k ? (isLightMode ? "bg-amber-600 text-white" : "bg-amber-500 text-white") : isLightMode ? "text-stone-600" : "text-slate-400"}`}
+                  className={`flex-1 py-1.5 rounded-[4px] text-[11px] font-bold transition ${objective === k ? (isLightMode ? "bg-dune-orange text-foreground" : "bg-dune-orange text-foreground") : isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                 >
                   {lbl}
                 </button>
@@ -655,28 +655,28 @@ export default function FbaOptimizationModule({
           {KNOCKOUTS.map((k) => (
             <label
               key={k.id}
-              className={`flex items-center gap-2 p-2 rounded-lg border text-[11px] cursor-pointer transition ${
+              className={`flex items-center gap-2 p-2 rounded-[4px] border text-[11px] cursor-pointer transition ${
                 knockouts.has(k.id)
                   ? isLightMode
-                    ? "border-rose-300 bg-rose-50 text-rose-800"
-                    : "border-rose-900/50 bg-rose-950/20 text-rose-300"
+                    ? "border-dune-rose bg-dune-rose text-dune-rose"
+                    : "border-dune-rose/50 bg-dune-rose/20 text-dune-rose"
                   : isLightMode
-                    ? "border-stone-200 bg-stone-50 text-stone-600"
-                    : "border-slate-800 bg-slate-900/40 text-slate-400"
+                    ? "border-border bg-background text-muted-foreground"
+                    : "border-border bg-dune-basalt/40 text-muted-foreground"
               }`}
             >
               <input
                 type="checkbox"
                 checked={knockouts.has(k.id)}
                 onChange={() => toggleKO(k.id)}
-                className="accent-rose-500"
+                className="accent-dune-rose"
               />
               <span className="font-mono font-bold">{k.label}</span>
             </label>
           ))}
         </div>
         <p
-          className={`mt-2 text-[10px] ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+          className={`mt-2 text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           <GlossaryText>
             Setting lb=ub=0 forces the LP to reroute carbon; watch the flow map,
@@ -692,7 +692,7 @@ export default function FbaOptimizationModule({
           label="Max growth µ"
           value={analysis.growthMax.toFixed(2)}
           unit="h⁻¹"
-          accent={isLightMode ? "text-teal-700" : "text-teal-400"}
+          accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
         />
         {has1 && (
           <StatCard
@@ -701,7 +701,7 @@ export default function FbaOptimizationModule({
             value={analysis.pgaMax.toFixed(2)}
             unit="mmol/gDCW/h"
             emphasize
-            accent={isLightMode ? "text-amber-700" : "text-amber-400"}
+            accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
           />
         )}
         {has2 && (
@@ -711,7 +711,7 @@ export default function FbaOptimizationModule({
             value={analysis.caMax.toFixed(2)}
             unit="mmol/gDCW/h"
             emphasize
-            accent={isLightMode ? "text-teal-700" : "text-teal-400"}
+            accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
           />
         )}
         {has1 && (
@@ -720,7 +720,7 @@ export default function FbaOptimizationModule({
             label="Precursor → ODE [S]"
             value={fbaPrecursorToConc(analysis.precursorFlux).toFixed(2)}
             unit="mM"
-            accent={isLightMode ? "text-amber-700" : "text-amber-400"}
+            accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
             sub="couples to kinetic model"
           />
         )}
@@ -734,7 +734,7 @@ export default function FbaOptimizationModule({
           }
           value={analysis.acetate.toFixed(2)}
           unit="mmol/gDCW/h"
-          accent={isLightMode ? "text-stone-700" : "text-slate-300"}
+          accent={isLightMode ? "text-foreground" : "text-foreground"}
           sub="carbon wasted"
         />
         <StatCard
@@ -742,7 +742,7 @@ export default function FbaOptimizationModule({
           label="Glucose shadow price"
           value={analysis.glucoseShadow.toFixed(2)}
           unit="Δobj/Δcap"
-          accent={isLightMode ? "text-amber-700" : "text-amber-400"}
+          accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
           sub={
             analysis.glucoseShadow > 0.01
               ? "feed is binding"
@@ -754,7 +754,7 @@ export default function FbaOptimizationModule({
           label="O₂ shadow price"
           value={analysis.o2Shadow.toFixed(2)}
           unit="Δobj/Δcap"
-          accent={isLightMode ? "text-teal-700" : "text-teal-400"}
+          accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
           sub={analysis.o2Shadow > 0.01 ? "O₂ is binding" : "O₂ not limiting"}
         />
       </div>
@@ -785,7 +785,7 @@ export default function FbaOptimizationModule({
         isLightMode={isLightMode}
         right={
           analysis.status !== "optimal" ? (
-            <span className="text-[10px] font-semibold text-dune-maroon dark:text-dune-rose">
+            <span className="text-[10px] font-semibold text-dune-maroon">
               Solver could not reach an optimum
             </span>
           ) : undefined
@@ -800,7 +800,7 @@ export default function FbaOptimizationModule({
           isLightMode={isLightMode}
         />
         <div
-          className={`mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[9px] ${isLightMode ? "text-stone-500" : "text-slate-400"}`}
+          className={`mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[9px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           {legendDot(isLightMode ? "#d6884a" : "#e0a878", "glycolysis")}
           {legendDot(isLightMode ? "#4a8f86" : "#8fb3ac", "TCA cycle")}
@@ -812,7 +812,7 @@ export default function FbaOptimizationModule({
           {legendDot("#ef4444", "overflow (acetate/lactate)")}
         </div>
         <p
-          className={`mt-1.5 text-[10px] ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+          className={`mt-1.5 text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           <GlossaryText>
             Arrow thickness and flow speed track each reaction&apos;s pFBA flux;
@@ -886,7 +886,7 @@ export default function FbaOptimizationModule({
           </LineChart>
         </ResponsiveContainer>
         <p
-          className={`mt-1 text-[10px] flex items-center gap-1.5 ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+          className={`mt-1 text-[10px] flex items-center gap-1.5 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           <Beaker className="w-3 h-3" /> Marker = current objective&apos;s
           operating point. The downward slope is the growth that must be traded
@@ -919,19 +919,19 @@ export default function FbaOptimizationModule({
               <div className="flex justify-between text-[10px] font-mono mb-0.5">
                 <span
                   className={
-                    isLightMode ? "text-stone-600 font-bold" : "text-slate-300"
+                    isLightMode ? "text-muted-foreground font-bold" : "text-foreground"
                   }
                 >
                   {lbl}
                 </span>
                 <span
-                  className={isLightMode ? "text-stone-500" : "text-slate-500"}
+                  className={isLightMode ? "text-muted-foreground" : "text-muted-foreground"}
                 >
                   {pct.toFixed(0)}% of feed C
                 </span>
               </div>
               <div
-                className={`h-2 rounded-full overflow-hidden ${isLightMode ? "bg-stone-200" : "bg-slate-800"}`}
+                className={`h-2 rounded-full overflow-hidden ${isLightMode ? "bg-secondary" : "bg-card"}`}
               >
                 <div
                   className="h-2 rounded-full"
@@ -942,7 +942,7 @@ export default function FbaOptimizationModule({
           ))}
         </div>
         <p
-          className={`text-[10px] mt-2 ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+          className={`text-[10px] mt-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           <GlossaryText>
             Carbon-mole balance on the fixed glucose feed. Deleting acetate
@@ -1035,25 +1035,25 @@ export default function FbaOptimizationModule({
                     <span
                       className={
                         isLightMode
-                          ? "text-stone-600 font-bold"
-                          : "text-slate-400"
+                          ? "text-muted-foreground font-bold"
+                          : "text-muted-foreground"
                       }
                     >
                       {id}
                     </span>
                     <span
                       className={
-                        isLightMode ? "text-stone-500" : "text-slate-500"
+                        isLightMode ? "text-muted-foreground" : "text-muted-foreground"
                       }
                     >
                       [{lo.toFixed(1)}, {hi.toFixed(1)}]
                     </span>
                   </div>
                   <div
-                    className={`h-2 rounded-full relative ${isLightMode ? "bg-stone-200" : "bg-slate-800"}`}
+                    className={`h-2 rounded-full relative ${isLightMode ? "bg-secondary" : "bg-card"}`}
                   >
                     <div
-                      className="absolute h-2 rounded-full bg-gradient-to-r from-teal-500 to-amber-500"
+                      className="absolute h-2 rounded-full bg-gradient-to-r from-dune-teal to-dune-orange"
                       style={{
                         left: `${(lo / span) * 100}%`,
                         width: `${Math.max(2, ((hi - lo) / span) * 100)}%`,
@@ -1064,7 +1064,7 @@ export default function FbaOptimizationModule({
               );
             })}
             <p
-              className={`text-[10px] mt-2 ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+              className={`text-[10px] mt-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
             >
               Wide bars = flexible reactions with alternate optima; pinpoints =
               rigid, rate-limiting steps.
@@ -1074,10 +1074,10 @@ export default function FbaOptimizationModule({
       </div>
 
       <div
-        className={`px-4 py-3 rounded-xl border text-[10px] font-mono leading-relaxed ${
+        className={`px-4 py-3 rounded-[6px] border text-[10px] font-mono leading-relaxed ${
           isLightMode
-            ? "bg-[#fcfaf5] border-amber-900/10 text-stone-600"
-            : "bg-[#1c1512] border-slate-850 text-slate-400"
+            ? "bg-[#fcfaf5] border-dune-orange/10 text-muted-foreground"
+            : "bg-[#1c1512] border-border text-muted-foreground"
         }`}
       >
         <GlossaryText>

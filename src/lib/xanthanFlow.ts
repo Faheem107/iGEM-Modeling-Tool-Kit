@@ -115,12 +115,14 @@ export function reynoldsMR(
 /** The five concentration levels used throughout the page (undiluted → heavily diluted). */
 export const CONCENTRATION_LEVELS = [1, 0.75, 0.5, 0.25, 0.1] as const;
 
+// A sequential ramp on the dune teal: darkest is undiluted, lightest is the
+// most dilute, so the ordering reads without the legend.
 export const CONCENTRATION_COLORS: Record<number, string> = {
-  1: "#0369a1", // sky-700, undiluted
-  0.75: "#0ea5e9", // sky-500
-  0.5: "#38bdf8", // sky-400
-  0.25: "#7dd3fc", // sky-300
-  0.1: "#bae6fd", // sky-200
+  1: "#2f4f49", // undiluted
+  0.75: "#496b64",
+  0.5: "#6d938b",
+  0.25: "#8fb3ac", // dune-teal
+  0.1: "#bdd4cf",
 };
 
 /** Format a fraction as a whole-number percentage label, e.g. 0.75 -> "75%". */

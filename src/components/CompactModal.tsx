@@ -73,7 +73,8 @@ export default function CompactModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 p-4 backdrop-blur-[2px]"
+          data-modal-open="true"
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-dune-basalt/55 p-4"
           onClick={onClose}
         >
           <motion.div
@@ -91,7 +92,7 @@ export default function CompactModal({
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0">
                   {eyebrow && <p className="caption mb-1.5 text-dune-orange">{eyebrow}</p>}
-                  <h2 className="text-xl font-bold leading-tight tracking-tight">{title}</h2>
+                  <h2 className="text-[length:var(--text-h3)] leading-tight">{title}</h2>
                 </div>
                 <button
                   {...stick}
@@ -105,17 +106,14 @@ export default function CompactModal({
               </div>
 
               {tabs.length > 1 && (
-                <div className="mt-4 flex flex-wrap gap-1">
+                <div className="-mb-4 mt-5 flex flex-wrap gap-5">
                   {tabs.map((t, i) => (
                     <button
                       key={t.id}
                       {...hl}
                       onClick={() => setActive(i)}
-                      className={`rounded-[4px] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] transition-colors ${
-                        i === active
-                          ? "bg-dune-orange/12 text-dune-orange"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
+                      data-active={i === active}
+                      className="caption border-b-2 border-transparent pb-2.5 transition-colors data-[active=true]:border-dune-orange data-[active=true]:text-dune-orange hover:text-foreground"
                     >
                       {t.label}
                     </button>

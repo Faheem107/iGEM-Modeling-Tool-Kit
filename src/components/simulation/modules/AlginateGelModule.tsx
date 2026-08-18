@@ -127,7 +127,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
         <div className="space-y-4">
           <Slider
             isLightMode={isLightMode}
-            accent="accent-rose-500"
+            accent="accent-dune-rose"
             label="Applied alginate"
             value={p.appliedPercent}
             min={0.1}
@@ -139,7 +139,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
           />
           <Slider
             isLightMode={isLightMode}
-            accent="accent-teal-500"
+            accent="accent-dune-teal"
             label={<>Ca²⁺ crosslinker</>}
             value={p.calcium}
             min={0}
@@ -151,7 +151,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
           />
           <Slider
             isLightMode={isLightMode}
-            accent="accent-amber-500"
+            accent="accent-dune-orange"
             label="Temperature"
             value={tempC}
             min={5}
@@ -163,7 +163,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
           />
           <Slider
             isLightMode={isLightMode}
-            accent="accent-teal-500"
+            accent="accent-dune-teal"
             label="Relative humidity"
             value={p.relativeHumidity}
             min={0}
@@ -175,7 +175,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
           />
           <Slider
             isLightMode={isLightMode}
-            accent="accent-amber-500"
+            accent="accent-dune-orange"
             label="Rain / wet cycles"
             value={p.rainCycles}
             min={0}
@@ -195,7 +195,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
           value={effectiveG.toFixed(0)}
           unit="Pa"
           emphasize
-          accent={isLightMode ? "text-rose-700" : "text-rose-400"}
+          accent={isLightMode ? "text-dune-rose" : "text-dune-rose"}
           sub={
             p.rainCycles > 0 ? `after ${p.rainCycles} wet cycles` : "fresh gel"
           }
@@ -205,14 +205,14 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
           label="Ca²⁺ saturation θ"
           value={(gel.theta * 100).toFixed(0)}
           unit="%"
-          accent={isLightMode ? "text-teal-700" : "text-teal-400"}
+          accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
         />
         <StatCard
           isLightMode={isLightMode}
           label="Moisture retained"
           value={moisture.toFixed(0)}
           unit="g/L"
-          accent={isLightMode ? "text-teal-700" : "text-teal-400"}
+          accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
           sub="keeps crust damp"
         />
         <StatCard
@@ -220,7 +220,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
           label="Washout half-life"
           value={halfLife.toFixed(1)}
           unit="cycles"
-          accent={isLightMode ? "text-amber-700" : "text-amber-400"}
+          accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
           sub="durability limit"
         />
       </div>
@@ -275,7 +275,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
           </LineChart>
         </ResponsiveContainer>
         <p
-          className={`mt-2 text-[10px] ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+          className={`mt-2 text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           <GlossaryText>
             Calcium binds the buckled G-blocks into egg-box junctions; the
@@ -327,7 +327,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
             </LineChart>
           </ResponsiveContainer>
           <p
-            className={`mt-2 text-[10px] ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+            className={`mt-2 text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             <GlossaryText>
               The honest limit: alginate is soluble, so each wet cycle removes a

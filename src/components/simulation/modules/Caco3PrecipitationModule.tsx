@@ -156,7 +156,7 @@ export default function Caco3PrecipitationModule({
         <div className="space-y-4">
           <Slider
             isLightMode={isLightMode}
-            accent="accent-teal-500"
+            accent="accent-dune-teal"
             label={<>Dissolved Ca²⁺</>}
             value={p.calcium}
             min={1}
@@ -168,7 +168,7 @@ export default function Caco3PrecipitationModule({
           />
           <Slider
             isLightMode={isLightMode}
-            accent="accent-teal-500"
+            accent="accent-dune-teal"
             label={<>Max DIC capacity</>}
             value={p.dicMax}
             min={2}
@@ -180,7 +180,7 @@ export default function Caco3PrecipitationModule({
           />
           <Slider
             isLightMode={isLightMode}
-            accent="accent-amber-500"
+            accent="accent-dune-orange"
             label={<>Solution pH</>}
             value={p.pH}
             min={8.5}
@@ -191,7 +191,7 @@ export default function Caco3PrecipitationModule({
           />
           <Slider
             isLightMode={isLightMode}
-            accent="accent-amber-500"
+            accent="accent-dune-orange"
             label={<>Carbonic Anhydrase activity</>}
             value={p.caEnhancement}
             min={0}
@@ -210,7 +210,7 @@ export default function Caco3PrecipitationModule({
           label="Carbonate content"
           value={result.carbonateWtPercent.toFixed(2)}
           unit="wt%"
-          accent={isLightMode ? "text-teal-700" : "text-teal-400"}
+          accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
           sub={`${(result.vateriteFraction * 100).toFixed(0)}% vaterite → calcite`}
         />
         <StatCard
@@ -221,11 +221,11 @@ export default function Caco3PrecipitationModule({
           accent={
             finalSI > 0
               ? isLightMode
-                ? "text-teal-700"
-                : "text-teal-400"
+                ? "text-dune-teal"
+                : "text-dune-teal"
               : isLightMode
-                ? "text-rose-600"
-                : "text-rose-400"
+                ? "text-dune-rose"
+                : "text-dune-rose"
           }
           sub={finalSI > 0 ? "supersaturated → precipitates" : "undersaturated"}
         />
@@ -239,7 +239,7 @@ export default function Caco3PrecipitationModule({
           value={(result.ucsKpa / 1000).toFixed(2)}
           unit="MPa"
           emphasize
-          accent={isLightMode ? "text-amber-700" : "text-amber-400"}
+          accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
           sub={`${result.ucsKpa.toFixed(0)} kPa biocement`}
         />
         <StatCard
@@ -251,7 +251,7 @@ export default function Caco3PrecipitationModule({
           }
           value={result.co2SequesteredGPerL.toFixed(2)}
           unit="g/L"
-          accent={isLightMode ? "text-teal-700" : "text-teal-400"}
+          accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
           sub="net-negative, no ammonia"
         />
       </div>
@@ -275,7 +275,7 @@ export default function Caco3PrecipitationModule({
         isLightMode={isLightMode}
         right={
           <span
-            className={`text-[10px] font-mono ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+            className={`text-[10px] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             operating pH {p.pH.toFixed(1)}
           </span>
@@ -389,7 +389,7 @@ export default function Caco3PrecipitationModule({
             </LineChart>
           </ResponsiveContainer>
           <p
-            className={`mt-2 text-[10px] ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+            className={`mt-2 text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             <GlossaryText>
               Once the solution is supersaturated the pathway is not direct:
@@ -444,9 +444,9 @@ export default function Caco3PrecipitationModule({
             </LineChart>
           </ResponsiveContainer>
           <p
-            className={`mt-2 text-[10px] flex items-start gap-1 ${isLightMode ? "text-stone-500" : "text-slate-500"}`}
+            className={`mt-2 text-[10px] flex items-start gap-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
-            <Leaf className="w-3 h-3 text-teal-500 mt-0.5 shrink-0" />
+            <Leaf className="w-3 h-3 text-dune-teal mt-0.5 shrink-0" />
             <GlossaryText>
               Red marker = current operating point. The power law UCS = kUcs x
               (calcite wt%)^nUcs is fixed by the wet-lab unconfined compression
