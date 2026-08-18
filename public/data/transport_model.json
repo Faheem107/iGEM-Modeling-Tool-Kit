@@ -1,0 +1,68 @@
+{
+  "sources": {
+    "size_classes_and_layer_height": "Marticorena & Bergametti 1995, doi 10.1029/95JD00690",
+    "settling_velocity": "Ferguson & Church 2004, J Sediment Res 74, 933-937",
+    "grain_statistics": "Benaafi et al., Arab J Geosci, Table 1, doi 10.1007/s12517-015-1970-9"
+  },
+  "saltation_range_m": [
+    6e-05,
+    0.002
+  ],
+  "saltation_layer_height_m": 1.0,
+  "grain": {
+    "Rub al Khali": {
+      "mean_phi": 1.46,
+      "sorting_phi": 0.863,
+      "n": 12
+    },
+    "Eastern Province": {
+      "mean_phi": 1.999,
+      "sorting_phi": 0.74,
+      "n": 9
+    },
+    "Sakaka": {
+      "mean_phi": 2.29,
+      "sorting_phi": 0.802,
+      "n": 12
+    }
+  },
+  "capture_curve": {
+    "U_5.0": {
+      "1": 0.95817,
+      "5": 0.0755,
+      "10": 0.01098,
+      "25": 0.0,
+      "50": 0.0,
+      "100": 0.0,
+      "500": 0.0,
+      "1000": 0.0
+    },
+    "U_10.0": {
+      "1": 1.0,
+      "5": 0.3543,
+      "10": 0.0755,
+      "25": 0.00522,
+      "50": 0.0,
+      "100": 0.0,
+      "500": 0.0,
+      "1000": 0.0
+    },
+    "U_15.0": {
+      "1": 1.0,
+      "5": 0.66296,
+      "10": 0.19914,
+      "25": 0.01923,
+      "50": 0.00145,
+      "100": 0.0,
+      "500": 0.0,
+      "1000": 0.0
+    }
+  },
+  "needs_source": {
+    "uae_electricity_tariff": "DEWA / ADDC / EWEC industrial tariff, USD per kWh. Needed to convert energy loss to money.",
+    "solar_capacity_factor": "UAE utility-scale PV capacity factor. Needed to turn nameplate MW into annual MWh.",
+    "abrasion_to_power_loss": "Glass haze or transmittance loss per unit saltation impact. No source found yet. This is the weakest link in the whole value chain.",
+    "deposition_to_transmittance": "Elminir et al. 2006, Energy Convers. Manag. 47, 3192, doi 10.1016/j.enconman.2006.02.014. PAYWALLED, needs library download.",
+    "encroachment_clearing_cost": "Municipal or O&M sand-clearing cost per km or per hectare in the Gulf. Business team flagged this as undocumented."
+  }
+}
