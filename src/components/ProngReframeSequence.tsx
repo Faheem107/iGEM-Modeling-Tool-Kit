@@ -311,10 +311,15 @@ export default function ProngReframeSequence({
           Skip
         </motion.button>
 
+        {/* z-20 keeps the branches above the cards. The cards come later in the DOM
+            and are absolutely positioned, so without this they paint over the branch
+            tips: at trioScale 1.1 a grown card's top edge rises to y about 93, which
+            swallows the heads and leaf nodes sitting at y 95. The svg is
+            pointer-events-none, so the cards underneath stay clickable. */}
         <svg
           viewBox="0 0 1000 600"
           preserveAspectRatio="none"
-          className="pointer-events-none absolute inset-0 h-full w-full overflow-visible"
+          className="pointer-events-none absolute inset-0 z-20 h-full w-full overflow-visible"
         >
           <defs>
             <linearGradient id="reframeBranch" gradientUnits="userSpaceOnUse" x1="500" y1="0" x2="500" y2="220">
