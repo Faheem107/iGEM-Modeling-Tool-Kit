@@ -40,6 +40,8 @@
   --chart-3: var(--dune-rose);
   --chart-4: var(--dune-maroon);
   --chart-5: #b9a07f;
+  --cursor: 42 26 22;
+  --cursor-contrast: 251 247 240;
   --radius: 0.25rem;
   --radius-crisp: 3px;
   --shadow-flat: 0 1px 0 rgba(0, 0, 0, 0.04);
@@ -60,6 +62,8 @@
   --muted-foreground: #b3a496;
   --accent: var(--dune-orange);
   --accent-foreground: #241c19;
+  --cursor: 243 233 219;
+  --cursor-contrast: 36 28 25;
   --destructive: var(--dune-rose);
   --destructive-foreground: #241c19;
   --border: #43362e;
@@ -273,59 +277,6 @@ input[type="checkbox"] {
   cursor: pointer;
 }
 
-/* ---- Custom cursor (ring + dot), pointer devices only ---- */
-html.has-cursor,
-html.has-cursor * {
-  cursor: none !important;
-}
-.cursor-ring,
-.cursor-dot {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 9999;
-  pointer-events: none;
-  will-change: transform, opacity;
-  transition: opacity 0.25s ease;
-}
-.cursor-ring {
-  width: 22px;
-  height: 22px;
-  border: 1px solid var(--dune-orange);
-  border-radius: 9999px;
-  transition:
-    width 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2),
-    height 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2),
-    background-color 0.22s ease,
-    opacity 0.25s ease;
-}
-.cursor-ring.cur-grow {
-  width: 32px;
-  height: 32px;
-  background: color-mix(in srgb, var(--dune-orange) 12%, transparent);
-}
-.cursor-ring.cur-down {
-  width: 16px;
-  height: 16px;
-  background: color-mix(in srgb, var(--dune-orange) 20%, transparent);
-}
-.cursor-dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 9999px;
-  background: var(--dune-orange);
-}
-@media (prefers-reduced-motion: reduce) {
-  .cursor-ring,
-  .cursor-dot {
-    display: none;
-  }
-  html.has-cursor,
-  html.has-cursor * {
-    cursor: auto !important;
-  }
-}
-
 /* ---- Sandyx toolkit: smooth scrolling, hidden scrollbars, motion safety ---- */
 html {
   scroll-behavior: smooth;
@@ -405,3 +356,82 @@ html {
   100% { transform: scale(1); opacity: 1; }
 }
 .retro-pop { animation: retro-pop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
+
+
+/* --------------------------------------------------------------------------
+   Custom cursor. Only mounted on a fine pointer that hovers, and never under
+   reduced motion, so the system cursor stays wherever replacing it is unsafe.
+   -------------------------------------------------------------------------- */
+@media (pointer: fine) and (hover: hover) {
+  html.has-custom-cursor,
+  html.has-custom-cursor *:not(input):not(textarea):not(select) {
+    cursor: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.has-custom-cursor,
+  html.has-custom-cursor * {
+    cursor: auto !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Plates. A framed field with a hairline edge, not a card: no shadow, no
+   gradient fill, no hover lift. The blur stays low so the dune backdrop reads
+   through rather than frosting over.
+   -------------------------------------------------------------------------- */
+@layer components {
+  .plate {
+    background: color-mix(in srgb, var(--card) 55%, transparent);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+
+  /* Dialogs sit over the page rather than over the backdrop, and there the text
+     does need something opaque behind it. */
+  .plate-solid {
+    background: var(--popover);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  /* The utility register: a plate caption, a figure number, an evidence grade. */
+  .caption {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+    line-height: 1.4;
+  }
+
+  /* Hover is a change of weight and edge, never a lift or a shadow. */
+  .plate-interactive {
+    transition:
+      border-color 0.28s ease,
+      background-color 0.28s ease;
+  }
+
+  .plate-interactive:hover,
+  .plate-interactive:focus-visible {
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+    background: color-mix(in srgb, var(--card) 78%, transparent);
+  }
+
+  /* Solid underline means this navigates. Dotted is reserved for a gloss. */
+  .rule-link {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+    text-decoration-color: color-mix(in srgb, var(--accent) 60%, transparent);
+    transition: text-decoration-color 0.25s ease, color 0.25s ease;
+  }
+
+  .rule-link:hover {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
+}
