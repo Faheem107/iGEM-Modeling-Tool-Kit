@@ -1,7 +1,7 @@
 /**
  * Biocontainment Kill Switch, MazE/MazF toxin–antitoxin dynamics
  * ==============================================================
- * The third element of the reframed project (it replaced the applied-alginate prong): a
+ * The biosafety layer of the reframed project, added over both engineered prongs: a
  * genetically-encoded control layer for the two engineered B. subtilis prongs. Three coupled
  * analyses, each a pure function so the UI and any tests compute the SAME numbers.
  *

@@ -27,7 +27,7 @@ export default function ModelsIndexView() {
         onClose={() => setViewing(null)}
         eyebrow={
           showingKill
-            ? "Replaces the applied alginate prong"
+            ? "Biosafety layer over both prongs"
             : activeProng?.whyDropped
               ? "Modelled for comparison, not carried forward"
               : "Prong"

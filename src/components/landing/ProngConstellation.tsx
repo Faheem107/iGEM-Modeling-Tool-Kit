@@ -8,6 +8,7 @@ import {
   type ConnectorSpec,
 } from "@/src/components/connectors/useMeasuredConnectors";
 import { KILL_SWITCH } from "@/src/lib/portalsData";
+import { GRAIN_NOISE } from "@/src/lib/grain";
 import ModelIndex from "./ModelIndex";
 
 /**
@@ -41,21 +42,21 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 const LEAVES = [
   {
     key: "p1",
-    eyebrow: "Prong 01",
+    eyebrow: "Prong 1",
     title: "Polymer Overexpression",
     lede: "γ-PGA bio-adhesive matrix",
     target: 1 as ViewTarget,
   },
   {
     key: "p2",
-    eyebrow: "Prong 02",
+    eyebrow: "Prong 2",
     title: "Carbonic Anhydrase & Sortase",
     lede: "Ammonia-free biomineralisation",
     target: 2 as ViewTarget,
   },
   {
     key: "alg",
-    eyebrow: "Prong 03",
+    eyebrow: "Prong 3",
     title: "Sodium Alginate",
     lede: "Applied hydrogel binder",
     target: 3 as ViewTarget,
@@ -65,9 +66,11 @@ const LEAVES = [
 export default function ProngConstellation({
   onView,
   onExplorePortals,
+  onSimulateBoth,
 }: {
   onView: (t: ViewTarget) => void;
   onExplorePortals: () => void;
+  onSimulateBoth: () => void;
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -77,10 +80,11 @@ export default function ProngConstellation({
   const p2Ref = useRef<HTMLDivElement>(null);
   const algRef = useRef<HTMLDivElement>(null);
 
-  const started = useInView(hostRef, { amount: 0.4 });
+  const started = useInView(hostRef, { amount: 0.25 });
   const armed = useRef(true);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
   const [phase, setPhase] = useState<Phase>(0);
+  const [nudge, setNudge] = useState(false);
   const [reduced, setReduced] = useState(false);
 
   useEffect(() => {
@@ -108,8 +112,23 @@ export default function ProngConstellation({
     return () => m.removeEventListener("change", apply);
   }, []);
 
+  // Landing here through a curtain jump means the section can already be in
+  // view on the frame the observer is attached, and a hard-refresh at this
+  // scroll position can leave useInView reporting stale. There is no Skip
+  // control any more, so the sequence has to be self-starting: if the host is
+  // inside the viewport and nothing has fired shortly after mount, start it.
   useEffect(() => {
-    if (!started || !armed.current) return;
+    const id = window.setTimeout(() => {
+      const el = hostRef.current;
+      if (!el || !armed.current) return;
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) setNudge(true);
+    }, 900);
+    return () => window.clearTimeout(id);
+  }, []);
+
+  useEffect(() => {
+    if ((!started && !nudge) || !armed.current) return;
     armed.current = false;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setPhase(4);
@@ -125,12 +144,7 @@ export default function ProngConstellation({
     return () => {
       tl.kill();
     };
-  }, [started]);
-
-  const skip = () => {
-    tlRef.current?.kill();
-    setPhase(4);
-  };
+  }, [started, nudge]);
 
   const struck = phase >= 1;
   const withered = phase >= 2;
@@ -181,33 +195,48 @@ export default function ProngConstellation({
   return (
     <section
       id="models"
-      className="mx-auto w-full max-w-6xl scroll-mt-24 px-5 pb-28 pt-[8vh] sm:px-8"
+      className="relative w-full scroll-mt-24 overflow-hidden pb-28 pt-[8vh]"
     >
-      {/* Section head */}
-      <div className="mb-12 flex flex-wrap items-end justify-between gap-6 border-b border-border pb-5">
-        <div>
-          <p className="caption mb-3">The design, and every model in it</p>
-          <h2 className="text-[length:var(--text-h1)] text-foreground">
-            {settled ? "Two prongs, and a kill switch" : "Three prongs"}
-          </h2>
-        </div>
-        <div className="flex items-center gap-6">
-          {!indexed && !reduced && (
+      {/* Sand, at the strength of paper texture. The section this sits behind is
+          about ground, so the ground is present rather than described. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage: GRAIN_NOISE,
+          backgroundSize: "160px 160px",
+          opacity: 0.045,
+          mixBlendMode: "soft-light",
+        }}
+      />
+
+      <div className="relative mx-auto w-full max-w-6xl px-5 sm:px-8">
+        {/* Section head */}
+        <div className="mb-4 flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <p className="caption mb-3">The design, and every model in it</p>
+            <h2 className="text-[length:var(--text-h1)] text-foreground">
+              {settled ? "Two prongs, and a kill switch" : "Three prongs"}
+            </h2>
+          </div>
+          <div className="flex flex-wrap items-center gap-6">
             <button
-              onClick={skip}
+              onClick={onSimulateBoth}
+              className="caption rule-link text-dune-orange transition-colors hover:text-foreground"
+            >
+              Simulate both prongs together
+            </button>
+            <button
+              onClick={onExplorePortals}
               className="caption rule-link transition-colors hover:text-foreground"
             >
-              Skip
+              Sandbox portals
             </button>
-          )}
-          <button
-            onClick={onExplorePortals}
-            className="caption rule-link transition-colors hover:text-foreground"
-          >
-            Sandbox portals
-          </button>
+          </div>
         </div>
-      </div>
+
+        {/* The rule under the head is a dune profile, not a straight line. */}
+        <DuneRule className="mb-12" />
 
       {/* ---- The figure. Desktop only; below md the index speaks for itself. ---- */}
       <div ref={hostRef} className="relative mb-20 hidden md:block">
@@ -277,7 +306,7 @@ export default function ProngConstellation({
             style={{ pointerEvents: settled ? "auto" : "none" }}
           >
             <Leaf
-              eyebrow="Replaces the applied prong"
+              eyebrow="Added, over both prongs"
               title={KILL_SWITCH.title}
               lede={KILL_SWITCH.short}
               onClick={() => onView("killswitch")}
@@ -286,9 +315,51 @@ export default function ProngConstellation({
         </div>
       </div>
 
-      {/* ---- The index. Everything, in one dense block. ---- */}
-      <ModelIndex show={indexed || reduced} onView={onView} />
+        {/* Where the figure meets the list: the same ridge, mirrored, so the
+            index reads as the layer under the surface. */}
+        <DuneRule className="mb-12" flip />
+
+        {/* ---- The index. Everything, grouped and folded. ---- */}
+        <ModelIndex show={indexed || reduced} onView={onView} />
+      </div>
     </section>
+  );
+}
+
+/**
+ * A hairline in the shape of a dune profile, with a second crest behind it. It
+ * does the job the border-b did, and it says desert without a photograph, a
+ * gradient or a filled shape.
+ */
+function DuneRule({
+  className = "",
+  flip,
+}: {
+  className?: string;
+  flip?: boolean;
+}) {
+  return (
+    <svg
+      viewBox="0 0 1200 44"
+      preserveAspectRatio="none"
+      aria-hidden
+      className={`block h-[44px] w-full ${flip ? "scale-y-[-1]" : ""} ${className}`}
+    >
+      <path
+        d="M0 34 C 150 34, 250 10, 420 12 C 560 14, 640 33, 800 31 C 940 29, 1050 15, 1200 17"
+        fill="none"
+        stroke="var(--dune-orange)"
+        strokeWidth="1"
+        strokeOpacity="0.5"
+      />
+      <path
+        d="M0 42 C 190 42, 300 26, 470 28 C 640 30, 720 41, 900 39 C 1030 38, 1100 30, 1200 31"
+        fill="none"
+        stroke="var(--dune-rose)"
+        strokeWidth="1"
+        strokeOpacity="0.25"
+      />
+    </svg>
   );
 }
 

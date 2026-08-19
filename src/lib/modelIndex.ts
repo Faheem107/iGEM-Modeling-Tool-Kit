@@ -9,7 +9,7 @@ import { MODULE_REGISTRY, type ModuleMeta } from "./prongs";
 
 export interface IndexColumn {
   key: string;
-  /** Rail label, e.g. "Prong 01". */
+  /** Rail label, e.g. "Prong 1". */
   eyebrow: string;
   title: string;
   lede: string;
@@ -42,7 +42,7 @@ const fieldLayer = shared.filter((m) => !CELL_SCALES.has(m.scale));
 export const INDEX_COLUMNS: IndexColumn[] = [
   {
     key: "prong-1",
-    eyebrow: "Prong 01",
+    eyebrow: "Prong 1",
     title: "Polymer Overexpression",
     lede: "γ-PGA bio-adhesive matrix in B. subtilis.",
     prongs: "1",
@@ -50,7 +50,7 @@ export const INDEX_COLUMNS: IndexColumn[] = [
   },
   {
     key: "prong-2",
-    eyebrow: "Prong 02",
+    eyebrow: "Prong 2",
     title: "Carbonic Anhydrase & Sortase",
     lede: "Non-ureolytic MICP, an ammonia-free route to CaCO₃.",
     prongs: "2",
@@ -71,6 +71,43 @@ export const INDEX_COLUMNS: IndexColumn[] = [
     lede: "What the crust does once it is out in the desert.",
     prongs: "1,2",
     modules: fieldLayer,
+  },
+];
+
+
+/**
+ * The rows in the "Wind and cost" group. These are not simulation modules, so
+ * they carry their own destinations rather than a prong query: two views on the
+ * exposure model, and the commercial case that model prices against.
+ */
+export interface IndexLink {
+  id: string;
+  title: string;
+  /** The caption under the title, in the same register as a module's scale. */
+  meta: string;
+  /** A route, or "business" for the modal the component owns. */
+  href?: string;
+  action?: "business";
+}
+
+export const FIELD_LINKS: IndexLink[] = [
+  {
+    id: "forecast",
+    title: "Seasonal forecast",
+    meta: "wind climatology",
+    href: "/exposure",
+  },
+  {
+    id: "live",
+    title: "Live feed",
+    meta: "current wind and dust",
+    href: "/exposure",
+  },
+  {
+    id: "business",
+    title: "Business model",
+    meta: "who pays, and for what",
+    action: "business",
   },
 ];
 
