@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, type ReactNode } from "react";
-import { useTheme } from "@/components/theme-context";
+import { useTheme, THEME_KEY } from "@/components/theme-context";
 import { GlossaryProvider } from "@/src/components/GlossaryTerm";
 import { ToolkitProvider } from "@/components/toolkit-provider";
 import { AppChrome } from "@/components/app-chrome";
@@ -14,7 +14,23 @@ import { PointerProvider } from "@/src/lib/motion/pointer";
  * hook the CSS overrides key off.
  */
 export function Providers({ children }: { children: ReactNode }) {
-  const { isLightMode } = useTheme();
+  const { isLightMode, setIsLightMode } = useTheme();
+
+  // Pick up a saved theme choice here rather than in the provider itself. The
+  // provider sits outside the Suspense boundary this subtree is inside, so an
+  // effect there commits before this boundary hydrates, and the boundary would
+  // then hydrate against a value the server never rendered. Reading it here
+  // means the update lands after hydration, which is the only order that is
+  // free of a mismatch.
+  useEffect(() => {
+    try {
+      if (localStorage.getItem(THEME_KEY) === "light") setIsLightMode(true);
+    } catch {
+      /* private mode: the default stands */
+    }
+    // Run once on mount. setIsLightMode is stable enough for that.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Mirror the theme onto <html> so portalled UI (Radix dialogs, tooltips,
   // toasts) that renders outside this subtree still picks up the .dark tokens.

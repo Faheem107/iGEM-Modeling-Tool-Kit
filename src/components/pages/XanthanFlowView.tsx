@@ -809,8 +809,8 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           <p
             className={`text-[10px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
-            Dashed lines are the five reference concentrations (mirrors the
-            write-up's Figure 1); the bold amber line is your slider's live
+            Dashed lines are the five reference concentrations, mirroring
+            Figure 1 of the write-up. The bold amber line is your slider's live
             curve. Moving to a lower concentration shifts the curve down and
             right, the same pressure drives a far higher speed.
           </p>

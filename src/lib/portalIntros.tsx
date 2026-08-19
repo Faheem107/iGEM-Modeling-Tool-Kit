@@ -54,7 +54,7 @@ export const PORTAL_INTROS: Record<
     steps: [
       {
         label: "What it is",
-        body: "A 2-D sandbox that mirrors the physical bench assays the wet-lab team runs on treated sand.",
+        body: "A 2-D sandbox running the same assays the wet-lab team runs on treated sand.",
       },
       {
         label: "What it does",
@@ -73,11 +73,11 @@ export const PORTAL_INTROS: Record<
     steps: [
       {
         label: "What it is",
-        body: "A structural viewer for the engineered enzymes at the heart of the project, carbonic anhydrase and the sortase anchor.",
+        body: "A structural viewer for the two enzymes the design turns on: carbonic anhydrase, and the sortase that pins it to the cell wall.",
       },
       {
         label: "What it does",
-        body: "It renders the real deposited PDB structures in 3-D and simulates how the protein fold destabilises as temperature climbs.",
+        body: "It draws the deposited PDB structures in 3-D and shows the fold coming apart as temperature climbs.",
       },
       {
         label: "What we plan to model",
@@ -154,7 +154,7 @@ export function buildModelIntro(prongIds: number[]): PortalIntroContent {
         label: "What it is",
         body:
           chosen.length === 0
-            ? "A simulation workspace tailored to the engineering prongs you picked."
+            ? "A workspace built around the prongs you picked."
             : `A simulation workspace tailored to ${namesJoined}.`,
       },
       {
@@ -171,7 +171,7 @@ export function buildModelIntro(prongIds: number[]): PortalIntroContent {
           chosen.length > 1
             ? "How the selected prongs combine, the total crust strength, CO₂ captured, and wind resistance you get when they work together."
             : (chosen[0]?.impact ??
-              "The crust strength and durability this approach delivers."),
+              "The strength the crust reaches, and how long it holds."),
       },
     ],
   };

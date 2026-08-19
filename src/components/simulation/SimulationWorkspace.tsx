@@ -576,12 +576,11 @@ function AlginateRationaleBanner({ isLightMode }: { isLightMode: boolean }) {
         </h2>
       </div>
       <p className="mb-3 max-w-[70ch] text-[0.875rem] leading-relaxed text-muted-foreground">
-        Alginate was originally scoped as a third prong (an externally applied
-        binder). We kept it fully modelled here so its trade-offs stay
-        quantifiable, but it is <strong>not</strong> part of the deployed design.
-        Its role is now filled by the two engineered prongs plus a
-        genetically-encoded kill switch. We did not proceed with it as a prong
-        because:
+        Alginate was scoped as a third prong, a binder you spread on rather
+        than one the cells make. It is still modelled in full here, so its
+        trade-offs against the engineered pair stay quantifiable, but it is{" "}
+        <strong>not</strong> part of the deployed design. Three findings took it
+        out, each of which stands on its own:
       </p>
       <ol className="max-w-[70ch] list-decimal space-y-1.5 pl-5 text-[0.875rem] leading-relaxed text-muted-foreground">
         {reasons.map((r, i) => (
