@@ -6,8 +6,14 @@ import { gsap } from "gsap";
 import StoryEscape from "@/src/components/landing/StoryEscape";
 import { storyPinLength } from "@/src/lib/scrollRestore";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Link from "next/link";
 import SandParticles from "./dune-story/SandParticles";
 import { GlossaryText } from "@/src/components/GlossaryTerm";
+import {
+  CYCLE_BEATS as BEATS,
+  CYCLE_STAGES,
+  type CycleBeat,
+} from "@/src/lib/designCycle";
 
 /**
  * DesignCycleStory: the scroll-scrubbed "Engineering Design Cycle" story.
@@ -24,40 +30,6 @@ import { GlossaryText } from "@/src/components/GlossaryTerm";
  * crisp at any size and reads in both themes. Under reduced motion / small
  * screens there is no pin: the finished crust is shown and the panel is a list.
  */
-
-interface Beat {
-  label: string;
-  title: string;
-  body: string;
-}
-
-const BEATS: Beat[] = [
-  {
-    label: "We started with a question",
-    title: "Wind moves the sand",
-    body: "We asked how a living surface treatment could bind loose desert grains into a stable crust. Before writing any model, we turned that question into numbers: grain sizes, wind speeds, and the strength a crust would need to hold.",
-  },
-  {
-    label: "We sketched the routes",
-    title: "Three prongs",
-    body: "We designed three biological routes to that crust and gave each its own model: γ-PGA overexpression, carbonic-anhydrase biomineralization, and a sodium-alginate binder. Modeling them apart let us judge them on the same terms.",
-  },
-  {
-    label: "We tested and learned",
-    title: "Two prongs and a kill switch",
-    body: "Two separate results. Alginate held water the cells needed and depended on calcium we could not count on, so we stopped carrying it as a prong. Separately, releasing a live engineered strain needs a way to end it, so we added a kill switch. The design is two engineered prongs, with the kill switch running over both.",
-  },
-  {
-    label: "We built the model",
-    title: "From cell to crust",
-    body: "We now link the biology to the crust: metabolism through flux balance analysis, polymer cross-linking, and how a treated surface resists wind shear. Each module feeds the next, so we can trace one grain from cell to cured crust.",
-  },
-  {
-    label: "We keep iterating",
-    title: "From bench to field",
-    body: "The model tells us which assays are worth running and what field scale to aim for. As real measurements come back from the lab, we feed them in and the toolkit keeps improving.",
-  },
-];
 
 // Palette (Dunelock) picked to read on both the warm sand and dark ember stages.
 const C = {
@@ -380,14 +352,40 @@ export default function DesignCycleStory({
             </g>
           </g>
 
-          {/* cross over the alginate tile (beat 3) */}
-          <g ref={crossRef} style={{ opacity: 0 }} stroke={C.cross} strokeWidth={5} strokeLinecap="round">
-            <path d="M1030 232 L1190 312" />
-            <path d="M1190 232 L1030 312" />
+          {/* cross over the alginate tile (beat 3), with the reason on it, so a
+              still frame cannot be read as "replaced by the shield below" */}
+          <g ref={crossRef} style={{ opacity: 0 }}>
+            <g stroke={C.cross} strokeWidth={5} strokeLinecap="round">
+              <path d="M1030 232 L1190 312" />
+              <path d="M1190 232 L1030 312" />
+            </g>
+            <text
+              x={1110}
+              y={344}
+              textAnchor="middle"
+              fontSize={15}
+              fontWeight={700}
+              letterSpacing={2}
+              fill={C.cross}
+            >
+              DROPPED
+            </text>
           </g>
 
-          {/* kill-switch shield (beat 3), centred in the right field */}
+          {/* kill-switch shield (beat 3), centred in the right field. It is an
+              addition over both prongs, not a stand-in for the tile above. */}
           <g ref={shieldRef} style={{ opacity: 0 }}>
+            <text
+              x={945}
+              y={484}
+              textAnchor="middle"
+              fontSize={15}
+              fontWeight={700}
+              letterSpacing={2}
+              fill={C.shield}
+            >
+              KILL SWITCH, ADDED
+            </text>
             <path
               d="M945 360 L983 375 L983 407 Q983 441 945 458 Q907 441 907 407 L907 375 Z"
               fill="none"
@@ -414,7 +412,7 @@ export default function DesignCycleStory({
         <div className="relative z-10 mx-auto w-full max-w-6xl px-5 sm:px-8">
           <div className="max-w-xl">
             <div
-              className={`rounded-[16px] border p-6 sm:p-8 ${
+              className={`rounded-[16px] border p-6 ${
                 isLightMode
                   ? "border-dune-maroon/12 bg-dune-paper/80"
                   : "border-dune-paper/12 bg-[#120d0a]/78"
@@ -425,64 +423,43 @@ export default function DesignCycleStory({
               </span>
 
               {staticMode ? (
-                // Mobile / reduced motion: the full five-beat story as a list.
-                <ol className="mt-4 space-y-6">
+                // Mobile / reduced motion: every turn of the loop as a list.
+                <ol className="mt-4 space-y-8">
                   {BEATS.map((b, i) => (
                     <li key={i}>
-                      <div className="mb-1 text-[11px] font-bold uppercase tracking-[0.2em] text-dune-orange">
-                        {b.label}
-                      </div>
-                      <h3
-                        className={`mb-2 text-xl font-black uppercase tracking-tight font-display ${
-                          isLightMode ? "text-dune-maroon" : "text-dune-orange"
-                        }`}
-                      >
-                        {b.title}
-                      </h3>
-                      <p
-                        className={`text-sm leading-relaxed ${
-                          isLightMode ? "text-foreground" : "text-foreground"
-                        }`}
-                      >
-                        <GlossaryText>{b.body}</GlossaryText>
-                      </p>
+                      <BeatBody beat={b} isLightMode={isLightMode} />
                     </li>
                   ))}
                 </ol>
               ) : (
                 <>
-                  <div className="mt-2 mb-4 text-[11px] font-bold uppercase tracking-[0.2em] text-dune-orange">
-                    {BEATS[active].label}
-                  </div>
-                  {/* Cross-fade the active beat's title + body. Sized for the
-                      longest beat so the text never spills onto the dot rail. */}
-                  <div className="relative min-h-[320px] sm:min-h-[280px]">
+                  <CycleRing
+                    stage={BEATS[active].stage}
+                    turn={BEATS[active].turn}
+                    isLightMode={isLightMode}
+                  />
+                  {/* Cross-fade the active beat. Sized for the longest one so
+                      the text never spills onto the ring. */}
+                  <div className="relative min-h-[380px] sm:min-h-[350px]">
                     {BEATS.map((b, i) => (
                       <div
                         key={i}
                         className="absolute inset-0 transition-opacity duration-500"
-                        style={{ opacity: i === active ? 1 : 0 }}
+                        style={{
+                          opacity: i === active ? 1 : 0,
+                          pointerEvents: i === active ? "auto" : "none",
+                        }}
                         aria-hidden={i !== active}
                       >
-                        <h2
-                          className={`mb-3 text-2xl sm:text-4xl font-black uppercase tracking-tight font-display ${
-                            isLightMode ? "text-dune-maroon" : "text-dune-orange"
-                          }`}
-                        >
-                          {b.title}
-                        </h2>
-                        <p
-                          className={`text-sm sm:text-lg leading-relaxed ${
-                            isLightMode ? "text-foreground" : "text-foreground"
-                          }`}
-                        >
-                          <GlossaryText>{b.body}</GlossaryText>
-                        </p>
+                        <BeatBody
+                          beat={b}
+                          isLightMode={isLightMode}
+                          active={i === active}
+                        />
                       </div>
                     ))}
                   </div>
-                  {/* dot rail */}
-                  <div className="mt-6 flex items-center gap-2.5">
+                  <div className="mt-4 flex items-center gap-2.5">
                     {BEATS.map((_, i) => (
                       <span
                         key={i}
@@ -501,5 +478,128 @@ export default function DesignCycleStory({
         </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * One beat: the question, what was run, what it changed, and where the evidence
+ * is. Four labelled lines rather than a paragraph, because a judge reading the
+ * page is checking for exactly those four things.
+ */
+function BeatBody({
+  beat,
+  isLightMode,
+  active = true,
+}: {
+  beat: CycleBeat;
+  isLightMode: boolean;
+  active?: boolean;
+}) {
+  return (
+    <>
+      <div className="mb-2 flex flex-wrap items-baseline gap-x-3 text-[11px] font-bold uppercase tracking-[0.2em] text-dune-orange">
+        <span>{beat.stage}</span>
+        <span className="opacity-60">
+          {beat.turn === 1 ? "first turn" : "second turn"}
+        </span>
+      </div>
+      <h2
+        className={`mb-3.5 font-display text-2xl font-black uppercase tracking-tight ${
+          isLightMode ? "text-dune-maroon" : "text-dune-orange"
+        }`}
+      >
+        {beat.title}
+      </h2>
+      <dl className="space-y-3 text-sm leading-relaxed text-foreground">
+        <Line term="Asked">{beat.question}</Line>
+        <Line term="Ran">{beat.did}</Line>
+        <Line term="Changed">{beat.changed}</Line>
+      </dl>
+      {beat.evidence && (
+        <Link
+          href={beat.evidence.href}
+          tabIndex={active ? 0 : -1}
+          className="caption rule-link mt-4 inline-block text-dune-orange"
+        >
+          Evidence: {beat.evidence.label}
+        </Link>
+      )}
+    </>
+  );
+}
+
+function Line({ term, children }: { term: string; children: string }) {
+  return (
+    <div className="grid grid-cols-[4.5rem_1fr] gap-x-3">
+      <dt className="caption pt-1">{term}</dt>
+      <dd>
+        <GlossaryText>{children}</GlossaryText>
+      </dd>
+    </div>
+  );
+}
+
+/**
+ * Where we are in the loop. Four arcs, the current one lit. A cycle that is
+ * drawn as a cycle is checkable at a glance; a list of five paragraphs is not.
+ */
+function CycleRing({
+  stage,
+  turn,
+  isLightMode,
+}: {
+  stage: string;
+  turn: number;
+  isLightMode: boolean;
+}) {
+  const R = 26;
+  const C = 2 * Math.PI * R;
+  const seg = C / 4;
+  const idx = CYCLE_STAGES.indexOf(stage as never);
+  return (
+    <div className="mb-5 mt-3 flex items-center gap-4">
+      <svg viewBox="0 0 64 64" className="h-12 w-12 shrink-0" aria-hidden>
+        <g transform="rotate(-90 32 32)">
+          {CYCLE_STAGES.map((_, i) => (
+            <circle
+              key={i}
+              cx="32"
+              cy="32"
+              r={R}
+              fill="none"
+              stroke={i === idx ? "var(--dune-orange)" : "var(--dune-ash)"}
+              strokeOpacity={i === idx ? 1 : 0.3}
+              strokeWidth={i === idx ? 3 : 1}
+              strokeDasharray={`${seg - 5} ${C - seg + 5}`}
+              strokeDashoffset={-i * seg}
+              strokeLinecap="round"
+              className="transition-all duration-500"
+            />
+          ))}
+        </g>
+        <text
+          x="32"
+          y="37"
+          textAnchor="middle"
+          fontSize="15"
+          fontWeight="700"
+          fill={isLightMode ? "#6e1e18" : "#d6884a"}
+        >
+          {turn}
+        </text>
+      </svg>
+      <div className="flex flex-wrap gap-x-3 gap-y-1">
+        {CYCLE_STAGES.map((st, i) => (
+          <span
+            key={st}
+            className={`caption transition-colors duration-500 ${
+              i === idx ? "text-dune-orange" : "text-muted-foreground opacity-50"
+            }`}
+          >
+            {st}
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }
