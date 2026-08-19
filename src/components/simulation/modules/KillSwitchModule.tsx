@@ -484,9 +484,9 @@ export function HgtTab({ isLightMode }: Themed) {
 
         <p className={`text-[10px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
           <GlossaryText>
-            The plasmid carries an E. coli MazF linked to the biofilm payload; a wild recipient
+            The plasmid carries an E. coli MazF linked to the biofilm payload, so a wild recipient
             gets the toxin but not the cognate E. coli MazE, so it self-eliminates. Splitting and
-            codon-optimising the antitoxin drive the acquisition-rescue route toward zero; the
+            codon-optimising the antitoxin drive the acquisition-rescue route toward zero. The
             residual escape is dominated by cognate-carrier organisms such as E. coli, which the
             team mitigates by careful site selection.
           </GlossaryText>

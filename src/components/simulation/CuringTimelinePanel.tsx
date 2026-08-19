@@ -356,7 +356,7 @@ export default function CuringTimelinePanel({
             step={1}
             unit="m/s"
             onChange={setDesignWind}
-            hint="Wind speed the crust must keep withstanding between sprays (UAE winds ≈16–20 m/s; optimised calcite ≈30 m/s)."
+            hint="Wind speed the crust must keep withstanding between sprays. UAE winds run 16 to 20 m/s, optimised calcite holds to about 30 m/s."
           />
         </Panel>
       </div>

@@ -36,47 +36,47 @@ export const PRONGS: Prong[] = [
     id: 1,
     title: "Polymer Overexpression",
     icon: <Sparkles className="w-8 h-8 text-dune-orange" />,
-    short: "Gamma-PGA bio-adhesive matrix",
+    short: "γ-PGA, a sticky biopolymer the cells secrete",
     whatItIs:
-      "We boost the natural production of Gamma-PGA in Bacillus subtilis so it works as a bio-adhesive matrix.",
+      "Bacillus subtilis already makes poly-γ-glutamic acid, a long sticky chain it secretes to hold water. We raise how much of it the cells make, so the sand around them is held in a mesh of the stuff rather than lying loose.",
     modelDoes:
-      "Simulates metabolic flux, cross-linking with calcium ions, and the resulting shear modulus.",
+      "Follows the carbon from glucose to polymer, then the polymer to a number. Calcium ions bridge neighbouring chains, the bridges set the network density, and the network density sets the shear modulus, which is the stiffness the crust actually has.",
     impact:
-      "Builds a biodegradable crust that holds up against wind.",
+      "A crust that bends rather than shatters, and that breaks down on its own. Its stiffness is what the wind model reads when it decides whether a grain moves.",
     inDesert:
-      "Sprayed onto the dune, the bacteria secrete poly-γ-glutamic acid, a sticky, water-retaining biopolymer that glues loose sand grains into a flexible living crust and holds the moisture the colony needs to survive the heat.",
+      "Sprayed onto the dune, the cells secrete γ-PGA into the spaces between grains. The chains hold water, which is how the colony survives the heat, and the same chains glue the grains into a crust that flexes instead of cracking.",
   },
   {
     id: 2,
     title: "Carbonic Anhydrase & Sortase",
     icon: <Layers className="w-8 h-8 text-dune-teal" />,
-    short: "Non-ureolytic MICP biomineralization",
+    short: "Cement grown between grains, without ammonia",
     whatItIs:
-      "Engineering B. subtilis to secrete carbonic anhydrase (CA) and display it on the cell surface via sortase-mediated ligation. CA accelerates the hydration of CO2 to bicarbonate; where calcium is available this shifts the carbonate equilibrium and precipitates calcium carbonate, avoiding the ammonia released by the ureolytic (urease-based) MICP route.",
+      "Carbonic anhydrase is an enzyme that speeds up one reaction: CO₂ plus water becomes bicarbonate. We engineer B. subtilis to make it and to pin it to the outside of the cell, using sortase, an enzyme that stitches proteins onto the cell wall. More bicarbonate next to available calcium means calcium carbonate comes out of solution as solid cement. The usual way to do this uses urease and releases ammonia. This route does not.",
     modelDoes:
-      "Simulates sortase anchoring, CA dimerization, and signal-peptide efficiency to estimate covalent surface display and calcium-carbonate precipitation rates.",
+      "Counts how many enzymes actually reach the cell surface and stay there, through the signal peptide, the sortase reaction and the pairing of the enzyme with itself. That count sets how fast calcium carbonate precipitates.",
     impact:
-      "Binds sand grains with calcium-carbonate cement along an ammonia-free route. The model uses the predicted precipitation rate to estimate how much this stiffens the crust.",
+      "Cement between grains, with no ammonia released into the sand. The precipitation rate feeds the strength estimate for the crust.",
     inDesert:
-      "In the sand, the surface-displayed carbonic anhydrase speeds CO₂ hydration and, using calcium present in desert dust, drives calcium-carbonate cement between grains, hardening the surface into an ammonia-free biocement.",
+      "Out in the sand the enzyme sits on the cell wall, turning CO₂ into bicarbonate. Desert dust carries calcium. Where the two meet, calcium carbonate grows in the gaps between grains and the surface sets hard.",
   },
   {
     id: 3,
     title: "Sodium Alginate",
     icon: <ShieldCheck className="w-8 h-8 text-dune-rose" />,
-    short: "Applied hydrogel binder, not pursued as a prong",
+    short: "A gel you spread on. Modelled, not deployed",
     whatItIs:
-      "Sodium alginate is a food-grade commercial biopolymer that cross-links with calcium on contact to form an 'egg-box' gel. It was originally scoped as a third prong (an externally applied binder), but was later dropped from the core design.",
+      "Sodium alginate comes from seaweed and is sold by the tonne for food. Add calcium and the chains clamp around it in a shape called an egg-box, and the liquid sets to a gel. It was scoped as a third prong, an applied binder rather than anything the bacteria make, and later dropped.",
     modelDoes:
-      "Still fully modelled here: gelation thermodynamics, moisture retention, and Ca²⁺ egg-box cross-linking efficiency under desert temperature and salinity, so its trade-offs against the engineered prongs remain quantifiable.",
+      "Still modelled in full: how the gel sets, how much water it holds, and how many egg-box junctions form at desert temperature and salinity. Dropping it as a prong is not a reason to stop being able to compare it.",
     impact:
       "Kept as a modelled comparison rather than a deployed prong. It was dropped on the three findings below, each of which stands on its own. The deployed design is the two engineered prongs, which are what the crust is actually built from.",
     inDesert:
-      "On contact with the calcium already present in desert dust, sodium alginate forms an 'egg-box' gel that instantly binds the surface, but as an inert applied material rather than anything the bacteria produce.",
+      "The calcium already in desert dust sets it on contact, so the surface binds at once. Nothing living is involved, which is both why it is fast and why it does not repair itself.",
     whyDropped: [
-      "Highly water-absorbent. As a hydrogel it can retain significant water, potentially reducing water availability and limiting nutrient diffusion to the cells, which could work against the engineered Prong 2 (CA → CaCO₃).",
-      "Depends on a consistent external Ca²⁺ supply for calcite formation. Without enough calcium, the bacteria may form alternative CaCO₃ polymorphs or poorly-formed aggregates, compromising the bioremediation outcome.",
-      "It is not a synthetic-biology solution. iGEM rewards demonstrating engineering through genetic design; a core prong that relies solely on an externally added material makes the overall system feel less integrated. A genetically-encoded strategy showcases the engineering contribution far better.",
+      "It takes the water. A hydrogel holds water tightly, which leaves less of it free for the cells and slows the nutrients that reach them by diffusion. Prong 2 needs those cells working.",
+      "It needs calcium we cannot promise. Below a certain supply, what precipitates is not calcite but a weaker form of calcium carbonate, or loose aggregate that binds nothing.",
+      "Nothing about it is engineered. It is a material you buy and spread, so it demonstrates no genetic design and it cannot be improved by changing the strain. The two remaining prongs can.",
     ],
   },
 ];
@@ -93,15 +93,15 @@ export const KILL_SWITCH = {
   id: "killswitch" as const,
   title: "Biocontainment Kill Switch",
   icon: <ShieldAlert className="w-8 h-8 text-dune-orange" />,
-  short: "MazE/MazF control of the engineered population",
+  short: "A toxin the cells hold in check, until they cannot",
   whatItIs:
     "A genetically-encoded control layer that limits the engineered B. subtilis population and, when needed, eliminates it. It runs over both engineered prongs rather than standing in for one. It binds nothing and adds no strength to the crust. What it adds is the ability to end the deployment.",
   modelDoes:
-    "Models the MazE/MazF Type II toxin–antitoxin circuit: aTc-inducible MazF for on-demand elimination of vegetative cells, plasmid-dilution self-limiting, and an E. coli MazEF split that kills any wild microbe that acquires the engineered genes by horizontal gene transfer.",
+    "Runs the MazE/MazF pair. MazF cuts the cell's own RNA and kills it. MazE binds MazF and stops that, but MazE breaks down quickly, so the cell has to keep making more. Three ways out follow from that: add aTc and MazF wins, let the plasmid dilute out over generations and MazF wins, or let the genes jump to a wild microbe with no matching antitoxin and MazF wins there too.",
   impact:
-    "Function: promote rapid biofilm formation for desert bioremediation. Containment: eliminate vegetative cells via the kill switch. Long-term biosafety: pair enhanced, more uniform spore germination (gerB*) with the kill switch so dormant spores are woken and cleared rather than persisting.",
+    "The strain does its work, then stops. Growing cells are cleared by the switch. Spores are the harder case: a spore is dormant, and a toxin that cuts active RNA does nothing to one, so gerB* is used to wake them first and clear them after.",
   inDesert:
-    "While the colony is working it keeps making antitoxin and stays alive; add the aTc trigger, or let the plasmid dilute out over generations, and the toxin wins, self-limiting the strain. Genes that jump to native microbes carry the toxin without its cognate antitoxin, so those recipients self-eliminate.",
+    "While the colony is working it keeps topping up the antitoxin and stays alive. Add the trigger, or wait for the plasmid to dilute out over generations, and the toxin wins. A native microbe that picks up the genes gets the toxin without the antitoxin, so it clears itself.",
 };
 
 export interface PortalCard {
@@ -120,7 +120,7 @@ export const PORTAL_CARDS: PortalCard[] = [
     href: "/portal/wet-lab",
     icon: <Bug className="w-6 h-6 text-dune-orange" />,
     title: "Wet Lab Sandbox",
-    desc: "Simulate physical lab assays and monitor biopolymer propagation.",
+    desc: "Set the bench conditions, then watch how far the polymer spreads and how much dune survives the wind.",
     grad: "from-dune-orange/20 via-dune-orange/5 to-transparent",
     ring: "text-dune-orange",
   },
@@ -129,7 +129,7 @@ export const PORTAL_CARDS: PortalCard[] = [
     href: "/portal/pipeline",
     icon: <Workflow className="w-6 h-6 text-dune-teal" />,
     title: "Physical Pipeline",
-    desc: "Analyze metabolic pathways, crosslinking biophysics, and wind resistance.",
+    desc: "One grain traced end to end: metabolism, cross-linking, then the wind it has to hold against.",
     grad: "from-dune-teal/20 via-dune-teal/5 to-transparent",
     ring: "text-dune-teal",
   },
@@ -138,7 +138,7 @@ export const PORTAL_CARDS: PortalCard[] = [
     href: "/portal/protein",
     icon: <Dna className="w-6 h-6 text-dune-rose" />,
     title: "3D Protein Suite",
-    desc: "Explore structural molecular dynamics and thermal decay.",
+    desc: "The real structures in 3D, and what heat does to them.",
     grad: "from-dune-rose/20 via-dune-rose/5 to-transparent",
     ring: "text-dune-rose",
   },
@@ -147,7 +147,7 @@ export const PORTAL_CARDS: PortalCard[] = [
     href: "/portal/xanthan-flow",
     icon: <Waves className="w-6 h-6 text-dune-teal" />,
     title: "Xanthan Flow Model",
-    desc: "Power-law rheology of xanthan gum through the delivery tubing.",
+    desc: "Xanthan gum thins as you push it harder. This is what that does to pressure in the delivery tubing.",
     grad: "from-dune-teal/20 via-dune-teal/5 to-transparent",
     ring: "text-dune-teal",
   },

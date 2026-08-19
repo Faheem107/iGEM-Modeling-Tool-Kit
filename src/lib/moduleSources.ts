@@ -69,7 +69,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label: "γ-PGA degradation knockouts Δggt / ΔpgcA",
         detail:
-          "Drive the loss term k_deg → 0; the biological basis of the overexpression prong.",
+          "Drive the loss term k_deg → 0. The biological basis of the overexpression prong.",
         kind: "literature",
       },
     ],
@@ -87,8 +87,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label:
           "Polyelectrolyte–Ca²⁺ affinity (γ-PGA carboxylate Kd, order-of-magnitude)",
-        detail:
-          "KdPGA in constants.ts; to be refined by ITC / Ca²⁺-ISE titration.",
+        detail: "KdPGA in constants.ts. To be refined by ITC / Ca²⁺-ISE titration.",
         kind: "literature",
       },
     ],
@@ -106,7 +105,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label: "CA catalytic enhancement kcat ≈ 10⁶ s⁻¹ vs k_uncat ≈ 0.04 s⁻¹",
         detail:
-          "caRateEnhancement in constants.ts; measured by pNPA esterase / pH-drop assay.",
+          "caRateEnhancement in constants.ts. Measured by pNPA esterase / pH-drop assay.",
         kind: "literature",
       },
     ],
@@ -119,7 +118,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
         label:
           "Lassin et al. (2018), TST surface-complexation CaCO₃ precipitation",
         detail:
-          "kPrecip and ACC-ripening kinetics; the precipitation-rate law (caco3.ts header, CACO3_CALIB).",
+          "kPrecip and ACC-ripening kinetics. The precipitation-rate law (caco3.ts header, CACO3_CALIB).",
         kind: "literature",
       },
       {
@@ -150,13 +149,13 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label: "Commercial alginate block spec F_G ≈ 0.3–0.7",
         detail:
-          "guluronateFraction in constants.ts; from supplier ¹H-NMR block analysis.",
+          "guluronateFraction in constants.ts. From supplier ¹H-NMR block analysis.",
         kind: "literature",
       },
       {
         label: "Soluble-polymer rain washout R(n) = (1−k)ⁿ",
         detail:
-          "The honest solubility limitation; washoutRatePerCycle from rainfall simulation.",
+          "The honest solubility limitation. The washoutRatePerCycle constant comes from rainfall simulation.",
         kind: "internal",
       },
     ],
@@ -185,7 +184,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label: "RCSB Protein Data Bank, deposited structures (uploaded .pdb)",
         detail:
-          "The Cα backbone is drawn directly from residue coordinates; no free parameters.",
+          "The Cα backbone is drawn directly from residue coordinates. No free parameters.",
         kind: "literature",
         url: "https://www.rcsb.org/",
       },
@@ -236,7 +235,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label: "Cohesion-enhanced threshold: adhesive term γ/(ρₐd)",
         detail:
-          "How crust cohesion enters the Bagnold threshold; UAE design winds 16–20 m/s.",
+          "How crust cohesion enters the Bagnold threshold. UAE design winds 16–20 m/s.",
         kind: "internal",
       },
     ],
@@ -260,7 +259,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
   },
   grainsize: {
     intro:
-      "Grain-size-resolved coverage: no single binder holds every grain size; the three prongs are complementary.",
+      "Grain-size-resolved coverage: no single binder holds every grain size. The three prongs are complementary.",
     sources: [
       {
         label:

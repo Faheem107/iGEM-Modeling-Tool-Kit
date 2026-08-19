@@ -232,7 +232,7 @@ export function prongInteractions(prongs: ProngId[]): InteractionEffect[] {
       mechanism: "Alginate moisture sustains precipitation",
       percent: cval(COMPOSITE_CALIB.eta_CaCO3_Alginate) * 100,
       description:
-        "Alginate is a water-magnet; the damp microhabitat it maintains keeps the bacteria and carbonic anhydrase active for longer, sustaining CaCO₃ precipitation.",
+        "Alginate holds water, and the damp microhabitat that creates keeps the bacteria and carbonic anhydrase active for longer, so CaCO₃ keeps precipitating.",
     });
   }
   if (prongs.includes(1) && prongs.includes(3)) {
@@ -242,7 +242,7 @@ export function prongInteractions(prongs: ProngId[]): InteractionEffect[] {
       mechanism: "Co-retained surface moisture",
       percent: cval(COMPOSITE_CALIB.eta_PGA_Alginate) * 100,
       description:
-        "Both γ-PGA and alginate are moisture-holding polyanions; together they keep the crust damp, though they also compete for the same Ca²⁺ (see above).",
+        "Both γ-PGA and alginate are moisture-holding polyanions, so together they keep the crust damp. They also compete for the same Ca²⁺ (see above).",
     });
   }
 

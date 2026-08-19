@@ -616,7 +616,7 @@ export default function FbaOptimizationModule({
             step={1}
             unit="mmol/gDCW/h"
             onChange={setO2Ub}
-            hint="Aerobiosis ceiling; low oxygen forces fermentation and acetate overflow."
+            hint="Aerobiosis ceiling. Low oxygen forces fermentation and acetate overflow."
           />
           <div>
             <span
@@ -679,7 +679,7 @@ export default function FbaOptimizationModule({
           className={`mt-2 text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           <GlossaryText>
-            Setting lb=ub=0 forces the LP to reroute carbon; watch the flow map,
+            Setting lb=ub=0 forces the LP to reroute carbon. Watch the flow map,
             the production envelope and the acetate overflow respond in
             lock-step.
           </GlossaryText>
@@ -1066,7 +1066,7 @@ export default function FbaOptimizationModule({
             <p
               className={`text-[10px] mt-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
             >
-              Wide bars = flexible reactions with alternate optima; pinpoints =
+              Wide bars = flexible reactions with alternate optima. Pinpoints =
               rigid, rate-limiting steps.
             </p>
           </div>

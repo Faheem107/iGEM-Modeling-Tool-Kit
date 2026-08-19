@@ -116,7 +116,7 @@ export const MODULE_CODE: Partial<Record<ModuleId, ModuleCode>> = {
   thermal: entry(
     "thermal",
     "Protein Thermal Stability",
-    "Two-state folding sets the active-enzyme fraction; the operative melting temperature is penalised away from the pH and salinity optima.",
+    "Two-state folding sets the active-enzyme fraction. The operative melting temperature is penalised away from the pH and salinity optima.",
     [
       p("thermal", 1, "Folded / active fraction vs temperature at several pH values."),
       p("thermal", 2, "Operative melting temperature over pH and salinity."),
@@ -143,7 +143,7 @@ export const MODULE_CODE: Partial<Record<ModuleId, ModuleCode>> = {
   aeolian: entry(
     "aeolian",
     "Aeolian Sand Transport",
-    "Bagnold threshold friction velocity and cubic saltation flux; engineered cohesion raises the threshold and cuts erosion.",
+    "Bagnold threshold friction velocity and cubic saltation flux. Engineered cohesion raises the threshold and cuts erosion.",
     [
       p("aeolian", 1, "Saltation mass flux vs wind, untreated vs treated crust."),
       p("aeolian", 2, "Threshold wind speed vs engineered cohesion."),

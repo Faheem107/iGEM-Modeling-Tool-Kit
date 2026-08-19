@@ -697,7 +697,7 @@ export default function AdvancedFbaPortal({
         unit: "mmol/gDCW/h",
         color: "bg-dune-rose",
         textColor: "text-dune-rose",
-        desc: "Wasted energy shunt; bypasses TCA cycle",
+        desc: "Wasted energy shunt, bypasses the TCA cycle",
         toggleGene: "pta",
         isKnockedOut: knockoutList["pta"],
       },
