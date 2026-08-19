@@ -6,6 +6,7 @@ import { createTimeline, svg, type Timeline } from "animejs";
 import { gsap } from "gsap";
 import StoryEscape, { skipToModels } from "@/src/components/landing/StoryEscape";
 import { storyPinLength } from "@/src/lib/scrollRestore";
+import { playCinematic, STORY_TRIGGER_ID } from "@/src/lib/storyPlayback";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "motion/react";
 import SandParticles from "./dune-story/SandParticles";
@@ -229,6 +230,9 @@ export default function LandingCinematic({
     renderFrame(0);
     const st = ScrollTrigger.create({
       trigger: scope,
+      // Named so storyPlayback can read this trigger's absolute scroll range
+      // back and drive it for a reader who asked to just watch the story.
+      id: STORY_TRIGGER_ID,
       start: "top top",
       // Pin length. Every beat is keyed to normalised progress, so this scales
       // the whole story uniformly rather than dropping any of it. A repeat
@@ -442,33 +446,39 @@ export default function LandingCinematic({
               </p>
 
               <div
-                className={`hero-reveal hero-reveal-3 mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 ${
+                className={`hero-reveal hero-reveal-3 relative mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 ${
                   isLightMode ? "text-dune-maroon" : "text-dune-paper"
                 }`}
               >
                 <button
                   type="button"
                   onClick={skipToModels}
-                  className="caption rule-link text-current"
+                  className="caption rule-link relative z-10 text-current"
                 >
                   Explore the models
                 </button>
                 <button
                   type="button"
-                  onClick={() =>
-                    window.scrollBy({ top: window.innerHeight, behavior: "smooth" })
-                  }
-                  className="caption rule-link text-current"
+                  onClick={playCinematic}
+                  className="caption rule-link relative z-10 text-current"
                 >
                   Watch the story
                 </button>
-                <button
-                  type="button"
-                  onClick={onOpenAdventure}
-                  className="caption rule-link text-current opacity-70 transition-opacity hover:opacity-100"
-                >
-                  Play as Sandyx
-                </button>
+                {/* Sandyx leans out from behind this link a second after the
+                    page has finished loading. Decoration only: she is
+                    pointer-events-none, so the text keeps the whole hit area,
+                    and she is placed past its trailing edge so nothing reads
+                    through her. */}
+                <span className="relative">
+                  <HeroSandyx />
+                  <button
+                    type="button"
+                    onClick={onOpenAdventure}
+                    className="caption rule-link relative z-10 text-current opacity-80 transition-opacity hover:opacity-100"
+                  >
+                    Play as Sandyx
+                  </button>
+                </span>
               </div>
             </div>
           </div>
@@ -543,6 +553,54 @@ export default function LandingCinematic({
         )}
       </div>
     </section>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Sandyx, leaning in diagonally behind the "Play as Sandyx" link.
+// ---------------------------------------------------------------------------
+function HeroSandyx() {
+  const [shown, setShown] = useState(false);
+  const [reduced, setReduced] = useState(false);
+
+  // A second after the page has actually finished loading, not a second after
+  // this component mounted: the point is that she arrives once the frame has
+  // settled, so the entrance is not competing with the hero text reveal or the
+  // first paint of the desert.
+  useEffect(() => {
+    setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    let timer = 0;
+    const arm = () => {
+      timer = window.setTimeout(() => setShown(true), 1000);
+    };
+    if (document.readyState === "complete") arm();
+    else window.addEventListener("load", arm, { once: true });
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("load", arm);
+    };
+  }, []);
+
+  return (
+    <motion.img
+      src="/sandyx.png"
+      alt=""
+      aria-hidden
+      draggable={false}
+      className="pointer-events-none absolute bottom-[-24px] left-[92%] z-0 hidden w-[126px] max-w-none select-none sm:block"
+      style={{ transformOrigin: "50% 100%" }}
+      initial={reduced ? false : { opacity: 0, scale: 0.55, rotate: -34, y: 26 }}
+      animate={
+        shown
+          ? { opacity: 0.92, scale: 1, rotate: -14, y: 0 }
+          : { opacity: 0, scale: 0.55, rotate: -34, y: 26 }
+      }
+      transition={
+        reduced
+          ? { duration: 0 }
+          : { type: "spring", stiffness: 190, damping: 14, mass: 0.8 }
+      }
+    />
   );
 }
 
