@@ -10,7 +10,9 @@ import { playCinematic, STORY_TRIGGER_ID } from "@/src/lib/storyPlayback";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "motion/react";
 import SandParticles from "./dune-story/SandParticles";
+import Link from "next/link";
 import { duneGradient, grainOverlayStyle } from "@/src/lib/grain";
+import { moduleHref } from "@/src/lib/modelIndex";
 import type { MolstarApi } from "@/components/molstar-viewer";
 import {
   microGrains,
@@ -45,10 +47,22 @@ const MolstarViewer = dynamic(() => import("@/components/molstar-viewer"), {
 interface BeatCopy {
   label: string;
   line: React.ReactNode;
+  /** Roughly how wide the frame is at this beat. The story is one zoom. */
+  scale: string;
+  /** The model that puts a number on this beat. */
+  model: { label: string; href: string };
 }
 
+// Each beat names the model that quantifies it, so the story doubles as an
+// index: nothing is asserted on screen that is not computed somewhere else on
+// the site, and the way there is one click.
 const BEATS: BeatCopy[] = [
-  { label: "The problem", line: "Loose desert sand lifts and blows away in the wind." },
+  {
+    label: "The problem",
+    line: "Loose desert sand lifts and blows away in the wind.",
+    scale: "~10 m",
+    model: { label: "Aeolian Wind Tunnel", href: moduleHref("1,2", "aeolian") },
+  },
   {
     label: "Micro scale",
     line: (
@@ -56,6 +70,8 @@ const BEATS: BeatCopy[] = [
         A single grain, and a living <i>Bacillus subtilis</i> cell.
       </>
     ),
+    scale: "~100 µm",
+    model: { label: "Grain-Size Coverage", href: moduleHref("1,2", "grainsize") },
   },
   {
     label: "Carbonic anhydrase",
@@ -64,9 +80,21 @@ const BEATS: BeatCopy[] = [
         A CA dimer on the cell surface grows CaCO<sub>3</sub> cement.
       </>
     ),
+    scale: "~5 nm",
+    model: { label: "CaCO₃ Precipitation", href: moduleHref("2", "caco3") },
   },
-  { label: "The fix", line: "γ-PGA chains cross-link and lock grain to grain." },
-  { label: "The result", line: "The surface holds together as a stabilized crust." },
+  {
+    label: "The fix",
+    line: "γ-PGA chains cross-link and lock grain to grain.",
+    scale: "~100 nm",
+    model: { label: "γ-PGA Cross-Linking", href: moduleHref("1", "crosslink") },
+  },
+  {
+    label: "The result",
+    line: "The surface holds together as a stabilized crust.",
+    scale: "~10 m",
+    model: { label: "Composite Strength", href: moduleHref("1,2", "composite") },
+  },
 ];
 
 const C = {
@@ -499,10 +527,14 @@ export default function LandingCinematic({
               >
                 {BEATS.map((b, i) => (
                   <li key={i}>
-                    <div className="text-[11px] font-bold uppercase tracking-[0.24em] text-dune-orange">
-                      {b.label}
+                    <div className="flex flex-wrap items-baseline gap-x-3 text-[11px] font-bold uppercase tracking-[0.24em] text-dune-orange">
+                      <span>{b.label}</span>
+                      <span className="opacity-60">{b.scale} across</span>
                     </div>
                     <p className="text-lg font-medium leading-snug">{b.line}</p>
+                    <Link href={b.model.href} className="caption rule-link mt-1 inline-block">
+                      Model: {b.model.label}
+                    </Link>
                   </li>
                 ))}
               </ol>
@@ -517,7 +549,7 @@ export default function LandingCinematic({
               {/* Stacked opacity cross-fade: only the active beat is shown, so a
                   fast scroll (or a jump to the top) can never pile up several
                   half-faded captions on top of each other. */}
-              <div className="relative h-28 max-w-xl">
+              <div className="relative h-40 max-w-2xl">
                 {BEATS.map((b, i) => (
                   <div
                     key={i}
@@ -525,8 +557,12 @@ export default function LandingCinematic({
                     style={{ opacity: i === active ? 1 : 0 }}
                     aria-hidden={i !== active}
                   >
-                    <div className="mb-2 text-[11px] font-bold uppercase tracking-[0.28em] text-dune-orange">
-                      {b.label}
+                    <div className="mb-2 flex flex-wrap items-baseline gap-x-4 text-[11px] font-bold uppercase tracking-[0.28em] text-dune-orange">
+                      <span>
+                        {String(i + 1).padStart(2, "0")} / {String(BEATS.length).padStart(2, "0")}
+                      </span>
+                      <span>{b.label}</span>
+                      <span className="opacity-60">{b.scale} across</span>
                     </div>
                     <p
                       className={`font-display text-2xl font-black leading-tight tracking-tight sm:text-4xl ${
@@ -535,6 +571,15 @@ export default function LandingCinematic({
                     >
                       {b.line}
                     </p>
+                    <Link
+                      href={b.model.href}
+                      tabIndex={i === active ? 0 : -1}
+                      className={`caption rule-link pointer-events-auto mt-3 inline-block ${
+                        isLightMode ? "text-dune-maroon/80" : "text-dune-paper/75"
+                      }`}
+                    >
+                      Model: {b.model.label}
+                    </Link>
                   </div>
                 ))}
               </div>
