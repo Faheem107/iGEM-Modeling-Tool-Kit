@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { smoothNavTo, MODELS_ANCHOR } from "@/src/lib/scrollRestore";
+import { MODELS_ANCHOR } from "@/src/lib/scrollRestore";
+import { curtainJumpTo } from "@/src/lib/curtainJump";
+import {
+  AUTOPLAY_EVENT,
+  cancelAutoplay,
+  isPlaying,
+} from "@/src/lib/storyPlayback";
 
 /**
  * The way out of a pinned story.
@@ -15,6 +21,10 @@ import { smoothNavTo, MODELS_ANCHOR } from "@/src/lib/scrollRestore";
  *   - a 1px progress rule, so the remaining length is visible rather than
  *     guessed at.
  *
+ * The skip goes through curtainJumpTo rather than a smooth scroll. Scrolling
+ * smoothly out of a pinned scrub means playing the whole story at speed on the
+ * way past, which reads as a fault rather than as navigation.
+ *
  * The rule is driven from a ref inside one rAF loop and written straight to
  * the DOM, because the stories deliberately avoid re-rendering React on scroll
  * and a progress bar is not a good enough reason to start.
@@ -23,7 +33,7 @@ import { smoothNavTo, MODELS_ANCHOR } from "@/src/lib/scrollRestore";
  */
 export function skipToModels() {
   const el = document.getElementById(MODELS_ANCHOR);
-  if (el) smoothNavTo(el, -70);
+  if (el) curtainJumpTo(el, -70);
 }
 
 export default function StoryEscape({
@@ -37,9 +47,20 @@ export default function StoryEscape({
   const hostRef = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
   const [reduced, setReduced] = useState(false);
+  const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
     setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }, []);
+
+  // Autoplay is owned by a plain module, not React, so it reports its state
+  // back on an event rather than through a provider nobody else needs.
+  useEffect(() => {
+    setPlaying(isPlaying());
+    const on = (e: Event) =>
+      setPlaying(Boolean((e as CustomEvent).detail?.playing));
+    window.addEventListener(AUTOPLAY_EVENT, on);
+    return () => window.removeEventListener(AUTOPLAY_EVENT, on);
   }, []);
 
   // Drive the rule straight to the DOM.
@@ -95,6 +116,11 @@ export default function StoryEscape({
       className="pointer-events-none absolute inset-x-0 bottom-0 z-[45] px-5 pb-6 sm:px-8"
     >
       <div className="mx-auto flex max-w-6xl items-center gap-5">
+        {playing && (
+          <span className="caption shrink-0 text-dune-orange">
+            Playing. Scroll to take over.
+          </span>
+        )}
         <div className="h-px flex-1 bg-current/20">
           <div
             ref={barRef}
@@ -102,14 +128,24 @@ export default function StoryEscape({
             style={{ transform: "scaleX(0)" }}
           />
         </div>
-        <button
-          type="button"
-          onClick={skipToModels}
-          className="caption pointer-events-auto shrink-0 transition-colors hover:text-foreground"
-        >
-          {label}
-          <span className="ml-2 opacity-50">esc</span>
-        </button>
+        {playing ? (
+          <button
+            type="button"
+            onClick={cancelAutoplay}
+            className="caption pointer-events-auto shrink-0 transition-colors hover:text-foreground"
+          >
+            Stop
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={skipToModels}
+            className="caption pointer-events-auto shrink-0 transition-colors hover:text-foreground"
+          >
+            {label}
+            <span className="ml-2 opacity-50">esc</span>
+          </button>
+        )}
       </div>
     </div>
   );

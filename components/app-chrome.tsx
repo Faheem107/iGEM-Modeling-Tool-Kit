@@ -10,6 +10,8 @@ import GlobalSandyx from "@/src/components/GlobalSandyx";
 import CustomCursor from "@/src/components/CustomCursor";
 import CommandPalette from "@/components/search/command-palette";
 import { smoothNavTo } from "@/src/lib/scrollRestore";
+import { curtainJumpTo } from "@/src/lib/curtainJump";
+import { playCinematic } from "@/src/lib/storyPlayback";
 
 /**
  * Persistent site chrome: the nav, the theme toggle, the search palette, the
@@ -68,13 +70,22 @@ export function AppChrome() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const scrollTop = () => smoothNavTo(0);
+  // Back to the top from below the stories is the same trip in reverse, so it
+  // is covered too.
+  const scrollTop = () => curtainJumpTo(0, 0);
   const scrollToId = (sel: string) => {
     const el = document.querySelector(sel);
     if (!el) return;
-    // #cinematic is the very top of the page (the pinned hero); its own offset
-    // would leave the reader a sliver below the true top.
-    if (sel === "#cinematic") return smoothNavTo(0);
+    // Anything reached across a pinned scrub is covered rather than scrolled to:
+    // a smooth trip through a pin plays that whole story at speed on the way
+    // past, which reads as a fault rather than as navigation.
+    //
+    // "story" means watch it, so the curtain lands on the first frame and then
+    // the story plays itself. #cinematic is the very top of the page, so it
+    // takes 0 rather than its own offset.
+    if (sel === "#cinematic") return curtainJumpTo(0, 0, playCinematic);
+    if (sel === "#models") return curtainJumpTo(el as HTMLElement, -70);
+    if (sel === "#design-cycle") return curtainJumpTo(el as HTMLElement, -70);
     smoothNavTo(el as HTMLElement, -70);
   };
 
