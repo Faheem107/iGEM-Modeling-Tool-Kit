@@ -278,7 +278,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
           className={`mt-2 text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           <GlossaryText>
-            Calcium binds the buckled G-blocks into egg-box junctions; the
+            Calcium binds the buckled G-blocks into egg-box junctions, and the
             junction density sets the shear modulus through rubber-elasticity, G
             = network density x R x T. The curve rises then saturates as the
             G-blocks run out of free binding sites.

@@ -35,7 +35,7 @@ export const MODULE_VIDEOS: Record<ModuleId, ModuleVideo> = {
   fba: {
     title: "How the cell decides where carbon goes",
     plain:
-      "Imagine the cell as a city of pipes carrying sugar. Flux Balance Analysis asks: with a fixed sugar supply and no carbon allowed to pile up anywhere, which routing sends the most flow toward the product we want? It is just picking the best traffic plan on a fixed road network, the answer tells the rest of the models how much precursor the cell can spare.",
+      "Imagine the cell as a city of pipes carrying sugar. Flux Balance Analysis asks: with a fixed sugar supply and no carbon allowed to pile up anywhere, which routing sends the most flow toward the product we want? It is a traffic plan on a fixed road network. The answer tells the rest of the models how much precursor the cell can spare.",
     length: "~47 s",
     ready: true,
   },
@@ -91,14 +91,14 @@ export const MODULE_VIDEOS: Record<ModuleId, ModuleVideo> = {
   ecological: {
     title: "Spreading safely, the kill switch",
     plain:
-      "Living crust is powerful but must not spread where it should not. The bacteria grow and diffuse across the sand like ink in water, but we engineer a kill switch: cross an environmental trigger and a toxin gene shuts the colony down. We watch growth and containment fight it out on a resource grid.",
+      "A living crust keeps repairing itself, which is the point, and also the risk. The bacteria grow and diffuse across the sand like ink in water, but we engineer a kill switch: cross an environmental trigger and a toxin gene shuts the colony down. We watch growth and containment fight it out on a resource grid.",
     length: "~55 s",
     ready: true,
   },
   aeolian: {
     title: "What it takes to stop sand from blowing",
     plain:
-      "Wind only moves sand once it blows harder than a threshold. Below it, nothing happens; just above it, sand transport explodes as the cube of the wind speed. Our crust adds stickiness between grains, which raises that threshold, so the same wind that used to strip bare sand now slides harmlessly over the treated surface.",
+      "Wind only moves sand once it blows harder than a threshold. Below it, nothing happens. Just above it, sand transport climbs as the cube of the wind speed. Our crust adds stickiness between grains, which raises that threshold, so the same wind that used to strip bare sand now slides harmlessly over the treated surface.",
     length: "~60 s",
     ready: true,
   },
@@ -112,7 +112,7 @@ export const MODULE_VIDEOS: Record<ModuleId, ModuleVideo> = {
   grainsize: {
     title: "No single glue fits every grain",
     plain:
-      "Sand is a mixture of grain sizes, and each binder has a size it is good at. Cementing (CaCO₃) loves fine-to-medium grains but fails on coarse and ultra-fine ones; γ-PGA and alginate cover exactly the sizes cementing misses. Overlap all three and every grain size gets held, that is the whole point of using three prongs.",
+      "Sand is a mixture of grain sizes, and each binder has a size it is good at. Cementing (CaCO₃) works on fine-to-medium grains and fails on coarse and ultra-fine ones. γ-PGA and alginate cover the sizes it misses. Overlap all three and every grain size gets held, that is the whole point of using three prongs.",
     length: "~60 s",
     ready: true,
   },
@@ -140,7 +140,7 @@ export const MODULE_VIDEOS: Record<ModuleId, ModuleVideo> = {
   killswitch: {
     title: "How the bacteria are switched off",
     plain:
-      "Every engineered cell makes two proteins: a toxin (MazF) that shreds its own RNA, and a short-lived antitoxin (MazE) that keeps the toxin in check. While the colony is working, antitoxin wins. Add the aTc trigger, or just wait for the antitoxin-carrying plasmid to dilute away over generations, and the toxin wins, so the cells self-limit. A second copy borrowed from E. coli kills any wild microbe that steals the genes, because the stolen toxin has no matching antitoxin.",
+      "Every engineered cell makes two proteins: a toxin (MazF) that shreds its own RNA, and a short-lived antitoxin (MazE) that keeps the toxin in check. While the colony is working, antitoxin wins. Add the aTc trigger, or wait for the antitoxin-carrying plasmid to dilute away over generations, and the toxin wins, so the cells self-limit. A second copy borrowed from E. coli kills any wild microbe that steals the genes, because the stolen toxin has no matching antitoxin.",
     length: "~60 s",
     ready: false,
   },

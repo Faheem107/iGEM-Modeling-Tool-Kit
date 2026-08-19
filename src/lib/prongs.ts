@@ -143,7 +143,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
     id: "fba",
     title: "Flux Balance Analysis",
     blurb:
-      "Constraint-based metabolic optimization (S·v=0) routing carbon to the precursor.",
+      "At steady state nothing accumulates inside the cell, so every metabolite balances. That leaves a space of possible flux patterns, and this picks the one that sends the most carbon to the precursor.",
     scale: "genetic",
     icon: Workflow,
     appliesTo: anyBacterial,
@@ -151,7 +151,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
   {
     id: "metabolic",
     title: "Intracellular γ-PGA Kinetics",
-    blurb: "RK4 ODE of transcription → translation → biopolymer accumulation.",
+    blurb: "Gene to mRNA to enzyme to polymer, as four coupled rates integrated step by step. Knock out a degradation gene and the loss term drops toward zero.",
     scale: "molecular",
     icon: Dna,
     appliesTo: (s) => has(s, 1),
@@ -159,7 +159,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
   {
     id: "ca-anchoring",
     title: "Carbonic Anhydrase Display",
-    blurb: "Sortase vs binding-motif surface anchoring & CA activity.",
+    blurb: "Two ways to hold an enzyme on the cell wall, one covalent and one not. How many stay put, and how active they are once there.",
     scale: "protein",
     icon: FlaskConical,
     appliesTo: (s) => has(s, 2),
@@ -168,7 +168,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
     id: "caco3",
     title: "CaCO₃ Precipitation → UCS",
     blurb:
-      "Geochemical supersaturation → calcite → unconfined compressive strength + CO₂ capture.",
+      "How far the water is past saturation sets how fast calcite forms. Calcite between grains sets the compressive strength, and the same reaction locks away CO₂.",
     scale: "material",
     icon: Atom,
     appliesTo: (s) => has(s, 2),
@@ -176,7 +176,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
   {
     id: "crosslink",
     title: "γ-PGA Ca²⁺ Cross-Linking",
-    blurb: "Langmuir binding → network density → shear modulus G=νRT.",
+    blurb: "Calcium ions bind the polymer chains and bridge them. Count the bridges and you have the network density, which is the stiffness.",
     scale: "material",
     icon: Layers,
     appliesTo: (s) => has(s, 1),
@@ -185,7 +185,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
     id: "alginate",
     title: "Alginate Egg-Box Gel",
     blurb:
-      "Ca²⁺ egg-box gelation, moisture retention, and rain washout durability.",
+      "Calcium clamps the alginate chains into egg-box junctions. How firm the gel gets, how much water it holds, and how long it lasts once it rains.",
     scale: "material",
     icon: Droplets,
     appliesTo: (s) => has(s, 3),
@@ -193,7 +193,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
   {
     id: "thermal",
     title: "Protein Thermal Stability",
-    blurb: "Two-state folding thermodynamics gating enzyme/scaffold viability.",
+    blurb: "A protein is either folded or it is not, and heat shifts the balance. Above its melting point the enzyme stops working, which sets the temperature ceiling on the whole design.",
     scale: "protein",
     icon: Thermometer,
     appliesTo: anyBacterial,
@@ -202,7 +202,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
     id: "protein-3d",
     title: "3D Protein Explorer",
     blurb:
-      "Structural view of PgsBCA (Prong 1) or Carbonic Anhydrase (Prong 2).",
+      "The actual structures, in 3D: the γ-PGA synthetase complex for Prong 1, carbonic anhydrase for Prong 2.",
     scale: "protein",
     icon: Globe,
     appliesTo: anyBacterial,
@@ -211,7 +211,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
     id: "ecological",
     title: "Ecological Spread & Kill Switch",
     blurb:
-      "Reaction-diffusion colony growth with MazE/MazF biocontainment, any engineered B. subtilis prong.",
+      "Cells divide where there is food and spread by diffusion, so the colony grows as a front. Turn on the kill switch and watch how far it got.",
     scale: "ecology",
     icon: Bug,
     appliesTo: anyBacterial,
@@ -220,7 +220,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
     id: "killswitch",
     title: "Biocontainment Kill Switch",
     blurb:
-      "MazE/MazF toxin–antitoxin dynamics: aTc-inducible kill + plasmid-dilution self-limiting, HGT containment, and germinate-then-kill spore clearance. The biosafety layer over both engineered prongs.",
+      "The toxin kills the cell, the antitoxin blocks the toxin, and the antitoxin breaks down faster. Stop making it and the cell dies. Three routes to that, plus what to do about spores.",
     scale: "ecology",
     icon: ShieldAlert,
     appliesTo: anyBacterial,
@@ -229,7 +229,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
     id: "aeolian",
     title: "Aeolian Wind Tunnel",
     blurb:
-      "Bagnold threshold + saltation flux driven by the combined crust cohesion (all prongs).",
+      "Below a threshold wind speed the surface does not move at all. Above it, transport climbs with the cube of the excess. Cohesion from the crust raises the threshold.",
     scale: "macro",
     icon: Wind,
     appliesTo: (s) => s.length > 0,
@@ -239,7 +239,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
     id: "wetlab",
     title: "Wet-Lab Sandbox (γ-PGA)",
     blurb:
-      "Feed real γ-PGA lab parameters (OD600, glutamate, salinity) into a 2D dune-erosion assay.",
+      "Put real bench numbers in, cell density, glutamate, salinity, and erode a dune with them.",
     scale: "macro",
     icon: Beaker,
     appliesTo: (s) => has(s, 1),
@@ -251,7 +251,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
     id: "grainsize",
     title: "Grain-Size Coverage",
     blurb:
-      "How the binders cover the UAE dune-sand grain-size distribution, MICP's 63–125 µm sweet spot vs the coarse/fine gaps γ-PGA and alginate close.",
+      "Sand is not one size. Calcite bridges the 63 to 125 µm band well and struggles either side of it, which is the gap the polymer fills.",
     scale: "macro",
     icon: Ruler,
     appliesTo: (s) => s.length > 0,
@@ -259,7 +259,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
   {
     id: "composite",
     title: "Composite Strength Synthesis",
-    blurb: "Multi-prong cohesion combination + failure-mode robustness.",
+    blurb: "Two binders in the same crust do not add up. What the combined cohesion is, and which failure mode goes first.",
     scale: "synthesis",
     icon: Combine,
     appliesTo: (s) => s.length >= 2,
@@ -271,7 +271,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
     id: "curing",
     title: "Curing & Deployment Timeline",
     blurb:
-      "Maturation over the 32 h spray protocol → months-scale weathering → re-application cadence. Fast-setting polymers buy early strength; the calcite floor buys longevity.",
+      "Strength over the 32 h spray protocol, then months of weathering, then when to spray again. The polymer sets fast and the calcite lasts, so the pair covers both ends.",
     scale: "deployment",
     icon: CalendarClock,
     appliesTo: (s) => s.length > 0,
@@ -279,7 +279,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
   {
     id: "economic",
     title: "Economic Scalability",
-    blurb: "Per-prong cost basis and break-even vs conventional stabilizers.",
+    blurb: "What a hectare costs per prong, and the point at which that beats spraying conventional stabilizer.",
     scale: "economic",
     icon: Coins,
     appliesTo: (s) => s.length > 0,

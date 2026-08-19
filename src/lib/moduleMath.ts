@@ -69,7 +69,7 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
   crosslink: {
     title: "γ-PGA Ca²⁺ Cross-Linking",
     intro:
-      "Divalent Ca²⁺ bridges carboxylate groups into a load-bearing network. A Langmuir isotherm sets how many sites are occupied; affine rubber-elasticity theory turns that into a shear modulus.",
+      "Divalent Ca²⁺ bridges carboxylate groups into a load-bearing network. A Langmuir isotherm sets how many sites are occupied, and affine rubber-elasticity theory turns that into a shear modulus.",
     blocks: [
       {
         tex: "\\theta = \\frac{[\\mathrm{Ca}^{2+}]}{K_d + [\\mathrm{Ca}^{2+}]}",
@@ -116,7 +116,7 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
       {
         tex: "\\Omega = \\frac{[\\mathrm{Ca}^{2+}][\\mathrm{CO_3^{2-}}]}{K_{sp}},\\qquad SI = \\log_{10}\\Omega",
         caption:
-          "Saturation ratio and index; SI > 0 means precipitation is favourable.",
+          "Saturation ratio and index. Above SI = 0, precipitation is favourable.",
       },
       {
         tex: "\\mathrm{ACC} \\xrightarrow{k_r} f_v\\,\\text{vaterite} + (1-f_v)\\,\\text{calcite},\\qquad \\text{vaterite} \\xrightarrow{k_{vc}} \\text{calcite}",
@@ -126,7 +126,7 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
       {
         tex: "w_{\\text{eff}} = w_{\\text{cal}} + s_v\\,w_{\\text{vat}},\\qquad \\mathrm{UCS} = k_{\\mathrm{UCS}}\\,w_{\\text{eff}}^{\\,n_{\\mathrm{UCS}}}",
         caption:
-          "Load-bearing carbonate wt%: vaterite counts at a reduced strength factor s_v until it converts; UCS is a power law of it [kPa].",
+          "Load-bearing carbonate wt%. Vaterite counts at a reduced strength factor s_v until it converts, and UCS is a power law of the result [kPa].",
       },
       {
         tex: "m_{\\mathrm{CO_2}} = n_{\\mathrm{CaCO_3}} \\cdot M_{\\mathrm{CO_2}}",
@@ -164,19 +164,19 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
       {
         tex: "f_{\\text{folded}} = \\frac{1}{1 + e^{-\\Delta G / RT}}",
         caption:
-          "Folded fraction (Boltzmann two-state); the melting point is where f = ½.",
+          "Folded fraction (Boltzmann two-state). The melting point is where f = ½.",
       },
     ],
   },
   "protein-3d": {
     title: "3D Protein Explorer",
     intro:
-      "A structural view of the key enzymes, PgsBCA (γ-PGA synthase, Prong 1) or carbonic anhydrase (Prong 2). The backbone is drawn from residue coordinates; no free parameters.",
+      "A structural view of the key enzymes, PgsBCA (γ-PGA synthase, Prong 1) or carbonic anhydrase (Prong 2). The backbone is drawn from residue coordinates, with no free parameters.",
     blocks: [
       {
         tex: "\\mathbf{r}_i = (x_i, y_i, z_i)",
         caption:
-          "Each residue is placed by its Cα coordinate; the ribbon interpolates the backbone.",
+          "Each residue is placed by its Cα coordinate, and the ribbon interpolates the backbone.",
       },
     ],
   },
@@ -200,7 +200,7 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
   aeolian: {
     title: "Aeolian Wind Tunnel",
     intro:
-      "Bagnold sand-transport physics. Wind must exceed a threshold friction velocity to move grains; the engineered cohesion γ raises that threshold, and any excess wind drives a cubic saltation flux.",
+      "Bagnold sand-transport physics. Wind must exceed a threshold friction velocity to move grains. The engineered cohesion γ raises that threshold, and any excess wind drives a cubic saltation flux.",
     blocks: [
       {
         tex: "u_{*t0} = A\\sqrt{\\frac{\\rho_s - \\rho_a}{\\rho_a}\\,g\\,d}",
@@ -259,7 +259,7 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
       {
         tex: "S_{\\mathrm{Ca}} = c_f + \\sum_p B_p\\,\\frac{c_f}{K_{d,p}+c_f},\\qquad \\phi_{\\mathrm{Ca},p} = \\frac{c_f/(K_{d,p}+c_f)}{c_f^{\\,\\text{alone}}/(K_{d,p}+c_f^{\\,\\text{alone}})}",
         caption:
-          "Competitive Langmuir Ca²⁺ partition: free calcium c_f solves the shared mass balance; each prong keeps φ_Ca of its standalone binding (the high-affinity calcite sink wins). Plus co-expression burden β for γ-PGA & CA.",
+          "Competitive Langmuir Ca²⁺ partition: free calcium c_f solves the shared mass balance, and each prong keeps φ_Ca of its standalone binding, so the high-affinity calcite sink wins. Plus co-expression burden β for γ-PGA & CA.",
       },
       {
         tex: "\\tilde\\gamma_i = \\gamma_i\\,\\phi_{\\mathrm{Ca}}\\,\\phi_{\\text{burden},i}",
@@ -330,7 +330,7 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
       {
         tex: "\\frac{dT}{dt} = \\sigma_T(\\text{aTc}) - \\delta_T T - k_{on} A T + k_{off} C + \\delta_A C",
         caption:
-          "Toxin: production (constitutive + aTc-induced) minus slow degradation; the labile antitoxin in the complex decays, releasing stable toxin.",
+          "Toxin: production (constitutive + aTc-induced) minus slow degradation. The labile antitoxin in the complex decays and releases stable toxin.",
       },
       {
         tex: "\\sigma_T(\\text{aTc}) = \\sigma_T^{0} + \\sigma_T^{\\max}\\left[\\ell + (1-\\ell)\\frac{\\text{aTc}^h}{K_d^h + \\text{aTc}^h}\\right]",
@@ -340,12 +340,12 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
       {
         tex: "p(t) = (1 - \\phi)^{\\,t/\\tau_g}, \\qquad \\mu(T) = \\mu_{\\max}(1-\\theta) - d_{\\max}\\,\\theta,\\;\\; \\theta = \\frac{T^n}{K_T^n + T^n}",
         caption:
-          "Plasmid copy dilutes by loss-per-generation φ; free toxin θ switches the specific rate from growth to death.",
+          "Plasmid copy dilutes by loss-per-generation φ. Free toxin θ switches the specific rate from growth to death.",
       },
       {
         tex: "\\frac{d}{dt}\\log_{10} N = \\frac{\\mu(T)}{\\ln 10}",
         caption:
-          "Viable-cell log balance; the time to an X-log kill is when log₁₀(N/N₀) ≤ −X.",
+          "Viable-cell log balance. The time to an X-log kill is when log₁₀(N/N₀) ≤ −X.",
       },
       {
         tex: "P_{\\text{contain}} = e_{\\text{expr}}\\left(1 - \\big[f_{cog} + (1-f_{cog})\\,f_{frag}^{\\,s}\\,\\varepsilon_{codon}\\big]\\right)",
@@ -355,7 +355,7 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
       {
         tex: "V_R = f_{\\min} + \\sum_{r=1}^{R}\\big[\\text{dormant}_r - g\\,(\\text{dormant}_r - f_{\\min})\\big], \\quad g = 1-(1-g_1)^{n_{\\text{germ}}}",
         caption:
-          "Spore clearance: each germinate-then-kill round wakes fraction g (raised by gerB* and multiple germinants); a superdormant floor f_min never wakes.",
+          "Spore clearance: each germinate-then-kill round wakes fraction g (raised by gerB* and multiple germinants), and a superdormant floor f_min never wakes.",
       },
     ],
   },

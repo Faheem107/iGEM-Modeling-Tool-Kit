@@ -59,7 +59,7 @@ interface BeatCopy {
 const BEATS: BeatCopy[] = [
   {
     label: "The problem",
-    line: "Loose desert sand lifts and blows away in the wind.",
+    line: "Past a threshold wind speed, loose sand lifts off the surface.",
     scale: "~10 m",
     model: { label: "Aeolian Wind Tunnel", href: moduleHref("1,2", "aeolian") },
   },
@@ -77,7 +77,7 @@ const BEATS: BeatCopy[] = [
     label: "Carbonic anhydrase",
     line: (
       <>
-        A CA dimer on the cell surface grows CaCO<sub>3</sub> cement.
+        Carbonic anhydrase on the cell wall grows CaCO<sub>3</sub> cement.
       </>
     ),
     scale: "~5 nm",
@@ -85,13 +85,13 @@ const BEATS: BeatCopy[] = [
   },
   {
     label: "The fix",
-    line: "γ-PGA chains cross-link and lock grain to grain.",
+    line: "γ-PGA chains cross-link through calcium and lock grain to grain.",
     scale: "~100 nm",
     model: { label: "γ-PGA Cross-Linking", href: moduleHref("1", "crosslink") },
   },
   {
     label: "The result",
-    line: "The surface holds together as a stabilized crust.",
+    line: "The crust holds, so the wind needs more speed to move it.",
     scale: "~10 m",
     model: { label: "Composite Strength", href: moduleHref("1,2", "composite") },
   },
@@ -469,8 +469,9 @@ export default function LandingCinematic({
                   isLightMode ? "text-dune-maroon/85" : "text-dune-paper/85"
                 }`}
               >
-                A modelling toolkit for a two-pronged engineered crust, plus a
-                genetically-encoded kill switch, against wind-driven sand.
+                Loose sand starts moving at a threshold wind speed. Two
+                engineered routes bind the grains into a crust and raise that
+                threshold. A kill switch ends the strain when the work is done.
               </p>
 
               <div

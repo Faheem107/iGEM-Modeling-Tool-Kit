@@ -149,7 +149,7 @@ export const roadEncroachment = (): DamageResult =>
   unsourced(
     "USD per km per year",
     "Khalaf & Al-Ajmi 1993 measure the Gulf drift rate (about 20 m³ per metre width per year in Kuwait) but publish no clearing cost.",
-    "The mass side is sourced; only the cost per cubic metre cleared is missing.",
+    "The mass side is sourced. Only the cost per cubic metre cleared is missing.",
   );
 
 export const industrialHse = (): DamageResult =>

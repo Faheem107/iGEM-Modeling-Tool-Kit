@@ -59,7 +59,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   fva: {
     title: "Flux Variability Analysis (FVA)",
     plain:
-      "Shows how much wiggle-room each pathway has while still reaching the same optimal result. A wide range means the cell has several ways to use that pathway; a narrow range means it is pinned down and probably important or limiting.",
+      "Shows how much wiggle-room each pathway has while still reaching the same optimal result. A wide range means the cell has several ways to use that pathway. A narrow range means it is pinned down, which usually means it matters.",
     category: "Metabolic Modeling",
   },
   "objective-function": {
@@ -113,7 +113,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "bacillus-subtilis": {
     title: "Bacillus subtilis",
     plain:
-      "A harmless, robust soil bacterium. We engineer its pathways to turn glucose and glutamate feeds into sand-stabilizing γ-PGA (Prong 1) or surface-displayed carbonic anhydrase (Prong 2).",
+      "A soil bacterium that survives heat and drought and harms nobody. We engineer its pathways so a glucose and glutamate feed comes out as γ-PGA (Prong 1) or as carbonic anhydrase held on the cell wall (Prong 2).",
     category: "Microorganism",
   },
 
@@ -315,7 +315,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "untreated-threshold": {
     title: "Untreated Threshold",
     plain:
-      "The wind speed at which bare, untreated desert sand starts to blow. Below it the dune sits still; above it grains lift into saltation and the surface erodes. It is the control the treated crust is measured against.",
+      "The wind speed at which bare, untreated desert sand starts to blow. Below it the dune sits still. Above it grains lift into saltation and the surface erodes. It is the control the treated crust is measured against.",
     derivation:
       "Bagnold's baseline threshold (Eq 7): the friction velocity u*t0 = A·√[((ρs−ρa)/ρa)·g·d] for loose quartz grains of diameter d (≈0.25 mm here) with no binder, so cohesion γ = 0. We then convert u* to a 10-m free-stream wind through the log-law surface coupling u* = ratio·U∞.",
     category: "Wind Mechanics",
@@ -401,13 +401,13 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "maze-mazf": {
     title: "MazE/MazF Kill-Switch",
     plain:
-      "A toxin–antitoxin safety system. MazF is a toxin that shreds the cell’s RNA; MazE is the short-lived antitoxin that neutralises it. While the engineered bacteria stay in place they keep making antitoxin, but as the plasmid dilutes out over generations (or conditions change), the toxin wins and the cells self-limit, stopping overspread and gene transfer to wild microbes.",
+      "A toxin–antitoxin safety system. MazF is a toxin that shreds the cell’s RNA. MazE is the short-lived antitoxin that blocks it. While the engineered bacteria stay in place they keep making antitoxin, but as the plasmid dilutes out over generations (or conditions change), the toxin wins and the cells self-limit, stopping overspread and gene transfer to wild microbes.",
     category: "Biosafety",
   },
   "prong-interaction": {
     title: "Inter-Prong Interaction",
     plain:
-      "The prongs are not independent. Combined, they interact: all three compete for the same soil calcium, γ-PGA and carbonic anhydrase compete for the same cell’s energy budget when co-expressed, and some pairs help each other (γ-PGA seeds calcite; alginate keeps things damp). The model accounts for both the competition and the cooperation.",
+      "The prongs are not independent. Combined, they interact: all three compete for the same soil calcium, γ-PGA and carbonic anhydrase compete for the same cell’s energy budget when co-expressed, and some pairs help each other, since γ-PGA seeds calcite and alginate keeps things damp. The model accounts for both the competition and the cooperation.",
     category: "Systems",
   },
   "chemical-spray": {
@@ -513,7 +513,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   aerobiosis: {
     title: "Aerobiosis",
     plain:
-      "Growing with oxygen. The oxygen-uptake ceiling sets how much the cell can respire; starve it of O₂ and it switches to less-efficient fermentation.",
+      "Growing with oxygen. The oxygen-uptake ceiling sets how much the cell can respire. Starve it of O₂ and it switches to fermentation, which yields less.",
     category: "Metabolic Modeling",
   },
   fermentation: {
@@ -531,7 +531,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "constraint-based": {
     title: "Constraint-Based Modelling",
     plain:
-      "Predicting cell behaviour without knowing every reaction speed, you just set bounds on each reaction and find the best flux pattern allowed. FBA is the classic example.",
+      "Predicting cell behaviour without knowing every reaction speed. You set bounds on each reaction and find the best flux pattern those bounds allow. FBA is the standard example.",
     category: "Metabolic Modeling",
   },
   "tca-cycle": {
@@ -586,7 +586,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "grain-size-coverage": {
     title: "Grain-Size Coverage",
     plain:
-      "The fraction of the sand's mass that is actually bound once you account for every grain size. MICP (CaCO₃) works best at 63–125 µm; γ-PGA and alginate close the coarse and fine gaps it misses, so together the three prongs cover far more of the size range than any one alone.",
+      "The fraction of the sand's mass that is actually bound once you account for every grain size. MICP (CaCO₃) works best at 63–125 µm. γ-PGA and alginate close the coarse and fine gaps it misses, so together they cover more of the size range than any one alone.",
     category: "Aeolian Physics",
     module: "Grain-Size Coverage",
   },

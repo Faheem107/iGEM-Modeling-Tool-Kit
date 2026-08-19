@@ -33,7 +33,7 @@ export const BUSINESS_SECTIONS: BusinessSection[] = [
     label: "Product",
     heading: "A biological crust on the source, not a coating on the asset",
     body: [
-      "Our engineered Bacillus subtilis binds loose surface sand into a crust. The crust raises the wind speed needed to lift a grain. Below that speed the surface simply does not move.",
+      "Our engineered Bacillus subtilis binds loose surface sand into a crust. The crust raises the wind speed needed to lift a grain. Below that speed the surface does not move.",
       "One number carries the whole effect. The wet lab measures the cohesion the crust adds. Cohesion raises the threshold friction velocity, and because sand transport rises steeply above that threshold, a modest increase in cohesion removes a large share of the transport.",
     ],
   },
@@ -43,7 +43,7 @@ export const BUSINESS_SECTIONS: BusinessSection[] = [
     heading: "Four receptors, ranked by how well the evidence holds",
     body: [
       "Utility solar is the clearest case to quantify. Dust on glass cuts transmittance, and that relationship is published and measured. The UAE has close to six gigawatts of utility-scale solar already built.",
-      "Roads are arguably the stronger physical fit. Sand piling on a carriageway is exactly the short-range transport the crust prevents, the receptor sits directly downwind of treatable shoulders, and Gulf municipalities already run continuous clearing crews. The drift rate is measured. What is missing is a published cost per cubic metre cleared.",
+      "Roads are the stronger physical fit. Sand piling on a carriageway is exactly the short-range transport the crust prevents, the receptor sits directly downwind of treatable shoulders, and Gulf municipalities already run continuous clearing crews. The drift rate is measured. What is missing is a published cost per cubic metre cleared.",
       "Industrial sites and farmland follow the same logic with weaker cost evidence. Both are modelled here so the comparison is honest, and both are labelled as lacking a cost coefficient.",
     ],
   },

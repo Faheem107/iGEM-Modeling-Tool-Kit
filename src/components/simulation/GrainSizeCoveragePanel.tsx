@@ -207,7 +207,7 @@ export default function GrainSizeCoveragePanel({
         <p
           className={`mt-2 text-[10px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
-          Dashed lines are each binder's per-grain effectiveness; the solid band
+          Dashed lines are each binder's per-grain effectiveness. The solid band
           is the union (a grain is held if <b>any</b> mechanism binds it: 1 −
           Π(1 − eₚ)). The grey silhouette is where the deployment sand's mass
           actually sits (D₅₀ ≈ {profile.d50.toFixed(0)} µm).
