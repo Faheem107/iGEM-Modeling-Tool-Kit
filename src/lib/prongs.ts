@@ -220,7 +220,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
     id: "killswitch",
     title: "Biocontainment Kill Switch",
     blurb:
-      "MazE/MazF toxin–antitoxin dynamics: aTc-inducible kill + plasmid-dilution self-limiting, HGT containment, and germinate-then-kill spore clearance, the reframed third element.",
+      "MazE/MazF toxin–antitoxin dynamics: aTc-inducible kill + plasmid-dilution self-limiting, HGT containment, and germinate-then-kill spore clearance. The biosafety layer over both engineered prongs.",
     scale: "ecology",
     icon: ShieldAlert,
     appliesTo: anyBacterial,

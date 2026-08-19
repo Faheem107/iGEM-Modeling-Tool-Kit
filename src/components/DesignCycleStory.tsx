@@ -45,7 +45,7 @@ const BEATS: Beat[] = [
   {
     label: "We tested and learned",
     title: "Two prongs and a kill switch",
-    body: "When we simulated the three, alginate did not hold up, so we cut it. We added a genetically encoded kill switch for biocontainment. Our plan settled into two engineered prongs plus a safety brake.",
+    body: "Two separate results. Alginate held water the cells needed and depended on calcium we could not count on, so we stopped carrying it as a prong. Separately, releasing a live engineered strain needs a way to end it, so we added a kill switch. The design is two engineered prongs, with the kill switch running over both.",
   },
   {
     label: "We built the model",

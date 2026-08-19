@@ -1,26 +1,31 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { motion } from "motion/react";
+import { useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "motion/react";
 import {
   INDEX_COLUMNS,
   ARCHIVED_MODULES,
+  FIELD_LINKS,
   moduleHref,
   TOTAL_MODULES,
+  type IndexLink,
 } from "@/src/lib/modelIndex";
 import type { ModuleMeta } from "@/src/lib/prongs";
+import CompactModal from "@/src/components/CompactModal";
+import { BUSINESS_SECTIONS, BUSINESS_SUMMARY } from "@/src/lib/businessModel";
 
 /**
- * Every model on the site, in one block.
+ * Every model on the site, grouped, with nothing open until it is asked for.
  * ==========================================================================
- * This is the thing the prong cards used to stand between the reader and.
- * Three columns of plain text links, hairline-divided, index in the rail. No
- * boxes, no modal step: each row is a real deep link into that module's
- * section inside the workspace.
+ * Six groups: the two engineered prongs, the two layers they share, the field
+ * and cost view, and the archived option. Each one shows its name, what it
+ * covers and how many models sit under it. The list itself stays folded, so the
+ * reader picks a layer before reading forty link titles.
  *
- * The columns come from MODULE_REGISTRY via src/lib/modelIndex.ts, so adding a
- * module to the registry lists it here automatically.
+ * The four model columns come from MODULE_REGISTRY via src/lib/modelIndex.ts,
+ * so adding a module to the registry lists it here automatically.
  */
 
 type ViewTarget = number | "killswitch";
@@ -34,6 +39,9 @@ export default function ModelIndex({
   onView?: (t: ViewTarget) => void;
   heading?: string;
 }) {
+  const router = useRouter();
+  const [showBusiness, setShowBusiness] = useState(false);
+
   return (
     <motion.div
       initial={false}
@@ -50,73 +58,212 @@ export default function ModelIndex({
         </div>
       )}
 
-      <div className="grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
         {INDEX_COLUMNS.map((col) => {
           // The two prong columns double as the way into their explainer.
           const prongId =
             col.key === "prong-1" ? 1 : col.key === "prong-2" ? 2 : null;
           return (
-          <div key={col.key}>
-            <p className="caption mb-2">{col.eyebrow}</p>
-            {prongId && onView ? (
-              <button
-                type="button"
-                onClick={() => onView(prongId)}
-                className="block text-left"
-              >
-                <h3 className="wght-head rule-link text-[length:var(--text-h3)] text-foreground">
-                  {col.title}
-                </h3>
-              </button>
-            ) : (
-              <h3 className="text-[length:var(--text-h3)] text-foreground">
-                {col.title}
-              </h3>
-            )}
-            <p className="mt-2 max-w-[32ch] text-[0.875rem] leading-snug text-muted-foreground">
-              {col.lede}
-            </p>
-            <List prongs={col.prongs} modules={col.modules} />
-          </div>
+            <Group
+              key={col.key}
+              eyebrow={col.eyebrow}
+              title={col.title}
+              lede={col.lede}
+              count={col.modules.length}
+              aside={
+                prongId && onView ? (
+                  <button
+                    type="button"
+                    onClick={() => onView(prongId)}
+                    className="caption rule-link mt-3 inline-block text-dune-orange"
+                  >
+                    What this prong is
+                  </button>
+                ) : null
+              }
+            >
+              <ModuleList prongs={col.prongs} modules={col.modules} />
+            </Group>
           );
         })}
       </div>
 
+      {/* Where the crust ends up: the sand that arrives at a site, and what
+          stopping it is worth. Same fold, same rail, one section. */}
+      <div className="mt-16 border-t border-border pt-8">
+        <div className="rail-row">
+          <p className="caption pt-1">Wind and cost</p>
+          <Group
+            title="Exposure and the commercial case"
+            lede="The prongs set how well a treated surface holds. These take that outward: how much sand reaches a given site, and what stopping it is worth to whoever owns it."
+            count={FIELD_LINKS.length}
+            unit="view"
+            wide
+          >
+            <LinkList
+              links={FIELD_LINKS}
+              onAction={() => setShowBusiness(true)}
+            />
+          </Group>
+        </div>
+      </div>
+
       {/* The archived option keeps its models, set apart rather than hidden. */}
       {ARCHIVED_MODULES.length > 0 && (
-        <div className="mt-16 border-t border-border pt-8">
+        <div className="mt-12 border-t border-border pt-8">
           <div className="rail-row">
             <p className="caption pt-1">Archived</p>
-            <div>
-              <h3 className="text-[length:var(--text-h3)] text-muted-foreground">
-                Sodium Alginate
-              </h3>
-              <p className="mt-2 max-w-[52ch] text-[0.875rem] leading-snug text-muted-foreground">
-                Dropped as a prong, still fully modelled so its trade-offs
-                against the engineered pair stay quantifiable.
-                {onView && (
-                  <>
-                    {" "}
-                    <button
-                      type="button"
-                      onClick={() => onView(3)}
-                      className="rule-link text-foreground"
-                    >
-                      Why it was dropped
-                    </button>
-                  </>
-                )}
-              </p>
-              <List prongs="3" modules={ARCHIVED_MODULES} />
-            </div>
+            <Group
+              title="Sodium Alginate"
+              lede="Dropped as a prong on the evidence, still modelled in full so its trade-offs against the engineered pair stay quantifiable."
+              count={ARCHIVED_MODULES.length}
+              muted
+              wide
+              aside={
+                onView ? (
+                  <button
+                    type="button"
+                    onClick={() => onView(3)}
+                    className="caption rule-link mt-3 inline-block text-dune-orange"
+                  >
+                    Why it was dropped
+                  </button>
+                ) : null
+              }
+            >
+              <ModuleList prongs="3" modules={ARCHIVED_MODULES} />
+            </Group>
           </div>
         </div>
       )}
+
+      <CompactModal
+        open={showBusiness}
+        onClose={() => setShowBusiness(false)}
+        eyebrow="Commercial"
+        title="Business model"
+        tabs={BUSINESS_SECTIONS.map((s) => ({
+          id: s.id,
+          label: s.label,
+          body: (
+            <div className="space-y-3">
+              <h3 className="text-[0.9375rem] leading-snug text-foreground">
+                {s.heading}
+              </h3>
+              {s.body.map((para, i) => (
+                <p key={i} className="text-sm leading-relaxed text-muted-foreground">
+                  {para}
+                </p>
+              ))}
+            </div>
+          ),
+        }))}
+        footer={
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              {BUSINESS_SUMMARY}
+            </p>
+            <button
+              onClick={() => {
+                setShowBusiness(false);
+                router.push("/exposure");
+              }}
+              className="caption shrink-0 border border-border px-4 py-2.5 text-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
+            >
+              Open the model
+            </button>
+          </div>
+        }
+      />
     </motion.div>
   );
 }
 
-function List({ prongs, modules }: { prongs: string; modules: ModuleMeta[] }) {
+/**
+ * One folded group. The whole header is the control, so the target is the size
+ * of the heading rather than a chevron, and the sign in the corner says which
+ * way it will go.
+ */
+function Group({
+  eyebrow,
+  title,
+  lede,
+  count,
+  unit = "model",
+  children,
+  aside,
+  muted,
+  wide,
+}: {
+  eyebrow?: string;
+  title: string;
+  lede: string;
+  count: number;
+  unit?: string;
+  children: React.ReactNode;
+  aside?: React.ReactNode;
+  muted?: boolean;
+  wide?: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div>
+      {eyebrow && <p className="caption mb-2">{eyebrow}</p>}
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="group block w-full text-left"
+      >
+        <span className="flex items-start justify-between gap-4">
+          <span
+            className={`wght-head rule-link text-[length:var(--text-h3)] ${
+              muted ? "text-muted-foreground" : "text-foreground"
+            }`}
+          >
+            {title}
+          </span>
+          <span aria-hidden className="caption shrink-0 pt-1.5 text-dune-orange">
+            {open ? "−" : "+"}
+          </span>
+        </span>
+        <span
+          className={`mt-2 block text-[0.875rem] leading-snug text-muted-foreground ${
+            wide ? "max-w-[62ch]" : "max-w-[32ch]"
+          }`}
+        >
+          {lede}
+        </span>
+        <span className="caption mt-3 block text-muted-foreground">
+          {count} {count === 1 ? unit : `${unit}s`}
+        </span>
+      </button>
+      {aside}
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            key="body"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden"
+          >
+            {children}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function ModuleList({
+  prongs,
+  modules,
+}: {
+  prongs: string;
+  modules: ModuleMeta[];
+}) {
   if (modules.length === 0) return null;
   return (
     <ol className="mt-6">
@@ -138,6 +285,54 @@ function List({ prongs, modules }: { prongs: string; modules: ModuleMeta[] }) {
           </Link>
         </li>
       ))}
+    </ol>
+  );
+}
+
+function LinkList({
+  links,
+  onAction,
+}: {
+  links: IndexLink[];
+  onAction: () => void;
+}) {
+  return (
+    <ol className="mt-6 max-w-[42rem]">
+      {links.map((l, i) => {
+        const inner = (
+          <>
+            <span className="caption pt-1">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <span>
+              <span className="wght-link rule-link block text-[0.9375rem] leading-snug">
+                {l.title}
+              </span>
+              <span className="caption mt-1 block opacity-60">{l.meta}</span>
+            </span>
+          </>
+        );
+        return (
+          <li key={l.id}>
+            {l.href ? (
+              <Link
+                href={l.href}
+                className="rail-row-tight border-t border-border py-2.5"
+              >
+                {inner}
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={onAction}
+                className="rail-row-tight w-full border-t border-border py-2.5 text-left"
+              >
+                {inner}
+              </button>
+            )}
+          </li>
+        );
+      })}
     </ol>
   );
 }

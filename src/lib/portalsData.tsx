@@ -70,7 +70,7 @@ export const PRONGS: Prong[] = [
     modelDoes:
       "Still fully modelled here: gelation thermodynamics, moisture retention, and Ca²⁺ egg-box cross-linking efficiency under desert temperature and salinity, so its trade-offs against the engineered prongs remain quantifiable.",
     impact:
-      "Retained as an archived comparison rather than a deployed prong. Its role is now filled by the two engineered prongs plus a genetically-encoded kill switch, keeping the whole solution a genuine synbio system.",
+      "Kept as a modelled comparison rather than a deployed prong. It was dropped on the three findings below, each of which stands on its own. The deployed design is the two engineered prongs, which are what the crust is actually built from.",
     inDesert:
       "On contact with the calcium already present in desert dust, sodium alginate forms an 'egg-box' gel that instantly binds the surface, but as an inert applied material rather than anything the bacteria produce.",
     whyDropped: [
@@ -82,9 +82,12 @@ export const PRONGS: Prong[] = [
 ];
 
 /**
- * The biocontainment kill switch, the "third element" that replaced the applied alginate prong.
- * It is a control/biosafety layer for the two engineered prongs rather than a sand binder, so it is
- * modelled separately from the prong combinations.
+ * The biocontainment kill switch.
+ *
+ * It is a control and biosafety layer that runs over both engineered prongs, not a sand binder, so
+ * it is modelled separately from the prong combinations. It is an addition to the design and not a
+ * substitute for anything: dropping alginate as a prong and adding the kill switch were two
+ * separate decisions, taken for unrelated reasons.
  */
 export const KILL_SWITCH = {
   id: "killswitch" as const,
@@ -92,7 +95,7 @@ export const KILL_SWITCH = {
   icon: <ShieldAlert className="w-8 h-8 text-dune-orange" />,
   short: "MazE/MazF control of the engineered population",
   whatItIs:
-    "A genetically-encoded control layer that limits and, when needed, eliminates the engineered B. subtilis population, replacing the applied alginate as the project's third element and keeping the whole design a synbio system.",
+    "A genetically-encoded control layer that limits the engineered B. subtilis population and, when needed, eliminates it. It runs over both engineered prongs rather than standing in for one. It binds nothing and adds no strength to the crust. What it adds is the ability to end the deployment.",
   modelDoes:
     "Models the MazE/MazF Type II toxin–antitoxin circuit: aTc-inducible MazF for on-demand elimination of vegetative cells, plasmid-dilution self-limiting, and an E. coli MazEF split that kills any wild microbe that acquires the engineered genes by horizontal gene transfer.",
   impact:

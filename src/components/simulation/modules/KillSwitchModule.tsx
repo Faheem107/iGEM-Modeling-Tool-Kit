@@ -2,7 +2,7 @@
 
 /**
  * Biocontainment Kill Switch, MazE/MazF toxin–antitoxin control layer.
- * The reframed "third element" (it replaced the applied-alginate prong): a genetically-encoded
+ * The biosafety layer that runs over both engineered prongs: a genetically-encoded
  * control for the two engineered prongs. Three analyses in one module:
  *   1) TA dynamics & viability, the aTc-inducible / plasmid-dilution kill (RK4 ODE).
  *   2) HGT containment, the E. coli MazEF split that self-eliminates wild recipients.

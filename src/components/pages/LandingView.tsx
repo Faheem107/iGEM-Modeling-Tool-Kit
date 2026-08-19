@@ -10,7 +10,6 @@ import ProngConstellation from "@/src/components/landing/ProngConstellation";
 import SandyxAdventure from "@/src/components/SandyxAdventure";
 import { GlossaryText } from "@/src/components/GlossaryTerm";
 import { PRONGS, KILL_SWITCH } from "@/src/lib/portalsData";
-import ExposureEntry from "@/src/components/exposure/ExposureEntry";
 import CompactModal from "@/src/components/CompactModal";
 import { restoreLandingScroll } from "@/src/lib/scrollRestore";
 
@@ -87,16 +86,14 @@ export default function LandingView() {
       {/* --- ENGINEERING DESIGN CYCLE: scroll-scrubbed 5-beat story --- */}
       <DesignCycleStory isLightMode={isLightMode} />
 
-      {/* --- THE PRONGS + THE MODEL INDEX: the 3 → 2 + kill-switch reframe,
-          told in type and hairlines, with every model listed underneath. --- */}
+      {/* --- THE PRONGS + THE MODEL INDEX: the 3 → 2 reframe and the added
+          kill switch, told in type and hairlines, with every model, the
+          exposure views and the commercial case folded underneath. --- */}
       <ProngConstellation
         onView={(t) => setViewing(t)}
         onExplorePortals={() => router.push("/portals")}
+        onSimulateBoth={() => goToModel([1, 2])}
       />
-
-      {/* --- DOORWAY: the two exposure modules and the business model. Sits
-          directly under the prong row so it reads as the next step. --- */}
-      <ExposureEntry />
 
       {/* --- PRONG / KILL-SWITCH INFORMATION MODAL --- */}
       <CompactModal
@@ -104,7 +101,7 @@ export default function LandingView() {
         onClose={() => setViewing(null)}
         eyebrow={
           showingKill
-            ? "Replaces the applied alginate prong"
+            ? "Biosafety layer over both prongs"
             : activeProng?.whyDropped
               ? "Modelled for comparison, not carried forward"
               : "Prong"
