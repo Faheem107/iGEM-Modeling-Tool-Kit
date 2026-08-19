@@ -45,12 +45,23 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // `dark` ships on the server render because dark is the default theme. The
+  // inline script below removes it before first paint for a reader who has
+  // chosen light, so neither theme flashes the other one first.
   return (
     <html
       lang="en"
-      className={`${lexend.variable} ${superDream.variable} ${pressStart.variable} antialiased`}
+      className={`dark ${lexend.variable} ${superDream.variable} ${pressStart.variable} antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if(localStorage.getItem('dunelock:theme')==='light')document.documentElement.classList.remove('dark')}catch(e){}",
+          }}
+        />
+      </head>
       <body className="antialiased bg-transparent select-none relative overflow-x-hidden min-h-screen font-sans">
         <ThemeProvider>
           <div className="fixed inset-0 z-[-1] pointer-events-none">

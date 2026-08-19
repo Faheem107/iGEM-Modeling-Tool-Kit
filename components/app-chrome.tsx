@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Sun, Moon } from "lucide-react";
@@ -77,6 +78,20 @@ export function AppChrome() {
     smoothNavTo(el as HTMLElement, -70);
   };
 
+  // The PNG carries its own wordmark in dune-maroon, which goes low-contrast at
+  // this size on the dark ground. It reads as a mark here and the Lexend
+  // wordmark beside it does the naming.
+  const logoMark = (
+    <Image
+      src="/dunelock-logo.png"
+      alt=""
+      width={28}
+      height={28}
+      priority
+      className="h-7 w-7 shrink-0"
+    />
+  );
+
   const themeToggle = (
     <button
       onClick={() => setIsLightMode(!isLightMode)}
@@ -91,6 +106,8 @@ export function AppChrome() {
     </button>
   );
 
+  // ⌘K and "/" still open the palette from anywhere. The button says what it
+  // does rather than naming a shortcut, and it is present at every width.
   const searchHint = (
     <button
       type="button"
@@ -100,10 +117,9 @@ export function AppChrome() {
         )
       }
       aria-label="Search the toolkit"
-      className="caption hidden items-center gap-2 border border-border px-3 py-1.5 text-muted-foreground transition-colors hover:border-dune-orange hover:text-dune-orange sm:inline-flex"
+      className="caption inline-flex items-center border border-border px-3 py-1.5 text-muted-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
     >
-      search
-      <span className="opacity-50">⌘K</span>
+      Search
     </button>
   );
 
@@ -148,18 +164,24 @@ export function AppChrome() {
           {isLanding ? (
             <button
               onClick={scrollTop}
-              className="wght-link text-[0.9375rem] tracking-tight text-foreground"
+              className="flex items-center gap-2.5"
               aria-label="Dunelock, back to top"
             >
-              dunelock.
+              {logoMark}
+              <span className="wght-link text-[0.9375rem] tracking-tight text-foreground">
+                dunelock.
+              </span>
             </button>
           ) : (
             <Link
               href="/"
-              className="wght-link text-[0.9375rem] tracking-tight text-foreground"
+              className="flex items-center gap-2.5"
               aria-label="Dunelock, return home"
             >
-              dunelock.
+              {logoMark}
+              <span className="wght-link text-[0.9375rem] tracking-tight text-foreground">
+                dunelock.
+              </span>
             </Link>
           )}
 
