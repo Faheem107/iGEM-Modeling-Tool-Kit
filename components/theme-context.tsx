@@ -1,10 +1,20 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 /** Where the reader's explicit theme choice is kept between visits. */
 export const THEME_KEY = "dunelock:theme";
 
+/**
+ * Theme state. Dark is the default, and it is the value both the server render
+ * and the first client render use, which is what keeps hydration honest: the
+ * server cannot know a reader's saved choice, so nothing may depend on it until
+ * after hydration. The saved choice is read in components/providers.tsx, inside
+ * the Suspense boundary its consumers live in, and applied there.
+ *
+ * The pre-paint script in app/layout.tsx has already put the right class on
+ * <html>, so the correct theme is painted before React runs either way.
+ */
 const ThemeContext = createContext<{
   isLightMode: boolean;
   setIsLightMode: (val: boolean) => void;
@@ -14,19 +24,7 @@ const ThemeContext = createContext<{
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // Initialise to dark, matching the `dark` class app/layout.tsx ships on
-  // <html>, so the first server paint already uses the dark tokens and there is
-  // no light flash before hydration. A reader who has chosen light gets it back
-  // from the pre-paint script in the layout; the effect below catches React up.
   const [isLightMode, setIsLightMode] = useState(false);
-
-  useEffect(() => {
-    try {
-      if (localStorage.getItem(THEME_KEY) === "light") setIsLightMode(true);
-    } catch {
-      /* private mode: stay on the default */
-    }
-  }, []);
 
   const choose = (val: boolean) => {
     setIsLightMode(val);

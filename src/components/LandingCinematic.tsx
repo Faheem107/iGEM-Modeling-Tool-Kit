@@ -498,7 +498,7 @@ export default function LandingCinematic({
                     pointer-events-none, so the text keeps the whole hit area,
                     and she is placed past its trailing edge so nothing reads
                     through her. */}
-                <span className="relative">
+                <span className="relative inline-flex items-center">
                   <HeroSandyx />
                   <button
                     type="button"
@@ -633,7 +633,7 @@ function HeroSandyx() {
       alt=""
       aria-hidden
       draggable={false}
-      className="pointer-events-none absolute bottom-[-24px] left-[92%] z-0 hidden w-[126px] max-w-none select-none sm:block"
+      className="pointer-events-none absolute bottom-[-26px] left-[calc(100%+6px)] z-0 hidden w-[126px] max-w-none select-none sm:block"
       style={{ transformOrigin: "50% 100%" }}
       initial={reduced ? false : { opacity: 0, scale: 0.55, rotate: -34, y: 26 }}
       animate={

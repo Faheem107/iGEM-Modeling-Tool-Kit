@@ -815,8 +815,8 @@ export default function FbaOptimizationModule({
           className={`mt-1.5 text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           <GlossaryText>
-            Arrow thickness and flow speed track each reaction&apos;s pFBA flux;
-            the bold-ringed node is the current objective. Every arrow obeys the
+            Arrow thickness and flow speed track each reaction&apos;s pFBA
+            flux, and the bold-ringed node is the current objective. Every arrow obeys the
             steady-state mass balance, so what leaves α-KG toward the product is
             carbon taken away from the TCA cycle and growth.
           </GlossaryText>

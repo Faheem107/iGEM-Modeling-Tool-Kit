@@ -275,10 +275,9 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
         <Link2 className="w-3.5 h-3.5 text-dune-teal mt-0.5 shrink-0" />
         <GlossaryText>
           Display efficiency is the product of three independent steps, export
-          times dimerization times anchoring, so the chain is only as strong as
-          its weakest link and can never exceed any single stage. The winning
-          route sets the realized carbonic anhydrase activity feeding the
-          precipitation model; every stage is a separate wet-lab assay.
+          times dimerization times anchoring, so it can never exceed the worst
+          of them. The winning route sets the carbonic anhydrase activity that
+          feeds the precipitation model. Each stage is its own wet-lab assay.
         </GlossaryText>
       </p>
     </ModuleShell>

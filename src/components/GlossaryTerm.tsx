@@ -1069,7 +1069,7 @@ export const GlossaryProvider: React.FC<{
                     className={`mt-4 pt-3 border-t text-[11px] leading-relaxed ${isLightMode ? "border-border text-muted-foreground" : "border-white/10 text-muted-foreground"}`}
                   >
                     This script ports the module&apos;s physics from the toolkit
-                    source; running it reproduces the plots above. Every constant
+                    source, and running it reproduces the plots above. Every constant
                     traces to the model code or a cited source. Verify against the
                     primary work before citing it on your wiki.
                   </p>
