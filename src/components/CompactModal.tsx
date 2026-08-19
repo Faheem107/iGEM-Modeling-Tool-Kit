@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
+import { useScrollLock } from "@/src/lib/scrollLock";
 import { X } from "lucide-react";
 import { useHighlight, useStick } from "@/src/lib/motion/pointer";
 
@@ -48,6 +49,9 @@ export default function CompactModal({
   useEffect(() => {
     if (open) setActive(0);
   }, [open, title]);
+
+  // Hold the page still while this is up, see src/lib/scrollLock.ts.
+  useScrollLock(open);
 
   useEffect(() => {
     if (!open) return;
@@ -122,7 +126,10 @@ export default function CompactModal({
               )}
             </div>
 
-            <div className="max-h-[46vh] overflow-y-auto px-6 py-5">
+            <div
+              data-lenis-prevent
+              className="max-h-[46vh] overflow-y-auto overscroll-contain px-6 py-5"
+            >
               <motion.div
                 key={tabs[active]?.id}
                 initial={{ opacity: 0, y: 4 }}

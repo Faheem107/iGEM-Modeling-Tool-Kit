@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
+import { useScrollLock } from "@/src/lib/scrollLock";
 import { MODULE_REGISTRY } from "@/src/lib/prongs";
 import { INDEX_COLUMNS, ARCHIVED_MODULES, moduleHref } from "@/src/lib/modelIndex";
 import { PORTAL_CARDS, KILL_SWITCH } from "@/src/lib/portalsData";
@@ -116,6 +117,9 @@ export default function CommandPalette() {
 
   useEffect(() => setMounted(true), []);
 
+  // Hold the page still while the palette is up, see src/lib/scrollLock.ts.
+  useScrollLock(open);
+
   const results = useMemo(() => {
     const needle = q.trim().toLowerCase();
     if (!needle) return entries;
@@ -225,7 +229,7 @@ export default function CommandPalette() {
               // text-base so iOS Safari does not zoom the page on focus.
               className="w-full border-b border-border bg-transparent px-5 py-4 text-base text-foreground outline-none placeholder:text-muted-foreground"
             />
-            <ul className="max-h-[52vh] overflow-y-auto py-2">
+            <ul data-lenis-prevent className="max-h-[52vh] overflow-y-auto overscroll-contain py-2">
               {results.length === 0 && (
                 <li className="caption px-5 py-6">Nothing matches that</li>
               )}

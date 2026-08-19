@@ -21,6 +21,7 @@ import {
   glossaryPhrases,
   type GlossaryEntry,
 } from "../lib/glossary";
+import { useScrollLock } from "@/src/lib/scrollLock";
 import { MODULE_MATH } from "../lib/moduleMath";
 import { MODULE_VIDEOS, videoSrc, videoVtt } from "../lib/moduleVideos";
 import { MODULE_SOURCES, type SourceRef } from "../lib/moduleSources";
@@ -292,7 +293,10 @@ function CodePanel({
             Could not load the script. Use the Download button to fetch it directly.
           </div>
         ) : (
-          <pre className="max-h-[42vh] overflow-auto no-scrollbar p-4 text-[11.5px] leading-relaxed text-foreground">
+          <pre
+            data-lenis-prevent
+            className="max-h-[42vh] overflow-auto overscroll-contain no-scrollbar p-4 text-[11.5px] leading-relaxed text-foreground"
+          >
             <code>{code}</code>
           </pre>
         )}
@@ -335,9 +339,15 @@ function SandyxOverlay({
   glowB: string;
   children: React.ReactNode;
 }) {
+  // The window is only ever rendered while it is open, so mounting is the
+  // signal. See src/lib/scrollLock.ts for why both halves are needed.
+  useScrollLock(true);
+
   return (
     <motion.div
       key={overlayKey}
+      // Lets StoryEscape know not to grab Escape while this is up.
+      data-modal-open="true"
       className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6"
       onClick={onClose}
     >
@@ -365,7 +375,10 @@ function SandyxOverlay({
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.94, opacity: 0, y: 16 }}
         transition={DIALOG_SPRING}
-        className={`relative w-full ${maxWidthClass} ${scroll ? "max-h-[88vh] overflow-y-auto no-scrollbar" : "overflow-hidden"} rounded-3xl border ${
+        // Lenis owns the wheel globally, so without data-lenis-prevent this
+        // panel never receives one and the page scrolls behind it instead.
+        data-lenis-prevent={scroll ? "" : undefined}
+        className={`relative w-full ${maxWidthClass} ${scroll ? "max-h-[88vh] overflow-y-auto overscroll-contain no-scrollbar" : "overflow-hidden"} rounded-3xl border ${
           isLightMode
             ? "bg-white/90 border-white/70 text-foreground"
             : "bg-dune-basalt/85 border-white/10 text-foreground"
