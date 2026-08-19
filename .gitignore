@@ -16,7 +16,18 @@ tsconfig.tsbuildinfo
 # Local-only project notes & references (kept on disk, kept off GitHub)
 CLAUDE.md
 DESIGN.md
+WRITING_STYLE.md
+UI_SKILLS_REFERENCE.md
+WET_LAB_AND_DRY_LAB_APPROACH.md
 PARAMETER_AUDIT_AND_PRESENTATION.md
+# Working notes for the dust-exposure build. The modules they describe are
+# shipped in src/components/exposure/ and their data provenance is in
+# src/lib/moduleSources.ts, which is what a reader actually needs.
+DUST_EXPOSURE_BUILD_PLAN.md
+DUST_EXPOSURE_DATA_SOURCES.md
+DUST_EXPOSURE_KNOWLEDGE_GRAPH.md
+DUST_EXPOSURE_MODULE_SPEC.md
+DUST_EXPOSURE_TRANSPORT_AND_VALUE.md
 Research Table iGEM 2026*.md
 Business team plan.md
 Toolkit in layman's terminology.md
@@ -30,6 +41,7 @@ docs/
 # AI assistant skills / config (kept local only)
 .agents/
 .claude/
+.mcp.json
 cobrapy/
 
 # Manim render artifacts (source scenes are kept; rendered media is regenerated)

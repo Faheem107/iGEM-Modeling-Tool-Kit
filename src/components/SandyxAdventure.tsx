@@ -24,6 +24,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, SkipForward } from "lucide-react";
 import { Cursor } from "@/components/motion-primitives/cursor";
+import { lockPageScroll, unlockPageScroll } from "@/src/lib/scrollLock";
 
 // ---------------------------------------------------------------------------
 // Retro palette
@@ -2293,7 +2294,8 @@ function TuneScene({
   );
   return (
     <div
-      className="absolute inset-0 crt-scanlines flex items-center justify-center p-5 overflow-y-auto"
+      data-lenis-prevent
+      className="absolute inset-0 crt-scanlines flex items-center justify-center p-5 overflow-y-auto overscroll-contain"
       style={{
         background: `radial-gradient(circle at 50% 20%, ${C.bg1}, ${C.bg0})`,
       }}
@@ -2393,11 +2395,13 @@ export default function SandyxAdventure({
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     // Halt Lenis smooth scroll so its wheel handling doesn't run under the
-    // full-screen game (the game owns wheel/keys for its own scenes).
-    window.__lenis?.stop();
+    // full-screen game (the game owns wheel/keys for its own scenes). Through
+    // the shared counter, so a window opened over the game cannot hand the
+    // page back while the game is still up.
+    lockPageScroll();
     return () => {
       document.body.style.overflow = prev;
-      window.__lenis?.start();
+      unlockPageScroll();
       // The Cursor primitive hides the native cursor; make sure it comes back.
       document.body.style.cursor = "";
     };
