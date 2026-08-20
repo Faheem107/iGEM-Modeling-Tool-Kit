@@ -494,10 +494,10 @@ export default function LandingCinematic({
                   Watch the story
                 </button>
                 {/* Sandyx leans out from behind this link a second after the
-                    page has finished loading. Decoration only: she is
-                    pointer-events-none, so the text keeps the whole hit area,
-                    and she is placed past its trailing edge so nothing reads
-                    through her. */}
+                    page has finished loading. She is pointer-events-none, so
+                    the text keeps the whole hit area, and she sits under the
+                    trailing end of the word at z-0 while the button holds
+                    z-10, so she reads as peeking out from behind it. */}
                 <span className="relative inline-flex items-center">
                   <HeroSandyx />
                   <button
@@ -613,7 +613,12 @@ export default function LandingCinematic({
 }
 
 // ---------------------------------------------------------------------------
-// Sandyx, leaning in diagonally behind the "Play as Sandyx" link.
+// Sandyx, peeking out from behind the "Play as Sandyx" link.
+//
+// She is front-facing in the source art with her tail sweeping to the canvas
+// right, so a clockwise tilt turns her toward the upper right and carries the
+// tail away from the words rather than across them. Small on purpose: she is a
+// greeting on a text link, not a third element competing with the headline.
 // ---------------------------------------------------------------------------
 function HeroSandyx() {
   const [shown, setShown] = useState(false);
@@ -643,13 +648,13 @@ function HeroSandyx() {
       alt=""
       aria-hidden
       draggable={false}
-      className="pointer-events-none absolute bottom-[-26px] left-[calc(100%+6px)] z-0 hidden w-[126px] max-w-none select-none sm:block"
+      className="pointer-events-none absolute bottom-[-19px] left-[calc(100%-13px)] z-0 hidden w-[62px] max-w-none select-none sm:block"
       style={{ transformOrigin: "50% 100%" }}
-      initial={reduced ? false : { opacity: 0, scale: 0.55, rotate: -34, y: 26 }}
+      initial={reduced ? false : { opacity: 0, scale: 0.6, rotate: 30, y: 18 }}
       animate={
         shown
-          ? { opacity: 0.92, scale: 1, rotate: -14, y: 0 }
-          : { opacity: 0, scale: 0.55, rotate: -34, y: 26 }
+          ? { opacity: 0.88, scale: 1, rotate: 13, y: 0 }
+          : { opacity: 0, scale: 0.6, rotate: 30, y: 18 }
       }
       transition={
         reduced
