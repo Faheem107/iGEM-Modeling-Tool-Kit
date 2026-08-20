@@ -412,16 +412,8 @@ export default function DesignCycleStory({
         {/* Panel + dots (left). Sits above the SVG. */}
         <div className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-6">
           <div className="max-w-xl">
-            <div
-              className={`rounded-[16px] border p-6 ${
-                isLightMode
-                  ? "border-dune-maroon/12 bg-dune-paper/80"
-                  : "border-dune-paper/12 bg-[#120d0a]/78"
-              }`}
-            >
-              <span className="text-[length:var(--text-caption)] font-bold uppercase tracking-[0.25em] text-dune-ash">
-                Engineering Design Cycle
-              </span>
+            <div className="plate p-6">
+              <span className="caption">Engineering Design Cycle</span>
 
               {staticMode ? (
                 // Mobile / reduced motion: every turn of the loop as a list.
@@ -441,7 +433,7 @@ export default function DesignCycleStory({
                   />
                   {/* Cross-fade the active beat. Sized for the longest one so
                       the text never spills onto the ring. */}
-                  <div className="relative min-h-[380px] sm:min-h-[350px]">
+                  <div className="relative min-h-[310px] sm:min-h-[290px]">
                     {BEATS.map((b, i) => (
                       <div
                         key={i}
@@ -460,14 +452,14 @@ export default function DesignCycleStory({
                       </div>
                     ))}
                   </div>
-                  <div className="mt-4 flex items-center gap-2">
+                  <div className="mt-4 flex items-center gap-2" aria-hidden>
                     {BEATS.map((_, i) => (
                       <span
                         key={i}
-                        className={`h-2.5 rounded-full transition-all duration-300 ${
+                        className={`h-px transition-all duration-300 ${
                           i === active
-                            ? "w-7 bg-dune-orange"
-                            : "w-2.5 bg-dune-ash/50"
+                            ? "w-10 bg-dune-orange"
+                            : "w-5 bg-dune-ash/40"
                         }`}
                       />
                     ))}
@@ -498,16 +490,16 @@ function BeatBody({
 }) {
   return (
     <>
-      <div className="mb-2 flex flex-wrap items-baseline gap-x-4">
-        <span className="caption text-dune-orange">{beat.stage}</span>
-        <span className="caption">
-          {beat.turn === 1 ? "first turn" : "second turn"}
-        </span>
-      </div>
+      {/* The ring above already names the stage on its arc and the turn in its
+          centre, so an eyebrow repeating both was the label-everything instinct
+          again. The title is the claim, so it is set as one: same weight and
+          scale as the beat headline in the dune story, not the display face
+          shouting in caps. */}
       <h2
-        className={`mb-4 font-display text-[length:var(--text-h3)] font-black uppercase tracking-tight ${
-          isLightMode ? "text-dune-maroon" : "text-dune-orange"
+        className={`mb-4 text-[length:var(--text-h3)] leading-snug ${
+          isLightMode ? "text-dune-maroon" : "text-dune-paper"
         }`}
+        style={{ fontVariationSettings: '"wght" 600' }}
       >
         {beat.title}
       </h2>

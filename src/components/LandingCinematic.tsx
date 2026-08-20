@@ -47,7 +47,6 @@ const MolstarViewer = dynamic(() => import("@/components/molstar-viewer"), {
  */
 
 interface BeatCopy {
-  label: string;
   line: React.ReactNode;
   /** Roughly how wide the frame is at this beat. The story is one zoom. */
   scale: string;
@@ -60,13 +59,11 @@ interface BeatCopy {
 // the site, and the way there is one click.
 const BEATS: BeatCopy[] = [
   {
-    label: "The problem",
     line: "Past a threshold wind speed, loose sand lifts off the surface.",
     scale: "~10 m",
     model: { label: "Aeolian Wind Tunnel", href: moduleHref("1,2", "aeolian") },
   },
   {
-    label: "Micro scale",
     line: (
       <>
         A single grain, and a living <i>Bacillus subtilis</i> cell.
@@ -76,7 +73,6 @@ const BEATS: BeatCopy[] = [
     model: { label: "Grain-Size Coverage", href: moduleHref("1,2", "grainsize") },
   },
   {
-    label: "Carbonic anhydrase",
     line: (
       <>
         Carbonic anhydrase on the cell wall grows CaCO<sub>3</sub> cement.
@@ -86,13 +82,11 @@ const BEATS: BeatCopy[] = [
     model: { label: "CaCO₃ Precipitation", href: moduleHref("2", "caco3") },
   },
   {
-    label: "The fix",
     line: "γ-PGA chains cross-link through calcium and lock grain to grain.",
     scale: "~100 nm",
     model: { label: "γ-PGA Cross-Linking", href: moduleHref("1", "crosslink") },
   },
   {
-    label: "The result",
     line: "A crust a few millimetres thick, holding grains a tenth of a millimetre wide.",
     scale: "~10 m",
     model: { label: "Composite Strength", href: moduleHref("1,2", "composite") },
@@ -517,27 +511,36 @@ export default function LandingCinematic({
 
         {/* Captions + rail (react-spring), or static list on mobile. */}
         {staticMode ? (
-          <div className="relative z-10 mx-auto flex min-h-screen max-w-6xl items-end px-4 pb-12">
-            <div
-              className={`w-full rounded-[16px] border p-6 backdrop-blur-[3px] ${
-                isLightMode
-                  ? "border-dune-maroon/12 bg-dune-paper/80"
-                  : "border-dune-paper/12 bg-[#120d0a]/78"
-              }`}
-            >
+          <div className="relative z-10 mx-auto flex min-h-screen max-w-6xl items-end px-6 pb-12">
+            {/* Same beats, same rail, no scrub. The plate is the site's one
+                surface primitive, so this and the scrubbed deck read as the
+                same thing rather than two designs. */}
+            <div className="plate w-full p-6">
               <ol
-                className={`space-y-4 ${isLightMode ? "text-dune-maroon" : "text-dune-paper"}`}
+                className={`space-y-6 ${isLightMode ? "text-dune-maroon" : "text-dune-paper"}`}
               >
                 {BEATS.map((b, i) => (
-                  <li key={i}>
-                    <div className="flex flex-wrap items-baseline gap-x-4">
-                      <span className="caption text-dune-orange">{b.label}</span>
-                      <span className="caption">{b.scale} across</span>
+                  <li key={i} className="rail-row">
+                    <div className="caption flex items-baseline gap-x-4 md:block">
+                      <span className="text-dune-orange">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span className="md:mt-1.5 md:block">{b.scale} across</span>
                     </div>
-                    <p className="text-[length:var(--text-body)] font-medium leading-snug">{b.line}</p>
-                    <Link href={b.model.href} className="caption rule-link mt-1 inline-block">
-                      {b.model.label}
-                    </Link>
+                    <div>
+                      <p
+                        className="text-[length:var(--text-h3)] leading-snug"
+                        style={{ fontVariationSettings: '"wght" 560' }}
+                      >
+                        {b.line}
+                      </p>
+                      <Link
+                        href={b.model.href}
+                        className="caption rule-link mt-2 inline-block"
+                      >
+                        {b.model.label}
+                      </Link>
+                    </div>
                   </li>
                 ))}
               </ol>
@@ -548,11 +551,18 @@ export default function LandingCinematic({
             className="pointer-events-none absolute inset-x-0 bottom-0 z-10 transition-opacity duration-300"
             style={{ opacity: showCaption ? 1 : 0 }}
           >
-            <div className="mx-auto max-w-6xl px-6 pb-12 sm:px-6">
+            <div className="mx-auto max-w-6xl px-6 pb-12">
               {/* Stacked opacity cross-fade: only the active beat is shown, so a
                   fast scroll (or a jump to the top) can never pile up several
-                  half-faded captions on top of each other. */}
-              <div className="relative h-40 max-w-2xl">
+                  half-faded captions on top of each other.
+
+                  The scale label sits in the --rail gutter, which DESIGN.md 17
+                  reserves for exactly this: indices and scale labels. It is the
+                  reader's only cue that the whole story is one continuous zoom,
+                  and it has to stay legible over every ground the story passes
+                  over, so it takes a colour defined per theme rather than an
+                  accent at 60% with no scrim. */}
+              <div className="relative h-44 max-w-4xl">
                 {BEATS.map((b, i) => (
                   <div
                     key={i}
@@ -560,48 +570,51 @@ export default function LandingCinematic({
                     style={{ opacity: i === active ? 1 : 0 }}
                     aria-hidden={i !== active}
                   >
-                    {/* The scale label is the reader's only cue that this is one
-                        continuous zoom, so it has to survive every ground the
-                        story passes over. It used to be dune-orange at 60% with
-                        no scrim, which is ~1.3:1 against MicroScene's pale mint
-                        in light mode. .caption resolves to --muted-foreground,
-                        which is defined per theme. */}
-                    <div className="mb-2 flex flex-wrap items-baseline gap-x-4">
-                      <span className="caption text-dune-orange">
-                        {String(i + 1).padStart(2, "0")} / {String(BEATS.length).padStart(2, "0")}
-                      </span>
-                      <span className="caption text-dune-orange">{b.label}</span>
-                      <span
-                        className={`caption ${isLightMode ? "text-dune-maroon/75" : "text-dune-paper/70"}`}
+                    <div className="rail-row">
+                      <div
+                        className={`caption flex items-baseline gap-x-4 md:block ${
+                          isLightMode ? "text-dune-maroon/70" : "text-dune-paper/65"
+                        }`}
                       >
-                        {b.scale} across
-                      </span>
+                        <span className="text-dune-orange">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <span className="md:mt-1.5 md:block">{b.scale} across</span>
+                      </div>
+                      <div>
+                        <p
+                          className={`text-[length:var(--text-h1)] leading-[1.08] ${
+                            isLightMode ? "text-dune-maroon" : "text-dune-paper"
+                          }`}
+                          style={{ fontVariationSettings: '"wght" 600' }}
+                        >
+                          {b.line}
+                        </p>
+                        <Link
+                          href={b.model.href}
+                          tabIndex={i === active ? 0 : -1}
+                          className={`caption rule-link pointer-events-auto mt-4 inline-block ${
+                            isLightMode ? "text-dune-maroon/80" : "text-dune-paper/75"
+                          }`}
+                        >
+                          {b.model.label}
+                        </Link>
+                      </div>
                     </div>
-                    <p
-                      className={`font-display text-[length:var(--text-h3)] font-black leading-tight tracking-tight ${
-                        isLightMode ? "text-dune-maroon" : "text-dune-paper"
-                      }`}
-                    >
-                      {b.line}
-                    </p>
-                    <Link
-                      href={b.model.href}
-                      tabIndex={i === active ? 0 : -1}
-                      className={`caption rule-link pointer-events-auto mt-4 inline-block ${
-                        isLightMode ? "text-dune-maroon/80" : "text-dune-paper/75"
-                      }`}
-                    >
-                      {b.model.label}
-                    </Link>
                   </div>
                 ))}
               </div>
-              <div className="mt-6 flex items-center gap-2">
+              {/* A rule per beat rather than a row of dots. Same idiom as
+                  .rule-link, and it reads as progress through a line instead of
+                  a carousel. */}
+              <div className="mt-6 flex items-center gap-2" aria-hidden>
                 {BEATS.map((_, i) => (
                   <span
                     key={i}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      i === active ? "w-8 bg-dune-orange" : "w-2 bg-dune-ash/45"
+                    className={`h-px transition-all duration-300 ${
+                      i === active
+                        ? "w-10 bg-dune-orange"
+                        : `w-5 ${isLightMode ? "bg-dune-maroon/25" : "bg-dune-paper/25"}`
                     }`}
                   />
                 ))}
