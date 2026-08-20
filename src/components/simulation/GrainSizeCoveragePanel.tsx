@@ -25,6 +25,7 @@ import { Panel, StatCard, chartColors, tooltipStyle, Themed } from "./_shared";
 import GlossaryTerm from "../GlossaryTerm";
 import { ModuleActions } from "./_shared";
 import { grainSizeProfile, PRONG_LABEL, type ProngId } from "../../lib/physics";
+import { DUNE, STATUS } from "@/src/lib/palette";
 
 interface Props extends Themed {
   prongs: ProngId[];
@@ -33,9 +34,9 @@ interface Props extends Themed {
 }
 
 const PRONG_COLOR: Record<ProngId, string> = {
-  1: "#f59e0b",
-  2: "#c28a7c",
-  3: "#f43f5e",
+  1: STATUS.warn,
+  2: DUNE.rose,
+  3: DUNE.rose,
 };
 
 export default function GrainSizeCoveragePanel({
@@ -165,7 +166,7 @@ export default function GrainSizeCoveragePanel({
               dataKey="psd"
               name="site sand (PSD)"
               stroke="none"
-              fill={isLightMode ? "#cbd5e1" : "#334155"}
+              fill={isLightMode ? DUNE.ash : DUNE.ash}
               fillOpacity={0.35}
               legendType="none"
             />
@@ -174,9 +175,9 @@ export default function GrainSizeCoveragePanel({
               type="monotone"
               dataKey="combined"
               name="Combined"
-              stroke="#14b8a6"
+              stroke={DUNE.teal}
               strokeWidth={2.5}
-              fill="#14b8a6"
+              fill={DUNE.teal}
               fillOpacity={0.12}
             />
             {prongs.map((p) => (

@@ -2,6 +2,7 @@
 
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { settleScrubs } from "./scrollRestore";
+import { DUNE } from "@/src/lib/palette";
 
 /**
  * Jumping past a pinned story without showing the trip.
@@ -50,7 +51,7 @@ function land(target: HTMLElement | number, offset: number) {
 /** Page ground behind the curtain, matching the nav's own scrolled colours. */
 function veilColour(): string {
   const dark = document.documentElement.classList.contains("dark");
-  return dark ? "#0d0a08" : "#fbf7f0";
+  return dark ? DUNE.ink : DUNE.paper;
 }
 
 export function curtainJumpTo(

@@ -19,6 +19,7 @@ import {
   cohesionFromShearModulus,
 } from "../lib/physics";
 import { ModuleActions } from "./simulation/_shared";
+import { DUNE, HAIRLINE, INK, STATUS, TINT } from "@/src/lib/palette";
 
 interface AeolianProps {
   params: AeolianParams;
@@ -59,9 +60,9 @@ export default function AeolianWindTunnel({
     1 | 2 | 3,
     { hi: string; mid: string; lo: string; name: string }
   > = {
-    1: { hi: "#fcd34d", mid: "#f59e0b", lo: "#b45309", name: "γ-PGA gel" },
-    2: { hi: "#a7f3d0", mid: "#c28a7c", lo: "#065f46", name: "CaCO₃ cement" },
-    3: { hi: "#fecdd3", mid: "#fb7185", lo: "#9f1239", name: "alginate coat" },
+    1: { hi: TINT.orangeLight, mid: STATUS.warn, lo: TINT.orangeDeep, name: "γ-PGA gel" },
+    2: { hi: TINT.tealWash, mid: DUNE.rose, lo: TINT.tealDeep, name: "CaCO₃ cement" },
+    3: { hi: TINT.roseWash, mid: TINT.roseLight, lo: DUNE.maroon, name: "alginate coat" },
   };
   const activeBinders = ([1, 2, 3] as const).filter((p) =>
     activeProngs.includes(p),
@@ -392,7 +393,7 @@ export default function AeolianWindTunnel({
       const s = dpr; // size scale so strokes/fonts stay crisp at any DPR
       clockTicks += 0.04;
 
-      ctx.fillStyle = d.isLightMode ? "#f8fafc" : "#030712";
+      ctx.fillStyle = d.isLightMode ? TINT.sandWash : DUNE.ink;
       ctx.fillRect(0, 0, W, H);
 
       // faint reference grid
@@ -433,7 +434,7 @@ export default function AeolianWindTunnel({
       }
 
       // centre divider
-      ctx.strokeStyle = d.isLightMode ? "#f3e9db" : "#43362e";
+      ctx.strokeStyle = d.isLightMode ? INK.dark : HAIRLINE.dark;
       ctx.lineWidth = 1.5 * s;
       ctx.beginPath();
       ctx.moveTo(W / 2, 0);
@@ -442,7 +443,7 @@ export default function AeolianWindTunnel({
 
       // side labels
       ctx.font = `bold ${9 * s}px "JetBrains Mono", Courier, monospace`;
-      ctx.fillStyle = "#ef4444";
+      ctx.fillStyle = STATUS.bad;
       ctx.fillText("UNTREATED SAND", 12 * s, 20 * s);
       ctx.fillStyle = d.isLightMode ? d.crust.lo : d.crust.mid;
       ctx.fillText(
@@ -499,17 +500,17 @@ export default function AeolianWindTunnel({
         );
         if (p.isTreated) {
           if (d.isShattered) {
-            grad.addColorStop(0, "#f97316");
-            grad.addColorStop(1, "#7c2d12");
+            grad.addColorStop(0, DUNE.orange);
+            grad.addColorStop(1, TINT.orangeDeep);
           } else {
             grad.addColorStop(0, d.crust.hi);
             grad.addColorStop(0.35, d.crust.mid);
             grad.addColorStop(1, d.crust.lo);
           }
         } else {
-          grad.addColorStop(0, "#f5deb3");
-          grad.addColorStop(0.4, "#c9a267");
-          grad.addColorStop(1, "#7c5a2e");
+          grad.addColorStop(0, TINT.sandWash);
+          grad.addColorStop(0.4, TINT.sandLight);
+          grad.addColorStop(1, TINT.sandDeep);
         }
         ctx.fillStyle = grad;
         ctx.beginPath();
@@ -831,7 +832,7 @@ export default function AeolianWindTunnel({
                       y1="90"
                       x2="500"
                       y2="90"
-                      stroke={isLightMode ? "#cbd5e1" : "#43362e"}
+                      stroke={isLightMode ? DUNE.ash : HAIRLINE.dark}
                       strokeWidth="0.8"
                     />
                     <line
@@ -839,7 +840,7 @@ export default function AeolianWindTunnel({
                       y1="10"
                       x2="500"
                       y2="10"
-                      stroke={isLightMode ? "#f3e9db" : "#43362e"}
+                      stroke={isLightMode ? INK.dark : HAIRLINE.dark}
                       strokeWidth="0.7"
                       strokeDasharray="3,3"
                     />
@@ -848,7 +849,7 @@ export default function AeolianWindTunnel({
                       y1="50"
                       x2="500"
                       y2="50"
-                      stroke={isLightMode ? "#f3e9db" : "#43362e"}
+                      stroke={isLightMode ? INK.dark : HAIRLINE.dark}
                       strokeWidth="0.7"
                       strokeDasharray="3,3"
                     />
@@ -860,7 +861,7 @@ export default function AeolianWindTunnel({
                         y1="0"
                         x2={gridX}
                         y2="100"
-                        stroke={isLightMode ? "#f3e9db" : "#1e1b4b"}
+                        stroke={isLightMode ? INK.dark : DUNE.ink}
                         strokeWidth="0.8"
                         strokeDasharray="2,2"
                       />
@@ -870,7 +871,7 @@ export default function AeolianWindTunnel({
                     <text
                       x="-5"
                       y="15"
-                      fill={isLightMode ? "#8a7e75" : "#475569"}
+                      fill={isLightMode ? DUNE.ash : DUNE.ash}
                       fontSize="8"
                       fontFamily="monospace"
                       textAnchor="end"
@@ -880,7 +881,7 @@ export default function AeolianWindTunnel({
                     <text
                       x="-5"
                       y="55"
-                      fill={isLightMode ? "#8a7e75" : "#475569"}
+                      fill={isLightMode ? DUNE.ash : DUNE.ash}
                       fontSize="8"
                       fontFamily="monospace"
                       textAnchor="end"
@@ -890,7 +891,7 @@ export default function AeolianWindTunnel({
                     <text
                       x="-5"
                       y="93"
-                      fill={isLightMode ? "#8a7e75" : "#475569"}
+                      fill={isLightMode ? DUNE.ash : DUNE.ash}
                       fontSize="8"
                       fontFamily="monospace"
                       textAnchor="end"
@@ -903,7 +904,7 @@ export default function AeolianWindTunnel({
                       <path
                         d={`M 0 90 ${liveControlErosion.map((pt) => `L ${(pt.x / 15.0) * 500} ${90 - (pt.y / 100) * 80}`).join(" ")}`}
                         fill="none"
-                        stroke="#f59e0b"
+                        stroke={STATUS.warn}
                         strokeWidth="2.5"
                         strokeLinecap="round"
                       />
@@ -914,7 +915,7 @@ export default function AeolianWindTunnel({
                       <path
                         d={`M 0 90 ${liveTreatedErosion.map((pt) => `L ${(pt.x / 15.0) * 500} ${90 - (pt.y / 100) * 80}`).join(" ")}`}
                         fill="none"
-                        stroke="#c28a7c"
+                        stroke={DUNE.rose}
                         strokeWidth="2.5"
                         strokeLinecap="round"
                       />
@@ -926,7 +927,7 @@ export default function AeolianWindTunnel({
                       y1="0"
                       x2={(liveTestTime / 15.0) * 500}
                       y2="90"
-                      stroke="#d6884a"
+                      stroke={DUNE.orange}
                       strokeWidth="1.5"
                       strokeDasharray="1,1"
                     />
@@ -956,13 +957,13 @@ export default function AeolianWindTunnel({
           <div
             className={`p-4 rounded-[4px] border flex flex-col gap-2 overflow-hidden ${
               isLightMode
-                ? "bg-[#f8fafc] border-border"
-                : "bg-[#02050b] border-border"
+                ? "bg-card border-border"
+                : "bg-dune-ink border-border"
             }`}
           >
             <div className="flex justify-between items-center px-1 gap-2 flex-wrap">
               <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-                <Gauge className="w-3.5 h-3.5 text-[#c28a7c]" /> Grain-Motion
+                <Gauge className="w-3.5 h-3.5 text-dune-rose" /> Grain-Motion
                 Viewport
               </span>
               <span className="text-[10px] text-dune-orange font-bold font-mono">
@@ -975,7 +976,7 @@ export default function AeolianWindTunnel({
               <span className="flex items-center gap-1 text-[9px] font-mono text-muted-foreground">
                 <span
                   className="w-2.5 h-2.5 rounded-full inline-block"
-                  style={{ background: "#c9a267" }}
+                  style={{ background: TINT.sandLight }}
                 />{" "}
                 untreated sand
               </span>
@@ -1022,8 +1023,8 @@ export default function AeolianWindTunnel({
           <div
             className={`p-4 rounded-[4px] border flex flex-col justify-between ${
               isLightMode
-                ? "bg-[#f8fafc] border-border"
-                : "bg-[#030610] border-border"
+                ? "bg-card border-border"
+                : "bg-dune-ink border-border"
             }`}
           >
             <div className="space-y-1">
@@ -1087,8 +1088,8 @@ export default function AeolianWindTunnel({
           <div
             className={`p-4 rounded-[4px] border flex flex-col justify-between ${
               isLightMode
-                ? "bg-[#f8fafc] border-border"
-                : "bg-[#030610] border-border"
+                ? "bg-card border-border"
+                : "bg-dune-ink border-border"
             }`}
           >
             <div className="space-y-1">
@@ -1117,7 +1118,7 @@ export default function AeolianWindTunnel({
                 <span className="text-muted-foreground">
                   Required Spray Density:
                 </span>
-                <span className="font-extrabold text-[#c28a7c]">
+                <span className="font-extrabold text-dune-rose">
                   {(250.0 + crustThickness * 14.5).toFixed(0)} mL/m²
                 </span>
               </div>
@@ -1151,7 +1152,7 @@ export default function AeolianWindTunnel({
           className={`mt-5 p-3 rounded-[4px] border flex items-start gap-2.5 text-[11px] font-mono ${
             isLightMode
               ? "bg-dune-orange/60 border-dune-orange text-foreground"
-              : "bg-[#05111d] border-dune-teal/50 text-dune-teal"
+              : "bg-dune-ink border-dune-teal/50 text-dune-teal"
           }`}
         >
           <Coins className="w-4 h-4 shrink-0 mt-0.5 text-dune-orange" />

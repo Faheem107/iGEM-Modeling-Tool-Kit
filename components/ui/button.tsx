@@ -14,7 +14,7 @@ const buttonVariants = cva(
         // maroon (light) / orange (dark), the brand primary
         default: "bg-primary text-primary-foreground hover:opacity-90",
         // orange call-to-action, both themes
-        accent: "bg-dune-orange text-[#241c19] hover:brightness-105",
+        accent: "bg-dune-orange text-dune-basalt hover:brightness-105",
         destructive:
           "bg-destructive text-destructive-foreground hover:opacity-90",
         outline: "border border-border bg-transparent hover:bg-secondary",

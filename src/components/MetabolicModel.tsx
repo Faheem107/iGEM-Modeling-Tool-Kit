@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import GlossaryTerm from "./GlossaryTerm";
 import { ModuleActions } from "./simulation/_shared";
+import { DUNE, HAIRLINE, STATUS, TINT } from "@/src/lib/palette";
 
 interface MetabolicProps {
   params: MetabolicParams;
@@ -151,8 +152,8 @@ export default function MetabolicModel({
     <div
       className={`grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 rounded-[6px] border transition-all duration-300 ${
         isLightMode
-          ? "bg-[#fdfaf3] border-dune-orange/10 shadow-[0_4px_24px_rgba(139,94,26,0.06)]"
-          : "bg-[#1c1512] border-border "
+          ? "bg-card border-dune-orange/10 shadow-[0_4px_24px_rgba(139,94,26,0.06)]"
+          : "bg-dune-ink border-border "
       }`}
       id="metabolic-module-panel"
     >
@@ -161,7 +162,7 @@ export default function MetabolicModel({
       </div>
       {/* Parameters Panel */}
       <div
-        className={`lg:col-span-12 xl:col-span-5 p-5 rounded border transition-colors duration-300 ${isLightMode ? "bg-white border-dune-orange/10" : "bg-[#1c1512] border-border"}`}
+        className={`lg:col-span-12 xl:col-span-5 p-5 rounded border transition-colors duration-300 ${isLightMode ? "bg-white border-dune-orange/10" : "bg-dune-ink border-border"}`}
       >
         <h3
           className={`text-xs font-extrabold uppercase tracking-wider flex items-center gap-2 mb-4 font-sans ${isLightMode ? "text-dune-orange" : "text-foreground"}`}
@@ -485,7 +486,7 @@ export default function MetabolicModel({
                     : "border-dune-teal bg-dune-teal/20 text-dune-teal"
                   : isLightMode
                     ? "border-dune-orange/10 bg-background text-muted-foreground hover:text-foreground"
-                    : "border-border bg-[#080b12] text-muted-foreground hover:text-foreground"
+                    : "border-border bg-dune-ink text-muted-foreground hover:text-foreground"
               }`}
             >
               <div className="flex flex-col">
@@ -514,7 +515,7 @@ export default function MetabolicModel({
                     : "border-dune-teal bg-dune-teal/20 text-dune-teal"
                   : isLightMode
                     ? "border-dune-orange/10 bg-background text-muted-foreground hover:text-foreground"
-                    : "border-border bg-[#080b12] text-muted-foreground hover:text-foreground"
+                    : "border-border bg-dune-ink text-muted-foreground hover:text-foreground"
               }`}
             >
               <div className="flex flex-col">
@@ -540,7 +541,7 @@ export default function MetabolicModel({
 
       {/* Analytics & Graph Panel */}
       <div
-        className={`lg:col-span-12 xl:col-span-7 p-5 rounded border flex flex-col justify-between transition-colors duration-300 ${isLightMode ? "bg-white border-dune-orange/10" : "bg-[#1c1512] border-border"}`}
+        className={`lg:col-span-12 xl:col-span-7 p-5 rounded border flex flex-col justify-between transition-colors duration-300 ${isLightMode ? "bg-white border-dune-orange/10" : "bg-dune-ink border-border"}`}
       >
         <div>
           <div className="flex flex-wrap justify-between items-center gap-3 mb-4">
@@ -582,7 +583,7 @@ export default function MetabolicModel({
 
           {/* SVG Graph */}
           <div
-            className={`relative border rounded p-2 overflow-hidden select-none transition-colors duration-300 ${isLightMode ? "bg-[#fcfbf9] border-dune-orange/10" : "bg-[#1c1512] border-border"}`}
+            className={`relative border rounded p-2 overflow-hidden select-none transition-colors duration-300 ${isLightMode ? "bg-card border-dune-orange/10" : "bg-dune-ink border-border"}`}
           >
             <svg
               viewBox={`0 0 ${width} ${height}`}
@@ -601,7 +602,7 @@ export default function MetabolicModel({
                     y1={y}
                     x2={width - paddingRight}
                     y2={y}
-                    stroke={isLightMode ? "#efe7d3" : "#161f30"}
+                    stroke={isLightMode ? TINT.sandWash : DUNE.ink}
                     strokeDasharray="3,3"
                   />
                 );
@@ -616,7 +617,7 @@ export default function MetabolicModel({
                     y1={paddingTop}
                     x2={x}
                     y2={height - paddingBottom}
-                    stroke={isLightMode ? "#efe7d3" : "#161f30"}
+                    stroke={isLightMode ? TINT.sandWash : DUNE.ink}
                     strokeDasharray="3,3"
                   />
                 );
@@ -626,7 +627,7 @@ export default function MetabolicModel({
               <polyline
                 fill="none"
                 strokeWidth={isLightMode ? "2.5" : "2"}
-                stroke={isLightMode ? "#d6884a" : "#8fb3ac"}
+                stroke={isLightMode ? DUNE.orange : DUNE.teal}
                 points={pathMRNA}
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -634,7 +635,7 @@ export default function MetabolicModel({
               <polyline
                 fill="none"
                 strokeWidth={isLightMode ? "2.5" : "2"}
-                stroke={isLightMode ? "#ea580c" : "#fb923c"}
+                stroke={isLightMode ? TINT.orangeDeep : TINT.orangeLight}
                 points={pathEnzyme}
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -642,7 +643,7 @@ export default function MetabolicModel({
               <polyline
                 fill="none"
                 strokeWidth={isLightMode ? "3.5" : "3"}
-                stroke={isLightMode ? "#16a34a" : "#4ade80"}
+                stroke={isLightMode ? STATUS.good : STATUS.good}
                 points={pathPGA}
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -654,7 +655,7 @@ export default function MetabolicModel({
                 y1={height - paddingBottom}
                 x2={width - paddingRight}
                 y2={height - paddingBottom}
-                stroke={isLightMode ? "#c8b49c" : "#43362e"}
+                stroke={isLightMode ? TINT.sandLight : HAIRLINE.dark}
                 strokeWidth="1"
               />
               <line
@@ -662,7 +663,7 @@ export default function MetabolicModel({
                 y1={paddingTop}
                 x2={paddingLeft}
                 y2={height - paddingBottom}
-                stroke={isLightMode ? "#c8b49c" : "#43362e"}
+                stroke={isLightMode ? TINT.sandLight : HAIRLINE.dark}
                 strokeWidth="1"
               />
               <line
@@ -670,7 +671,7 @@ export default function MetabolicModel({
                 y1={paddingTop}
                 x2={width - paddingRight}
                 y2={height - paddingBottom}
-                stroke={isLightMode ? "#c8b49c" : "#43362e"}
+                stroke={isLightMode ? TINT.sandLight : HAIRLINE.dark}
                 strokeWidth="1"
               />
 
@@ -678,7 +679,7 @@ export default function MetabolicModel({
               <text
                 x={paddingLeft - 8}
                 y={paddingTop + 5}
-                fill={isLightMode ? "#78350f" : "#475569"}
+                fill={isLightMode ? STATUS.bad : DUNE.ash}
                 fontSize="9"
                 textAnchor="end"
                 fontWeight="bold"
@@ -689,7 +690,7 @@ export default function MetabolicModel({
               <text
                 x={paddingLeft - 8}
                 y={height - paddingBottom}
-                fill={isLightMode ? "#78350f" : "#475569"}
+                fill={isLightMode ? STATUS.bad : DUNE.ash}
                 fontSize="9"
                 textAnchor="end"
                 fontWeight="bold"
@@ -701,7 +702,7 @@ export default function MetabolicModel({
                 x={paddingLeft - 32}
                 y={height / 2}
                 transform={`rotate(-90, ${paddingLeft - 32}, ${height / 2})`}
-                fill={isLightMode ? "#d6884a" : "#8fb3ac"}
+                fill={isLightMode ? DUNE.orange : DUNE.teal}
                 fontSize="9"
                 textAnchor="middle"
                 fontWeight="bold"
@@ -714,7 +715,7 @@ export default function MetabolicModel({
               <text
                 x={width - paddingRight + 8}
                 y={paddingTop + 5}
-                fill={isLightMode ? "#16a34a" : "#4ade80"}
+                fill={isLightMode ? STATUS.good : STATUS.good}
                 fontSize="9"
                 textAnchor="start"
                 fontWeight="bold"
@@ -725,7 +726,7 @@ export default function MetabolicModel({
               <text
                 x={width - paddingRight + 8}
                 y={height - paddingBottom}
-                fill={isLightMode ? "#16a34a" : "#4ade80"}
+                fill={isLightMode ? STATUS.good : STATUS.good}
                 fontSize="9"
                 textAnchor="start"
                 fontWeight="bold"
@@ -737,7 +738,7 @@ export default function MetabolicModel({
                 x={width - paddingRight + 32}
                 y={height / 2}
                 transform={`rotate(90, ${width - paddingRight + 32}, ${height / 2})`}
-                fill={isLightMode ? "#16a34a" : "#4ade80"}
+                fill={isLightMode ? STATUS.good : STATUS.good}
                 fontSize="9"
                 textAnchor="middle"
                 fontWeight="bold"
@@ -756,7 +757,7 @@ export default function MetabolicModel({
                     key={t}
                     x={x}
                     y={height - paddingBottom + 16}
-                    fill={isLightMode ? "#78350f" : "#475569"}
+                    fill={isLightMode ? STATUS.bad : DUNE.ash}
                     fontSize="9"
                     textAnchor="middle"
                     fontWeight="bold"
@@ -769,7 +770,7 @@ export default function MetabolicModel({
               <text
                 x={width / 2}
                 y={height - 5}
-                fill={isLightMode ? "#78350f" : "#475569"}
+                fill={isLightMode ? STATUS.bad : DUNE.ash}
                 fontSize="9"
                 fontWeight="bold"
                 textAnchor="middle"
@@ -787,7 +788,7 @@ export default function MetabolicModel({
                     y1={paddingTop}
                     x2={points[hoverIndex].x}
                     y2={height - paddingBottom}
-                    stroke={isLightMode ? "#b4a088" : "#334155"}
+                    stroke={isLightMode ? TINT.sandDeep : DUNE.ash}
                     strokeWidth="1"
                     strokeDasharray="4,4"
                   />
@@ -795,19 +796,19 @@ export default function MetabolicModel({
                     cx={points[hoverIndex].x}
                     cy={points[hoverIndex].yMRNA}
                     r="5"
-                    fill={isLightMode ? "#d6884a" : "#8fb3ac"}
+                    fill={isLightMode ? DUNE.orange : DUNE.teal}
                   />
                   <circle
                     cx={points[hoverIndex].x}
                     cy={points[hoverIndex].yEnzyme}
                     r="5"
-                    fill={isLightMode ? "#ea580c" : "#fb923c"}
+                    fill={isLightMode ? TINT.orangeDeep : TINT.orangeLight}
                   />
                   <circle
                     cx={points[hoverIndex].x}
                     cy={points[hoverIndex].yPGA}
                     r="5"
-                    fill={isLightMode ? "#16a34a" : "#4ade80"}
+                    fill={isLightMode ? STATUS.good : STATUS.good}
                   />
                 </>
               )}
@@ -819,7 +820,7 @@ export default function MetabolicModel({
                 className={`absolute top-4 left-16 select-none pointer-events-none space-y-1 p-3 text-[10px] font-mono rounded border ${
                   isLightMode
                     ? "bg-white/95 border-dune-orange/15 text-foreground "
-                    : "bg-[#080b12]/95 border border-border text-foreground"
+                    : "bg-dune-ink/95 border border-border text-foreground"
                 }`}
               >
                 <p
@@ -864,7 +865,7 @@ export default function MetabolicModel({
           className={`mt-5 p-4 rounded border relative overflow-hidden transition-colors ${
             isLightMode
               ? "bg-dune-orange/50 border-dune-orange/10"
-              : "bg-[#091522]/60 border border-dune-teal/80"
+              : "bg-dune-ink/60 border border-dune-teal/80"
           }`}
         >
           <div className="absolute right-3 top-3 opacity-5">
@@ -889,7 +890,7 @@ export default function MetabolicModel({
           </p>
           <div className="flex flex-wrap items-center gap-3">
             <div
-              className={`flex items-center gap-2 px-3 py-1.5 rounded border ${isLightMode ? "bg-white border-dune-orange/15" : "bg-[#1c1512] border-border"}`}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded border ${isLightMode ? "bg-white border-dune-orange/15" : "bg-dune-ink border-border"}`}
             >
               <span
                 className={`text-[10px] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
@@ -914,7 +915,7 @@ export default function MetabolicModel({
               onClick={handleCalibrate}
               className={`px-3.5 py-1.5 text-[10px] font-mono font-bold rounded uppercase tracking-wider transition flex items-center gap-1 cursor-pointer ${
                 isLightMode
-                  ? "text-foreground bg-dune-teal hover:bg-dune-teal bg-[#4a8f86]"
+                  ? "text-foreground bg-dune-teal hover:bg-dune-teal"
                   : "text-black bg-dune-teal hover:bg-dune-teal"
               }`}
             >

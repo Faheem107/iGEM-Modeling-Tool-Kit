@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import GlossaryTerm from "./GlossaryTerm";
 import { ModuleActions } from "./simulation/_shared";
+import { DUNE, STATUS, SURFACE } from "@/src/lib/palette";
 
 interface ProteinThermalDecayProps {
   isLightMode: boolean;
@@ -122,8 +123,8 @@ export default function ProteinThermalDecay({
     <div
       className={`p-5 rounded-[6px] border transition-all duration-300 font-sans ${
         isLightMode
-          ? "bg-[#fcfaf5] border-dune-orange/10"
-          : "bg-[#1c1512] border-border"
+          ? "bg-card border-dune-orange/10"
+          : "bg-dune-ink border-border"
       }`}
       id="protein-thermal-decay-frame"
     >
@@ -156,10 +157,10 @@ export default function ProteinThermalDecay({
             className={`p-4 rounded-[4px] border space-y-4 ${
               isLightMode
                 ? "bg-dune-orange/50 border-dune-orange/5"
-                : "bg-[#1c1512]/60 border-border"
+                : "bg-dune-ink/60 border-border"
             }`}
           >
-            <h4 className="text-[11px] font-extrabold uppercase tracking-widest text-[#a5b4fc] font-mono flex items-center gap-1.5 pb-1 border-b border-dashed border-border">
+            <h4 className="text-[11px] font-extrabold uppercase tracking-widest text-dune-teal font-mono flex items-center gap-1.5 pb-1 border-b border-dashed border-border">
               <Compass className="w-3.5 h-3.5" /> Soil Micro-Climate Inputs
             </h4>
 
@@ -235,8 +236,8 @@ export default function ProteinThermalDecay({
           <div
             className={`p-4 rounded-[4px] border text-xs space-y-2 ${
               isLightMode
-                ? "bg-[#f8f5ee] border-dune-orange/10"
-                : "bg-[#080d16] border-border"
+                ? "bg-card border-dune-orange/10"
+                : "bg-dune-ink border-border"
             }`}
           >
             <div className="flex justify-between items-center text-[11px]">
@@ -266,8 +267,8 @@ export default function ProteinThermalDecay({
           <div
             className={`p-3.5 rounded-[4px] border ${
               isLightMode
-                ? "bg-[#fbf9f4] border-dune-orange/5"
-                : "bg-[#020408]/90 border-border"
+                ? "bg-card border-dune-orange/5"
+                : "bg-dune-ink/90 border-border"
             }`}
           >
             <div className="flex justify-between items-center mb-2 text-[10px] font-mono uppercase text-muted-foreground">
@@ -296,7 +297,7 @@ export default function ProteinThermalDecay({
                   y1="0"
                   x2="380"
                   y2="0"
-                  stroke="#334155"
+                  stroke={DUNE.ash}
                   strokeDasharray="2,3"
                   strokeWidth="0.8"
                 />
@@ -305,7 +306,7 @@ export default function ProteinThermalDecay({
                   y1="80"
                   x2="380"
                   y2="80"
-                  stroke="#334155"
+                  stroke={DUNE.ash}
                   strokeDasharray="1,4"
                   strokeWidth="0.8"
                 />
@@ -314,7 +315,7 @@ export default function ProteinThermalDecay({
                   y1="160"
                   x2="380"
                   y2="160"
-                  stroke="#475569"
+                  stroke={DUNE.ash}
                   strokeWidth="1"
                 />
 
@@ -324,7 +325,7 @@ export default function ProteinThermalDecay({
                   y1="0"
                   x2={(operativeT_melting / 70) * 380}
                   y2="160"
-                  stroke="#ef4444"
+                  stroke={STATUS.bad}
                   strokeDasharray="3,3"
                   strokeWidth="0.8"
                   opacity="0.65"
@@ -334,7 +335,7 @@ export default function ProteinThermalDecay({
                 <path
                   d={pathData}
                   fill="none"
-                  stroke={foldedPercentage < 40 ? "#f43f5e" : "#c28a7c"}
+                  stroke={foldedPercentage < 40 ? DUNE.rose : DUNE.rose}
                   strokeWidth="2.5"
                   className="transition-all duration-300"
                 />
@@ -357,7 +358,7 @@ export default function ProteinThermalDecay({
                     cx={currentIndicatorPos.x}
                     cy={currentIndicatorPos.y}
                     r="8"
-                    fill="#f43f5e"
+                    fill={DUNE.rose}
                     opacity="0.25"
                     className="animate-ping"
                     style={{ animationDuration: "2s" }}
@@ -366,8 +367,8 @@ export default function ProteinThermalDecay({
                     cx={currentIndicatorPos.x}
                     cy={currentIndicatorPos.y}
                     r="4"
-                    fill="#ef4444"
-                    stroke="#ffffff"
+                    fill={STATUS.bad}
+                    stroke={SURFACE.light}
                     strokeWidth="1"
                   />
                 </g>
@@ -377,7 +378,7 @@ export default function ProteinThermalDecay({
                   x="5"
                   y="12"
                   fontSize="7"
-                  fill="#8a7e75"
+                  fill={DUNE.ash}
                   className="font-mono"
                 >
                   100% Folded (Active)
@@ -386,7 +387,7 @@ export default function ProteinThermalDecay({
                   x="5"
                   y="156"
                   fontSize="7"
-                  fill="#8a7e75"
+                  fill={DUNE.ash}
                   className="font-mono"
                 >
                   0% Folded (Denatured)
@@ -395,7 +396,7 @@ export default function ProteinThermalDecay({
                   x="375"
                   y="172"
                   fontSize="7"
-                  fill="#8a7e75"
+                  fill={DUNE.ash}
                   className="font-mono"
                   textAnchor="end"
                 >
@@ -405,7 +406,7 @@ export default function ProteinThermalDecay({
                   x="5"
                   y="172"
                   fontSize="7"
-                  fill="#8a7e75"
+                  fill={DUNE.ash}
                   className="font-mono"
                 >
                   0 °C
@@ -414,7 +415,7 @@ export default function ProteinThermalDecay({
                   x={(operativeT_melting / 70) * 380}
                   y="172"
                   fontSize="7"
-                  fill="#ef4444"
+                  fill={STATUS.bad}
                   className="font-mono font-bold"
                   textAnchor="middle"
                 >
@@ -430,8 +431,8 @@ export default function ProteinThermalDecay({
                     x2="0%"
                     y2="100%"
                   >
-                    <stop offset="0%" stopColor="#c28a7c" />
-                    <stop offset="100%" stopColor="#c28a7c" stopOpacity="0" />
+                    <stop offset="0%" stopColor={DUNE.rose} />
+                    <stop offset="100%" stopColor={DUNE.rose} stopOpacity="0" />
                   </linearGradient>
                   <linearGradient
                     id="grad-red"
@@ -440,8 +441,8 @@ export default function ProteinThermalDecay({
                     x2="0%"
                     y2="100%"
                   >
-                    <stop offset="0%" stopColor="#f43f5e" />
-                    <stop offset="100%" stopColor="#f43f5e" stopOpacity="0" />
+                    <stop offset="0%" stopColor={DUNE.rose} />
+                    <stop offset="100%" stopColor={DUNE.rose} stopOpacity="0" />
                   </linearGradient>
                 </defs>
               </svg>

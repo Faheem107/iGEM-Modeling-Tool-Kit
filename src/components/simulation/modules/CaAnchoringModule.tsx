@@ -25,6 +25,7 @@ import {
 } from "recharts";
 import { FlaskConical, Anchor, Link2, CheckCircle2 } from "lucide-react";
 import GlossaryTerm, { GlossaryText } from "../../GlossaryTerm";
+import { STATUS, TINT } from "@/src/lib/palette";
 import {
   ModuleShell,
   Panel,
@@ -235,7 +236,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
               {data.map((d, i) => (
                 <Cell
                   key={i}
-                  fill={d.stage === "Overall" ? "#b07568" : "#cf9d90"}
+                  fill={d.stage === "Overall" ? TINT.roseDeep : TINT.roseLight}
                 />
               ))}
             </Bar>
@@ -243,7 +244,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
               {data.map((d, i) => (
                 <Cell
                   key={i}
-                  fill={d.stage === "Overall" ? "#d97706" : "#fbbf24"}
+                  fill={d.stage === "Overall" ? STATUS.warn : TINT.orangeLight}
                 />
               ))}
             </Bar>

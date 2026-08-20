@@ -273,7 +273,7 @@ function CodePanel({
           <a
             href={codeUrl}
             download={filename}
-            className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1.5 rounded-[3px] bg-dune-orange text-[#241c19] transition-opacity hover:opacity-90"
+            className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1.5 rounded-[3px] bg-dune-orange text-dune-basalt transition-opacity hover:opacity-90"
           >
             <Download className="w-3.5 h-3.5" /> Download .py
           </a>
@@ -621,7 +621,7 @@ export const GlossaryProvider: React.FC<{
                             }),
                           );
                         }}
-                        className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-[3px] bg-dune-orange text-[#241c19] text-[12px] font-bold uppercase tracking-[0.1em] transition-opacity hover:opacity-90"
+                        className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-[3px] bg-dune-orange text-dune-basalt text-[12px] font-bold uppercase tracking-[0.1em] transition-opacity hover:opacity-90"
                       >
                         {entry.jumpLabel ?? "Go to the module"}
                         <ArrowRight className="w-3.5 h-3.5" />

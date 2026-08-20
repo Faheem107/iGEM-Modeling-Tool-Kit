@@ -23,6 +23,7 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 import GlossaryTerm from "./GlossaryTerm";
 import { PORTAL_NAMES } from "@/content/copy";
+import { DUNE, HAIRLINE, STATUS, SURFACE, TINT } from "@/src/lib/palette";
 import {
   solveDetailedFBA,
   OBJECTIVE_PGA,
@@ -724,11 +725,11 @@ export default function AdvancedFbaPortal({
   }, [metabolicFlux, knockoutList]);
 
   // Sophisticated, academic palette config based on light/dark mode triggers
-  const skyColor = isLightMode ? "#4a8f86" : "#8fb3ac";
-  const roseColor = isLightMode ? "#b0574a" : "#f43f5e";
-  const emeraldColor = isLightMode ? "#b07568" : "#c28a7c";
-  const dormantColor = isLightMode ? "#cbd5e1" : "#475569";
-  const labelColor = isLightMode ? "#020617" : "#f1f5f9";
+  const skyColor = isLightMode ? TINT.tealDeep : DUNE.teal;
+  const roseColor = isLightMode ? TINT.roseDeep : DUNE.rose;
+  const emeraldColor = isLightMode ? TINT.roseDeep : DUNE.rose;
+  const dormantColor = isLightMode ? DUNE.ash : DUNE.ash;
+  const labelColor = isLightMode ? DUNE.ink : TINT.sandWash;
 
   // Dynamic SVG path properties calculated according to custom metabolic loads
   const getPathProps = (
@@ -785,8 +786,8 @@ export default function AdvancedFbaPortal({
     <div
       className={`p-5 transition-colors duration-300 font-sans ${
         isLightMode
-          ? "bg-[#f4ebd0] text-foreground"
-          : "bg-[#181210] text-foreground"
+          ? "bg-dune-sand text-foreground"
+          : "bg-dune-ink text-foreground"
       }`}
       id="fba-sim-portal-frame"
     >
@@ -795,12 +796,12 @@ export default function AdvancedFbaPortal({
         className={`p-4 rounded-[6px] border mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors duration-300 ${
           isLightMode
             ? "bg-dune-orange/60 border-dune-orange/10"
-            : "bg-[#1c1512] border-border"
+            : "bg-dune-ink border-border"
         }`}
       >
         <div className="flex items-center gap-3">
           <div
-            className={`p-2 rounded-[4px] ${isLightMode ? "bg-dune-orange text-dune-orange" : "bg-dune-orange/50 text-[#a5b4fc] border border-dune-orange/50"}`}
+            className={`p-2 rounded-[4px] ${isLightMode ? "bg-dune-orange text-dune-orange" : "bg-dune-orange/50 text-dune-teal border border-dune-orange/50"}`}
           >
             <Cpu
               className="w-5 h-5 animate-spin"
@@ -853,7 +854,7 @@ export default function AdvancedFbaPortal({
             className={`px-2 py-1 rounded border ${isLightMode ? "bg-muted border-border" : "bg-dune-basalt/50 border-border"}`}
           >
             Pivots:{" "}
-            <span className="text-[#a5b4fc] font-bold">
+            <span className="text-dune-teal font-bold">
               {fbaResults.iterations}
             </span>
           </div>
@@ -869,7 +870,7 @@ export default function AdvancedFbaPortal({
             className={`p-5 rounded-[6px] border space-y-4 ${
               isLightMode
                 ? "bg-white border-dune-orange/10 "
-                : "bg-[#1c1512] border-border"
+                : "bg-dune-ink border-border"
             }`}
           >
             <h3
@@ -907,7 +908,7 @@ export default function AdvancedFbaPortal({
                 className={`grid grid-cols-2 p-1 rounded border text-[10px] font-mono gap-1 ${
                   isLightMode
                     ? "bg-background border-border"
-                    : "bg-[#1c1512] border-border"
+                    : "bg-dune-ink border-border"
                 }`}
               >
                 <button
@@ -992,8 +993,8 @@ export default function AdvancedFbaPortal({
               <div
                 className={`p-2.5 rounded-[4px] border flex items-center justify-between text-xs transition-colors ${
                   isLightMode
-                    ? "bg-[#fcfbf9]/40 border-dune-orange/10"
-                    : "bg-[#080b12] border-border"
+                    ? "bg-card/40 border-dune-orange/10"
+                    : "bg-dune-ink border-border"
                 }`}
               >
                 <div>
@@ -1019,7 +1020,7 @@ export default function AdvancedFbaPortal({
             className={`p-5 rounded-[6px] border space-y-3.5 ${
               isLightMode
                 ? "bg-white border-dune-orange/10 "
-                : "bg-[#1c1512] border-border"
+                : "bg-dune-ink border-border"
             }`}
           >
             <div>
@@ -1077,7 +1078,7 @@ export default function AdvancedFbaPortal({
             className={`p-4 rounded-[6px] border space-y-3 ${
               isLightMode
                 ? "bg-white border-dune-orange/10 "
-                : "bg-[#1c1512] border-border"
+                : "bg-dune-ink border-border"
             }`}
           >
             <h3
@@ -1155,8 +1156,8 @@ export default function AdvancedFbaPortal({
           <div
             className={`p-5 rounded-[6px] border relative ${
               isLightMode
-                ? "bg-[#fdfbf7] border-dune-orange/10 "
-                : "bg-[#1c1512] border-border"
+                ? "bg-card border-dune-orange/10 "
+                : "bg-dune-ink border-border"
             }`}
           >
             <div className="flex justify-between items-center mb-3">
@@ -1171,8 +1172,8 @@ export default function AdvancedFbaPortal({
               <span
                 className={`text-[9px] font-mono px-2 py-0.5 rounded border ${
                   isLightMode
-                    ? "bg-[#f5e9ce] border-dune-orange"
-                    : "bg-[#1c1512] border-border"
+                    ? "bg-dune-sand border-dune-orange"
+                    : "bg-dune-ink border-border"
                 }`}
               >
                 Thicker Arrows = Elevated Flux Magnitude
@@ -1183,11 +1184,11 @@ export default function AdvancedFbaPortal({
             <div
               className={`flex flex-wrap items-center gap-4 text-[9.5px] font-mono p-2.5 rounded-[4px] border mb-4 transition-all ${
                 isLightMode
-                  ? "bg-[#f8f5ee] border-dune-orange/10 text-foreground"
-                  : "bg-[#03060a]/90 border-border text-foreground"
+                  ? "bg-card border-dune-orange/10 text-foreground"
+                  : "bg-dune-ink/90 border-border text-foreground"
               }`}
             >
-              <span className="font-extrabold uppercase text-[9pt] text-[#b07568] select-none">
+              <span className="font-extrabold uppercase text-[9pt] text-dune-rose select-none">
                 Flow Channels Legend:
               </span>
               <div className="flex items-center gap-1.5">
@@ -1234,8 +1235,8 @@ export default function AdvancedFbaPortal({
             <div
               className={`relative border rounded-[4px] h-[410px] overflow-hidden select-none ${
                 isLightMode
-                  ? "bg-[#fdfbf6] border-dune-orange/5"
-                  : "bg-[#020305]/95 border-border"
+                  ? "bg-card border-dune-orange/5"
+                  : "bg-dune-ink/95 border-border"
               }`}
             >
               <svg
@@ -1298,8 +1299,8 @@ export default function AdvancedFbaPortal({
                   cx="50"
                   cy="80"
                   r="15"
-                  fill={isLightMode ? "#ffffff" : "#0c101b"}
-                  stroke={isLightMode ? "#43362e" : "#334155"}
+                  fill={isLightMode ? SURFACE.light : DUNE.ink}
+                  stroke={isLightMode ? HAIRLINE.dark : DUNE.ash}
                   strokeWidth="1.5"
                 />
                 <text
@@ -1319,7 +1320,7 @@ export default function AdvancedFbaPortal({
                   cx="160"
                   cy="80"
                   r="15"
-                  fill={isLightMode ? "#ffffff" : "#0c101b"}
+                  fill={isLightMode ? SURFACE.light : DUNE.ink}
                   stroke={skyColor}
                   strokeWidth="2"
                 />
@@ -1340,7 +1341,7 @@ export default function AdvancedFbaPortal({
                   cx="280"
                   cy="80"
                   r="15"
-                  fill={isLightMode ? "#ffffff" : "#0c101b"}
+                  fill={isLightMode ? SURFACE.light : DUNE.ink}
                   stroke={skyColor}
                   strokeWidth="1.5"
                 />
@@ -1361,7 +1362,7 @@ export default function AdvancedFbaPortal({
                   cx="280"
                   cy="180"
                   r="15"
-                  fill={isLightMode ? "#ffffff" : "#0c101b"}
+                  fill={isLightMode ? SURFACE.light : DUNE.ink}
                   stroke={skyColor}
                   strokeWidth="1.5"
                 />
@@ -1382,7 +1383,7 @@ export default function AdvancedFbaPortal({
                   cx="160"
                   cy="230"
                   r="15"
-                  fill={isLightMode ? "#ffffff" : "#0c101b"}
+                  fill={isLightMode ? SURFACE.light : DUNE.ink}
                   stroke={skyColor}
                   strokeWidth="1.5"
                 />
@@ -1403,7 +1404,7 @@ export default function AdvancedFbaPortal({
                   cx="160"
                   cy="330"
                   r="15"
-                  fill={isLightMode ? "#ffffff" : "#0c101b"}
+                  fill={isLightMode ? SURFACE.light : DUNE.ink}
                   stroke={skyColor}
                   strokeWidth="1.5"
                 />
@@ -1424,7 +1425,7 @@ export default function AdvancedFbaPortal({
                   cx="290"
                   cy="330"
                   r="15"
-                  fill={isLightMode ? "#ffffff" : "#0c101b"}
+                  fill={isLightMode ? SURFACE.light : DUNE.ink}
                   stroke={skyColor}
                   strokeWidth="1.5"
                 />
@@ -1445,7 +1446,7 @@ export default function AdvancedFbaPortal({
                   cx="160"
                   cy="150"
                   r="15"
-                  fill={isLightMode ? "#ffffff" : "#0c101b"}
+                  fill={isLightMode ? SURFACE.light : DUNE.ink}
                   stroke={roseColor}
                   strokeWidth="1.5"
                 />
@@ -1466,7 +1467,7 @@ export default function AdvancedFbaPortal({
                   cx="80"
                   cy="190"
                   r="15"
-                  fill={isLightMode ? "#ffffff" : "#0c101b"}
+                  fill={isLightMode ? SURFACE.light : DUNE.ink}
                   stroke={roseColor}
                   strokeWidth="1.5"
                 />
@@ -1487,8 +1488,8 @@ export default function AdvancedFbaPortal({
                   cx="390"
                   cy="370"
                   r="15"
-                  fill={isLightMode ? "#ffffff" : "#0c101b"}
-                  stroke={isLightMode ? "#475569" : "#8a7e75"}
+                  fill={isLightMode ? SURFACE.light : DUNE.ink}
+                  stroke={isLightMode ? DUNE.ash : DUNE.ash}
                   strokeWidth="1.5"
                 />
                 <text
@@ -1508,7 +1509,7 @@ export default function AdvancedFbaPortal({
                   cx="410"
                   cy="270"
                   r="15"
-                  fill={isLightMode ? "#ffffff" : "#0c101b"}
+                  fill={isLightMode ? SURFACE.light : DUNE.ink}
                   stroke={emeraldColor}
                   strokeWidth="1.5"
                 />
@@ -1529,7 +1530,7 @@ export default function AdvancedFbaPortal({
                   cx="530"
                   cy="270"
                   r="15"
-                  fill={isLightMode ? "#ffffff" : "#0c101b"}
+                  fill={isLightMode ? SURFACE.light : DUNE.ink}
                   stroke={emeraldColor}
                   strokeWidth="1.5"
                 />
@@ -1550,7 +1551,7 @@ export default function AdvancedFbaPortal({
                   cx="630"
                   cy="220"
                   r="15"
-                  fill={isLightMode ? "#ffffff" : "#0c101b"}
+                  fill={isLightMode ? SURFACE.light : DUNE.ink}
                   stroke={emeraldColor}
                   strokeWidth="1.5"
                 />
@@ -1571,7 +1572,7 @@ export default function AdvancedFbaPortal({
                   cx="530"
                   cy="150"
                   r="15"
-                  fill={isLightMode ? "#ffffff" : "#0c101b"}
+                  fill={isLightMode ? SURFACE.light : DUNE.ink}
                   stroke={emeraldColor}
                   strokeWidth="2.5"
                 />
@@ -1592,7 +1593,7 @@ export default function AdvancedFbaPortal({
                   cx="530"
                   cy="60"
                   r="15"
-                  fill={isLightMode ? "#ffffff" : "#0c101b"}
+                  fill={isLightMode ? SURFACE.light : DUNE.ink}
                   stroke={roseColor}
                   strokeWidth="2.5"
                 />
@@ -1613,7 +1614,7 @@ export default function AdvancedFbaPortal({
                   cx="680"
                   cy="60"
                   r="17"
-                  fill={isLightMode ? "#f0fdf4" : "#062f22"}
+                  fill={isLightMode ? TINT.tealWash : TINT.tealDeep}
                   stroke={emeraldColor}
                   strokeWidth="3.5"
                 />
@@ -1623,7 +1624,7 @@ export default function AdvancedFbaPortal({
                   textAnchor="middle"
                   fontSize="9"
                   fontWeight="black"
-                  fill={isLightMode ? "#15803d" : "#4ade80"}
+                  fill={isLightMode ? TINT.tealDeep : STATUS.good}
                   className="font-sans select-none pointer-events-none"
                 >
                   PGA
@@ -1634,7 +1635,7 @@ export default function AdvancedFbaPortal({
                   cx="650"
                   cy="320"
                   r="15"
-                  fill={isLightMode ? "#ffffff" : "#0c101b"}
+                  fill={isLightMode ? SURFACE.light : DUNE.ink}
                   stroke={emeraldColor}
                   strokeWidth="1.5"
                 />
@@ -1655,7 +1656,7 @@ export default function AdvancedFbaPortal({
                   cx="530"
                   cy="380"
                   r="15"
-                  fill={isLightMode ? "#ffffff" : "#0c101b"}
+                  fill={isLightMode ? SURFACE.light : DUNE.ink}
                   stroke={emeraldColor}
                   strokeWidth="1.5"
                 />
@@ -1676,7 +1677,7 @@ export default function AdvancedFbaPortal({
                   cx="410"
                   cy="180"
                   r="15"
-                  fill={isLightMode ? "#ffffff" : "#0c101b"}
+                  fill={isLightMode ? SURFACE.light : DUNE.ink}
                   stroke={emeraldColor}
                   strokeWidth="1.5"
                 />
@@ -1959,7 +1960,7 @@ export default function AdvancedFbaPortal({
                   y="36"
                   fontSize="10.5"
                   fontWeight="black"
-                  fill={isLightMode ? "#047857" : "#cf9d90"}
+                  fill={isLightMode ? TINT.tealDeep : TINT.roseLight}
                   textAnchor="middle"
                   className="font-sans antialiased tracking-tight bg-dune-teal/50"
                 >
@@ -1974,7 +1975,7 @@ export default function AdvancedFbaPortal({
             className={`p-5 rounded-[6px] border space-y-4 ${
               isLightMode
                 ? "bg-white border-dune-orange/10 "
-                : "bg-[#1c1512] border-border"
+                : "bg-dune-ink border-border"
             }`}
           >
             <div className="flex justify-between items-center">
@@ -1995,8 +1996,8 @@ export default function AdvancedFbaPortal({
             <div
               className={`overflow-x-auto border rounded-[6px] p-2 ${
                 isLightMode
-                  ? "bg-[#fcfaf5] border-dune-orange/10"
-                  : "bg-[#05070a] border-border"
+                  ? "bg-card border-dune-orange/10"
+                  : "bg-dune-ink border-border"
               }`}
             >
               <div className="min-w-[700px] text-[8px] font-mono select-none">
@@ -2070,7 +2071,7 @@ export default function AdvancedFbaPortal({
             className={`p-5 rounded-[6px] border space-y-4 transition-all duration-300 ${
               isLightMode
                 ? "bg-white border-dune-orange/10 "
-                : "bg-[#1c1512] border-border"
+                : "bg-dune-ink border-border"
             }`}
           >
             <div className="flex justify-between items-center">
@@ -2085,8 +2086,8 @@ export default function AdvancedFbaPortal({
               <span
                 className={`text-[9.5px] font-mono px-2 py-0.5 rounded border ${
                   isLightMode
-                    ? "bg-[#f5e9ce] border-dune-orange"
-                    : "bg-[#0a0f1e] border-border"
+                    ? "bg-dune-sand border-dune-orange"
+                    : "bg-dune-ink border-border"
                 }`}
               >
                 Top 5 Key Flux Coordinates
@@ -2099,8 +2100,8 @@ export default function AdvancedFbaPortal({
                   key={item.id}
                   className={`p-3 rounded-[6px] border flex flex-col justify-between transition-all hover:scale-[1.02] ${
                     isLightMode
-                      ? "bg-[#faf8f4] border-dune-orange/10 "
-                      : "bg-[#060a10]/80 border-border "
+                      ? "bg-card border-dune-orange/10 "
+                      : "bg-dune-ink/80 border-border "
                   }`}
                 >
                   <div>
@@ -2163,7 +2164,7 @@ export default function AdvancedFbaPortal({
               className={`p-4 rounded-[6px] border space-y-3.5 ${
                 isLightMode
                   ? "bg-white border-dune-orange/10 "
-                  : "bg-[#1c1512] border-border"
+                  : "bg-dune-ink border-border"
               }`}
             >
               <h4
@@ -2209,7 +2210,7 @@ export default function AdvancedFbaPortal({
               className={`p-4 rounded-[6px] border space-y-2.5 ${
                 isLightMode
                   ? "bg-white border-dune-orange/10 "
-                  : "bg-[#1c1512] border-border"
+                  : "bg-dune-ink border-border"
               }`}
             >
               <h4
@@ -2265,7 +2266,7 @@ export default function AdvancedFbaPortal({
           isLightMode ? "bg-white/70 text-foreground" : "bg-card/70 text-dune-teal"
         }`}
       >
-        <span className="text-[10px] uppercase font-mono tracking-widest text-[#c28a7c] font-black block mb-1">
+        <span className="text-[10px] uppercase font-mono tracking-widest text-dune-rose font-black block mb-1">
           SYSTEM METABOLIC SIMULATION OUTCOME
         </span>
         <h4 className="text-sm font-bold uppercase tracking-wider font-sans mb-1.5">

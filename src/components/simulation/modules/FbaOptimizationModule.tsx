@@ -52,6 +52,7 @@ import {
   Themed,
 } from "../_shared";
 import { GlossaryText } from "../../GlossaryTerm";
+import { DUNE, INK, STATUS, SURFACE, TINT } from "@/src/lib/palette";
 
 interface Props extends Themed {
   /** Bacterial prongs present (subset of {1,2}); decides the FBA objective. */
@@ -245,19 +246,19 @@ function PathwayFlowMap({
   const maxFlux = Math.max(1e-6, ...vals);
 
   const HEX: Record<ColorKey, string> = {
-    spine: isLightMode ? "#d6884a" : "#e0a878",
-    tca: isLightMode ? "#4a8f86" : "#8fb3ac",
-    ppp: isLightMode ? "#a88f6f" : "#b9a07f",
-    ana: isLightMode ? "#a88f6f" : "#c4a988",
-    over: "#ef4444",
-    bio: isLightMode ? "#b07568" : "#cf9d90",
-    pga: isLightMode ? "#d97706" : "#fbbf24",
-    ca: isLightMode ? "#0d9488" : "#2dd4bf",
+    spine: isLightMode ? DUNE.orange : TINT.orangeLight,
+    tca: isLightMode ? TINT.tealDeep : DUNE.teal,
+    ppp: isLightMode ? TINT.sandDeep : TINT.sandDeep,
+    ana: isLightMode ? TINT.sandDeep : TINT.sandLight,
+    over: STATUS.bad,
+    bio: isLightMode ? TINT.roseDeep : TINT.roseLight,
+    pga: isLightMode ? STATUS.warn : TINT.orangeLight,
+    ca: isLightMode ? TINT.tealDeep : TINT.tealLight,
   };
-  const muted = isLightMode ? "#c4bcae" : "#3a475c";
-  const inkNode = isLightMode ? "#fdfaf3" : "#1c1512";
-  const nodeStroke = isLightMode ? "#57534e" : "#8a7e75";
-  const nodeText = isLightMode ? "#1c1917" : "#f3e9db";
+  const muted = isLightMode ? TINT.sandLight : DUNE.ash;
+  const inkNode = isLightMode ? SURFACE.light : DUNE.ink;
+  const nodeStroke = isLightMode ? DUNE.ash : DUNE.ash;
+  const nodeText = isLightMode ? INK.light : INK.dark;
 
   // Trim an edge back from both node centres so the arrowhead lands cleanly on the target rim.
   const geom = (from: [number, number], to: [number, number]) => {
@@ -349,7 +350,7 @@ function PathwayFlowMap({
                   y1={g.y1}
                   x2={g.x2}
                   y2={g.y2}
-                  stroke={isLightMode ? "#ffffff" : "#f3e9db"}
+                  stroke={isLightMode ? SURFACE.light : INK.dark}
                   strokeWidth={Math.min(2.4, w * 0.45)}
                   strokeLinecap="round"
                   opacity={0.85}
@@ -802,14 +803,14 @@ export default function FbaOptimizationModule({
         <div
           className={`mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[9px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
-          {legendDot(isLightMode ? "#d6884a" : "#e0a878", "glycolysis")}
-          {legendDot(isLightMode ? "#4a8f86" : "#8fb3ac", "TCA cycle")}
-          {legendDot(isLightMode ? "#a88f6f" : "#b9a07f", "pentose-P (NADPH)")}
-          {legendDot(isLightMode ? "#a88f6f" : "#c4a988", "anaplerosis")}
-          {has1 && legendDot(isLightMode ? "#d97706" : "#fbbf24", "γ-PGA")}
-          {has2 && legendDot(isLightMode ? "#0d9488" : "#2dd4bf", "CA enzyme")}
-          {legendDot(isLightMode ? "#b07568" : "#cf9d90", "biomass")}
-          {legendDot("#ef4444", "overflow (acetate/lactate)")}
+          {legendDot(isLightMode ? DUNE.orange : TINT.orangeLight, "glycolysis")}
+          {legendDot(isLightMode ? TINT.tealDeep : DUNE.teal, "TCA cycle")}
+          {legendDot(isLightMode ? TINT.sandDeep : TINT.sandDeep, "pentose-P (NADPH)")}
+          {legendDot(isLightMode ? TINT.sandDeep : TINT.sandLight, "anaplerosis")}
+          {has1 && legendDot(isLightMode ? STATUS.warn : TINT.orangeLight, "γ-PGA")}
+          {has2 && legendDot(isLightMode ? TINT.tealDeep : TINT.tealLight, "CA enzyme")}
+          {legendDot(isLightMode ? TINT.roseDeep : TINT.roseLight, "biomass")}
+          {legendDot(STATUS.bad, "overflow (acetate/lactate)")}
         </div>
         <p
           className={`mt-1.5 text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
@@ -872,7 +873,7 @@ export default function FbaOptimizationModule({
             <Line
               type="monotone"
               dataKey="product"
-              stroke="#d6884a"
+              stroke={DUNE.orange}
               strokeWidth={2.5}
               dot={false}
             />
@@ -880,7 +881,7 @@ export default function FbaOptimizationModule({
               x={+analysis.growth.toFixed(2)}
               y={+analysis.product.toFixed(2)}
               r={6}
-              fill={objective === "growth" ? "#c28a7c" : "#f59e0b"}
+              fill={objective === "growth" ? DUNE.rose : STATUS.warn}
               stroke={isLightMode ? "#fff" : "#000"}
             />
           </LineChart>
@@ -905,13 +906,13 @@ export default function FbaOptimizationModule({
               [
                 "To product",
                 carbonToProduct.product,
-                isLightMode ? "#d97706" : "#fbbf24",
+                isLightMode ? STATUS.warn : TINT.orangeLight,
               ],
-              ["Wasted as acetate", carbonToProduct.acetate, "#ef4444"],
+              ["Wasted as acetate", carbonToProduct.acetate, STATUS.bad],
               [
                 "Released as CO₂",
                 carbonToProduct.co2,
-                isLightMode ? "#8a7e75" : "#94a3b8",
+                isLightMode ? DUNE.ash : DUNE.ash,
               ],
             ] as [string, number, string][]
           ).map(([lbl, pct, hex]) => (
@@ -991,16 +992,16 @@ export default function FbaOptimizationModule({
                     key={d.id}
                     fill={
                       d.id === "EX_PGA"
-                        ? "#f59e0b"
+                        ? STATUS.warn
                         : d.id === "EX_CA"
-                          ? "#cf9d90"
+                          ? TINT.roseLight
                           : d.id === "EX_BIOM"
-                            ? "#c28a7c"
+                            ? DUNE.rose
                             : d.id === "OVF"
-                              ? "#ef4444"
+                              ? STATUS.bad
                               : isLightMode
-                                ? "#d6884a"
-                                : "#e0a878"
+                                ? DUNE.orange
+                                : TINT.orangeLight
                     }
                   />
                 ))}
@@ -1076,8 +1077,8 @@ export default function FbaOptimizationModule({
       <div
         className={`px-4 py-3 rounded-[6px] border text-[10px] font-mono leading-relaxed ${
           isLightMode
-            ? "bg-[#fcfaf5] border-dune-orange/10 text-muted-foreground"
-            : "bg-[#1c1512] border-border text-muted-foreground"
+            ? "bg-card border-dune-orange/10 text-muted-foreground"
+            : "bg-dune-ink border-border text-muted-foreground"
         }`}
       >
         <GlossaryText>

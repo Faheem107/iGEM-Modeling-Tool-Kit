@@ -10,6 +10,7 @@ import Link from "next/link";
 import SandParticles from "./dune-story/SandParticles";
 import { GlossaryText } from "@/src/components/GlossaryTerm";
 import { NAV } from "@/content/copy";
+import { DUNE } from "@/src/lib/palette";
 import {
   CYCLE_BEATS as BEATS,
   CYCLE_STAGES,
@@ -34,11 +35,11 @@ import {
 
 // Palette (Dunelock) picked to read on both the warm sand and dark ember stages.
 const C = {
-  loose: "#d6884a", // dune-orange, loose grains
-  cured: "#8fb3ac", // dune-teal, bound crust
-  mesh: "#c28a7c", // dune-rose, cross-links
-  node: "#d6884a",
-  shield: "#8fb3ac",
+  loose: DUNE.orange, // dune-orange, loose grains
+  cured: DUNE.teal, // dune-teal, bound crust
+  mesh: DUNE.rose, // dune-rose, cross-links
+  node: DUNE.orange,
+  shield: DUNE.teal,
   cross: "#c0392b",
 };
 
@@ -584,7 +585,7 @@ function CycleRing({
           textAnchor="middle"
           fontSize="15"
           fontWeight="700"
-          fill={isLightMode ? "#6e1e18" : "#d6884a"}
+          fill={isLightMode ? DUNE.maroon : DUNE.orange}
         >
           {turn}
         </text>

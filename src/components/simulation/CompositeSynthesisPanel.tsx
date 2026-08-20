@@ -45,6 +45,7 @@ import {
   type InteractionEffect,
 } from "../../lib/physics";
 import { Panel, StatCard, chartColors, tooltipStyle, Themed } from "./_shared";
+import { DUNE, STATUS } from "@/src/lib/palette";
 
 interface Props extends Themed {
   prongs: ProngId[];
@@ -53,9 +54,9 @@ interface Props extends Themed {
 }
 
 const PRONG_COLOR: Record<ProngId, string> = {
-  1: "#f59e0b",
-  2: "#c28a7c",
-  3: "#f43f5e",
+  1: STATUS.warn,
+  2: DUNE.rose,
+  3: DUNE.rose,
 };
 const toMilli = (n: number) => n * 1000; // N/m → mN/m
 
@@ -266,8 +267,8 @@ export default function CompositeSynthesisPanel({
               <Radar
                 name="Combined"
                 dataKey="Combined"
-                stroke="#d6884a"
-                fill="#d6884a"
+                stroke={DUNE.orange}
+                fill={DUNE.orange}
                 fillOpacity={0.3}
                 strokeWidth={2.5}
               />

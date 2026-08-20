@@ -16,6 +16,7 @@ import {
 import GlossaryTerm from "./GlossaryTerm";
 import { ModuleActions } from "./simulation/_shared";
 import { PORTAL_NAMES } from "@/content/copy";
+import { DUNE } from "@/src/lib/palette";
 
 interface WetLabSandbox2DProps {
   onBack: () => void;
@@ -321,14 +322,14 @@ export default function WetLabSandbox2D({
           const y = r * cellH;
 
           if (cell.revealedBedrock) {
-            ctx.fillStyle = "#1e110b";
+            ctx.fillStyle = DUNE.ink;
           } else {
             const val = Math.floor(100 + cell.height * 115);
             ctx.fillStyle = `rgb(${val}, ${Math.floor(val * 0.68)}, ${Math.floor(val * 0.32)})`;
           }
           ctx.fillRect(x, y, cellW, cellH);
 
-          ctx.strokeStyle = "#05070a";
+          ctx.strokeStyle = DUNE.ink;
           ctx.lineWidth = 0.25;
           ctx.strokeRect(x, y, cellW, cellH);
         }
@@ -342,7 +343,7 @@ export default function WetLabSandbox2D({
           const y = r * cellH;
 
           if (cell.revealedBedrock) {
-            ctx.fillStyle = "#1e110b";
+            ctx.fillStyle = DUNE.ink;
           } else {
             const val = Math.floor(100 + cell.height * 115);
             const rComp = Math.floor(val * (1.0 - cell.organicBind * 0.8));
@@ -352,7 +353,7 @@ export default function WetLabSandbox2D({
           }
           ctx.fillRect(x, y, cellW, cellH);
 
-          ctx.strokeStyle = "#05070a";
+          ctx.strokeStyle = DUNE.ink;
           ctx.lineWidth = 0.25;
           ctx.strokeRect(x, y, cellW, cellH);
 
@@ -371,7 +372,7 @@ export default function WetLabSandbox2D({
         }
       }
 
-      ctx.strokeStyle = "#334155";
+      ctx.strokeStyle = DUNE.ash;
       ctx.lineWidth = 4;
       ctx.beginPath();
       ctx.moveTo(canvas.width / 2, 0);
@@ -440,7 +441,7 @@ export default function WetLabSandbox2D({
           className={`lg:col-span-5 space-y-6 p-5 rounded-[6px] border transition-all duration-300 ${
             isLightMode
               ? "bg-white/95 border-dune-orange/10 text-foreground"
-              : "bg-[#1c1512] border-border text-foreground"
+              : "bg-dune-ink border-border text-foreground"
           }`}
         >
           <div>
@@ -613,7 +614,7 @@ export default function WetLabSandbox2D({
           </div>
 
           <div
-            className={`p-4 rounded-[6px] border mt-6 ${isLightMode ? "bg-[#fcfaf5] border-dune-orange/10" : "bg-[#020508] border-border"}`}
+            className={`p-4 rounded-[6px] border mt-6 ${isLightMode ? "bg-card border-dune-orange/10" : "bg-dune-ink border-border"}`}
           >
             <div className="flex items-center gap-2 mb-4">
               <Wind
@@ -634,7 +635,7 @@ export default function WetLabSandbox2D({
                     <code
                       className={
                         isLightMode
-                          ? "text-[#b07568] font-bold"
+                          ? "text-dune-rose font-bold"
                           : "text-dune-teal"
                       }
                     >
@@ -743,7 +744,7 @@ export default function WetLabSandbox2D({
             className={`p-1.5 rounded-[6px] border flex flex-col relative overflow-hidden transition-all duration-300 ${
               isLightMode
                 ? "bg-white border-dune-orange/10 "
-                : "bg-[#020305] border-border"
+                : "bg-dune-ink border-border"
             }`}
           >
             <canvas
@@ -793,7 +794,7 @@ export default function WetLabSandbox2D({
             className={`border rounded-[6px] overflow-hidden mt-4 ${
               isLightMode
                 ? "bg-background border-dune-orange/10"
-                : "bg-[#1c1512] border-border"
+                : "bg-dune-ink border-border"
             }`}
           >
             <div className="flex border-b border-inherit">
@@ -864,7 +865,7 @@ export default function WetLabSandbox2D({
                 <div className="animate-fadeIn space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div
-                      className={`p-2.5 border rounded ${isLightMode ? "bg-[#fcfaf5]/85 border-[#b8956c]/20" : "bg-[#04060a] border-border"}`}
+                      className={`p-2.5 border rounded ${isLightMode ? "bg-card/85 border-dune-sand/20" : "bg-dune-ink border-border"}`}
                     >
                       <span className="text-dune-rose font-bold block mb-1">
                         1. Temperature Viability:
@@ -876,7 +877,7 @@ export default function WetLabSandbox2D({
                       </p>
                     </div>
                     <div
-                      className={`p-2.5 border rounded ${isLightMode ? "bg-[#fcfaf5]/85 border-[#b8956c]/20" : "bg-[#04060a] border-border"}`}
+                      className={`p-2.5 border rounded ${isLightMode ? "bg-card/85 border-dune-sand/20" : "bg-dune-ink border-border"}`}
                     >
                       <span className="text-dune-orange font-bold block mb-1">
                         2. Salinity Saturation:
@@ -888,7 +889,7 @@ export default function WetLabSandbox2D({
                       </p>
                     </div>
                     <div
-                      className={`p-2.5 border rounded ${isLightMode ? "bg-[#fcfaf5]/85 border-[#b8956c]/20" : "bg-[#04060a] border-border"}`}
+                      className={`p-2.5 border rounded ${isLightMode ? "bg-card/85 border-dune-sand/20" : "bg-dune-ink border-border"}`}
                     >
                       <span className="text-dune-orange font-bold block mb-1">
                         3. Sand Shear Modulus Gs:
@@ -900,7 +901,7 @@ export default function WetLabSandbox2D({
                       </p>
                     </div>
                     <div
-                      className={`p-2.5 border rounded ${isLightMode ? "bg-[#fcfaf5]/85 border-[#b8956c]/20" : "bg-[#04060a] border-border"}`}
+                      className={`p-2.5 border rounded ${isLightMode ? "bg-card/85 border-dune-sand/20" : "bg-dune-ink border-border"}`}
                     >
                       <span className="text-dune-teal font-bold block mb-1">
                         4. Threshold Windspeed u*t:

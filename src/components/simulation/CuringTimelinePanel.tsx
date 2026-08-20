@@ -37,6 +37,7 @@ import {
   Themed,
 } from "./_shared";
 import GlossaryTerm from "../GlossaryTerm";
+import { DUNE, STATUS, TINT } from "@/src/lib/palette";
 import {
   curingTimeline,
   PRONG_LABEL,
@@ -53,9 +54,9 @@ interface Props extends Themed {
 }
 
 const PRONG_COLOR: Record<ProngId, string> = {
-  1: "#f59e0b",
-  2: "#c28a7c",
-  3: "#f43f5e",
+  1: STATUS.warn,
+  2: DUNE.rose,
+  3: DUNE.rose,
 };
 /** Protocol spray times over the maturation window (Study 5). */
 const SPRAY_HOURS = [0, 8, 16, 24, 32];
@@ -230,9 +231,9 @@ export default function CuringTimelinePanel({
               <Area
                 type="monotone"
                 dataKey="total"
-                stroke="#8fb3ac"
+                stroke={DUNE.teal}
                 strokeWidth={2.5}
-                fill="#8fb3ac"
+                fill={DUNE.teal}
                 fillOpacity={0.15}
                 name="crust cohesion"
               />
@@ -240,7 +241,7 @@ export default function CuringTimelinePanel({
                 <ReferenceLine
                   key={h}
                   x={h}
-                  stroke={isLightMode ? "#8fb3ac" : "#8fb3ac"}
+                  stroke={isLightMode ? DUNE.teal : DUNE.teal}
                   strokeDasharray="2 3"
                   strokeOpacity={0.6}
                   label={{
@@ -321,12 +322,12 @@ export default function CuringTimelinePanel({
               ))}
               <ReferenceLine
                 y={survivalMn}
-                stroke={isLightMode ? "#e11d48" : "#fb7185"}
+                stroke={isLightMode ? DUNE.maroon : TINT.roseLight}
                 strokeDasharray="5 3"
                 label={{
                   value: `survive ${designWind} m/s`,
                   fontSize: 8,
-                  fill: isLightMode ? "#e11d48" : "#fb7185",
+                  fill: isLightMode ? DUNE.maroon : TINT.roseLight,
                   position: "insideTopRight",
                 }}
               />

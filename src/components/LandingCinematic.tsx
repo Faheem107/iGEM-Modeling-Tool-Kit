@@ -15,6 +15,7 @@ import { duneGradient, grainOverlayStyle } from "@/src/lib/grain";
 import { moduleHref } from "@/src/lib/modelIndex";
 import type { MolstarApi } from "@/components/molstar-viewer";
 import { NAV, PROJECT_TEAM, PROJECT_TITLE } from "@/content/copy";
+import { DUNE } from "@/src/lib/palette";
 import {
   microGrains,
   polymerBridges,
@@ -99,11 +100,11 @@ const BEATS: BeatCopy[] = [
 ];
 
 const C = {
-  sand: "#d6884a",
+  sand: DUNE.orange,
   sandDeep: "#b5702f",
-  cured: "#8fb3ac",
+  cured: DUNE.teal,
   teal: "#3E8C82",
-  mesh: "#c28a7c",
+  mesh: DUNE.rose,
 };
 
 const smooth = (x: number, a: number, b: number) => {

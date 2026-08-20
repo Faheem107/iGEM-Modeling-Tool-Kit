@@ -14,6 +14,7 @@ import { useGlossary, GlossaryText } from "../GlossaryTerm";
 import { MODULE_CODE } from "../../lib/moduleCode";
 import type { ModuleId } from "../../lib/prongs";
 import { NAV } from "@/content/copy";
+import { DUNE, HAIRLINE, INK, MUTED_INK, SURFACE } from "@/src/lib/palette";
 
 export interface Themed {
   isLightMode: boolean;
@@ -31,20 +32,20 @@ const revealProps = {
 
 /** recharts color tokens for a given theme. */
 export const chartColors = (light: boolean) => ({
-  grid: light ? "#e0d3c1" : "#3a2f29",
-  axis: light ? "#6f6157" : "#8a7e75",
-  tooltipBg: light ? "#ffffff" : "#1c1512",
-  tooltipBorder: light ? "#e0d3c1" : "#43362e",
-  text: light ? "#2a1a16" : "#f3e9db",
+  grid: light ? HAIRLINE.light : HAIRLINE.dark,
+  axis: light ? MUTED_INK.light : DUNE.ash,
+  tooltipBg: light ? SURFACE.light : DUNE.ink,
+  tooltipBorder: light ? HAIRLINE.light : HAIRLINE.dark,
+  text: light ? INK.light : INK.dark,
 });
 
 export const tooltipStyle = (light: boolean) => ({
   backgroundColor: light ? "rgba(255,255,255,0.97)" : "rgba(28,21,18,0.97)",
-  border: `1px solid ${light ? "#e0d3c1" : "#43362e"}`,
+  border: `1px solid ${light ? HAIRLINE.light : HAIRLINE.dark}`,
   borderRadius: 3,
   fontSize: 11,
   fontFamily: "var(--font-lexend), system-ui, sans-serif",
-  color: light ? "#2a1a16" : "#f3e9db",
+  color: light ? INK.light : INK.dark,
 });
 
 export function Panel({
