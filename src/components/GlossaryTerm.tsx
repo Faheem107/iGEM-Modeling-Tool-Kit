@@ -257,7 +257,7 @@ function CodePanel({
           <button
             onClick={copy}
             disabled={!code}
-            className={`inline-flex items-center gap-2 text-[length:var(--text-caption)] font-bold px-2 py-2 rounded-[3px] border transition-colors disabled:opacity-50 ${
+            className={`inline-flex items-center gap-2 text-[length:var(--text-caption)] font-bold px-2 py-2 rounded-[4px] border transition-colors disabled:opacity-50 ${
               isLightMode
                 ? "border-border text-muted-foreground hover:bg-muted"
                 : "border-white/15 text-foreground hover:bg-white/10"
@@ -273,7 +273,7 @@ function CodePanel({
           <a
             href={codeUrl}
             download={filename}
-            className="inline-flex items-center gap-2 text-[length:var(--text-caption)] font-bold px-2 py-2 rounded-[3px] bg-dune-orange text-dune-basalt transition-opacity hover:opacity-90"
+            className="inline-flex items-center gap-2 text-[length:var(--text-caption)] font-bold px-2 py-2 rounded-[4px] bg-dune-orange text-dune-basalt transition-opacity hover:opacity-90"
           >
             <Download className="h-3.5 w-3.5" /> Download .py
           </a>
@@ -378,7 +378,7 @@ function SandyxOverlay({
         // Lenis owns the wheel globally, so without data-lenis-prevent this
         // panel never receives one and the page scrolls behind it instead.
         data-lenis-prevent={scroll ? "" : undefined}
-        className={`relative w-full ${maxWidthClass} ${scroll ? "max-h-[88vh] overflow-y-auto overscroll-contain no-scrollbar" : "overflow-hidden"} rounded-3xl border ${
+        className={`relative w-full ${maxWidthClass} ${scroll ? "max-h-[88vh] overflow-y-auto overscroll-contain no-scrollbar" : "overflow-hidden"} rounded-[6px] border ${
           isLightMode
             ? "bg-white/90 border-white/70 text-foreground"
             : "bg-dune-basalt/85 border-white/10 text-foreground"
@@ -621,7 +621,7 @@ export const GlossaryProvider: React.FC<{
                             }),
                           );
                         }}
-                        className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-[3px] bg-dune-orange text-dune-basalt text-[length:var(--text-micro)] font-bold uppercase tracking-[0.1em] transition-opacity hover:opacity-90"
+                        className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-[4px] bg-dune-orange text-dune-basalt text-[length:var(--text-micro)] font-bold uppercase tracking-[0.1em] transition-opacity hover:opacity-90"
                       >
                         {entry.jumpLabel ?? "Go to the module"}
                         <ArrowRight className="h-3.5 w-3.5" />
@@ -1141,7 +1141,7 @@ export const Term: React.FC<TermProps> = ({ k, term, children, className }) => {
         }
       }}
       title={`${resolved.entry.title}, tap or drop Sandyx for an explanation`}
-      className={`sandyx-term cursor-help underline decoration-dotted decoration-2 underline-offset-2 font-semibold transition-colors duration-150 rounded px-1 -mx-0.5 py-1 -my-1 ${
+      className={`sandyx-term cursor-help underline decoration-dotted decoration-2 underline-offset-2 font-semibold transition-colors duration-150 rounded-[4px] px-1 -mx-0.5 py-1 -my-1 ${
         isLightMode
           ? "decoration-dune-teal/70 text-foreground hover:text-dune-teal"
           : "decoration-dune-teal/70 text-foreground hover:text-dune-teal"

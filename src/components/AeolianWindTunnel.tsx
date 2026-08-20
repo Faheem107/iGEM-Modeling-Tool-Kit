@@ -1053,7 +1053,7 @@ export default function AeolianWindTunnel({
                   Bio-Treated Time:
                 </span>
                 <span
-                  className={`text-[length:var(--text-micro)] font-black px-2 py-1 rounded ${
+                  className={`text-[length:var(--text-micro)] font-black px-2 py-1 rounded-[4px] ${
                     physicsResult.isShattered
                       ? "text-dune-maroon bg-dune-maroon"
                       : stopwatchMetrics.treatedFailSec > 15

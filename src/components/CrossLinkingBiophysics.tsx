@@ -472,7 +472,7 @@ export default function CrossLinkingBiophysics({
     <div
       className={`grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 rounded-[6px] border transition-all duration-300 ${
         isLightMode
-          ? "bg-card border-dune-orange/10 shadow-[0_4px_24px_rgba(139,94,26,0.06)]"
+          ? "bg-card border-dune-orange/10"
           : "bg-dune-ink border-border "
       }`}
       id="crosslinking-biophysics-panel"
@@ -501,11 +501,11 @@ export default function CrossLinkingBiophysics({
               Settings
             </h3>
             <div
-              className={`flex gap-2 p-1 rounded border ${isLightMode ? "bg-dune-orange/50 border-dune-orange/10" : "bg-dune-ink border-border"}`}
+              className={`flex gap-2 p-1 rounded-[4px] border ${isLightMode ? "bg-dune-orange/50 border-dune-orange/10" : "bg-dune-ink border-border"}`}
             >
               <button
                 onClick={() => handlePreset("day")}
-                className={`px-2 py-1 text-[length:var(--text-caption)] font-mono font-bold rounded flex items-center gap-1 cursor-pointer transition ${
+                className={`px-2 py-1 text-[length:var(--text-caption)] font-mono font-bold rounded-[4px] flex items-center gap-1 cursor-pointer transition ${
                   activePreset === "day"
                     ? isLightMode
                       ? "bg-white text-dune-teal border border-dune-orange/15 "
@@ -519,7 +519,7 @@ export default function CrossLinkingBiophysics({
               </button>
               <button
                 onClick={() => handlePreset("night")}
-                className={`px-2 py-1 text-[length:var(--text-caption)] font-mono font-bold rounded flex items-center gap-1 cursor-pointer transition ${
+                className={`px-2 py-1 text-[length:var(--text-caption)] font-mono font-bold rounded-[4px] flex items-center gap-1 cursor-pointer transition ${
                   activePreset === "night"
                     ? isLightMode
                       ? "bg-white text-dune-teal border border-dune-orange/15 "
@@ -553,7 +553,7 @@ export default function CrossLinkingBiophysics({
                   type="checkbox"
                   checked={isLinked}
                   onChange={(e) => setIsLinked(e.target.checked)}
-                  className="rounded accent-dune-teal h-4 w-4 cursor-pointer"
+                  className="rounded-[4px] accent-dune-teal h-4 w-4 cursor-pointer"
                 />
               </label>
               <p
@@ -592,7 +592,7 @@ export default function CrossLinkingBiophysics({
                   )
                 </span>
                 <span
-                  className={`font-mono px-2 py-1 rounded text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/40 border border-dune-teal/40 text-dune-teal"}`}
+                  className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/40 border border-dune-teal/40 text-dune-teal"}`}
                 >
                   {params.ion_conc.toFixed(1)} mol/m³
                 </span>
@@ -610,7 +610,7 @@ export default function CrossLinkingBiophysics({
                   }));
                   setActivePreset("custom");
                 }}
-                className={`w-full h-1.5 rounded accent-dune-teal cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
+                className={`w-full h-1.5 rounded-[4px] accent-dune-teal cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
               />
               <span
                 className={`text-[length:var(--text-caption)] block mt-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
@@ -638,7 +638,7 @@ export default function CrossLinkingBiophysics({
                   )
                 </span>
                 <span
-                  className={`font-mono px-2 py-1 rounded text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-orange border border-dune-orange text-dune-orange font-bold" : "bg-dune-orange/30 border border-dune-orange/45 text-dune-orange"}`}
+                  className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-orange border border-dune-orange text-dune-orange font-bold" : "bg-dune-orange/30 border border-dune-orange/45 text-dune-orange"}`}
                 >
                   {params.Kd.toFixed(1)} mol/m³
                 </span>
@@ -653,7 +653,7 @@ export default function CrossLinkingBiophysics({
                   setParams((p) => ({ ...p, Kd: parseFloat(e.target.value) }));
                   setActivePreset("custom");
                 }}
-                className={`w-full h-1.5 rounded accent-dune-orange cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
+                className={`w-full h-1.5 rounded-[4px] accent-dune-orange cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
               />
               <span
                 className={`text-[length:var(--text-caption)] block mt-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
@@ -681,14 +681,14 @@ export default function CrossLinkingBiophysics({
                   )
                 </span>
                 <span
-                  className={`font-mono px-2 py-1 rounded text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/30 border border-dune-teal/30 text-dune-rose"}`}
+                  className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/30 border border-dune-teal/30 text-dune-rose"}`}
                 >
                   {effectiveRhoPolymer.toFixed(2)} kg/m³
                 </span>
               </div>
               {isLinked ? (
                 <div
-                  className={`py-2 px-4 rounded text-[length:var(--text-caption)] border font-mono flex items-center gap-2 ${
+                  className={`py-2 px-4 rounded-[4px] text-[length:var(--text-caption)] border font-mono flex items-center gap-2 ${
                     isLightMode
                       ? "bg-dune-teal/55 border-dune-teal text-dune-teal font-bold "
                       : "bg-dune-basalt/45 text-dune-rose border-dune-teal/20"
@@ -710,7 +710,7 @@ export default function CrossLinkingBiophysics({
                     }));
                     setActivePreset("custom");
                   }}
-                  className={`w-full h-1.5 rounded accent-dune-teal cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
+                  className={`w-full h-1.5 rounded-[4px] accent-dune-teal cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
                 />
               )}
             </div>
@@ -733,7 +733,7 @@ export default function CrossLinkingBiophysics({
                   )
                 </span>
                 <span
-                  className={`font-mono px-2 py-1 rounded text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-rose border border-dune-rose text-dune-rose font-bold" : "bg-dune-rose/30 border border-dune-rose/40 text-dune-rose"}`}
+                  className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-rose border border-dune-rose text-dune-rose font-bold" : "bg-dune-rose/30 border border-dune-rose/40 text-dune-rose"}`}
                 >
                   {params.temperature.toFixed(1)} K (
                   {(params.temperature - 273.15).toFixed(1)}°C)
@@ -752,7 +752,7 @@ export default function CrossLinkingBiophysics({
                   }));
                   setActivePreset("custom");
                 }}
-                className={`w-full h-1.5 rounded accent-dune-rose cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
+                className={`w-full h-1.5 rounded-[4px] accent-dune-rose cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
               />
             </div>
           </div>
@@ -779,7 +779,7 @@ export default function CrossLinkingBiophysics({
                   Mx: Math.max(100, parseInt(e.target.value) || 0),
                 }))
               }
-              className={`w-full p-2 border rounded text-[length:var(--text-micro)] font-mono outline-none ${
+              className={`w-full p-2 border rounded-[4px] text-[length:var(--text-micro)] font-mono outline-none ${
                 isLightMode
                   ? "bg-card border-dune-orange/15 text-foreground focus:border-dune-teal"
                   : "bg-dune-ink border-border text-foreground focus:border-dune-teal"
@@ -804,7 +804,7 @@ export default function CrossLinkingBiophysics({
                   Mn: Math.max(5000, parseInt(e.target.value) || 0),
                 }))
               }
-              className={`w-full p-2 border rounded text-[length:var(--text-micro)] font-mono outline-none ${
+              className={`w-full p-2 border rounded-[4px] text-[length:var(--text-micro)] font-mono outline-none ${
                 isLightMode
                   ? "bg-card border-dune-orange/15 text-foreground focus:border-dune-teal"
                   : "bg-dune-ink border-border text-foreground focus:border-dune-teal"
@@ -861,12 +861,12 @@ export default function CrossLinkingBiophysics({
                   ref={canvasRef}
                   width={550}
                   height={360}
-                  className="block rounded max-w-full h-auto cursor-crosshair"
+                  className="block rounded-[4px] max-w-full h-auto cursor-crosshair"
                 />
 
                 {/* 3D hover helper */}
                 <div
-                  className={`absolute top-2.5 left-2.5 px-2 py-1 rounded text-[length:var(--text-caption)] font-mono tracking-wider border uppercase transition pointer-events-none group-hover:opacity-100 ${
+                  className={`absolute top-2.5 left-2.5 px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] font-mono tracking-wider border uppercase transition pointer-events-none group-hover:opacity-100 ${
                     isLightMode
                       ? "bg-white/95 border-dune-orange/15 text-dune-orange "
                       : "bg-black/85 border-border text-dune-orange opacity-0"

@@ -525,7 +525,7 @@ export default function LandingCinematic({
                       <span className="text-dune-orange">
                         {String(i + 1).padStart(2, "0")}
                       </span>
-                      <span className="md:mt-1.5 md:block">{b.scale} across</span>
+                      <span className="md:mt-2 md:block">{b.scale} across</span>
                     </div>
                     <div>
                       <p
@@ -579,7 +579,7 @@ export default function LandingCinematic({
                         <span className="text-dune-orange">
                           {String(i + 1).padStart(2, "0")}
                         </span>
-                        <span className="md:mt-1.5 md:block">{b.scale} across</span>
+                        <span className="md:mt-2 md:block">{b.scale} across</span>
                       </div>
                       <div>
                         <p

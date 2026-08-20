@@ -219,7 +219,7 @@ export default function EconomicScalabilityEngine({
     <div
       className={`grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 rounded-[6px] border transition-colors ${
         isLightMode
-          ? "bg-card border-dune-orange/10 shadow-[0_4px_24px_rgba(139,94,26,0.06)]"
+          ? "bg-card border-dune-orange/10"
           : "bg-dune-ink border-border "
       }`}
     >

@@ -472,7 +472,7 @@ export function HgtTab({ isLightMode }: Themed) {
             {routeData.map((x, i) => (
               <div key={i} className="flex items-center gap-2 text-[length:var(--text-caption)]">
                 <span
-                  className="inline-block h-3.5 w-3.5 rounded-sm"
+                  className="inline-block h-3.5 w-3.5 rounded-[4px]"
                   style={{ background: [STATUS.bad, STATUS.warn, DUNE.ash][i] }}
                 />
                 <span className={isLightMode ? "text-muted-foreground" : "text-muted-foreground"}>
@@ -674,7 +674,7 @@ export function StructuresTab({ isLightMode }: Themed) {
             <button
               key={st.id}
               onClick={() => setSel(i)}
-              className={`w-full rounded-[5px] border p-4 text-left transition-colors ${
+              className={`w-full rounded-[4px] border p-4 text-left transition-colors ${
                 active
                   ? isLightMode
                     ? "border-dune-orange bg-dune-orange"

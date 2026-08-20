@@ -32,7 +32,7 @@ function Grade({ grade }: { grade: "measured" | "literature" | "unsourced" }) {
     : grade === "literature" ? "text-dune-orange border-dune-orange/40"
     : "text-dune-rose border-dune-rose/40";
   return (
-    <span className={`caption rounded-[3px] border px-2 py-1 ${tone}`}>{grade}</span>
+    <span className={`caption rounded-[4px] border px-2 py-1 ${tone}`}>{grade}</span>
   );
 }
 
@@ -392,7 +392,7 @@ export default function ExposureWorkspace() {
           {fullyArrested && (
             <p className="mt-2 text-[length:var(--text-micro)] leading-relaxed text-dune-teal">
               The treated bed does not move at all at this wind. That is a real result of the
-              threshold shift, not a rounded figure, but it holds only up to about{" "}
+              threshold shift, not a rounded-[4px] figure, but it holds only up to about{" "}
               {(utFreeT).toFixed(1)} m/s. Above that the crust starts transporting again.
             </p>
           )}
