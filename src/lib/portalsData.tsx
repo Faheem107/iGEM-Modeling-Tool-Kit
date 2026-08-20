@@ -118,7 +118,6 @@ export interface PortalCard {
   icon: ReactNode;
   title: string;
   desc: string;
-  grad: string;
   ring: string;
 }
 
@@ -129,7 +128,6 @@ export const PORTAL_CARDS: PortalCard[] = [
     icon: <Beaker className="h-4 w-4 text-dune-orange" />,
     title: PORTAL_NAMES.wetlab,
     desc: "Set the bench conditions, then watch how far the polymer spreads and how much dune survives the wind.",
-    grad: "from-dune-orange/20 via-dune-orange/5 to-transparent",
     ring: "text-dune-orange",
   },
   {
@@ -138,7 +136,6 @@ export const PORTAL_CARDS: PortalCard[] = [
     icon: <Workflow className="h-4 w-4 text-dune-teal" />,
     title: PORTAL_NAMES.pipeline,
     desc: "One grain traced end to end: metabolism, cross-linking, then the wind it has to hold against.",
-    grad: "from-dune-teal/20 via-dune-teal/5 to-transparent",
     ring: "text-dune-teal",
   },
   {
@@ -147,7 +144,6 @@ export const PORTAL_CARDS: PortalCard[] = [
     icon: <Dna className="h-4 w-4 text-dune-rose" />,
     title: PORTAL_NAMES.protein,
     desc: "The real structures in 3D, and what heat does to them.",
-    grad: "from-dune-rose/20 via-dune-rose/5 to-transparent",
     ring: "text-dune-rose",
   },
   {
@@ -156,7 +152,6 @@ export const PORTAL_CARDS: PortalCard[] = [
     icon: <Waves className="h-4 w-4 text-dune-teal" />,
     title: PORTAL_NAMES.xanthan,
     desc: "Xanthan gum thins as you push it harder. This is what that does to pressure in the delivery tubing.",
-    grad: "from-dune-teal/20 via-dune-teal/5 to-transparent",
     ring: "text-dune-teal",
   },
 ];
