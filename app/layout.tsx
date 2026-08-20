@@ -20,7 +20,7 @@ const lexend = Lexend({
   variable: "--font-lexend",
 });
 
-// Display / headings, Super Dream, the rounded retro face that matches the
+// Display / headings, Super Dream, the rounded-[4px] retro face that matches the
 // Dunelock wordmark. Shipped locally in public/fonts.
 const superDream = localFont({
   src: "../public/fonts/SuperDream.ttf",

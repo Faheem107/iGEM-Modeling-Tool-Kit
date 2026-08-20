@@ -26,7 +26,7 @@ export default function PipelineView() {
       <PortalIntro content={PORTAL_INTROS.pipeline} />
       <button
         onClick={() => router.push("/portals")}
-        className="mb-6 flex items-center gap-2 px-4 py-2 text-[length:var(--text-micro)] font-semibold rounded-[3px] border border-border bg-secondary hover:brightness-95 transition"
+        className="mb-6 flex items-center gap-2 px-4 py-2 text-[length:var(--text-micro)] font-semibold rounded-[4px] border border-border bg-secondary hover:brightness-95 transition"
       >
         <ArrowLeft className="h-4 w-4" /> {NAV.backToPortals}
       </button>

@@ -297,7 +297,7 @@ export default function MolstarViewer({
           <button
             onClick={toggleSpin}
             aria-label="Toggle auto-rotation"
-            className={`p-2 rounded-[3px] border border-border transition-colors ${
+            className={`p-2 rounded-[4px] border border-border transition-colors ${
               spinning
                 ? "bg-dune-orange text-dune-basalt"
                 : "bg-card hover:brightness-95"
@@ -308,7 +308,7 @@ export default function MolstarViewer({
           <button
             onClick={resetCamera}
             aria-label="Reset camera"
-            className="p-2 rounded-[3px] border border-border bg-card hover:brightness-95 transition-colors"
+            className="p-2 rounded-[4px] border border-border bg-card hover:brightness-95 transition-colors"
           >
             <RefreshCw className="h-4 w-4" />
           </button>

@@ -465,7 +465,7 @@ export default function WetLabSandbox2D({
                     Inoculum Cell Density (<GlossaryTerm term="OD600" />)
                   </span>
                   <span
-                    className={`font-mono px-2 py-1 rounded text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange border-dune-orange text-dune-orange font-bold" : "text-dune-orange bg-dune-orange/40 border border-dune-orange/30"}`}
+                    className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange border-dune-orange text-dune-orange font-bold" : "text-dune-orange bg-dune-orange/40 border border-dune-orange/30"}`}
                   >
                     {labOD600.toFixed(2)} Abs
                   </span>
@@ -478,7 +478,7 @@ export default function WetLabSandbox2D({
                     step="0.1"
                     value={labOD600}
                     onChange={(e) => setLabOD600(parseFloat(e.target.value))}
-                    className={`grow h-1.5 rounded accent-dune-orange cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
+                    className={`grow h-1.5 rounded-[4px] accent-dune-orange cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
                   />
                 </div>
               </div>
@@ -493,7 +493,7 @@ export default function WetLabSandbox2D({
                     Inoculation Vol (Per dm³ soil)
                   </span>
                   <span
-                    className={`font-mono px-2 py-1 rounded text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange border-dune-orange text-dune-orange font-bold" : "text-dune-orange bg-dune-orange/40 border border-dune-orange/30"}`}
+                    className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange border-dune-orange text-dune-orange font-bold" : "text-dune-orange bg-dune-orange/40 border border-dune-orange/30"}`}
                   >
                     {labInocVolume.toFixed(0)} mL
                   </span>
@@ -506,7 +506,7 @@ export default function WetLabSandbox2D({
                     step="2"
                     value={labInocVolume}
                     onChange={(e) => setLabInocVolume(parseInt(e.target.value))}
-                    className={`grow h-1.5 rounded accent-dune-orange cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
+                    className={`grow h-1.5 rounded-[4px] accent-dune-orange cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
                   />
                 </div>
               </div>
@@ -521,7 +521,7 @@ export default function WetLabSandbox2D({
                     <GlossaryTerm term="L-Glutamate" /> Substrate Feed
                   </span>
                   <span
-                    className={`font-mono px-2 py-1 rounded text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-teal border-dune-teal text-dune-teal font-bold" : "text-dune-teal bg-dune-teal/40 border border-dune-teal/30"}`}
+                    className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-teal border-dune-teal text-dune-teal font-bold" : "text-dune-teal bg-dune-teal/40 border border-dune-teal/30"}`}
                   >
                     {labGlutamate.toFixed(0)} mM
                   </span>
@@ -534,7 +534,7 @@ export default function WetLabSandbox2D({
                     step="5"
                     value={labGlutamate}
                     onChange={(e) => setLabGlutamate(parseInt(e.target.value))}
-                    className={`grow h-1.5 rounded accent-dune-teal cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
+                    className={`grow h-1.5 rounded-[4px] accent-dune-teal cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
                   />
                 </div>
               </div>
@@ -549,7 +549,7 @@ export default function WetLabSandbox2D({
                     Ca2+ Salinity Additive
                   </span>
                   <span
-                    className={`font-mono px-2 py-1 rounded text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange border-dune-orange text-dune-orange font-bold" : "text-dune-orange bg-dune-orange/40 border border-dune-orange/30"}`}
+                    className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange border-dune-orange text-dune-orange font-bold" : "text-dune-orange bg-dune-orange/40 border border-dune-orange/30"}`}
                   >
                     {labSalinity.toFixed(1)} g/L
                   </span>
@@ -562,7 +562,7 @@ export default function WetLabSandbox2D({
                     step="0.1"
                     value={labSalinity}
                     onChange={(e) => setLabSalinity(parseFloat(e.target.value))}
-                    className={`grow h-1.5 rounded accent-dune-orange cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
+                    className={`grow h-1.5 rounded-[4px] accent-dune-orange cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
                   />
                 </div>
                 <span
@@ -593,7 +593,7 @@ export default function WetLabSandbox2D({
                     )
                   </span>
                   <span
-                    className={`font-mono px-2 py-1 rounded text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-rose border-dune-rose text-dune-rose font-bold" : "text-dune-rose bg-dune-rose/40 border border-dune-rose/30"}`}
+                    className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-rose border-dune-rose text-dune-rose font-bold" : "text-dune-rose bg-dune-rose/40 border border-dune-rose/30"}`}
                   >
                     {labTemp.toFixed(1)} °C
                   </span>
@@ -606,7 +606,7 @@ export default function WetLabSandbox2D({
                     step="1"
                     value={labTemp}
                     onChange={(e) => setLabTemp(parseFloat(e.target.value))}
-                    className={`grow h-1.5 rounded accent-dune-rose cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
+                    className={`grow h-1.5 rounded-[4px] accent-dune-rose cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
                   />
                 </div>
               </div>
@@ -644,7 +644,7 @@ export default function WetLabSandbox2D({
                     )
                   </span>
                   <span
-                    className={`font-mono px-2 py-1 rounded text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-teal border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/30 text-dune-teal border border-dune-teal/30"}`}
+                    className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-teal border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/30 text-dune-teal border border-dune-teal/30"}`}
                   >
                     {windFriction.toFixed(2)} m/s
                   </span>
@@ -656,7 +656,7 @@ export default function WetLabSandbox2D({
                   step="0.05"
                   value={windFriction}
                   onChange={(e) => setWindFriction(parseFloat(e.target.value))}
-                  className={`w-full h-1.5 rounded accent-dune-teal cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
+                  className={`w-full h-1.5 rounded-[4px] accent-dune-teal cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
                 />
               </div>
 
@@ -665,7 +665,7 @@ export default function WetLabSandbox2D({
                   type="checkbox"
                   checked={stormActive}
                   onChange={(e) => setStormActive(e.target.checked)}
-                  className="rounded border-border text-dune-maroon focus:ring-dune-maroon bg-dune-basalt h-4 w-4"
+                  className="rounded-[4px] border-border text-dune-maroon focus:ring-dune-maroon bg-dune-basalt h-4 w-4"
                 />
                 <span
                   className={`text-[length:var(--text-caption)] font-bold uppercase transition-colors ${stormActive ? "text-dune-maroon" : isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
@@ -865,7 +865,7 @@ export default function WetLabSandbox2D({
                 <div className="animate-fadeIn space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div
-                      className={`p-2 border rounded ${isLightMode ? "bg-card/85 border-dune-sand/20" : "bg-dune-ink border-border"}`}
+                      className={`p-2 border rounded-[4px] ${isLightMode ? "bg-card/85 border-dune-sand/20" : "bg-dune-ink border-border"}`}
                     >
                       <span className="text-dune-rose font-bold block mb-1">
                         1. Temperature Viability:
@@ -877,7 +877,7 @@ export default function WetLabSandbox2D({
                       </p>
                     </div>
                     <div
-                      className={`p-2 border rounded ${isLightMode ? "bg-card/85 border-dune-sand/20" : "bg-dune-ink border-border"}`}
+                      className={`p-2 border rounded-[4px] ${isLightMode ? "bg-card/85 border-dune-sand/20" : "bg-dune-ink border-border"}`}
                     >
                       <span className="text-dune-orange font-bold block mb-1">
                         2. Salinity Saturation:
@@ -889,7 +889,7 @@ export default function WetLabSandbox2D({
                       </p>
                     </div>
                     <div
-                      className={`p-2 border rounded ${isLightMode ? "bg-card/85 border-dune-sand/20" : "bg-dune-ink border-border"}`}
+                      className={`p-2 border rounded-[4px] ${isLightMode ? "bg-card/85 border-dune-sand/20" : "bg-dune-ink border-border"}`}
                     >
                       <span className="text-dune-orange font-bold block mb-1">
                         3. Sand Shear Modulus Gs:
@@ -901,7 +901,7 @@ export default function WetLabSandbox2D({
                       </p>
                     </div>
                     <div
-                      className={`p-2 border rounded ${isLightMode ? "bg-card/85 border-dune-sand/20" : "bg-dune-ink border-border"}`}
+                      className={`p-2 border rounded-[4px] ${isLightMode ? "bg-card/85 border-dune-sand/20" : "bg-dune-ink border-border"}`}
                     >
                       <span className="text-dune-teal font-bold block mb-1">
                         4. Threshold Windspeed u*t:

@@ -828,7 +828,7 @@ export default function AdvancedFbaPortal({
         {/* Diagnostic indicators */}
         <div className="flex gap-2 flex-wrap font-mono text-[length:var(--text-caption)]">
           <div
-            className={`px-2 py-1 rounded border flex items-center gap-2 ${
+            className={`px-2 py-1 rounded-[4px] border flex items-center gap-2 ${
               fbaResults.status === "Optimal" ||
               fbaResults.status === "Feasible"
                 ? isLightMode
@@ -843,7 +843,7 @@ export default function AdvancedFbaPortal({
             Solver Status: {fbaResults.status}
           </div>
           <div
-            className={`px-2 py-1 rounded border ${isLightMode ? "bg-muted border-border" : "bg-dune-basalt/50 border-border"}`}
+            className={`px-2 py-1 rounded-[4px] border ${isLightMode ? "bg-muted border-border" : "bg-dune-basalt/50 border-border"}`}
           >
             Objective Vol:{" "}
             <span className="font-extrabold">
@@ -851,7 +851,7 @@ export default function AdvancedFbaPortal({
             </span>
           </div>
           <div
-            className={`px-2 py-1 rounded border ${isLightMode ? "bg-muted border-border" : "bg-dune-basalt/50 border-border"}`}
+            className={`px-2 py-1 rounded-[4px] border ${isLightMode ? "bg-muted border-border" : "bg-dune-basalt/50 border-border"}`}
           >
             Pivots:{" "}
             <span className="text-dune-teal font-bold">
@@ -886,7 +886,7 @@ export default function AdvancedFbaPortal({
               </span>
               <button
                 onClick={handleResetParameters}
-                className={`p-1 rounded cursor-pointer transition text-[length:var(--text-caption)] font-semibold border ${
+                className={`p-1 rounded-[4px] cursor-pointer transition text-[length:var(--text-caption)] font-semibold border ${
                   isLightMode
                     ? "bg-muted text-muted-foreground border-border hover:bg-secondary"
                     : "bg-dune-basalt text-muted-foreground border-border hover:bg-card"
@@ -905,7 +905,7 @@ export default function AdvancedFbaPortal({
                 Mathematical Objective (Maximize)
               </label>
               <div
-                className={`grid grid-cols-2 p-1 rounded border text-[length:var(--text-caption)] font-mono gap-1 ${
+                className={`grid grid-cols-2 p-1 rounded-[4px] border text-[length:var(--text-caption)] font-mono gap-1 ${
                   isLightMode
                     ? "bg-background border-border"
                     : "bg-dune-ink border-border"
@@ -913,7 +913,7 @@ export default function AdvancedFbaPortal({
               >
                 <button
                   onClick={() => setCurrentObjective("R_PGAsyn")}
-                  className={`py-2 rounded cursor-pointer transition text-center ${
+                  className={`py-2 rounded-[4px] cursor-pointer transition text-center ${
                     currentObjective === "R_PGAsyn"
                       ? isLightMode
                         ? "bg-dune-orange text-foreground font-bold"
@@ -927,7 +927,7 @@ export default function AdvancedFbaPortal({
                 </button>
                 <button
                   onClick={() => setCurrentObjective("R_Biomass")}
-                  className={`py-2 rounded cursor-pointer transition text-center ${
+                  className={`py-2 rounded-[4px] cursor-pointer transition text-center ${
                     currentObjective === "R_Biomass"
                       ? isLightMode
                         ? "bg-dune-orange text-foreground font-bold"
@@ -1054,7 +1054,7 @@ export default function AdvancedFbaPortal({
                 <button
                   key={item.gene}
                   onClick={() => handleToggleKnockout(item.gene)}
-                  className={`p-2 rounded border text-left cursor-pointer transition-all flex items-center justify-between ${
+                  className={`p-2 rounded-[4px] border text-left cursor-pointer transition-all flex items-center justify-between ${
                     knockoutList[item.gene]
                       ? isLightMode
                         ? "bg-dune-rose border-dune-rose text-dune-rose font-bold"
@@ -1095,7 +1095,7 @@ export default function AdvancedFbaPortal({
             <div className="grid grid-cols-2 gap-4 pt-1">
               {/* ATP production box */}
               <div
-                className={`p-2 rounded border text-center ${
+                className={`p-2 rounded-[4px] border text-center ${
                   isLightMode
                     ? "bg-background border-border"
                     : "bg-dune-basalt/40 border-border"
@@ -1114,7 +1114,7 @@ export default function AdvancedFbaPortal({
 
               {/* NADPH efficiency circle */}
               <div
-                className={`p-2 rounded border text-center ${
+                className={`p-2 rounded-[4px] border text-center ${
                   isLightMode
                     ? "bg-background border-border"
                     : "bg-dune-basalt/40 border-border"
@@ -1133,7 +1133,7 @@ export default function AdvancedFbaPortal({
             </div>
 
             {/* Explainer note */}
-            <div className="p-2 bg-dune-orange/20 rounded border border-dune-orange/10 text-[length:var(--text-caption)] text-muted-foreground leading-tight">
+            <div className="p-2 bg-dune-orange/20 rounded-[4px] border border-dune-orange/10 text-[length:var(--text-caption)] text-muted-foreground leading-tight">
               Glutamate synthesis pathways require 1 full mole of{" "}
               <strong
                 className={isLightMode ? "text-dune-teal" : "text-dune-teal"}
@@ -1170,7 +1170,7 @@ export default function AdvancedFbaPortal({
                 Active Analytical Metabolic Flux Map
               </h3>
               <span
-                className={`text-[length:var(--text-caption)] font-mono px-2 py-1 rounded border ${
+                className={`text-[length:var(--text-caption)] font-mono px-2 py-1 rounded-[4px] border ${
                   isLightMode
                     ? "bg-dune-sand border-dune-orange"
                     : "bg-dune-ink border-border"
@@ -2046,7 +2046,7 @@ export default function AdvancedFbaPortal({
                         return (
                           <div
                             key={`${met.id}-${rxn.id}`}
-                            className={`w-[32px] h-[18px] shrink-0 flex items-center justify-center rounded-sm mx-1 text-[length:var(--text-caption)] ${bgClass}`}
+                            className={`w-[32px] h-[18px] shrink-0 flex items-center justify-center rounded-[4px] mx-1 text-[length:var(--text-caption)] ${bgClass}`}
                             title={`Reaction: ${rxn.name}\nMetabolite: ${met.name}\nCoefficient: ${coeff}`}
                           >
                             {coeff !== 0 ? coeff : "."}
@@ -2084,7 +2084,7 @@ export default function AdvancedFbaPortal({
                 Metabolic Flux Leaderboard
               </h3>
               <span
-                className={`text-[length:var(--text-caption)] font-mono px-2 py-1 rounded border ${
+                className={`text-[length:var(--text-caption)] font-mono px-2 py-1 rounded-[4px] border ${
                   isLightMode
                     ? "bg-dune-sand border-dune-orange"
                     : "bg-dune-ink border-border"
@@ -2115,7 +2115,7 @@ export default function AdvancedFbaPortal({
                       {item.toggleGene && (
                         <button
                           onClick={() => handleToggleKnockout(item.toggleGene)}
-                          className={`text-[length:var(--text-caption)] px-2 py-1 rounded font-black uppercase tracking-wider transition-all duration-200 shrink-0 ${
+                          className={`text-[length:var(--text-caption)] px-2 py-1 rounded-[4px] font-black uppercase tracking-wider transition-all duration-200 shrink-0 ${
                             item.isKnockedOut
                               ? "bg-dune-rose/10 text-dune-rose border border-dune-rose/30"
                               : "bg-dune-teal/10 text-dune-teal border border-dune-teal/30 hover:bg-dune-rose/20 hover:text-dune-rose hover:border-dune-rose"
@@ -2227,7 +2227,7 @@ export default function AdvancedFbaPortal({
                 balance constraint).
               </p>
               <div
-                className={`p-2 rounded border text-[length:var(--text-caption)] font-mono text-left leading-normal ${
+                className={`p-2 rounded-[4px] border text-[length:var(--text-caption)] font-mono text-left leading-normal ${
                   isLightMode
                     ? "bg-background border-border"
                     : "bg-dune-basalt/45 border-border"

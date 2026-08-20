@@ -489,12 +489,12 @@ export default function EcologicalSpread({
 
   return (
     <div
-      className={`grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 rounded-[6px] border transition-all duration-300 ${isLightMode ? "bg-card border-dune-orange/10 shadow-[0_4px_24px_rgba(139,94,26,0.06)]" : "bg-dune-ink border-border "}`}
+      className={`grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 rounded-[6px] border transition-all duration-300 ${isLightMode ? "bg-card border-dune-orange/10" : "bg-dune-ink border-border "}`}
       id="ecological-spread-panel"
     >
       {/* Rules Config Panel */}
       <div
-        className={`lg:col-span-12 xl:col-span-4 p-6 rounded border transition-colors duration-300 ${isLightMode ? "bg-white border-dune-orange/10" : "bg-dune-ink border-border"} font-sans`}
+        className={`lg:col-span-12 xl:col-span-4 p-6 rounded-[4px] border transition-colors duration-300 ${isLightMode ? "bg-white border-dune-orange/10" : "bg-dune-ink border-border"} font-sans`}
       >
         <h3
           className={`text-[length:var(--text-micro)] font-extrabold uppercase tracking-wider flex items-center gap-2 mb-4 font-mono ${isLightMode ? "text-dune-orange" : "text-foreground"}`}
@@ -512,7 +512,7 @@ export default function EcologicalSpread({
         <div className="space-y-4">
           {/* Universal Linkage switch */}
           <div
-            className={`p-4 rounded text-[length:var(--text-micro)] mb-2 ${isLightMode ? "bg-dune-orange/45 border border-dune-orange" : "bg-dune-orange/15 border border-dune-orange/35"}`}
+            className={`p-4 rounded-[4px] text-[length:var(--text-micro)] mb-2 ${isLightMode ? "bg-dune-orange/45 border border-dune-orange" : "bg-dune-orange/15 border border-dune-orange/35"}`}
           >
             <label className="flex items-center justify-between cursor-pointer">
               <span
@@ -527,7 +527,7 @@ export default function EcologicalSpread({
                 type="checkbox"
                 checked={isLinked}
                 onChange={(e) => setIsLinked(e.target.checked)}
-                className="rounded accent-dune-orange"
+                className="rounded-[4px] accent-dune-orange"
               />
             </label>
             <p
@@ -555,7 +555,7 @@ export default function EcologicalSpread({
               Inoculation Pattern
             </span>
             <div
-              className={`grid grid-cols-3 gap-2 p-1 rounded border font-mono ${isLightMode ? "bg-card border-dune-orange/10 " : "bg-dune-ink border border-border"}`}
+              className={`grid grid-cols-3 gap-2 p-1 rounded-[4px] border font-mono ${isLightMode ? "bg-card border-dune-orange/10 " : "bg-dune-ink border border-border"}`}
             >
               {(["center", "corners", "random"] as const).map((pat) => (
                 <button
@@ -563,7 +563,7 @@ export default function EcologicalSpread({
                   onClick={() =>
                     setConfig((prev) => ({ ...prev, initialInoculation: pat }))
                   }
-                  className={`px-2 py-1 text-[length:var(--text-caption)] font-bold rounded capitalize cursor-pointer transition ${config.initialInoculation === pat ? (isLightMode ? "bg-dune-orange text-dune-orange border border-dune-orange " : "bg-dune-orange text-dune-orange border border-dune-orange/60") : isLightMode ? "text-muted-foreground hover:text-foreground bg-card border border-border hover:border-dune-orange" : "text-muted-foreground hover:text-foreground"}`}
+                  className={`px-2 py-1 text-[length:var(--text-caption)] font-bold rounded-[4px] capitalize cursor-pointer transition ${config.initialInoculation === pat ? (isLightMode ? "bg-dune-orange text-dune-orange border border-dune-orange " : "bg-dune-orange text-dune-orange border border-dune-orange/60") : isLightMode ? "text-muted-foreground hover:text-foreground bg-card border border-border hover:border-dune-orange" : "text-muted-foreground hover:text-foreground"}`}
                 >
                   {pat}
                 </button>
@@ -583,21 +583,21 @@ export default function EcologicalSpread({
                 </span>
                 <Info className="h-3.5 w-3.5 text-muted-foreground hover:text-dune-teal transition" />
                 <div
-                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border border-border"}`}
+                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border border-border"}`}
                 >
                   The raw probability rate of vegetative binary fission and
                   cellular spread to adjacent porous sand cavities.
                 </div>
               </div>
               <span
-                className={`font-mono px-1 py-1 rounded text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange border-dune-orange text-dune-orange font-bold" : "bg-dune-orange/40 text-dune-orange border border-dune-orange/30"}`}
+                className={`font-mono px-1 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange border-dune-orange text-dune-orange font-bold" : "bg-dune-orange/40 text-dune-orange border border-dune-orange/30"}`}
               >
                 {(effectiveSpreadProb * 100).toFixed(0)}%
               </span>
             </div>
             {isLinked ? (
               <div
-                className={`py-2 px-4 rounded text-[length:var(--text-caption)] font-mono flex items-center gap-2 border ${
+                className={`py-2 px-4 rounded-[4px] text-[length:var(--text-caption)] font-mono flex items-center gap-2 border ${
                   isLightMode
                     ? "bg-dune-orange/45 text-dune-orange border-dune-orange "
                     : "bg-dune-basalt/40 text-dune-orange border border-dune-orange/60"
@@ -620,12 +620,12 @@ export default function EcologicalSpread({
                     spreadProb: parseFloat(e.target.value),
                   }))
                 }
-                className={`w-full accent-dune-orange cursor-ew-resize ${isLightMode ? "bg-secondary h-1.5 rounded" : ""}`}
+                className={`w-full accent-dune-orange cursor-ew-resize ${isLightMode ? "bg-secondary h-1.5 rounded-[4px]" : ""}`}
               />
             )}
             {/* Rigorous physical front speed (Fisher–KPP), reported alongside the schematic map. */}
             <div
-              className={`mt-2 p-2 rounded text-[length:var(--text-caption)] font-mono border leading-relaxed ${isLightMode ? "bg-dune-teal/50 border-dune-teal text-foreground" : "bg-dune-teal/15 border-dune-teal/30 text-foreground"}`}
+              className={`mt-2 p-2 rounded-[4px] text-[length:var(--text-caption)] font-mono border leading-relaxed ${isLightMode ? "bg-dune-teal/50 border-dune-teal text-foreground" : "bg-dune-teal/15 border-dune-teal/30 text-foreground"}`}
             >
               <div className="flex items-center gap-1 mb-1 font-bold not-italic">
                 <Gauge
@@ -681,7 +681,7 @@ export default function EcologicalSpread({
                 </span>
                 <Info className="h-3.5 w-3.5 text-muted-foreground hover:text-dune-teal transition" />
                 <div
-                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border border-border"}`}
+                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border border-border"}`}
                 >
                   The same Ca²⁺ dosed for γ-PGA cross-linking / MICP complexes
                   surfactin and disables flagellum-independent sliding, lowering
@@ -690,7 +690,7 @@ export default function EcologicalSpread({
                 </div>
               </div>
               <span
-                className={`font-mono px-1 py-1 rounded text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-teal border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/40 text-dune-teal border border-dune-teal/30"}`}
+                className={`font-mono px-1 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-teal border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/40 text-dune-teal border border-dune-teal/30"}`}
               >
                 {caConc.toFixed(1)} mM
               </span>
@@ -702,7 +702,7 @@ export default function EcologicalSpread({
               step="0.5"
               value={caConc}
               onChange={(e) => setCaConc(parseFloat(e.target.value))}
-              className={`w-full accent-dune-teal cursor-ew-resize ${isLightMode ? "bg-secondary h-1.5 rounded" : ""}`}
+              className={`w-full accent-dune-teal cursor-ew-resize ${isLightMode ? "bg-secondary h-1.5 rounded-[4px]" : ""}`}
             />
           </div>
 
@@ -718,14 +718,14 @@ export default function EcologicalSpread({
                 </span>
                 <Info className="h-3.5 w-3.5 text-muted-foreground hover:text-dune-teal transition" />
                 <div
-                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border border-border"}`}
+                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border border-border"}`}
                 >
                   Nutrient/water uptake rate of bacillus colony clusters per
                   simulated generation generation step.
                 </div>
               </div>
               <span
-                className={`font-mono px-1 py-1 rounded text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-maroon border-dune-maroon text-dune-maroon font-bold" : "bg-dune-maroon/40 text-dune-maroon border border-dune-maroon/30"}`}
+                className={`font-mono px-1 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-maroon border-dune-maroon text-dune-maroon font-bold" : "bg-dune-maroon/40 text-dune-maroon border border-dune-maroon/30"}`}
               >
                 {(config.resourceConsume * 100).toFixed(0)}% step⁻¹
               </span>
@@ -742,7 +742,7 @@ export default function EcologicalSpread({
                   resourceConsume: parseFloat(e.target.value),
                 }))
               }
-              className={`w-full accent-dune-maroon cursor-ew-resize ${isLightMode ? "bg-secondary h-1.5 rounded" : ""}`}
+              className={`w-full accent-dune-maroon cursor-ew-resize ${isLightMode ? "bg-secondary h-1.5 rounded-[4px]" : ""}`}
             />
           </div>
 
@@ -760,7 +760,7 @@ export default function EcologicalSpread({
                   gridSize: parseInt(e.target.value),
                 }))
               }
-              className={`w-full p-2 rounded text-[length:var(--text-micro)] font-semibold font-mono outline-none border ${
+              className={`w-full p-2 rounded-[4px] text-[length:var(--text-micro)] font-semibold font-mono outline-none border ${
                 isLightMode
                   ? "bg-dune-orange/65 border-dune-orange/12 text-foreground"
                   : "bg-dune-ink border-border text-foreground"
@@ -800,7 +800,7 @@ export default function EcologicalSpread({
 
           {/* Quantitative escape-frequency biosafety calculator, the real "spread probability". */}
           <div
-            className={`mb-4 p-4 rounded border font-mono ${isLightMode ? "bg-white border-dune-orange/12" : "bg-dune-ink border-border"}`}
+            className={`mb-4 p-4 rounded-[4px] border font-mono ${isLightMode ? "bg-white border-dune-orange/12" : "bg-dune-ink border-border"}`}
           >
             <div
               className={`flex justify-between text-[length:var(--text-caption)] mb-2 font-sans ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
@@ -809,7 +809,7 @@ export default function EcologicalSpread({
                 Kill-switch escape frequency
               </span>
               <span
-                className={`px-1 py-1 rounded text-[length:var(--text-caption)] border font-mono ${escape.meetsNIH ? (isLightMode ? "bg-dune-teal border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/40 text-dune-teal border-dune-teal/40") : isLightMode ? "bg-dune-rose border-dune-rose text-dune-rose font-bold" : "bg-dune-rose/40 text-dune-rose border-dune-rose/40"}`}
+                className={`px-1 py-1 rounded-[4px] text-[length:var(--text-caption)] border font-mono ${escape.meetsNIH ? (isLightMode ? "bg-dune-teal border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/40 text-dune-teal border-dune-teal/40") : isLightMode ? "bg-dune-rose border-dune-rose text-dune-rose font-bold" : "bg-dune-rose/40 text-dune-rose border-dune-rose/40"}`}
               >
                 {sci(pEscape)} cell⁻¹
               </span>
@@ -821,7 +821,7 @@ export default function EcologicalSpread({
               step="0.5"
               value={escapeExp}
               onChange={(e) => setEscapeExp(parseFloat(e.target.value))}
-              className={`w-full accent-dune-teal cursor-ew-resize ${isLightMode ? "bg-secondary h-1.5 rounded" : ""}`}
+              className={`w-full accent-dune-teal cursor-ew-resize ${isLightMode ? "bg-secondary h-1.5 rounded-[4px]" : ""}`}
             />
             <div
               className={`flex justify-between text-[length:var(--text-caption)] mt-1 font-sans ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
@@ -846,7 +846,7 @@ export default function EcologicalSpread({
                 type="checkbox"
                 checked={redundantSwitch}
                 onChange={(e) => setRedundantSwitch(e.target.checked)}
-                className="rounded accent-dune-teal"
+                className="rounded-[4px] accent-dune-teal"
               />
             </label>
             <p
@@ -895,7 +895,7 @@ export default function EcologicalSpread({
                 </span>
               </div>
               <div
-                className={`mt-2 flex items-center gap-2 p-2 rounded text-[length:var(--text-caption)] font-sans font-bold border ${escape.containedAtScale ? (isLightMode ? "bg-dune-teal text-dune-teal border-dune-teal" : "bg-dune-teal/30 text-dune-teal border-dune-teal/40") : isLightMode ? "bg-dune-rose text-dune-rose border-dune-rose" : "bg-dune-rose/30 text-dune-rose border-dune-rose/40"}`}
+                className={`mt-2 flex items-center gap-2 p-2 rounded-[4px] text-[length:var(--text-caption)] font-sans font-bold border ${escape.containedAtScale ? (isLightMode ? "bg-dune-teal text-dune-teal border-dune-teal" : "bg-dune-teal/30 text-dune-teal border-dune-teal/40") : isLightMode ? "bg-dune-rose text-dune-rose border-dune-rose" : "bg-dune-rose/30 text-dune-rose border-dune-rose/40"}`}
               >
                 {escape.containedAtScale ? (
                   <>
@@ -916,7 +916,7 @@ export default function EcologicalSpread({
 
           <div className="space-y-2 font-mono">
             <div
-              className={`flex items-center justify-between p-2 rounded text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange/20 border-dune-orange/10" : "bg-dune-ink border-border"}`}
+              className={`flex items-center justify-between p-2 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange/20 border-dune-orange/10" : "bg-dune-ink border-border"}`}
             >
               <span
                 className={
@@ -932,7 +932,7 @@ export default function EcologicalSpread({
               </span>
             </div>
             <div
-              className={`flex items-center justify-between p-2 rounded text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange/20 border-dune-orange/10" : "bg-dune-ink border-border"}`}
+              className={`flex items-center justify-between p-2 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange/20 border-dune-orange/10" : "bg-dune-ink border-border"}`}
             >
               <span
                 className={
@@ -949,7 +949,7 @@ export default function EcologicalSpread({
             </div>
             {killSwitchTriggered && (
               <div
-                className={`border-2 border-dashed p-2 rounded text-[length:var(--text-caption)] font-bold leading-normal ${
+                className={`border-2 border-dashed p-2 rounded-[4px] text-[length:var(--text-caption)] font-bold leading-normal ${
                   isLightMode
                     ? "bg-dune-teal text-dune-teal border-dune-teal"
                     : "bg-dune-ink text-dune-teal border-dune-teal"
@@ -966,7 +966,7 @@ export default function EcologicalSpread({
 
       {/* Grid Canvas Sandbox */}
       <div
-        className={`lg:col-span-12 xl:col-span-8 p-6 rounded border flex flex-col justify-between font-sans transition-colors duration-300 ${
+        className={`lg:col-span-12 xl:col-span-8 p-6 rounded-[4px] border flex flex-col justify-between font-sans transition-colors duration-300 ${
           isLightMode
             ? "bg-white border-dune-orange/10"
             : "bg-dune-ink border-border"
@@ -987,7 +987,7 @@ export default function EcologicalSpread({
             <div className="flex gap-2 font-mono">
               <button
                 onClick={initSimulation}
-                className={`px-2 py-1 rounded text-[length:var(--text-caption)] font-bold flex items-center gap-1 cursor-pointer transition-colors border ${
+                className={`px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] font-bold flex items-center gap-1 cursor-pointer transition-colors border ${
                   isLightMode
                     ? "bg-dune-orange text-foreground border-dune-orange/12 hover:bg-dune-orange/50"
                     : "bg-dune-ink border-border hover:text-foreground text-muted-foreground"
@@ -999,7 +999,7 @@ export default function EcologicalSpread({
                 onClick={() =>
                   isRunning ? setIsRunning(false) : tickSimulation()
                 }
-                className={`px-2 py-1 rounded text-[length:var(--text-caption)] font-bold cursor-pointer transition-colors border ${
+                className={`px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] font-bold cursor-pointer transition-colors border ${
                   isLightMode
                     ? "bg-dune-orange text-foreground border-dune-orange/12 hover:bg-dune-orange/50"
                     : "bg-dune-ink border-border hover:text-foreground text-muted-foreground"
@@ -1009,7 +1009,7 @@ export default function EcologicalSpread({
               </button>
               <button
                 onClick={() => setIsRunning((r) => !r)}
-                className={`px-4 py-1 rounded text-[length:var(--text-caption)] font-bold flex items-center gap-1 cursor-pointer transition border ${
+                className={`px-4 py-1 rounded-[4px] text-[length:var(--text-caption)] font-bold flex items-center gap-1 cursor-pointer transition border ${
                   isRunning
                     ? isLightMode
                       ? "bg-dune-rose text-dune-rose border-dune-rose "
@@ -1046,14 +1046,14 @@ export default function EcologicalSpread({
               />
               <div className="absolute top-2 right-2 flex flex-col gap-1">
                 <span
-                  className={`text-[length:var(--text-caption)] font-extrabold px-2 py-1 rounded text-right font-mono border ${isLightMode ? "bg-white/85 text-foreground border-dune-orange/12" : "bg-dune-basalt/70 backdrop-blur text-foreground"}`}
+                  className={`text-[length:var(--text-caption)] font-extrabold px-2 py-1 rounded-[4px] text-right font-mono border ${isLightMode ? "bg-white/85 text-foreground border-dune-orange/12" : "bg-dune-basalt/70 backdrop-blur text-foreground"}`}
                 >
                   Generation {steps}
                 </span>
               </div>
               <div className="absolute bottom-2 left-2">
                 <span
-                  className={`text-[length:var(--text-caption)] px-2 py-1 rounded font-mono border ${isLightMode ? "bg-white/80 text-muted-foreground border-dune-orange/12" : "bg-dune-basalt/60 backdrop-blur text-muted-foreground"}`}
+                  className={`text-[length:var(--text-caption)] px-2 py-1 rounded-[4px] font-mono border ${isLightMode ? "bg-white/80 text-muted-foreground border-dune-orange/12" : "bg-dune-basalt/60 backdrop-blur text-muted-foreground"}`}
                 >
                   bird&apos;s-eye · click to inoculate
                 </span>
@@ -1063,7 +1063,7 @@ export default function EcologicalSpread({
             {/* Color Metrics and Legend */}
             <div className="w-full md:w-44 space-y-4">
               <div
-                className={`font-mono text-[length:var(--text-micro)] space-y-4 p-4 border rounded ${isLightMode ? "bg-card/55 border-dune-orange/10 text-muted-foreground" : "bg-dune-ink border border-border text-muted-foreground"}`}
+                className={`font-mono text-[length:var(--text-micro)] space-y-4 p-4 border rounded-[4px] ${isLightMode ? "bg-card/55 border-dune-orange/10 text-muted-foreground" : "bg-dune-ink border border-border text-muted-foreground"}`}
               >
                 <span
                   className={`text-[length:var(--text-caption)] font-bold block tracking-widest uppercase ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
@@ -1073,13 +1073,13 @@ export default function EcologicalSpread({
 
                 <div className="flex items-center gap-2">
                   <span
-                    className={`w-3 h-3 rounded inline-block border ${isLightMode ? "bg-dune-sand border-dune-orange" : "bg-dune-ink border-border"}`}
+                    className={`w-3 h-3 rounded-[4px] inline-block border ${isLightMode ? "bg-dune-sand border-dune-orange" : "bg-dune-ink border-border"}`}
                   ></span>
                   <span>Desert sand (darker = damp)</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span
-                    className={`w-3 h-3 rounded inline-block ${isLightMode ? "bg-dune-rose" : "bg-dune-rose"}`}
+                    className={`w-3 h-3 rounded-[4px] inline-block ${isLightMode ? "bg-dune-rose" : "bg-dune-rose"}`}
                   ></span>
                   <span>
                     Active <i>B. subtilis</i>
@@ -1087,7 +1087,7 @@ export default function EcologicalSpread({
                 </div>
                 <div className="flex items-center gap-2">
                   <span
-                    className="h-3.5 w-3.5 rounded inline-block"
+                    className="h-3.5 w-3.5 rounded-[4px] inline-block"
                     style={{
                       background: `rgb(${crustRGB[0]},${crustRGB[1]},${crustRGB[2]})`,
                     }}
@@ -1096,7 +1096,7 @@ export default function EcologicalSpread({
                 </div>
                 <div className="flex items-center gap-2">
                   <span
-                    className={`w-3 h-3 rounded inline-block ${isLightMode ? "bg-muted" : "bg-muted"}`}
+                    className={`w-3 h-3 rounded-[4px] inline-block ${isLightMode ? "bg-muted" : "bg-muted"}`}
                   ></span>
                   <span>Just died (kill-switch)</span>
                 </div>
