@@ -41,15 +41,32 @@ const C = {
   cross: "#c0392b",
 };
 
-// Deterministic layout so scatter/grid/mesh are stable across renders. The
-// crust (grid) sits low-right so it clears the text panel on the left; the loose
-// grains scatter across the open sky above and to the right of the panel.
+// Deterministic layout so scatter/grid/mesh are stable across renders.
+//
+// Every x here lives in the right half of the 1200-wide viewBox, because the
+// text panel owns the left. The loose grains used to scatter from x=220, which
+// put them straight through the panel at any width; now they blow across the
+// same field the crust later forms in, so the scatter and the grid read as the
+// same sand. The grid also sits high enough to clear the progress rule that
+// StoryEscape draws along the bottom.
 const COLS = 9;
 const ROWS = 3;
-const GRID_X0 = 580;
-const GRID_X1 = 1150;
-const GRID_Y0 = 575;
-const GRID_Y1 = 685;
+const GRID_X0 = 720;
+const GRID_X1 = 1160;
+const GRID_Y0 = 520;
+const GRID_Y1 = 630;
+/**
+ * The left edge of the illustration field, in viewBox units. Nothing decorative
+ * starts before it.
+ *
+ * 720 is not arbitrary. With preserveAspectRatio="meet" the viewBox is letterboxed
+ * rather than cropped, so the plate's right edge lands at viewBox x ~704 at 1600
+ * wide, ~717 at 1280 and lower still above that. Keeping every drawn element to
+ * the right of 720 is what gives the panel and the figure a column each from
+ * 1280 up. Below that they share the space, and the mask on the SVG is what
+ * keeps the figure from reading through the words.
+ */
+const FIELD_X0 = 720;
 
 // Rounded so the SSR and client renders are byte-identical (Math.sin can differ
 // in its last bit across engines, which would trip a hydration mismatch).
@@ -74,9 +91,9 @@ function buildLayout() {
     for (let c = 0; c < COLS; c++) {
       const gx = r2(GRID_X0 + (c / (COLS - 1)) * (GRID_X1 - GRID_X0));
       const gy = r2(GRID_Y0 + (r / (ROWS - 1)) * (GRID_Y1 - GRID_Y0));
-      // Loose: blown up into the open sky, spread across the top and right.
-      const sx = r2(220 + seeded(i + 1) * 940);
-      const sy = r2(70 + seeded(i + 7) * 300);
+      // Loose: blown up into the open sky above the field, never over the panel.
+      const sx = r2(FIELD_X0 + seeded(i + 1) * 460);
+      const sy = r2(90 + seeded(i + 7) * 300);
       grains.push({ gx, gy, sx, sy, r: r2(5 + seeded(i + 3) * 3) });
       i++;
     }
@@ -233,10 +250,13 @@ export default function DesignCycleStory({
         <SandParticles
           progressRef={progressRef}
           isLightMode={isLightMode}
+          densityScale={0.6}
           className="pointer-events-none absolute inset-0 z-0"
         />
 
-        {/* Soft accent glow behind the SVG (scaled by the timeline). */}
+        {/* Soft accent glow behind the SVG (scaled by the timeline). Offset into
+            the right field from md up, so it lights the illustration instead of
+            sitting behind the words. */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 flex items-center justify-center"
@@ -244,7 +264,7 @@ export default function DesignCycleStory({
           <div
             ref={glowRef}
             style={{ opacity: 0.4 }}
-            className={`h-[70%] w-[70%] rounded-full blur-[120px] ${
+            className={`h-[70%] w-[70%] rounded-full blur-[120px] md:ml-[26%] md:w-[56%] ${
               isLightMode
                 ? "bg-[radial-gradient(circle,rgba(143,179,172,0.5),rgba(214,136,74,0.25),transparent_70%)]"
                 : "bg-[radial-gradient(circle,rgba(143,179,172,0.42),rgba(214,136,74,0.22),transparent_70%)]"
@@ -252,12 +272,23 @@ export default function DesignCycleStory({
           />
         </div>
 
-        {/* The morphing story SVG: fills the stage, bleeds off the right edge. */}
+        {/* The morphing story SVG.
+            preserveAspectRatio is "meet", not "slice". Under "slice" a wider or
+            a narrower window CROPPED the composition and magnified what was
+            left, which is how the prong tiles ended up filling a phone and how
+            the loose grains ended up on top of the panel at 1440 and above. The
+            art is line work on transparent ground, so letterboxing it is
+            invisible, and the whole figure is now in frame at every width.
+
+            The mask is the second half of that: from md up, where the panel is
+            pinned to the left, the illustration fades out before it reaches the
+            words. Decoration that recedes, rather than decoration that has to
+            be dodged. */}
         <svg
           ref={svgRef}
           viewBox="0 0 1200 800"
-          preserveAspectRatio="xMidYMid slice"
-          className="pointer-events-none absolute inset-0 h-full w-full opacity-90"
+          preserveAspectRatio="xMidYMid meet"
+          className="pointer-events-none absolute inset-0 h-full w-full opacity-90 md:opacity-55 xl:opacity-85 md:[-webkit-mask-image:linear-gradient(to_right,transparent_0%,transparent_34%,black_62%)] md:[mask-image:linear-gradient(to_right,transparent_0%,transparent_34%,black_62%)]"
           aria-hidden
         >
           {/* wind streaks (beat 1) */}
@@ -265,7 +296,7 @@ export default function DesignCycleStory({
             {[160, 250, 340, 430].map((y, i) => (
               <path
                 key={i}
-                d={`M${120 + i * 40} ${y} q 90 -18 180 0 t 180 0`}
+                d={`M${FIELD_X0 + i * 30} ${y} q 90 -18 180 0 t 180 0`}
                 fill="none"
                 opacity={0.5 - i * 0.06}
               />
@@ -296,11 +327,16 @@ export default function DesignCycleStory({
           </g>
 
           {/* three prong tiles (beat 2): clear, labelled cards so "three prongs"
-              actually reads as three named routes, not faint dots. */}
+              actually reads as three named routes, not faint dots.
+
+              They sit in the top band of the field, which clears the plate both
+              across and down. They used to be a wider row starting at x=608,
+              where the first tile spent every wide viewport half hidden behind
+              the panel. */}
           <g ref={prongsRef}>
             {[
-              { x: 700, label: "γ-PGA" },
-              { x: 905, label: "CA · MICP" },
+              { x: 795, label: "γ-PGA" },
+              { x: 955, label: "CA · MICP" },
             ].map((p, i) => (
               <g
                 key={i}
@@ -308,20 +344,20 @@ export default function DesignCycleStory({
                 style={{ opacity: 0, transformBox: "fill-box", transformOrigin: "center" }}
               >
                 <rect
-                  x={p.x - 92}
-                  y={226}
-                  width={184}
-                  height={92}
-                  rx={14}
+                  x={p.x - 75}
+                  y={96}
+                  width={150}
+                  height={76}
+                  rx={12}
                   fill="rgba(214,136,74,0.12)"
                   stroke={C.node}
                   strokeWidth={3}
                 />
-                <circle cx={p.x - 60} cy={272} r={16} fill={C.node} />
-                <text x={p.x - 60} y={279} textAnchor="middle" fontSize={19} fontWeight={800} fill="#1a120c">
+                <circle cx={p.x - 52} cy={134} r={14} fill={C.node} />
+                <text x={p.x - 52} y={140} textAnchor="middle" fontSize={17} fontWeight={800} fill="#1a120c">
                   {i + 1}
                 </text>
-                <text x={p.x + 26} y={279} textAnchor="middle" fontSize={20} fontWeight={700} fill={C.node}>
+                <text x={p.x + 20} y={141} textAnchor="middle" fontSize={17} fontWeight={700} fill={C.node}>
                   {p.label}
                 </text>
               </g>
@@ -333,20 +369,20 @@ export default function DesignCycleStory({
               style={{ opacity: 0, transformBox: "fill-box", transformOrigin: "center" }}
             >
               <rect
-                x={1110 - 92}
-                y={226}
-                width={184}
-                height={92}
-                rx={14}
+                x={1115 - 75}
+                y={96}
+                width={150}
+                height={76}
+                rx={12}
                 fill="rgba(214,136,74,0.12)"
                 stroke={C.node}
                 strokeWidth={3}
               />
-              <circle cx={1110 - 60} cy={272} r={16} fill={C.node} />
-              <text x={1110 - 60} y={279} textAnchor="middle" fontSize={19} fontWeight={800} fill="#1a120c">
+              <circle cx={1115 - 52} cy={134} r={14} fill={C.node} />
+              <text x={1115 - 52} y={140} textAnchor="middle" fontSize={17} fontWeight={800} fill="#1a120c">
                 3
               </text>
-              <text x={1110 + 24} y={279} textAnchor="middle" fontSize={20} fontWeight={700} fill={C.node}>
+              <text x={1115 + 22} y={141} textAnchor="middle" fontSize={17} fontWeight={700} fill={C.node}>
                 Alginate
               </text>
             </g>
@@ -356,12 +392,12 @@ export default function DesignCycleStory({
               still frame cannot be read as "replaced by the shield below" */}
           <g ref={crossRef} style={{ opacity: 0 }}>
             <g stroke={C.cross} strokeWidth={5} strokeLinecap="round">
-              <path d="M1030 232 L1190 312" />
-              <path d="M1190 232 L1030 312" />
+              <path d="M1046 102 L1184 166" />
+              <path d="M1184 102 L1046 166" />
             </g>
             <text
-              x={1110}
-              y={344}
+              x={1115}
+              y={198}
               textAnchor="middle"
               fontSize={15}
               fontWeight={700}
@@ -372,12 +408,13 @@ export default function DesignCycleStory({
             </text>
           </g>
 
-          {/* kill-switch shield (beat 3), centred in the right field. It is an
-              addition over both prongs, not a stand-in for the tile above. */}
+          {/* kill-switch shield (beat 3), centred in the field under the tiles.
+              It is an addition over both prongs, not a stand-in for the tile
+              above. */}
           <g ref={shieldRef} style={{ opacity: 0 }}>
             <text
-              x={945}
-              y={484}
+              x={955}
+              y={412}
               textAnchor="middle"
               fontSize={15}
               fontWeight={700}
@@ -387,31 +424,31 @@ export default function DesignCycleStory({
               KILL SWITCH, ADDED
             </text>
             <path
-              d="M945 360 L983 375 L983 407 Q983 441 945 458 Q907 441 907 407 L907 375 Z"
+              d="M955 288 L993 303 L993 335 Q993 369 955 386 Q917 369 917 335 L917 303 Z"
               fill="none"
               stroke={C.shield}
               strokeWidth={4}
               strokeLinejoin="round"
             />
-            <path d="M928 408 L941 423 L964 390" fill="none" stroke={C.shield} strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M938 336 L951 351 L974 318" fill="none" stroke={C.shield} strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" />
           </g>
 
           {/* field / horizon opening up (beat 5) */}
           <g ref={fieldRef} style={{ opacity: 0 }} stroke={C.cured} strokeWidth={1.6} opacity={0.6}>
-            <path d="M120 690 L1080 690" />
-            {[720, 752, 784].map((y, i) => (
-              <path key={i} d={`M${180 - i * 30} ${y} L${1020 + i * 30} ${y}`} opacity={0.5 - i * 0.12} />
+            <path d="M720 676 L1180 676" />
+            {[708, 740, 772].map((y, i) => (
+              <path key={i} d={`M${716 - i * 5} ${y} L${1186 + i * 5} ${y}`} opacity={0.5 - i * 0.12} />
             ))}
-            {[300, 500, 700, 900].map((x, i) => (
-              <path key={`v${i}`} d={`M${x} 690 L${x + (x - 600) * 0.4} 790`} opacity={0.4} />
+            {[760, 870, 980, 1090].map((x, i) => (
+              <path key={`v${i}`} d={`M${x} 676 L${x + (x - 925) * 0.32} 796`} opacity={0.4} />
             ))}
           </g>
         </svg>
 
         {/* Panel + dots (left). Sits above the SVG. */}
         <div className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-6">
-          <div className="max-w-xl">
-            <div className="plate p-6">
+          <div className="max-w-xl xl:max-w-2xl">
+            <div className="plate p-6 xl:p-8">
               <span className="caption">Engineering Design Cycle</span>
 
               {staticMode ? (
@@ -529,7 +566,7 @@ function CycleRing({
   const seg = C / 4;
   const idx = CYCLE_STAGES.indexOf(stage as never);
   return (
-    <div className="mb-6 mt-4 flex items-center gap-4">
+    <div className="mb-5 mt-3 flex items-center gap-4 border-b border-border pb-4">
       <svg viewBox="0 0 64 64" className="h-12 w-12 shrink-0" aria-hidden>
         <g transform="rotate(-90 32 32)">
           {CYCLE_STAGES.map((_, i) => (
