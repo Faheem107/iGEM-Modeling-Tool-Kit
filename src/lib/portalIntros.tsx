@@ -10,10 +10,12 @@ import type { ReactNode } from "react";
 import { PRONGS } from "./portalsData";
 import { PORTAL_NAMES, KILL_SWITCH_TITLE } from "@/content/copy";
 
-// The 3-step explainer shown when a portal (or a prong combination) is opened, // what it is / what it does / what we plan to model. See DESIGN.md §5.
+// The three-part explainer shown when a portal (or a prong combination) is
+// opened: what it is, how it works, what it reports. Those used to be printed
+// as labels above each paragraph, which announced the paragraph instead of
+// being it. The paragraphs say it themselves now. See DESIGN.md §5.
 
 export interface IntroStep {
-  label: string;
   body: string;
 }
 
@@ -35,16 +37,13 @@ export const PORTAL_INTROS: Record<
     icon: <Workflow className="w-7 h-7 text-dune-teal" />,
     steps: [
       {
-        label: "What it is",
         body: "A constraint-based model of the engineered B. subtilis metabolism, the mathematical core that decides how the cell splits its carbon between growing and making bio-adhesive.",
       },
       {
-        label: "What it does",
         body: "It solves a real linear program on the mass-balanced reaction network (S·v = 0, subject to the glucose and oxygen limits you set) to find the best the cell can do, then lets you knock out genes and watch the carbon re-route.",
       },
       {
-        label: "What we plan to model",
-        body: "The optimal flux distribution: the maximum γ-PGA (or carbonic-anhydrase) yield, the growth trade-off (production envelope), and which reactions are the true bottlenecks.",
+        body: "It reports the optimal flux distribution: the maximum γ-PGA or carbonic-anhydrase yield, the growth trade-off, and which reactions are the true bottlenecks.",
       },
     ],
   },
@@ -54,16 +53,13 @@ export const PORTAL_INTROS: Record<
     icon: <Bug className="w-7 h-7 text-dune-orange" />,
     steps: [
       {
-        label: "What it is",
         body: "A 2-D sandbox running the same assays the wet-lab team runs on treated sand.",
       },
       {
-        label: "What it does",
         body: "It simulates the engineered biopolymer spreading across a sand bed so you can watch a cohesive crust form under conditions you set.",
       },
       {
-        label: "What we plan to model",
-        body: "Surface coverage, propagation rate, and crust cohesion, driven by the same γ-PGA yield and shear-modulus values the pipeline computes.",
+        body: "It reports surface coverage, propagation rate and crust cohesion, driven by the same γ-PGA yield and shear-modulus values the pipeline computes.",
       },
     ],
   },
@@ -73,16 +69,13 @@ export const PORTAL_INTROS: Record<
     icon: <Dna className="w-7 h-7 text-dune-rose" />,
     steps: [
       {
-        label: "What it is",
         body: "A structural viewer for the two enzymes the design turns on: carbonic anhydrase, and the sortase that pins it to the cell wall.",
       },
       {
-        label: "What it does",
         body: "It draws the deposited PDB structures in 3-D and shows the fold coming apart as temperature climbs.",
       },
       {
-        label: "What we plan to model",
-        body: "Thermal stability of the enzyme, the fraction of protein that stays correctly folded and active across the desert's temperature swings.",
+        body: "It reports the thermal stability of the enzyme: the fraction of protein that stays correctly folded and active across the desert's temperature swings.",
       },
     ],
   },
@@ -92,16 +85,13 @@ export const PORTAL_INTROS: Record<
     icon: <Waves className="w-7 h-7 text-dune-teal" />,
     steps: [
       {
-        label: "What it is",
         body: "A power-law (Ostwald–de Waele) rheology model for how a xanthan gum solution, the shear-thinning carrier fluid used to pump the biopolymer mix, moves through the tubing that delivers it to the dune.",
       },
       {
-        label: "What it does",
         body: "It relates mean flow speed to the pressure drop across a straight cylindrical tube, and shows how diluting the gum with water changes both numbers, using the consistency index K and flow-behaviour index n measured for the solution.",
       },
       {
-        label: "What we plan to model",
-        body: "The pressure required to hit a target flow speed (or vice versa), how strongly dilution loosens the flow, and whether the flow stays laminar via the Metzner–Reed Reynolds number.",
+        body: "It reports the pressure required to hit a target flow speed, how strongly dilution loosens the flow, and whether the flow stays laminar, via the Metzner–Reed Reynolds number.",
       },
     ],
   },
@@ -114,16 +104,13 @@ export const KILL_SWITCH_INTRO: PortalIntroContent = {
   icon: <ShieldAlert className="w-7 h-7 text-dune-orange" />,
   steps: [
     {
-      label: "What it is",
       body: "A MazE/MazF toxin and antitoxin pair, carried by the engineered B. subtilis. MazF cuts the cell's own RNA and kills it. MazE binds MazF and stops that, but breaks down fast, so the cell has to keep making more to stay alive.",
     },
     {
-      label: "What it does",
       body: "Add the aTc trigger and the toxin wins, so the cells die. Even with no trigger, the antitoxin plasmid dilutes out over generations and the strain limits itself. A second copy kills any wild microbe that picks up the genes.",
     },
     {
-      label: "What we plan to model",
-      body: "The kill dynamics and time to clear the population, how well horizontal gene transfer is contained, and how many rounds of germination it takes to clear dormant spores.",
+      body: "It reports the kill dynamics and time to clear the population, how well horizontal gene transfer is contained, and how many rounds of germination it takes to clear dormant spores.",
     },
   ],
 };
@@ -152,7 +139,6 @@ export function buildModelIntro(prongIds: number[]): PortalIntroContent {
     icon: <FlaskConical className="w-7 h-7 text-dune-orange" />,
     steps: [
       {
-        label: "What it is",
         body:
           chosen.length === 0
             ? "A workspace built around the prongs you picked."
@@ -160,17 +146,15 @@ export function buildModelIntro(prongIds: number[]): PortalIntroContent {
       },
       {
         // The biological job the prong(s) do in the desert during deployment.
-        label: "What it does",
         body:
           chosen.length === 0
             ? "It stabilises the dune surface by binding loose sand grains into a cohesive crust."
             : chosen.map((p) => p.inDesert).join(" "),
       },
       {
-        label: "What we plan to model",
         body:
           chosen.length > 1
-            ? "How the selected prongs combine, the total crust strength, CO₂ captured, and wind resistance you get when they work together."
+            ? "It reports how the selected prongs combine: the total crust strength, CO₂ captured, and wind resistance you get when they work together."
             : (chosen[0]?.impact ??
               "The strength the crust reaches, and how long it holds."),
       },

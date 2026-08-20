@@ -134,6 +134,4 @@ export const NAV = {
   backToOverview: "Back to the overview",
   backToPortals: "Back to the portals",
   revealMath: "Show the math",
-  /** Prefix for a link from a story beat to the model that quantifies it. */
-  modelLink: "Model",
 } as const;

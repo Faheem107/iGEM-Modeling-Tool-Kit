@@ -73,13 +73,6 @@ export function PortalIntro({ content }: { content: PortalIntroContent }) {
               <X className="h-4 w-4" />
             </button>
 
-            <span className="caption mb-4 flex items-center gap-2 text-dune-orange">
-              <span className="[&_svg]:h-3.5 [&_svg]:w-3.5" aria-hidden>
-                {content.icon}
-              </span>
-              Before you start
-            </span>
-
             <TextEffect
               as="h2"
               per="word"
@@ -92,22 +85,22 @@ export function PortalIntro({ content }: { content: PortalIntroContent }) {
             <ol className="space-y-6">
               {content.steps.map((step, i) => (
                 <motion.li
-                  key={step.label}
+                  key={i}
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15 + i * 0.12, duration: 0.4 }}
                 >
-                  <div className="flex items-baseline gap-3 mb-1.5">
-                    <span className="caption tabular-nums opacity-50">
+                  <div className="flex gap-3">
+                    <span
+                      aria-hidden
+                      className={`caption shrink-0 pt-1 tabular-nums ${STEP_ACCENTS[i]}`}
+                    >
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <h4 className={`caption ${STEP_ACCENTS[i]}`}>
-                      {step.label}
-                    </h4>
+                    <p className="text-[0.9375rem] leading-relaxed text-muted-foreground">
+                      {step.body}
+                    </p>
                   </div>
-                  <p className="pl-8 text-[0.9375rem] leading-relaxed text-muted-foreground">
-                    {step.body}
-                  </p>
                 </motion.li>
               ))}
             </ol>

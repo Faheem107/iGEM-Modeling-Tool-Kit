@@ -536,7 +536,7 @@ export default function LandingCinematic({
                     </div>
                     <p className="text-lg font-medium leading-snug">{b.line}</p>
                     <Link href={b.model.href} className="caption rule-link mt-1 inline-block">
-                      {NAV.modelLink}: {b.model.label}
+                      {b.model.label}
                     </Link>
                   </li>
                 ))}
@@ -591,7 +591,7 @@ export default function LandingCinematic({
                         isLightMode ? "text-dune-maroon/80" : "text-dune-paper/75"
                       }`}
                     >
-                      {NAV.modelLink}: {b.model.label}
+                      {b.model.label}
                     </Link>
                   </div>
                 ))}

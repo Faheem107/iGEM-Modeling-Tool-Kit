@@ -9,7 +9,6 @@ import {
   ARCHIVED_MODULES,
   FIELD_LINKS,
   moduleHref,
-  TOTAL_MODULES,
   type IndexLink,
 } from "@/src/lib/modelIndex";
 import type { ModuleMeta } from "@/src/lib/prongs";
@@ -52,7 +51,6 @@ export default function ModelIndex({
     >
       {heading && (
         <div className="mb-10 border-b border-border pb-5">
-          <p className="caption mb-3">{TOTAL_MODULES} models</p>
           <h2 className="text-[length:var(--text-h1)] text-foreground">
             {heading}
           </h2>
@@ -78,7 +76,7 @@ export default function ModelIndex({
                     onClick={() => onView(prongId)}
                     className="caption rule-link mt-3 inline-block text-dune-orange"
                   >
-                    What this prong is
+                    How it works
                   </button>
                 ) : null
               }
@@ -141,7 +139,6 @@ export default function ModelIndex({
       <CompactModal
         open={showBusiness}
         onClose={() => setShowBusiness(false)}
-        eyebrow="Commercial"
         title="Business model"
         tabs={BUSINESS_SECTIONS.map((s) => ({
           id: s.id,
@@ -224,8 +221,9 @@ function Group({
           >
             {title}
           </span>
-          <span aria-hidden className="caption shrink-0 pt-1.5 text-dune-orange">
+          <span aria-hidden className="caption shrink-0 pt-1.5 tabular-nums text-dune-orange">
             {open ? "−" : "+"}
+            {count}
           </span>
         </span>
         <span
@@ -234,9 +232,6 @@ function Group({
           }`}
         >
           {lede}
-        </span>
-        <span className="caption mt-3 block text-muted-foreground">
-          {count} {count === 1 ? unit : `${unit}s`}
         </span>
       </button>
       {aside}

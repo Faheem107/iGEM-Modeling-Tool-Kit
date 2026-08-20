@@ -20,7 +20,6 @@ export default function ExposureView() {
       </Link>
 
       <header className="mb-10 max-w-3xl">
-        <p className="caption mb-3">Dust exposure</p>
         <h1 className="mb-4 text-4xl font-extrabold tracking-tight md:text-5xl">
           Where the sand comes from, and what reaches a site
         </h1>
