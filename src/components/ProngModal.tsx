@@ -82,7 +82,7 @@ export default function ProngModal({
             if (showingKill) onOpenModel("killswitch");
             else if (activeProng) onOpenModel(activeProng.id);
           }}
-          className="caption w-full border border-border py-3 text-center text-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
+          className="caption w-full border border-border py-4 text-center text-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
         >
           {showingKill ? "Open the kill switch model" : "Simulate this prong"}
         </button>

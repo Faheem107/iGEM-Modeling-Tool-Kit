@@ -108,7 +108,7 @@ export default function CompositeSynthesisPanel({
     >
       <ModuleActions moduleId="composite" isLightMode={isLightMode} />
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard
           isLightMode={isLightMode}
           label="Additive cohesion"
@@ -178,7 +178,7 @@ export default function CompositeSynthesisPanel({
             No cross-prong interactions for this combination.
           </p>
         ) : (
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             {interactions.map((e, i) => {
               const neg = e.percent < 0;
               const Icon =
@@ -200,9 +200,9 @@ export default function CompositeSynthesisPanel({
                       ? "text-dune-rose bg-dune-rose border-dune-rose"
                       : "text-dune-rose bg-dune-rose/20 border-dune-rose/40";
               return (
-                <div key={i} className={`p-3 rounded-[6px] border ${tone}`}>
-                  <div className="flex items-center justify-between gap-3 mb-1">
-                    <span className="flex items-center gap-1.5 text-[11px] font-bold">
+                <div key={i} className={`p-4 rounded-[6px] border ${tone}`}>
+                  <div className="flex items-center justify-between gap-4 mb-1">
+                    <span className="flex items-center gap-2 text-[11px] font-bold">
                       <Icon className="w-3.5 h-3.5" />
                       {e.prongs.map((p) => PRONG_LABEL[p]).join(" ↔ ")} ·{" "}
                       {e.mechanism}
@@ -231,7 +231,7 @@ export default function CompositeSynthesisPanel({
         )}
       </Panel>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Panel
           title={
             <GlossaryTerm term="failure-mode">
@@ -280,7 +280,7 @@ export default function CompositeSynthesisPanel({
             </RadarChart>
           </ResponsiveContainer>
           <div
-            className={`mt-2 p-2.5 rounded-[4px] text-[11px] flex items-center gap-2 ${isLightMode ? "bg-dune-orange text-dune-orange" : "bg-dune-orange/20 text-dune-orange"}`}
+            className={`mt-2 p-2 rounded-[4px] text-[11px] flex items-center gap-2 ${isLightMode ? "bg-dune-orange text-dune-orange" : "bg-dune-orange/20 text-dune-orange"}`}
           >
             <ShieldAlert className="w-4 h-4 shrink-0" />
             <span>

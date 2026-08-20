@@ -13,7 +13,7 @@ import { PORTAL_CARDS } from "@/src/lib/portalsData";
  */
 export default function PortalsView() {
   return (
-    <div className="mx-auto w-full max-w-4xl px-5 pb-32 pt-32 sm:px-8">
+    <div className="mx-auto w-full max-w-6xl px-6 pb-24 pt-24">
       <div className="mb-12">
         <h1 className="text-[length:var(--text-h1)] text-foreground">
           Sandbox portals
@@ -29,13 +29,13 @@ export default function PortalsView() {
           <li key={card.id}>
             <Link
               href={card.href}
-              className="rail-row group border-t border-border py-8"
+              className="rail-row group border-t border-border py-6"
             >
-              <span className="caption pt-1.5">
+              <span className="caption pt-2">
                 {String(i + 1).padStart(2, "0")}
               </span>
               <span>
-                <span className="flex items-center gap-2.5">
+                <span className="flex items-center gap-2">
                   <span className="[&_svg]:h-4 [&_svg]:w-4" aria-hidden>
                     {card.icon}
                   </span>

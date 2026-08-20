@@ -65,11 +65,11 @@ export function Panel({
   return (
     <motion.div
       {...revealProps}
-      className={`rounded-[6px] border border-border p-5 transition-colors duration-300 ${
+      className={`rounded-[6px] border border-border p-6 transition-colors duration-300 ${
         isLightMode ? "bg-white/70" : "bg-card/70"
       } ${className}`}
     >
-      <div className="mb-4 flex items-center justify-between gap-3 border-b border-border pb-3">
+      <div className="mb-4 flex items-center justify-between gap-4 border-b border-border pb-4">
         <h3 className="caption flex items-center gap-2 text-foreground">
           {Icon && <Icon className="h-3.5 w-3.5 text-dune-teal" />}
           {title}
@@ -107,7 +107,7 @@ export function Slider({
 }) {
   return (
     <div>
-      <div className="mb-1.5 flex items-center justify-between gap-3 text-[11px]">
+      <div className="mb-2 flex items-center justify-between gap-4 text-[11px]">
         <span className="font-medium text-foreground">{label}</span>
         {/* The value is information, not a badge: mono and tabular, no chip. */}
         <span className="font-mono text-[10px] tabular-nums text-muted-foreground">
@@ -126,7 +126,7 @@ export function Slider({
       />
       {hint && (
         <span
-          className="mt-1.5 block text-[10px] leading-snug text-muted-foreground opacity-80"
+          className="mt-2 block text-[10px] leading-snug text-muted-foreground opacity-80"
         >
           <GlossaryText max={3}>{hint}</GlossaryText>
         </span>
@@ -155,12 +155,12 @@ export function StatCard({
     // A figure on a rule, not a tile. The emphasised one is marked by a heavier
     // top rule and a larger number, never by a ring or a fill.
     <div
-      className={`border-t pt-2.5 ${
+      className={`border-t pt-2 ${
         emphasize ? "border-dune-orange" : "border-border"
       }`}
     >
-      <span className="caption mb-1.5 block">{label}</span>
-      <div className="flex items-baseline gap-1.5">
+      <span className="caption mb-2 block">{label}</span>
+      <div className="flex items-baseline gap-2">
         <span
           className={`tabular-nums ${emphasize ? "text-2xl" : "text-lg"} ${accent}`}
           style={{ fontVariationSettings: '"wght" 620' }}
@@ -195,9 +195,9 @@ export function MathDisclosure({
     >
       <button
         onClick={() => setOpen((o) => !o)}
-        className="caption flex w-full items-center justify-between px-4 py-2.5 transition-colors hover:text-foreground"
+        className="caption flex w-full items-center justify-between px-4 py-2 transition-colors hover:text-foreground"
       >
-        <span className="flex items-center gap-1.5">
+        <span className="flex items-center gap-2">
           <Sigma className="w-3.5 h-3.5" /> {label}
         </span>
         <ChevronDown
@@ -206,7 +206,7 @@ export function MathDisclosure({
       </button>
       {open && (
         <div
-          className="border-t border-border px-4 py-3 font-mono text-[11px] leading-relaxed text-foreground"
+          className="border-t border-border px-4 py-4 font-mono text-[11px] leading-relaxed text-foreground"
         >
           {children}
         </div>
@@ -250,7 +250,7 @@ function ModuleToggle({
       onClick={onOpen}
       title={`${label}, click, or drop Sandyx here`}
       // Sandyx hover is marked by the edge taking the accent, not by a ring.
-      className={`caption flex w-full min-w-0 flex-col items-center justify-center gap-2 rounded-[4px] border px-2 py-3.5 transition-colors hover:border-dune-orange hover:text-dune-orange ${
+      className={`caption flex w-full min-w-0 flex-col items-center justify-center gap-2 rounded-[4px] border px-2 py-4 transition-colors hover:border-dune-orange hover:text-dune-orange ${
         hovered ? "border-dune-orange text-dune-orange" : "border-border"
       } ${className}`}
     >
@@ -406,12 +406,12 @@ export function ModuleShell({
   return (
     <motion.div
       {...revealProps}
-      className={`grid grid-cols-1 gap-8 rounded-[6px] border border-border p-6 transition-colors duration-300 lg:grid-cols-12 ${
+      className={`grid grid-cols-1 gap-6 rounded-[6px] border border-border p-6 transition-colors duration-300 lg:grid-cols-12 ${
         isLightMode ? "bg-white/60" : "bg-card/60"
       }`}
     >
-      <div className="lg:col-span-5 space-y-5">{controls}</div>
-      <div className="lg:col-span-7 space-y-5">{children}</div>
+      <div className="lg:col-span-5 space-y-6">{controls}</div>
+      <div className="lg:col-span-7 space-y-6">{children}</div>
     </motion.div>
   );
 }

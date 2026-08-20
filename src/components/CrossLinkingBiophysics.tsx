@@ -470,7 +470,7 @@ export default function CrossLinkingBiophysics({
 
   return (
     <div
-      className={`grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 rounded-[6px] border transition-all duration-300 ${
+      className={`grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 rounded-[6px] border transition-all duration-300 ${
         isLightMode
           ? "bg-card border-dune-orange/10 shadow-[0_4px_24px_rgba(139,94,26,0.06)]"
           : "bg-dune-ink border-border "
@@ -483,12 +483,12 @@ export default function CrossLinkingBiophysics({
 
       {/* Parameter Controls Panel */}
       <div
-        className={`lg:col-span-12 xl:col-span-5 p-5 rounded-[6px] border transition-colors duration-300 ${isLightMode ? "bg-white border-dune-orange/10" : "bg-dune-ink border-border"} space-y-5 flex flex-col justify-between`}
+        className={`lg:col-span-12 xl:col-span-5 p-6 rounded-[6px] border transition-colors duration-300 ${isLightMode ? "bg-white border-dune-orange/10" : "bg-dune-ink border-border"} space-y-6 flex flex-col justify-between`}
       >
         <div className="space-y-4">
           {/* Module Header */}
           <div
-            className="flex justify-between items-center pb-3 border-b border-border"
+            className="flex justify-between items-center pb-4 border-b border-border"
           >
             <h3
               className={`text-xs font-black uppercase tracking-wider flex items-center gap-2 font-mono ${isLightMode ? "text-dune-orange" : "text-foreground"}`}
@@ -501,7 +501,7 @@ export default function CrossLinkingBiophysics({
               Settings
             </h3>
             <div
-              className={`flex gap-1.5 p-1 rounded border ${isLightMode ? "bg-dune-orange/50 border-dune-orange/10" : "bg-dune-ink border-border"}`}
+              className={`flex gap-2 p-1 rounded border ${isLightMode ? "bg-dune-orange/50 border-dune-orange/10" : "bg-dune-ink border-border"}`}
             >
               <button
                 onClick={() => handlePreset("day")}
@@ -538,11 +538,11 @@ export default function CrossLinkingBiophysics({
           <div className="space-y-4">
             {/* Universal Linkage toggle with cyan outline */}
             <div
-              className={`p-3.5 rounded-[4px] text-xs ${isLightMode ? "bg-dune-teal/45 border border-dune-teal" : "bg-dune-teal/10 border border-dune-teal/35"}`}
+              className={`p-4 rounded-[4px] text-xs ${isLightMode ? "bg-dune-teal/45 border border-dune-teal" : "bg-dune-teal/10 border border-dune-teal/35"}`}
             >
               <label className="flex items-center justify-between cursor-pointer">
                 <span
-                  className={`flex items-center gap-1.5 font-bold font-sans ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
+                  className={`flex items-center gap-2 font-bold font-sans ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
                 >
                   <Link2
                     className={`w-4 h-4 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
@@ -592,7 +592,7 @@ export default function CrossLinkingBiophysics({
                   )
                 </span>
                 <span
-                  className={`font-mono px-1.5 py-0.5 rounded text-[10px] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/40 border border-dune-teal/40 text-dune-teal"}`}
+                  className={`font-mono px-2 py-1 rounded text-[10px] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/40 border border-dune-teal/40 text-dune-teal"}`}
                 >
                   {params.ion_conc.toFixed(1)} mol/m³
                 </span>
@@ -638,7 +638,7 @@ export default function CrossLinkingBiophysics({
                   )
                 </span>
                 <span
-                  className={`font-mono px-1.5 py-0.5 rounded text-[10px] ${isLightMode ? "bg-dune-orange border border-dune-orange text-dune-orange font-bold" : "bg-dune-orange/30 border border-dune-orange/45 text-dune-orange"}`}
+                  className={`font-mono px-2 py-1 rounded text-[10px] ${isLightMode ? "bg-dune-orange border border-dune-orange text-dune-orange font-bold" : "bg-dune-orange/30 border border-dune-orange/45 text-dune-orange"}`}
                 >
                   {params.Kd.toFixed(1)} mol/m³
                 </span>
@@ -681,14 +681,14 @@ export default function CrossLinkingBiophysics({
                   )
                 </span>
                 <span
-                  className={`font-mono px-1.5 py-0.5 rounded text-[10px] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/30 border border-dune-teal/30 text-dune-rose"}`}
+                  className={`font-mono px-2 py-1 rounded text-[10px] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/30 border border-dune-teal/30 text-dune-rose"}`}
                 >
                   {effectiveRhoPolymer.toFixed(2)} kg/m³
                 </span>
               </div>
               {isLinked ? (
                 <div
-                  className={`py-2.5 px-3 rounded text-[10px] border font-mono flex items-center gap-1.5 ${
+                  className={`py-2 px-4 rounded text-[10px] border font-mono flex items-center gap-2 ${
                     isLightMode
                       ? "bg-dune-teal/55 border-dune-teal text-dune-teal font-bold "
                       : "bg-dune-basalt/45 text-dune-rose border-dune-teal/20"
@@ -733,7 +733,7 @@ export default function CrossLinkingBiophysics({
                   )
                 </span>
                 <span
-                  className={`font-mono px-1.5 py-0.5 rounded text-[10px] ${isLightMode ? "bg-dune-rose border border-dune-rose text-dune-rose font-bold" : "bg-dune-rose/30 border border-dune-rose/40 text-dune-rose"}`}
+                  className={`font-mono px-2 py-1 rounded text-[10px] ${isLightMode ? "bg-dune-rose border border-dune-rose text-dune-rose font-bold" : "bg-dune-rose/30 border border-dune-rose/40 text-dune-rose"}`}
                 >
                   {params.temperature.toFixed(1)} K (
                   {(params.temperature - 273.15).toFixed(1)}°C)
@@ -759,7 +759,7 @@ export default function CrossLinkingBiophysics({
         </div>
 
         <div
-          className={`grid grid-cols-2 gap-3 pt-3 border-t ${isLightMode ? "border-dune-orange/10" : "border-border"}`}
+          className={`grid grid-cols-2 gap-4 pt-4 border-t ${isLightMode ? "border-dune-orange/10" : "border-border"}`}
         >
           <div>
             <label
@@ -779,7 +779,7 @@ export default function CrossLinkingBiophysics({
                   Mx: Math.max(100, parseInt(e.target.value) || 0),
                 }))
               }
-              className={`w-full p-1.5 border rounded text-xs font-mono outline-none ${
+              className={`w-full p-2 border rounded text-xs font-mono outline-none ${
                 isLightMode
                   ? "bg-card border-dune-orange/15 text-foreground focus:border-dune-teal"
                   : "bg-dune-ink border-border text-foreground focus:border-dune-teal"
@@ -804,7 +804,7 @@ export default function CrossLinkingBiophysics({
                   Mn: Math.max(5000, parseInt(e.target.value) || 0),
                 }))
               }
-              className={`w-full p-1.5 border rounded text-xs font-mono outline-none ${
+              className={`w-full p-2 border rounded text-xs font-mono outline-none ${
                 isLightMode
                   ? "bg-card border-dune-orange/15 text-foreground focus:border-dune-teal"
                   : "bg-dune-ink border-border text-foreground focus:border-dune-teal"
@@ -816,7 +816,7 @@ export default function CrossLinkingBiophysics({
 
       {/* Larger, Stunning Real-Time Visuals Viewport */}
       <div
-        className={`lg:col-span-12 xl:col-span-7 p-5 rounded-[6px] border flex flex-col justify-between space-y-4 transition-colors duration-300 ${
+        className={`lg:col-span-12 xl:col-span-7 p-6 rounded-[6px] border flex flex-col justify-between space-y-4 transition-colors duration-300 ${
           isLightMode
             ? "bg-white border-dune-orange/10"
             : "bg-dune-ink border-border"
@@ -847,7 +847,7 @@ export default function CrossLinkingBiophysics({
             an elastic solid matrix, boosting soil shear modulus up to 4000 Pa!
           </p>
 
-          <div className="mt-5 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
             {/* Realtime Canvas Box (LARGER VIEWPORT) */}
             <div className="md:col-span-8 flex justify-center">
               <div
@@ -866,7 +866,7 @@ export default function CrossLinkingBiophysics({
 
                 {/* 3D hover helper */}
                 <div
-                  className={`absolute top-2.5 left-2.5 px-2.5 py-1 rounded text-[9px] font-mono tracking-wider border uppercase transition pointer-events-none group-hover:opacity-100 ${
+                  className={`absolute top-2.5 left-2.5 px-2 py-1 rounded text-[9px] font-mono tracking-wider border uppercase transition pointer-events-none group-hover:opacity-100 ${
                     isLightMode
                       ? "bg-white/95 border-dune-orange/15 text-dune-orange "
                       : "bg-black/85 border-border text-dune-orange opacity-0"
@@ -887,7 +887,7 @@ export default function CrossLinkingBiophysics({
             >
               <div>
                 <span
-                  className={`text-[9px] font-black tracking-wider block uppercase mb-3 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`text-[9px] font-black tracking-wider block uppercase mb-4 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                 >
                   Live Gel Readout
                 </span>
@@ -895,7 +895,7 @@ export default function CrossLinkingBiophysics({
                 <div className="space-y-4">
                   <div>
                     <span
-                      className={`block text-[9px] mb-0.5 ${isLightMode ? "text-muted-foreground font-bold" : "text-muted-foreground"}`}
+                      className={`block text-[9px] mb-1 ${isLightMode ? "text-muted-foreground font-bold" : "text-muted-foreground"}`}
                     >
                       SATURATION DENSITY (θ)
                     </span>
@@ -908,7 +908,7 @@ export default function CrossLinkingBiophysics({
 
                   <div>
                     <span
-                      className={`block text-[9px] mb-0.5 ${isLightMode ? "text-muted-foreground font-bold" : "text-muted-foreground"}`}
+                      className={`block text-[9px] mb-1 ${isLightMode ? "text-muted-foreground font-bold" : "text-muted-foreground"}`}
                     >
                       PEPTIDIC CROSSLINKS
                     </span>
@@ -921,7 +921,7 @@ export default function CrossLinkingBiophysics({
 
                   <div>
                     <span
-                      className={`block text-[9px] mb-0.5 font-sans ${isLightMode ? "text-muted-foreground font-bold" : "text-muted-foreground"}`}
+                      className={`block text-[9px] mb-1 font-sans ${isLightMode ? "text-muted-foreground font-bold" : "text-muted-foreground"}`}
                     >
                       SHEAR STIFFNESS (Gs)
                     </span>
@@ -935,7 +935,7 @@ export default function CrossLinkingBiophysics({
               </div>
 
               <div
-                className={`pt-2.5 border-t leading-normal text-[10px] font-sans flex gap-1.5 items-start ${
+                className={`pt-2 border-t leading-normal text-[10px] font-sans flex gap-2 items-start ${
                   isLightMode
                     ? "border-dune-orange/10 text-muted-foreground font-medium"
                     : "border-border text-muted-foreground"

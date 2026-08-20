@@ -121,7 +121,7 @@ export default function ProteinThermalDecay({
 
   return (
     <div
-      className={`p-5 rounded-[6px] border transition-all duration-300 font-sans ${
+      className={`p-6 rounded-[6px] border transition-all duration-300 font-sans ${
         isLightMode
           ? "bg-card border-dune-orange/10"
           : "bg-dune-ink border-border"
@@ -129,7 +129,7 @@ export default function ProteinThermalDecay({
       id="protein-thermal-decay-frame"
     >
       {/* Title block */}
-      <div className="flex items-center gap-3 mb-5">
+      <div className="flex items-center gap-4 mb-6">
         <div
           className={`p-2 rounded-[4px] ${isLightMode ? "bg-dune-orange text-dune-orange" : "bg-dune-orange/45 text-dune-orange"}`}
         >
@@ -139,14 +139,14 @@ export default function ProteinThermalDecay({
           <h3 className="text-sm font-black uppercase tracking-wider font-mono">
             Protein Conformational &amp; Thermal Decay
           </h3>
-          <p className="text-[10px] text-muted-foreground mt-0.5">
+          <p className="text-[10px] text-muted-foreground mt-1">
             Thermodynamic folding state f_folded mapping of sandy soil
             biopolymers.
           </p>
         </div>
       </div>
 
-      <div className="mb-5">
+      <div className="mb-6">
         <ModuleActions moduleId="thermal" isLightMode={isLightMode} />
       </div>
 
@@ -160,7 +160,7 @@ export default function ProteinThermalDecay({
                 : "bg-dune-ink/60 border-border"
             }`}
           >
-            <h4 className="text-[11px] font-extrabold uppercase tracking-widest text-dune-teal font-mono flex items-center gap-1.5 pb-1 border-b border-dashed border-border">
+            <h4 className="text-[11px] font-extrabold uppercase tracking-widest text-dune-teal font-mono flex items-center gap-2 pb-1 border-b border-dashed border-border">
               <Compass className="w-3.5 h-3.5" /> Soil Micro-Climate Inputs
             </h4>
 
@@ -265,7 +265,7 @@ export default function ProteinThermalDecay({
         <div className="md:col-span-7 flex flex-col justify-between">
           {/* Live Folded State Plot */}
           <div
-            className={`p-3.5 rounded-[4px] border ${
+            className={`p-4 rounded-[4px] border ${
               isLightMode
                 ? "bg-card border-dune-orange/5"
                 : "bg-dune-ink/90 border-border"
@@ -450,12 +450,12 @@ export default function ProteinThermalDecay({
           </div>
 
           {/* Actionable Warning Box Panel */}
-          <div className="mt-3">
+          <div className="mt-4">
             {foldedPercentage < 50 ? (
-              <div className="p-3 bg-dune-maroon/20 border border-dune-maroon/60 rounded-[4px] flex items-start gap-2.5 text-[11px] text-dune-maroon">
-                <AlertTriangle className="w-4 h-4 text-dune-maroon shrink-0 mt-0.5" />
+              <div className="p-4 bg-dune-maroon/20 border border-dune-maroon/60 rounded-[4px] flex items-start gap-2 text-[11px] text-dune-maroon">
+                <AlertTriangle className="w-4 h-4 text-dune-maroon shrink-0 mt-1" />
                 <div>
-                  <strong className="font-black uppercase tracking-wider block mb-0.5">
+                  <strong className="font-black uppercase tracking-wider block mb-1">
                     Critical Thermophilic Integrity Loss!
                   </strong>
                   Severe local micro-climate triggers protein denaturation. The
@@ -467,13 +467,13 @@ export default function ProteinThermalDecay({
                 </div>
               </div>
             ) : (
-              <div className="p-3 bg-dune-teal/15 border border-dune-teal/40 rounded-[4px] flex items-start gap-2.5 text-[11px] text-dune-teal">
+              <div className="p-4 bg-dune-teal/15 border border-dune-teal/40 rounded-[4px] flex items-start gap-2 text-[11px] text-dune-teal">
                 <Sparkles
-                  className="w-4 h-4 text-dune-teal shrink-0 mt-0.5 animate-spin"
+                  className="w-4 h-4 text-dune-teal shrink-0 mt-1 animate-spin"
                   style={{ animationDuration: "10s" }}
                 />
                 <div>
-                  <strong className="font-bold uppercase tracking-wider block mb-0.5">
+                  <strong className="font-bold uppercase tracking-wider block mb-1">
                     Structural Fold State Optimized
                   </strong>
                   The biopolymer scaffold maintains secure structural

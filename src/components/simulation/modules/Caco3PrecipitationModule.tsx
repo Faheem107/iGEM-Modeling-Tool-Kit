@@ -205,7 +205,7 @@ export default function Caco3PrecipitationModule({
         </div>
       </Panel>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-4">
         <StatCard
           isLightMode={isLightMode}
           label="Carbonate content"
@@ -327,7 +327,7 @@ export default function Caco3PrecipitationModule({
         </ResponsiveContainer>
       </Panel>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <Panel
           title={
             <>
@@ -447,7 +447,7 @@ export default function Caco3PrecipitationModule({
           <p
             className={`mt-2 text-[10px] flex items-start gap-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
-            <Leaf className="w-3 h-3 text-dune-teal mt-0.5 shrink-0" />
+            <Leaf className="w-3 h-3 text-dune-teal mt-1 shrink-0" />
             <GlossaryText>
               Red marker = current operating point. The power law UCS = kUcs x
               (calcite wt%)^nUcs is fixed by the wet-lab unconfined compression

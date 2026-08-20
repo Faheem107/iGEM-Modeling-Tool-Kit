@@ -9,17 +9,17 @@ import { NAV } from "@/content/copy";
 export default function ExposureView() {
   const hl = useHighlight();
   return (
-    <div className="mx-auto max-w-7xl px-5 pb-24 pt-28 md:px-8">
+    <div className="mx-auto w-full max-w-[1600px] px-6 pb-24 pt-24">
       <Link
         href="/"
         {...hl}
-        className="caption mb-8 inline-flex items-center gap-2 transition-colors hover:text-dune-orange"
+        className="caption mb-6 inline-flex items-center gap-2 transition-colors hover:text-dune-orange"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
         {NAV.backToOverview}
       </Link>
 
-      <header className="mb-10 max-w-3xl">
+      <header className="mb-12 max-w-3xl">
         <h1 className="mb-4 text-4xl font-extrabold tracking-tight md:text-5xl">
           Where the sand comes from, and what reaches a site
         </h1>

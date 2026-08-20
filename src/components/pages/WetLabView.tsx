@@ -16,7 +16,7 @@ export default function WetLabView() {
   const backToPortals = () => router.push("/portals");
 
   return (
-    <div className="pt-24 pb-12 px-4 md:px-8 max-w-[1400px] mx-auto">
+    <div className="mx-auto w-full max-w-[1600px] px-6 pb-24 pt-24">
       <PortalIntro content={PORTAL_INTROS["wet-lab"]} />
       <button
         onClick={backToPortals}

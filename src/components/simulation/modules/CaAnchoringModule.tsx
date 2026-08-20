@@ -161,7 +161,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
       </Panel>
 
       <div
-        className={`p-4 rounded-[6px] border flex items-center gap-3 ${
+        className={`p-4 rounded-[6px] border flex items-center gap-4 ${
           isLightMode
             ? "bg-dune-teal/60 border-dune-teal"
             : "bg-dune-teal/15 border-dune-teal/40"
@@ -182,7 +182,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
             {recommend}
           </span>
           <span
-            className={`block text-[10px] font-mono mt-0.5 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`block text-[10px] font-mono mt-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             {(best * 100).toFixed(1)}% functional CA displayed
           </span>
@@ -252,7 +252,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
         </ResponsiveContainer>
       </Panel>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-4">
         <StatCard
           isLightMode={isLightMode}
           label="Sortase overall"
@@ -271,9 +271,9 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
         />
       </div>
       <p
-        className={`text-[10px] flex items-start gap-1.5 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+        className={`text-[10px] flex items-start gap-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
       >
-        <Link2 className="w-3.5 h-3.5 text-dune-teal mt-0.5 shrink-0" />
+        <Link2 className="w-3.5 h-3.5 text-dune-teal mt-1 shrink-0" />
         <GlossaryText>
           Display efficiency is the product of three independent steps, export
           times dimerization times anchoring, so it can never exceed the worst

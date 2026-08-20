@@ -79,7 +79,7 @@ export default function GrainSizeCoveragePanel({
     >
       <ModuleActions moduleId="grainsize" isLightMode={isLightMode} />
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard
           isLightMode={isLightMode}
           label="Bound sand mass"
@@ -216,7 +216,7 @@ export default function GrainSizeCoveragePanel({
       </Panel>
 
       <div
-        className={`p-3 rounded-[6px] border text-[11px] flex items-start gap-2 ${
+        className={`p-4 rounded-[6px] border text-[11px] flex items-start gap-2 ${
           multi
             ? isLightMode
               ? "bg-dune-teal text-dune-teal border-dune-teal"
@@ -226,7 +226,7 @@ export default function GrainSizeCoveragePanel({
               : "bg-dune-orange/20 text-dune-orange border-dune-orange/40"
         }`}
       >
-        <TriangleAlert className="w-4 h-4 shrink-0 mt-0.5" />
+        <TriangleAlert className="w-4 h-4 shrink-0 mt-1" />
         <span>
           {multi ? (
             <>

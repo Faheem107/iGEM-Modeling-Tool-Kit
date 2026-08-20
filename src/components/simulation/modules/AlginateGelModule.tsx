@@ -189,7 +189,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
         </div>
       </Panel>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-4">
         <StatCard
           isLightMode={isLightMode}
           label="Gel shear modulus"
@@ -287,7 +287,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
         </p>
       </Panel>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <Panel
           title={
             <>

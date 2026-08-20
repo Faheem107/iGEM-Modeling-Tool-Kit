@@ -62,7 +62,7 @@ export default function LandingView() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="relative w-full z-10 pb-16"
+      className="relative w-full z-10 pb-12"
     >
       {/* --- CINEMATIC DUNE STORY: hero title over the desert, then dive into a
           grain + cell → carbonic-anhydrase 3D → polymer lock → stabilized crust.

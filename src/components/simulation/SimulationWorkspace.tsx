@@ -455,8 +455,8 @@ export default function SimulationWorkspace({
   // The index and the scale label live in the rail, so position carries them
   // instead of an icon chip and a pill badge.
   const sectionHeader = (m: ModuleMeta, index: number) => (
-    <div className="mb-5 border-b border-border pb-4">
-      <div className="caption mb-2 flex items-center gap-3">
+    <div className="mb-6 border-b border-border pb-4">
+      <div className="caption mb-2 flex items-center gap-4">
         <span>{String(index + 1).padStart(2, "0")}</span>
         <span className="opacity-60">{m.scale}</span>
       </div>
@@ -464,16 +464,16 @@ export default function SimulationWorkspace({
         <m.icon className="h-4 w-4 shrink-0 text-dune-teal" />
         {m.title}
       </h2>
-      <p className="mt-1.5 max-w-[70ch] text-[0.875rem] leading-snug text-muted-foreground">
+      <p className="mt-2 max-w-[70ch] text-[0.875rem] leading-snug text-muted-foreground">
         <GlossaryText max={4}>{m.blurb}</GlossaryText>
       </p>
     </div>
   );
 
   return (
-    <div className="mx-auto max-w-[1500px] px-5 pb-32 pt-28 sm:px-8">
+    <div className="mx-auto max-w-[1500px] px-6 pb-24 pt-24 sm:px-6">
       {/* Header / summary banner */}
-      <div className="mb-12 border-b border-border pb-8">
+      <div className="mb-12 border-b border-border pb-6">
         <button
           onClick={onBack}
           className="caption mb-6 inline-flex items-center gap-2 transition-colors hover:text-foreground"
@@ -483,12 +483,12 @@ export default function SimulationWorkspace({
         <h1 className="text-[length:var(--text-h1)] text-foreground">
           {combinationLabel(prongs)}
         </h1>
-        <p className="caption mt-3 flex flex-wrap items-center gap-x-3 gap-y-1">
+        <p className="caption mt-4 flex flex-wrap items-center gap-x-4 gap-y-1">
           {prongs.map((p) => {
             const P = PRONGS[p];
             const Icon = P.icon;
             return (
-              <span key={p} className="inline-flex items-center gap-1.5">
+              <span key={p} className="inline-flex items-center gap-2">
                 <Icon className="h-3 w-3 text-dune-teal" />
                 {P.title}
               </span>
@@ -497,7 +497,7 @@ export default function SimulationWorkspace({
         </p>
 
         {/* Headline macro result */}
-        <div className="mt-8 grid grid-cols-2 gap-x-8 gap-y-6 md:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-6 md:grid-cols-4">
           <HeadlineStat
             isLightMode={isLightMode}
             icon={Wind}
@@ -540,10 +540,10 @@ export default function SimulationWorkspace({
       )}
 
       {/* Rail + stacked modules */}
-      <div className="lg:grid lg:grid-cols-[210px_minmax(0,1fr)] lg:gap-8">
+      <div className="lg:grid lg:grid-cols-[210px_minmax(0,1fr)] lg:gap-6">
         <SandyxCompanion items={treeItems} isLightMode={isLightMode} />
 
-        <div className="space-y-10 min-w-0">
+        <div className="space-y-12 min-w-0">
           {modules.map((m, i) => (
             <motion.section
               key={m.id}
@@ -569,17 +569,17 @@ export default function SimulationWorkspace({
 function AlginateRationaleBanner({ isLightMode }: { isLightMode: boolean }) {
   const reasons = PRONG_COPY.find((p) => p.id === 3)?.whyDropped ?? [];
   return (
-    <div className="mb-12 border-t border-dune-rose pt-5">
-      <div className="mb-3 flex items-center gap-2 text-dune-rose">
+    <div className="mb-12 border-t border-dune-rose pt-6">
+      <div className="mb-4 flex items-center gap-2 text-dune-rose">
         <Ban className="h-3.5 w-3.5 shrink-0" />
         <h2 className="caption text-dune-rose">{ALGINATE_STATUS}</h2>
       </div>
-      <p className="mb-3 max-w-[70ch] text-[0.875rem] leading-relaxed text-muted-foreground">
+      <p className="mb-4 max-w-[70ch] text-[0.875rem] leading-relaxed text-muted-foreground">
         Alginate was scoped as a third prong, a binder you spread on rather
         than one the cells make. Three findings took it out, each of which
         stands on its own:
       </p>
-      <ol className="max-w-[70ch] list-decimal space-y-1.5 pl-5 text-[0.875rem] leading-relaxed text-muted-foreground">
+      <ol className="max-w-[70ch] list-decimal space-y-2 pl-6 text-[0.875rem] leading-relaxed text-muted-foreground">
         {reasons.map((r, i) => (
           <li key={i}>{r}</li>
         ))}
@@ -608,12 +608,12 @@ function HeadlineStat({
   return (
     // A figure on a rule. The emphasised one takes the accent rule and a larger
     // number rather than a tinted box.
-    <div className={`border-t pt-3 ${emphasize ? "border-dune-orange" : "border-border"}`}>
-      <span className="caption mb-2 flex items-center gap-1.5">
+    <div className={`border-t pt-4 ${emphasize ? "border-dune-orange" : "border-border"}`}>
+      <span className="caption mb-2 flex items-center gap-2">
         <Icon className="h-3 w-3 shrink-0" />
         {termKey ? <Term k={termKey}>{label}</Term> : label}
       </span>
-      <div className="flex items-baseline gap-1.5">
+      <div className="flex items-baseline gap-2">
         <span
           className={`tabular-nums ${emphasize ? "text-3xl text-dune-orange" : "text-2xl text-foreground"}`}
           style={{ fontVariationSettings: '"wght" 620' }}
