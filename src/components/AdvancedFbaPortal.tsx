@@ -2272,7 +2272,7 @@ export default function AdvancedFbaPortal({
         </h4>
         <div className="flex flex-col items-center justify-center">
           <div
-            className={`text-4xl md:text-5xl font-black font-mono tracking-tight my-2 drop- flex items-center justify-center gap-1.5 transition-all ${
+            className={`text-4xl md:text-5xl font-black font-mono tracking-tight my-2 flex items-center justify-center gap-1.5 transition-all ${
               pulseMetric
                 ? "text-dune-teal scale-105"
                 : isLightMode

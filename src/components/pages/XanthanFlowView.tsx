@@ -477,7 +477,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
 
       {/* Chart A: ΔP vs V at the undiluted default. */}
       <Panel
-        title="Visualising ΔP vs. V (undiluted)"
+        title="5 · Visualising ΔP vs. V (undiluted)"
         icon={Waves}
         isLightMode={isLightMode}
       >

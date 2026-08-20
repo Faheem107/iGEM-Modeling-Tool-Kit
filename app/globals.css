@@ -151,10 +151,13 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  /* Two radii carry the whole site: 6px for a plate or panel, 4px for a control
+   * inside one. The old scale derived from --radius (0.25rem), which made
+   * --radius-sm evaluate to 0px and rendered every rounded-sm square. */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 6px;
+  --radius-xl: 6px;
 }
 
 @layer base {

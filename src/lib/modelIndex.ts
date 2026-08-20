@@ -95,13 +95,13 @@ export const FIELD_LINKS: IndexLink[] = [
     id: "forecast",
     title: "Seasonal forecast",
     meta: "wind climatology",
-    href: "/exposure",
+    href: "/exposure?mode=seasonal",
   },
   {
     id: "live",
     title: "Live feed",
     meta: "current wind and dust",
-    href: "/exposure",
+    href: "/exposure?mode=live",
   },
   {
     id: "business",
