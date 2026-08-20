@@ -15,7 +15,6 @@ export default function PortalsView() {
   return (
     <div className="mx-auto w-full max-w-4xl px-5 pb-32 pt-32 sm:px-8">
       <div className="mb-12">
-        <p className="caption mb-3">{PORTAL_CARDS.length} standalone workspaces</p>
         <h1 className="text-[length:var(--text-h1)] text-foreground">
           Sandbox portals
         </h1>

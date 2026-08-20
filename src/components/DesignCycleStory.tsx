@@ -9,7 +9,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
 import SandParticles from "./dune-story/SandParticles";
 import { GlossaryText } from "@/src/components/GlossaryTerm";
-import { NAV } from "@/content/copy";
 import { DUNE } from "@/src/lib/palette";
 import {
   CYCLE_BEATS as BEATS,
@@ -523,7 +522,7 @@ function BeatBody({
           tabIndex={active ? 0 : -1}
           className="caption rule-link mt-4 inline-block text-dune-orange"
         >
-          {NAV.modelLink}: {beat.evidence.label}
+          {beat.evidence.label}
         </Link>
       )}
     </>

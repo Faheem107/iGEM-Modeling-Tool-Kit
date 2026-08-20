@@ -44,21 +44,18 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 const LEAVES = [
   {
     key: "p1",
-    eyebrow: "Prong 1",
     title: PRONG_TITLES[1],
     lede: PRONG_SHORTS[1],
     target: 1 as ViewTarget,
   },
   {
     key: "p2",
-    eyebrow: "Prong 2",
     title: PRONG_TITLES[2],
     lede: PRONG_SHORTS[2],
     target: 2 as ViewTarget,
   },
   {
     key: "alg",
-    eyebrow: "Prong 3",
     title: PRONG_TITLES[3],
     lede: PRONG_SHORTS[3],
     target: 3 as ViewTarget,
@@ -285,7 +282,6 @@ export default function ProngConstellation({
                   onLayoutAnimationComplete={remeasure}
                 >
                   <Leaf
-                    eyebrow={l.eyebrow}
                     title={l.title}
                     lede={l.lede}
                     struck={isAlg && struck}
@@ -431,7 +427,8 @@ function Leaf({
   struck,
   onClick,
 }: {
-  eyebrow: string;
+  /** Only for the kill switch, which is not one of the numbered routes. */
+  eyebrow?: string;
   title: string;
   lede: string;
   struck?: boolean;
@@ -443,7 +440,7 @@ function Leaf({
       onClick={onClick}
       className="group block w-full text-center"
     >
-      <p className="caption mb-2">{eyebrow}</p>
+      {eyebrow && <p className="caption mb-2">{eyebrow}</p>}
       <h3 className="wght-head relative inline-block text-[length:var(--text-h3)] text-foreground">
         {title}
         <motion.span

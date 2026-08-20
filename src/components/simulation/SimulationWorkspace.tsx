@@ -494,7 +494,6 @@ export default function SimulationWorkspace({
               </span>
             );
           })}
-          <span className="opacity-60">{modules.length} modules</span>
         </p>
 
         {/* Headline macro result */}

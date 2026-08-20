@@ -135,7 +135,6 @@ export default function KillSwitchWorkspace({ isLightMode, onBack }: Props) {
         </h1>
         <p className="caption mt-3 flex flex-wrap items-center gap-x-3">
           <span>Biosafety element</span>
-          <span className="opacity-60">{SECTIONS.length} modules</span>
         </p>
         <p className="mt-4 max-w-[70ch] text-[0.9375rem] leading-relaxed text-muted-foreground">
           <GlossaryText>
