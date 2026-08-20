@@ -378,9 +378,9 @@ export default function CuringTimelinePanel({
         }`}
       >
         {meetsDesign && timeline.survivesToScheduledReapply ? (
-          <Sprout className="w-4 h-4 shrink-0 mt-1" />
+          <Sprout className="h-4 w-4 shrink-0 mt-1" />
         ) : (
-          <TriangleAlert className="w-4 h-4 shrink-0 mt-1" />
+          <TriangleAlert className="h-4 w-4 shrink-0 mt-1" />
         )}
         <span>
           {!meetsDesign ? (

@@ -28,7 +28,7 @@ export default function PipelineView() {
         onClick={() => router.push("/portals")}
         className="mb-6 flex items-center gap-2 px-4 py-2 text-[length:var(--text-micro)] font-semibold rounded-[3px] border border-border bg-secondary hover:brightness-95 transition"
       >
-        <ArrowLeft className="w-4 h-4" /> {NAV.backToPortals}
+        <ArrowLeft className="h-4 w-4" /> {NAV.backToPortals}
       </button>
       <ModuleErrorBoundary isLightMode={isLightMode} label={PORTAL_NAMES.pipeline}>
         <AdvancedFbaPortal

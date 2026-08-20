@@ -104,7 +104,7 @@ export default function XanthanFlowView() {
         onClick={backToPortals}
         className="mb-6 flex items-center gap-2 px-4 py-2 text-[length:var(--text-micro)] font-semibold rounded-[3px] border border-border bg-secondary hover:brightness-95 transition"
       >
-        <ArrowLeft className="w-4 h-4" /> {NAV.backToPortals}
+        <ArrowLeft className="h-4 w-4" /> {NAV.backToPortals}
       </button>
       <ModuleErrorBoundary isLightMode={isLightMode} label={PORTAL_NAMES.xanthan}>
         <XanthanFlowContent isLightMode={isLightMode} />
@@ -207,7 +207,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           <div
             className={`p-2 rounded-[4px] ${isLightMode ? "bg-dune-teal text-dune-teal" : "bg-dune-teal/50 text-dune-teal border border-dune-teal/50"}`}
           >
-            <Waves className="w-5 h-5" />
+            <Waves className="h-4 w-4" />
           </div>
           <div>
             <h1 className="text-[length:var(--text-micro)] font-black uppercase tracking-wider font-mono">
@@ -650,7 +650,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           <h3
             className={`text-[length:var(--text-micro)] font-extrabold uppercase tracking-wider flex items-center gap-2 ${isLightMode ? "text-dune-maroon" : "text-dune-paper"}`}
           >
-            <Gauge className="w-4 h-4 text-dune-teal" /> Interactive Calculator
+            <Gauge className="h-4 w-4 text-dune-teal" /> Interactive Calculator
           </h3>
           <p
             className={`text-[length:var(--text-caption)] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
@@ -737,7 +737,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           <h3
             className={`text-[length:var(--text-micro)] font-extrabold uppercase tracking-wider flex items-center gap-2 ${isLightMode ? "text-dune-maroon" : "text-dune-paper"}`}
           >
-            <Droplets className="w-4 h-4 text-dune-teal" /> ΔP vs. V by
+            <Droplets className="h-4 w-4 text-dune-teal" /> ΔP vs. V by
             Concentration
           </h3>
           <ResponsiveContainer width="100%" height={300}>
@@ -883,7 +883,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
               : "bg-dune-orange/20 text-dune-orange border-dune-orange/40"
           }`}
         >
-          <TriangleAlert className="w-4 h-4 shrink-0 mt-1" />
+          <TriangleAlert className="h-4 w-4 shrink-0 mt-1" />
           <span>
             This model can be extended to a Herschel–Bulkley form (τ = τ₀ +
             Kγ̇ⁿ) if the solution shows a measurable yield stress τ₀, common

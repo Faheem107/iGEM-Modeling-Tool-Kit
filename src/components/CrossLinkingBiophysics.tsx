@@ -515,7 +515,7 @@ export default function CrossLinkingBiophysics({
                       : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <Sun className="w-3 h-3 text-dune-orange" /> Day
+                <Sun className="h-3.5 w-3.5 text-dune-orange" /> Day
               </button>
               <button
                 onClick={() => handlePreset("night")}
@@ -529,7 +529,7 @@ export default function CrossLinkingBiophysics({
                       : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <Moon className="w-3 h-3 text-dune-teal" /> Night
+                <Moon className="h-3.5 w-3.5 text-dune-teal" /> Night
               </button>
             </div>
           </div>
@@ -553,7 +553,7 @@ export default function CrossLinkingBiophysics({
                   type="checkbox"
                   checked={isLinked}
                   onChange={(e) => setIsLinked(e.target.checked)}
-                  className="rounded accent-dune-teal w-4 h-4 cursor-pointer"
+                  className="rounded accent-dune-teal h-4 w-4 cursor-pointer"
                 />
               </label>
               <p

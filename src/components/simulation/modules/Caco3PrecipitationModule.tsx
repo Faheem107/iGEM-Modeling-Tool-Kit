@@ -447,7 +447,7 @@ export default function Caco3PrecipitationModule({
           <p
             className={`mt-2 text-[length:var(--text-caption)] flex items-start gap-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
-            <Leaf className="w-3 h-3 text-dune-teal mt-1 shrink-0" />
+            <Leaf className="h-3.5 w-3.5 text-dune-teal mt-1 shrink-0" />
             <GlossaryText>
               Red marker = current operating point. The power law UCS = kUcs x
               (calcite wt%)^nUcs is fixed by the wet-lab unconfined compression

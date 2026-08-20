@@ -10,7 +10,7 @@
 
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, Wind, ShieldCheck, Gauge, Ban } from "lucide-react";
+import { ArrowLeft, Ban, Combine, Gauge, ShieldCheck, Wind } from "lucide-react";
 
 import { PRONGS as PRONG_COPY } from "../../lib/portalsData";
 
@@ -489,7 +489,7 @@ export default function SimulationWorkspace({
             const Icon = P.icon;
             return (
               <span key={p} className="inline-flex items-center gap-2">
-                <Icon className="h-3 w-3 text-dune-teal" />
+                <Icon className="h-3.5 w-3.5 text-dune-teal" />
                 {P.title}
               </span>
             );
@@ -525,7 +525,7 @@ export default function SimulationWorkspace({
           />
           <HeadlineStat
             isLightMode={isLightMode}
-            icon={ShieldCheck}
+            icon={Combine}
             label="Composite cohesion"
             termKey="composite-cohesion"
             value={(composite.totalCohesion * 1000).toFixed(1)}
@@ -610,7 +610,7 @@ function HeadlineStat({
     // number rather than a tinted box.
     <div className={`border-t pt-4 ${emphasize ? "border-dune-orange" : "border-border"}`}>
       <span className="caption mb-2 flex items-center gap-2">
-        <Icon className="h-3 w-3 shrink-0" />
+        <Icon className="h-3.5 w-3.5 shrink-0" />
         {termKey ? <Term k={termKey}>{label}</Term> : label}
       </span>
       <div className="flex items-baseline gap-2">

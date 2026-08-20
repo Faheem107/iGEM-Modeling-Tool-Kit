@@ -418,7 +418,7 @@ export default function WetLabSandbox2D({
         <div
           className={`p-2 rounded-[6px] ${isLightMode ? "bg-dune-teal text-dune-teal" : "bg-dune-teal/40 text-dune-teal"}`}
         >
-          <Beaker className="w-5 h-5" />
+          <Beaker className="h-4 w-4" />
         </div>
         <div>
           <h3
@@ -665,7 +665,7 @@ export default function WetLabSandbox2D({
                   type="checkbox"
                   checked={stormActive}
                   onChange={(e) => setStormActive(e.target.checked)}
-                  className="rounded border-border text-dune-maroon focus:ring-dune-maroon bg-dune-basalt w-4 h-4"
+                  className="rounded border-border text-dune-maroon focus:ring-dune-maroon bg-dune-basalt h-4 w-4"
                 />
                 <span
                   className={`text-[length:var(--text-caption)] font-bold uppercase transition-colors ${stormActive ? "text-dune-maroon" : isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
@@ -688,9 +688,9 @@ export default function WetLabSandbox2D({
               }`}
             >
               {isSimulating ? (
-                <Pause className="w-3 h-3" />
+                <Pause className="h-3.5 w-3.5" />
               ) : (
-                <Play className="w-3 h-3" />
+                <Play className="h-3.5 w-3.5" />
               )}
               {isSimulating ? "Pause dune grid" : "Resume dune grid"}
             </button>
@@ -704,7 +704,7 @@ export default function WetLabSandbox2D({
               }`}
               title="Reset grid simulation"
             >
-              <RefreshCw className="w-3 h-3" />
+              <RefreshCw className="h-3.5 w-3.5" />
               Reset
             </button>
           </div>

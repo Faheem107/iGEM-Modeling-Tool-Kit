@@ -804,7 +804,7 @@ export default function AdvancedFbaPortal({
             className={`p-2 rounded-[4px] ${isLightMode ? "bg-dune-orange text-dune-orange" : "bg-dune-orange/50 text-dune-teal border border-dune-orange/50"}`}
           >
             <Cpu
-              className="w-5 h-5 animate-spin"
+              className="h-4 w-4 animate-spin"
               style={{ animationDuration: "6s" }}
             />
           </div>
@@ -1009,7 +1009,7 @@ export default function AdvancedFbaPortal({
                   type="checkbox"
                   checked={hypoxiaMode}
                   onChange={() => setHypoxiaMode(!hypoxiaMode)}
-                  className="w-4 h-4 accent-dune-maroon cursor-pointer"
+                  className="h-4 w-4 accent-dune-maroon cursor-pointer"
                 />
               </div>
             </div>
@@ -1031,7 +1031,7 @@ export default function AdvancedFbaPortal({
                     : "text-foreground border-border"
                 }`}
               >
-                <Dna className="w-4 h-4 text-dune-rose" /> iGEM Knockout Sandbox
+                <Dna className="h-4 w-4 text-dune-rose" /> iGEM Knockout Sandbox
               </h3>
               <p className="text-[length:var(--text-caption)] text-muted-foreground mt-1">
                 Induce single gene deletions. Simplex reroutes carbon fluxes
@@ -1088,7 +1088,7 @@ export default function AdvancedFbaPortal({
                   : "text-foreground border-border"
               }`}
             >
-              <Gauge className="w-4 h-4 text-dune-orange" /> Co-Factor
+              <Gauge className="h-4 w-4 text-dune-orange" /> Co-Factor
               Biosynthetic Yields
             </h3>
 
@@ -1166,7 +1166,7 @@ export default function AdvancedFbaPortal({
                   isLightMode ? "text-foreground" : "text-foreground"
                 }`}
               >
-                <Activity className="w-4 h-4 text-dune-teal font-extrabold" />{" "}
+                <Activity className="h-4 w-4 text-dune-teal font-extrabold" />{" "}
                 Active Analytical Metabolic Flux Map
               </h3>
               <span
@@ -1984,7 +1984,7 @@ export default function AdvancedFbaPortal({
                   isLightMode ? "text-foreground" : "text-foreground"
                 }`}
               >
-                <Database className="w-4 h-4 text-dune-teal" /> Micro
+                <Database className="h-4 w-4 text-dune-teal" /> Micro
                 Stoichiometric Coefficient Matrix (S)
               </h3>
               <span className="font-mono text-[length:var(--text-caption)] text-muted-foreground">
@@ -2080,7 +2080,7 @@ export default function AdvancedFbaPortal({
                   isLightMode ? "text-foreground" : "text-foreground"
                 }`}
               >
-                <Zap className="w-4 h-4 text-dune-teal" />{" "}
+                <Zap className="h-4 w-4 text-dune-teal" />{" "}
                 Metabolic Flux Leaderboard
               </h3>
               <span
@@ -2172,7 +2172,7 @@ export default function AdvancedFbaPortal({
                   isLightMode ? "text-dune-orange" : "text-foreground"
                 }`}
               >
-                <TrendingUp className="w-4 h-4 text-dune-teal" /> Matrix
+                <TrendingUp className="h-4 w-4 text-dune-teal" /> Matrix
                 Constraint Shadow Prices
               </h4>
               <p className="text-[length:var(--text-caption)] text-muted-foreground leading-normal">
@@ -2218,7 +2218,7 @@ export default function AdvancedFbaPortal({
                   isLightMode ? "text-dune-orange" : "text-foreground"
                 }`}
               >
-                <HelpCircle className="w-4 h-4 text-dune-teal" /> iGEM FBA
+                <HelpCircle className="h-4 w-4 text-dune-teal" /> iGEM FBA
                 Science Deck
               </h4>
               <p className="text-[length:var(--text-caption)] text-muted-foreground leading-relaxed font-sans">

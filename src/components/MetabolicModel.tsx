@@ -919,7 +919,7 @@ export default function MetabolicModel({
                   : "text-black bg-dune-teal hover:bg-dune-teal"
               }`}
             >
-              <RotateCcw className="w-3.5 h-3.5" />
+              <RotateCcw className="h-3.5 w-3.5" />
               Calibrate k_cat
             </button>
             {calibratedKcat !== null && (

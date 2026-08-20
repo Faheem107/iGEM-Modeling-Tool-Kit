@@ -198,7 +198,7 @@ export function MathDisclosure({
         className="caption flex w-full items-center justify-between px-4 py-2 transition-colors hover:text-foreground"
       >
         <span className="flex items-center gap-2">
-          <Sigma className="w-3.5 h-3.5" /> {label}
+          <Sigma className="h-3.5 w-3.5" /> {label}
         </span>
         <ChevronDown
           className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`}
@@ -254,7 +254,7 @@ function ModuleToggle({
         hovered ? "border-dune-orange text-dune-orange" : "border-border"
       } ${className}`}
     >
-      <Icon className="w-4 h-4 shrink-0" />
+      <Icon className="h-4 w-4 shrink-0" />
       <span className="text-center leading-tight whitespace-normal break-words">
         {label}
       </span>
@@ -378,7 +378,7 @@ export function ModuleActions({
           src="/sandyx.png"
           alt=""
           aria-hidden
-          className="w-4 h-4 object-contain shrink-0"
+          className="h-4 w-4 object-contain shrink-0"
           draggable={false}
         />
         Drop Sandyx or click any of the {hasCode ? 4 : 3} below!

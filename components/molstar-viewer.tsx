@@ -286,7 +286,7 @@ export default function MolstarViewer({
             </span>
           ) : (
             <span className="flex items-center gap-2 text-[length:var(--text-micro)] text-dune-ash">
-              <Loader2 className="w-4 h-4 animate-spin" /> Loading structure…
+              <Loader2 className="h-4 w-4 animate-spin" /> Loading structure…
             </span>
           )}
         </div>
@@ -303,14 +303,14 @@ export default function MolstarViewer({
                 : "bg-card hover:brightness-95"
             }`}
           >
-            <RotateCw className="w-4 h-4" />
+            <RotateCw className="h-4 w-4" />
           </button>
           <button
             onClick={resetCamera}
             aria-label="Reset camera"
             className="p-2 rounded-[3px] border border-border bg-card hover:brightness-95 transition-colors"
           >
-            <RefreshCw className="w-4 h-4" />
+            <RefreshCw className="h-4 w-4" />
           </button>
         </div>
       )}

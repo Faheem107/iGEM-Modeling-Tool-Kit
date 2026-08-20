@@ -130,7 +130,7 @@ export default function KillSwitchWorkspace({ isLightMode, onBack }: Props) {
           <ArrowLeft className="h-3.5 w-3.5" /> {NAV.backToOverview}
         </button>
         <h1 className="flex items-center gap-2 text-[length:var(--text-h1)] text-foreground">
-          <ShieldAlert className="h-6 w-6 shrink-0 text-dune-orange" />
+          <ShieldAlert className="h-4 w-4 shrink-0 text-dune-orange" />
           {KILL_SWITCH_TITLE}
         </h1>
         <p className="caption mt-4 flex flex-wrap items-center gap-x-4">
@@ -267,7 +267,7 @@ function HeadlineStat({
     // A figure on a rule, matching the simulation workspace.
     <div className={`border-t pt-4 ${emphasize ? "border-dune-orange" : "border-border"}`}>
       <span className="caption mb-2 flex items-center gap-2">
-        <Icon className="h-3 w-3 shrink-0" /> {label}
+        <Icon className="h-3.5 w-3.5 shrink-0" /> {label}
       </span>
       <div className="flex items-baseline gap-2">
         <span

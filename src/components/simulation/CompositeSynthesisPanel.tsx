@@ -203,7 +203,7 @@ export default function CompositeSynthesisPanel({
                 <div key={i} className={`p-4 rounded-[6px] border ${tone}`}>
                   <div className="flex items-center justify-between gap-4 mb-1">
                     <span className="flex items-center gap-2 text-[length:var(--text-caption)] font-bold">
-                      <Icon className="w-3.5 h-3.5" />
+                      <Icon className="h-3.5 w-3.5" />
                       {e.prongs.map((p) => PRONG_LABEL[p]).join(" ↔ ")} ·{" "}
                       {e.mechanism}
                     </span>
@@ -282,7 +282,7 @@ export default function CompositeSynthesisPanel({
           <div
             className={`mt-2 p-2 rounded-[4px] text-[length:var(--text-caption)] flex items-center gap-2 ${isLightMode ? "bg-dune-orange text-dune-orange" : "bg-dune-orange/20 text-dune-orange"}`}
           >
-            <ShieldAlert className="w-4 h-4 shrink-0" />
+            <ShieldAlert className="h-4 w-4 shrink-0" />
             <span>
               Limiting scenario: <b>{limiting.scenario}</b> at{" "}
               {(limiting.resilience * 100).toFixed(0)}% combined resilience.
