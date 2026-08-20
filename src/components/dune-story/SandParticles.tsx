@@ -40,6 +40,7 @@ export default function SandParticles({
   className = "",
   fadeWithDive = false,
   interactive = true,
+  densityScale = 1,
 }: {
   progressRef: MutableRefObject<number>;
   isLightMode: boolean;
@@ -48,6 +49,12 @@ export default function SandParticles({
   fadeWithDive?: boolean;
   /** Mouse repulsion + scroll boost. */
   interactive?: boolean;
+  /**
+   * Multiplier on the grain count. Density comes from the canvas area, so a wide
+   * window gets a denser field exactly where there is already the most on screen.
+   * A section that runs the field behind text passes a value below 1 to thin it.
+   */
+  densityScale?: number;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -74,7 +81,9 @@ export default function SandParticles({
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       // Lighter, tank-style density: sparse enough to stay smooth, dense enough
       // to read as a field. Slow base drift so the grains barely creep.
-      const target = coarse ? 55 : Math.min(180, Math.round((w * h) / 11000));
+      const target = Math.round(
+        (coarse ? 55 : Math.min(180, Math.round((w * h) / 11000))) * densityScale,
+      );
       particles = Array.from({ length: target }, (_, i) => ({
         x: Math.random() * w,
         y: Math.random() * h,
@@ -208,7 +217,7 @@ export default function SandParticles({
       window.removeEventListener("mouseout", onLeave);
       window.removeEventListener("scroll", onScroll);
     };
-  }, [isLightMode, progressRef, fadeWithDive, interactive]);
+  }, [isLightMode, progressRef, fadeWithDive, interactive, densityScale]);
 
   return (
     <canvas
