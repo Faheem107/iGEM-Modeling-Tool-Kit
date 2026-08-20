@@ -15,6 +15,7 @@ import {
 import type { ModuleMeta } from "@/src/lib/prongs";
 import CompactModal from "@/src/components/CompactModal";
 import { BUSINESS_SECTIONS, BUSINESS_SUMMARY } from "@/src/lib/businessModel";
+import { PRONG_TITLES, ALGINATE_RATIONALE } from "@/content/copy";
 
 /**
  * Every model on the site, grouped, with nothing open until it is asked for.
@@ -114,8 +115,8 @@ export default function ModelIndex({
           <div className="rail-row">
             <p className="caption pt-1">Archived</p>
             <Group
-              title="Sodium Alginate"
-              lede="Dropped as a prong on the evidence, still modelled in full so its trade-offs against the engineered pair stay quantifiable."
+              title={PRONG_TITLES[3]}
+              lede={ALGINATE_RATIONALE}
               count={ARCHIVED_MODULES.length}
               muted
               wide

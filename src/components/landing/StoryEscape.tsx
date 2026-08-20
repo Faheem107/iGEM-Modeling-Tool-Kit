@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { MODELS_ANCHOR } from "@/src/lib/scrollRestore";
 import { curtainJumpTo } from "@/src/lib/curtainJump";
+import { NAV } from "@/content/copy";
 import {
   AUTOPLAY_EVENT,
   cancelAutoplay,
@@ -38,7 +39,7 @@ export function skipToModels() {
 
 export default function StoryEscape({
   progressRef,
-  label = "Skip the story",
+  label = NAV.skipStory,
 }: {
   /** Live 0..1 progress through this story. Read every frame, never rendered. */
   progressRef: React.RefObject<number>;

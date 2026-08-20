@@ -21,7 +21,7 @@ export default function PortalsView() {
         </h1>
         <p className="mt-4 max-w-[60ch] text-[length:var(--text-lede)] leading-relaxed text-muted-foreground">
           Each portal is its own workspace, separate from the prong-tailored
-          simulation. Open one to begin.
+          simulation.
         </p>
       </div>
 

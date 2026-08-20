@@ -13,6 +13,7 @@ import { ChevronDown, Sigma, PlayCircle, BookText, Code2 } from "lucide-react";
 import { useGlossary, GlossaryText } from "../GlossaryTerm";
 import { MODULE_CODE } from "../../lib/moduleCode";
 import type { ModuleId } from "../../lib/prongs";
+import { NAV } from "@/content/copy";
 
 export interface Themed {
   isLightMode: boolean;
@@ -184,7 +185,7 @@ export function StatCard({
 export function MathDisclosure({
   isLightMode,
   children,
-  label = "Show the math",
+  label = NAV.revealMath,
 }: Themed & { children: React.ReactNode; label?: string }) {
   const [open, setOpen] = useState(false);
   return (
@@ -276,7 +277,7 @@ export function ShowMathToggle({
       moduleId={moduleId}
       dropAttr="data-sandyx-math"
       icon={Sigma}
-      label="Show the Math"
+      label={NAV.revealMath}
       onOpen={() => openMath(moduleId)}
       hovered={hoverId === moduleId}
       className={className}

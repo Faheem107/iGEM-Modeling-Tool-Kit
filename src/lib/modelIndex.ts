@@ -1,4 +1,5 @@
 import { MODULE_REGISTRY, type ModuleMeta } from "./prongs";
+import { PRONG_TITLES } from "@/content/copy";
 
 /**
  * The landing/model index, derived from MODULE_REGISTRY rather than hand-written.
@@ -43,7 +44,7 @@ export const INDEX_COLUMNS: IndexColumn[] = [
   {
     key: "prong-1",
     eyebrow: "Prong 1",
-    title: "Polymer Overexpression",
+    title: PRONG_TITLES[1],
     lede: "The cells make more of a sticky chain, and the sand is held in it.",
     prongs: "1",
     modules: p1Only,
@@ -51,7 +52,7 @@ export const INDEX_COLUMNS: IndexColumn[] = [
   {
     key: "prong-2",
     eyebrow: "Prong 2",
-    title: "Carbonic Anhydrase & Sortase",
+    title: PRONG_TITLES[2],
     lede: "An enzyme on the cell wall grows CaCO₃ cement, with no ammonia.",
     prongs: "2",
     modules: p2Only,

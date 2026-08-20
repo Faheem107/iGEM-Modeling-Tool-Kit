@@ -8,6 +8,7 @@ import { useScrollLock } from "@/src/lib/scrollLock";
 import { MODULE_REGISTRY } from "@/src/lib/prongs";
 import { INDEX_COLUMNS, ARCHIVED_MODULES, moduleHref } from "@/src/lib/modelIndex";
 import { PORTAL_CARDS, KILL_SWITCH } from "@/src/lib/portalsData";
+import { PRONG_TITLES, PRONG_SHORTS } from "@/content/copy";
 
 /**
  * ⌘K palette: every model, prong and portal, one keystroke away.
@@ -48,15 +49,15 @@ function buildEntries(): Entry[] {
   out.push(
     {
       id: "prong-1",
-      label: "Polymer Overexpression",
-      hint: "γ-PGA bio-adhesive matrix",
+      label: PRONG_TITLES[1],
+      hint: PRONG_SHORTS[1],
       group: "Prongs",
       href: "/model?prongs=1",
     },
     {
       id: "prong-2",
-      label: "Carbonic Anhydrase & Sortase",
-      hint: "Ammonia-free biomineralisation",
+      label: PRONG_TITLES[2],
+      hint: PRONG_SHORTS[2],
       group: "Prongs",
       href: "/model?prongs=2",
     },

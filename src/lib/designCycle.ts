@@ -1,4 +1,5 @@
 import { moduleHref } from "./modelIndex";
+import { MECHANISM } from "@/content/copy";
 
 /**
  * The engineering design cycle, as it actually ran.
@@ -36,7 +37,7 @@ export const CYCLE_BEATS: CycleBeat[] = [
     question: "How strong does a crust have to be before the wind stops lifting grains?",
     did: "Turned the question into numbers: the grain sizes in UAE dune sand, the wind speeds those grains see, and the threshold friction velocity that separates a still surface from a moving one.",
     changed:
-      "Gave every later module the same target. Cohesion raises the threshold, and transport climbs steeply above it, so that one number is what all three routes were later judged against.",
+      "Gave every later module the same target. " + MECHANISM + " That one number is what all three routes were later judged against.",
     evidence: { label: "Aeolian Wind Tunnel", href: moduleHref("1,2", "aeolian") },
   },
   {

@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import GlossaryTerm from "./GlossaryTerm";
 import { ModuleActions } from "./simulation/_shared";
+import { PORTAL_NAMES } from "@/content/copy";
 
 interface WetLabSandbox2DProps {
   onBack: () => void;
@@ -422,7 +423,7 @@ export default function WetLabSandbox2D({
           <h3
             className={`text-sm font-black uppercase tracking-wider ${isLightMode ? "text-foreground" : "text-foreground"}`}
           >
-            Wet-Lab Parameter Sandbox
+            {PORTAL_NAMES.wetlab}
           </h3>
           <p
             className={`text-[11px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}

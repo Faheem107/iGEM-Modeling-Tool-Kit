@@ -5,6 +5,7 @@
  * Rendered by the "Show the Math" window (KaTeX). Sourced directly from src/lib/physics/*
  * and constants.ts so the on-screen math cannot drift from the code that runs.
  */
+import { PORTAL_NAMES } from "@/content/copy";
 
 import type { ModuleId } from "./prongs";
 
@@ -169,7 +170,7 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
     ],
   },
   "protein-3d": {
-    title: "3D Protein Explorer",
+    title: PORTAL_NAMES.protein,
     intro:
       "A structural view of the key enzymes, PgsBCA (γ-PGA synthase, Prong 1) or carbonic anhydrase (Prong 2). The backbone is drawn from residue coordinates, with no free parameters.",
     blocks: [

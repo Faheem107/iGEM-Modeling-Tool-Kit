@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { Dna, Atom } from "lucide-react";
 import { Reveal } from "@/components/reveal";
+import { PORTAL_NAMES } from "@/content/copy";
 
 // WebGL viewer is browser-only, load it client-side with no SSR.
 const MolstarViewer = dynamic(() => import("@/components/molstar-viewer"), {
@@ -91,7 +92,7 @@ export default function MolstarProteinExplorer({
         <div className="mb-6">
           <h2 className="text-3xl font-extrabold tracking-tight flex items-center gap-3">
             <Dna className="w-7 h-7 text-dune-rose" />
-            Protein Structure Explorer
+            {PORTAL_NAMES.protein}
           </h2>
           <p className="opacity-70 text-sm mt-1 max-w-2xl">
             Real deposited structures behind the engineered enzymes, rendered in

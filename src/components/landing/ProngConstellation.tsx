@@ -10,6 +10,8 @@ import {
 import { KILL_SWITCH } from "@/src/lib/portalsData";
 import { GRAIN_NOISE } from "@/src/lib/grain";
 import ModelIndex from "./ModelIndex";
+import { KILL_SWITCH_ROLE } from "@/content/copy";
+import { PRONG_TITLES, PRONG_SHORTS } from "@/content/copy";
 
 /**
  * ProngConstellation: "three prongs became two prongs plus a kill switch",
@@ -43,22 +45,22 @@ const LEAVES = [
   {
     key: "p1",
     eyebrow: "Prong 1",
-    title: "Polymer Overexpression",
-    lede: "γ-PGA bio-adhesive matrix",
+    title: PRONG_TITLES[1],
+    lede: PRONG_SHORTS[1],
     target: 1 as ViewTarget,
   },
   {
     key: "p2",
     eyebrow: "Prong 2",
-    title: "Carbonic Anhydrase & Sortase",
-    lede: "Ammonia-free biomineralisation",
+    title: PRONG_TITLES[2],
+    lede: PRONG_SHORTS[2],
     target: 2 as ViewTarget,
   },
   {
     key: "alg",
     eyebrow: "Prong 3",
-    title: "Sodium Alginate",
-    lede: "Applied hydrogel binder",
+    title: PRONG_TITLES[3],
+    lede: PRONG_SHORTS[3],
     target: 3 as ViewTarget,
   },
 ];
@@ -306,7 +308,7 @@ export default function ProngConstellation({
             style={{ pointerEvents: settled ? "auto" : "none" }}
           >
             <Leaf
-              eyebrow="Added, over both prongs"
+              eyebrow={KILL_SWITCH_ROLE}
               title={KILL_SWITCH.title}
               lede={KILL_SWITCH.short}
               onClick={() => onView("killswitch")}

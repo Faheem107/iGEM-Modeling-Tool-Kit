@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import GlossaryTerm from "./GlossaryTerm";
+import { PORTAL_NAMES } from "@/content/copy";
 import {
   solveDetailedFBA,
   OBJECTIVE_PGA,
@@ -808,7 +809,7 @@ export default function AdvancedFbaPortal({
           </div>
           <div>
             <h2 className="text-sm font-black uppercase tracking-wider font-mono">
-              FBA Core Central Metabolism Optimizer
+              {PORTAL_NAMES.pipeline}
             </h2>
             <p className="text-[10px] text-muted-foreground mt-0.5">
               Simulating{" "}

@@ -35,6 +35,8 @@ import { ModuleActions } from "./_shared";
 import ModuleErrorBoundary from "../ErrorBoundary";
 import { GlossaryText } from "../GlossaryTerm";
 import SandyxCompanion from "../SandyxCompanion";
+import { NAV } from "@/content/copy";
+import { KILL_SWITCH_TITLE } from "@/content/copy";
 import {
   DEFAULT_KILLSWITCH,
   DEFAULT_HGT,
@@ -125,11 +127,11 @@ export default function KillSwitchWorkspace({ isLightMode, onBack }: Props) {
           onClick={onBack}
           className="caption mb-6 inline-flex items-center gap-2 transition-colors hover:text-foreground"
         >
-          <ArrowLeft className="h-3.5 w-3.5" /> Back to the overview
+          <ArrowLeft className="h-3.5 w-3.5" /> {NAV.backToOverview}
         </button>
         <h1 className="flex items-center gap-2.5 text-[length:var(--text-h1)] text-foreground">
           <ShieldAlert className="h-6 w-6 shrink-0 text-dune-orange" />
-          Biocontainment Kill Switch
+          {KILL_SWITCH_TITLE}
         </h1>
         <p className="caption mt-3 flex flex-wrap items-center gap-x-3">
           <span>Biosafety element</span>
@@ -137,10 +139,9 @@ export default function KillSwitchWorkspace({ isLightMode, onBack }: Props) {
         </p>
         <p className="mt-4 max-w-[70ch] text-[0.9375rem] leading-relaxed text-muted-foreground">
           <GlossaryText>
-            The biosafety element for the two engineered prongs. It controls
-            the population with a MazE/MazF toxin and antitoxin circuit,
-            contains gene transfer to wild microbes, and clears dormant
-            spores. This is modelled on its own.
+            Three ways the strain ends, modelled separately: induced with aTc,
+            diluted out over generations, or killed in a wild microbe that
+            picked up the genes without the antitoxin.
           </GlossaryText>
         </p>
 

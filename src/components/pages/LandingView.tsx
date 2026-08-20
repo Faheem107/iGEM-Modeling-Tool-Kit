@@ -8,18 +8,14 @@ import LandingCinematic from "@/src/components/LandingCinematic";
 import DesignCycleStory from "@/src/components/DesignCycleStory";
 import ProngConstellation from "@/src/components/landing/ProngConstellation";
 import SandyxAdventure from "@/src/components/SandyxAdventure";
-import { GlossaryText } from "@/src/components/GlossaryTerm";
-import { PRONGS, KILL_SWITCH } from "@/src/lib/portalsData";
-import CompactModal from "@/src/components/CompactModal";
+import ProngModal, { type ProngTarget } from "@/src/components/ProngModal";
 import { restoreLandingScroll } from "@/src/lib/scrollRestore";
-
-type ViewTarget = number | "killswitch";
 
 export default function LandingView() {
   const router = useRouter();
   const { isLightMode } = useTheme();
 
-  const [viewing, setViewing] = useState<ViewTarget | null>(null);
+  const [viewing, setViewing] = useState<ProngTarget | null>(null);
   const [showAdventure, setShowAdventure] = useState(false);
 
   // A fresh load opens at the top (the hero beat of the pinned story): browsers
@@ -62,12 +58,6 @@ export default function LandingView() {
     router.push(`/model?prongs=${[...prongs].sort().join(",")}`);
   };
 
-  const activeProng =
-    typeof viewing === "number"
-      ? PRONGS.find((p) => p.id === viewing)
-      : undefined;
-  const showingKill = viewing === "killswitch";
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -96,66 +86,14 @@ export default function LandingView() {
       />
 
       {/* --- PRONG / KILL-SWITCH INFORMATION MODAL --- */}
-      <CompactModal
-        open={Boolean(activeProng || showingKill)}
+      <ProngModal
+        viewing={viewing}
         onClose={() => setViewing(null)}
-        eyebrow={
-          showingKill
-            ? "Biosafety layer over both prongs"
-            : activeProng?.whyDropped
-              ? "Modelled for comparison, not carried forward"
-              : "Prong"
-        }
-        title={showingKill ? KILL_SWITCH.title : (activeProng?.title ?? "")}
-        tabs={
-          showingKill
-            ? [
-                { id: "what", label: "What it is", body: <Body text={KILL_SWITCH.whatItIs} /> },
-                { id: "model", label: "Model", body: <Body text={KILL_SWITCH.modelDoes} /> },
-                { id: "impact", label: "Impact", body: <Body text={KILL_SWITCH.impact} /> },
-              ]
-            : activeProng
-              ? [
-                  { id: "what", label: "What it is", body: <Body text={activeProng.whatItIs} /> },
-                  { id: "model", label: "Model", body: <Body text={activeProng.modelDoes} /> },
-                  { id: "impact", label: "Impact", body: <Body text={activeProng.impact} /> },
-                  ...(activeProng.whyDropped
-                    ? [
-                        {
-                          id: "why",
-                          label: "Why not",
-                          body: (
-                            <ol className="list-decimal space-y-2 pl-4 text-sm leading-relaxed text-muted-foreground">
-                              {activeProng.whyDropped.map((r, i) => (
-                                <li key={i}>
-                                  <GlossaryText>{r}</GlossaryText>
-                                </li>
-                              ))}
-                            </ol>
-                          ),
-                        },
-                      ]
-                    : []),
-                ]
-              : []
-        }
-        footer={
-          <button
-            onClick={() => {
-              if (showingKill) {
-                setViewing(null);
-                router.push("/model?view=killswitch");
-              } else if (activeProng) {
-                const id = activeProng.id;
-                setViewing(null);
-                goToModel([id]);
-              }
-            }}
-            className="caption w-full border border-border py-3 text-center text-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
-          >
-            {showingKill ? "Open the kill switch model" : "Simulate this prong"}
-          </button>
-        }
+        onOpenModel={(target) => {
+          setViewing(null);
+          if (target === "killswitch") router.push("/model?view=killswitch");
+          else goToModel([target]);
+        }}
       />
 
       {/* --- SANDYX ADVENTURE (full-screen story + retro arcade) --- */}
@@ -172,10 +110,3 @@ export default function LandingView() {
   );
 }
 
-function Body({ text }: { text: string }) {
-  return (
-    <p className="text-sm leading-relaxed text-muted-foreground">
-      <GlossaryText>{text}</GlossaryText>
-    </p>
-  );
-}

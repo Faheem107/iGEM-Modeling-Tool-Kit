@@ -14,6 +14,7 @@ import Link from "next/link";
 import { duneGradient, grainOverlayStyle } from "@/src/lib/grain";
 import { moduleHref } from "@/src/lib/modelIndex";
 import type { MolstarApi } from "@/components/molstar-viewer";
+import { NAV, PROJECT_TEAM, PROJECT_TITLE } from "@/content/copy";
 import {
   microGrains,
   polymerBridges,
@@ -91,7 +92,7 @@ const BEATS: BeatCopy[] = [
   },
   {
     label: "The result",
-    line: "The crust holds, so the wind needs more speed to move it.",
+    line: "A crust a few millimetres thick, holding grains a tenth of a millimetre wide.",
     scale: "~10 m",
     model: { label: "Composite Strength", href: moduleHref("1,2", "composite") },
   },
@@ -438,7 +439,7 @@ export default function LandingCinematic({
           >
             <div className="mx-auto w-full max-w-6xl">
               <span className="hero-reveal hero-reveal-1 caption mb-6 block text-dune-orange">
-                NYUAD iGEM 2026
+                {PROJECT_TEAM}
               </span>
               {/* Plain, always-painted hero copy. It used to use a per-segment
                   framer-motion reveal (AnimatePresence + blur), which could get
@@ -457,7 +458,7 @@ export default function LandingCinematic({
                   isLightMode ? "text-dune-maroon" : "text-dune-paper"
                 }`}
               >
-                Locking down the dunes
+                {PROJECT_TITLE}
               </h1>
               <p
                 style={{
@@ -484,7 +485,7 @@ export default function LandingCinematic({
                   onClick={skipToModels}
                   className="caption rule-link relative z-10 text-current"
                 >
-                  Explore the models
+                  {NAV.toModels}
                 </button>
                 <button
                   type="button"
@@ -534,7 +535,7 @@ export default function LandingCinematic({
                     </div>
                     <p className="text-lg font-medium leading-snug">{b.line}</p>
                     <Link href={b.model.href} className="caption rule-link mt-1 inline-block">
-                      Model: {b.model.label}
+                      {NAV.modelLink}: {b.model.label}
                     </Link>
                   </li>
                 ))}
@@ -589,7 +590,7 @@ export default function LandingCinematic({
                         isLightMode ? "text-dune-maroon/80" : "text-dune-paper/75"
                       }`}
                     >
-                      Model: {b.model.label}
+                      {NAV.modelLink}: {b.model.label}
                     </Link>
                   </div>
                 ))}

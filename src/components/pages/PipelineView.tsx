@@ -8,6 +8,8 @@ import { PortalIntro } from "@/components/portal-intro";
 import { PORTAL_INTROS } from "@/src/lib/portalIntros";
 import AdvancedFbaPortal from "@/src/components/AdvancedFbaPortal";
 import ModuleErrorBoundary from "@/src/components/ErrorBoundary";
+import { NAV } from "@/content/copy";
+import { PORTAL_NAMES } from "@/content/copy";
 
 /**
  * Physical Pipeline portal, Flux Balance Analysis only. The other biophysical
@@ -26,9 +28,9 @@ export default function PipelineView() {
         onClick={() => router.push("/portals")}
         className="mb-6 flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-[3px] border border-border bg-secondary hover:brightness-95 transition"
       >
-        <ArrowLeft className="w-4 h-4" /> Back to Portals
+        <ArrowLeft className="w-4 h-4" /> {NAV.backToPortals}
       </button>
-      <ModuleErrorBoundary isLightMode={isLightMode} label="Flux Balance Analysis">
+      <ModuleErrorBoundary isLightMode={isLightMode} label={PORTAL_NAMES.pipeline}>
         <AdvancedFbaPortal
           isLightMode={isLightMode}
           onUpdatePrecursorFlux={tk.updatePrecursorFlux}

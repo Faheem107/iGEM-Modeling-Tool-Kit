@@ -5,6 +5,7 @@
  * sourced the text says so rather than rounding to something plausible.
  * House style: no em dashes, short sentences, no filler.
  */
+import { MECHANISM } from "@/content/copy";
 
 export interface BusinessSection {
   id: string;
@@ -34,7 +35,7 @@ export const BUSINESS_SECTIONS: BusinessSection[] = [
     heading: "A biological crust on the source, not a coating on the asset",
     body: [
       "Our engineered Bacillus subtilis binds loose surface sand into a crust. The crust raises the wind speed needed to lift a grain. Below that speed the surface does not move.",
-      "One number carries the whole effect. The wet lab measures the cohesion the crust adds. Cohesion raises the threshold friction velocity, and because sand transport rises steeply above that threshold, a modest increase in cohesion removes a large share of the transport.",
+      "One number carries the whole effect. The wet lab measures the cohesion the crust adds. " + MECHANISM,
     ],
   },
   {

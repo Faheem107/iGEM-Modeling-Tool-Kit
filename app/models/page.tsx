@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import ModelsIndexView from "@/src/components/pages/ModelsIndexView";
+import { PROJECT_META_DESCRIPTION } from "@/content/copy";
 
 export const metadata: Metadata = {
   title: "Models · Dunelock",
-  description:
-    "Every simulation in the Dunelock toolkit, from metabolic flux to aeolian erosion and deployment cost.",
+  description: PROJECT_META_DESCRIPTION,
 };
 
 export default function ModelsPage() {
