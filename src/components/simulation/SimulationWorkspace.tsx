@@ -58,6 +58,8 @@ import CuringTimelinePanel from "./CuringTimelinePanel";
 import SandyxCompanion from "../SandyxCompanion";
 import ModuleErrorBoundary from "../ErrorBoundary";
 import { GlossaryText, Term } from "../GlossaryTerm";
+import { NAV } from "@/content/copy";
+import { ALGINATE_STATUS } from "@/content/copy";
 
 interface Props {
   selectedProngs: ProngId[];
@@ -476,7 +478,7 @@ export default function SimulationWorkspace({
           onClick={onBack}
           className="caption mb-6 inline-flex items-center gap-2 transition-colors hover:text-foreground"
         >
-          <ArrowLeft className="h-3.5 w-3.5" /> Back to the overview
+          <ArrowLeft className="h-3.5 w-3.5" /> {NAV.backToOverview}
         </button>
         <h1 className="text-[length:var(--text-h1)] text-foreground">
           {combinationLabel(prongs)}
@@ -571,16 +573,12 @@ function AlginateRationaleBanner({ isLightMode }: { isLightMode: boolean }) {
     <div className="mb-12 border-t border-dune-rose pt-5">
       <div className="mb-3 flex items-center gap-2 text-dune-rose">
         <Ban className="h-3.5 w-3.5 shrink-0" />
-        <h2 className="caption text-dune-rose">
-          Modelled for comparison, not deployed as a prong
-        </h2>
+        <h2 className="caption text-dune-rose">{ALGINATE_STATUS}</h2>
       </div>
       <p className="mb-3 max-w-[70ch] text-[0.875rem] leading-relaxed text-muted-foreground">
         Alginate was scoped as a third prong, a binder you spread on rather
-        than one the cells make. It is still modelled in full here, so its
-        trade-offs against the engineered pair stay quantifiable, but it is{" "}
-        <strong>not</strong> part of the deployed design. Three findings took it
-        out, each of which stands on its own:
+        than one the cells make. Three findings took it out, each of which
+        stands on its own:
       </p>
       <ol className="max-w-[70ch] list-decimal space-y-1.5 pl-5 text-[0.875rem] leading-relaxed text-muted-foreground">
         {reasons.map((r, i) => (

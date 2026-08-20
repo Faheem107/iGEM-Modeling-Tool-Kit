@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import ExposureWorkspace from "@/src/components/exposure/ExposureWorkspace";
 import { useHighlight } from "@/src/lib/motion/pointer";
+import { NAV } from "@/content/copy";
 
 export default function ExposureView() {
   const hl = useHighlight();
@@ -15,7 +16,7 @@ export default function ExposureView() {
         className="caption mb-8 inline-flex items-center gap-2 transition-colors hover:text-dune-orange"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
-        Back to the overview
+        {NAV.backToOverview}
       </Link>
 
       <header className="mb-10 max-w-3xl">

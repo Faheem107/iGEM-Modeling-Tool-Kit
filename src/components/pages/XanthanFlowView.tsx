@@ -45,6 +45,8 @@ import { PortalIntro } from "@/components/portal-intro";
 import { PORTAL_INTROS } from "@/src/lib/portalIntros";
 import ModuleErrorBoundary from "@/src/components/ErrorBoundary";
 import Katex from "@/src/components/Katex";
+import { PORTAL_NAMES } from "@/content/copy";
+import { NAV } from "@/content/copy";
 import {
   Panel,
   Slider,
@@ -101,9 +103,9 @@ export default function XanthanFlowView() {
         onClick={backToPortals}
         className="mb-6 flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-[3px] border border-border bg-secondary hover:brightness-95 transition"
       >
-        <ArrowLeft className="w-4 h-4" /> Back to Portals
+        <ArrowLeft className="w-4 h-4" /> {NAV.backToPortals}
       </button>
-      <ModuleErrorBoundary isLightMode={isLightMode} label="Xanthan Gum Flow Model">
+      <ModuleErrorBoundary isLightMode={isLightMode} label={PORTAL_NAMES.xanthan}>
         <XanthanFlowContent isLightMode={isLightMode} />
       </ModuleErrorBoundary>
     </div>
@@ -208,7 +210,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           </div>
           <div>
             <h1 className="text-sm font-black uppercase tracking-wider font-mono">
-              Xanthan Gum Flow Model
+              {PORTAL_NAMES.xanthan}
             </h1>
             <p
               className={`text-[11px] mt-0.5 max-w-2xl ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
@@ -377,7 +379,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
             <Katex tex="\Delta P(V)=\dfrac{2KL}{R}\left(\dfrac{(3n+1)V}{nR}\right)^{n}" />
           </div>
         </div>
-        <MathDisclosure isLightMode={isLightMode} label="Show the full derivation">
+        <MathDisclosure isLightMode={isLightMode}>
           <div className="space-y-3">
             <p>Force balance on a cylindrical fluid element of radius r:</p>
             <Katex tex="\tau(r)=\dfrac{\Delta P}{2L}\,r" />

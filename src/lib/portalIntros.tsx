@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { PRONGS } from "./portalsData";
+import { PORTAL_NAMES, KILL_SWITCH_TITLE } from "@/content/copy";
 
 // The 3-step explainer shown when a portal (or a prong combination) is opened, // what it is / what it does / what we plan to model. See DESIGN.md §5.
 
@@ -30,7 +31,7 @@ export const PORTAL_INTROS: Record<
 > = {
   pipeline: {
     storageKey: "portal-intro:pipeline-fba",
-    title: "Flux Balance Analysis",
+    title: PORTAL_NAMES.pipeline,
     icon: <Workflow className="w-7 h-7 text-dune-teal" />,
     steps: [
       {
@@ -49,7 +50,7 @@ export const PORTAL_INTROS: Record<
   },
   "wet-lab": {
     storageKey: "portal-intro:wet-lab",
-    title: "Wet Lab Sandbox",
+    title: PORTAL_NAMES.wetlab,
     icon: <Bug className="w-7 h-7 text-dune-orange" />,
     steps: [
       {
@@ -68,7 +69,7 @@ export const PORTAL_INTROS: Record<
   },
   protein: {
     storageKey: "portal-intro:protein",
-    title: "3D Protein Suite",
+    title: PORTAL_NAMES.protein,
     icon: <Dna className="w-7 h-7 text-dune-rose" />,
     steps: [
       {
@@ -87,7 +88,7 @@ export const PORTAL_INTROS: Record<
   },
   "xanthan-flow": {
     storageKey: "portal-intro:xanthan-flow",
-    title: "Xanthan Gum Flow Model",
+    title: PORTAL_NAMES.xanthan,
     icon: <Waves className="w-7 h-7 text-dune-teal" />,
     steps: [
       {
@@ -109,12 +110,12 @@ export const PORTAL_INTROS: Record<
 /** The biocontainment kill switch, modelled on its own (the biosafety element). */
 export const KILL_SWITCH_INTRO: PortalIntroContent = {
   storageKey: "portal-intro:killswitch",
-  title: "Biocontainment Kill Switch",
+  title: KILL_SWITCH_TITLE,
   icon: <ShieldAlert className="w-7 h-7 text-dune-orange" />,
   steps: [
     {
       label: "What it is",
-      body: "The biosafety element of the project. A MazE/MazF toxin and antitoxin circuit that controls the engineered B. subtilis and clears it when the job is done.",
+      body: "A MazE/MazF toxin and antitoxin pair, carried by the engineered B. subtilis. MazF cuts the cell's own RNA and kills it. MazE binds MazF and stops that, but breaks down fast, so the cell has to keep making more to stay alive.",
     },
     {
       label: "What it does",

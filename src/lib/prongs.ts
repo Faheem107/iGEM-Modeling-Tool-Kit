@@ -29,6 +29,7 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import type { ProngId } from "./physics";
+import { PRONG_TITLES, PRONG_MOLECULES, PORTAL_NAMES } from "@/content/copy";
 
 export type { ProngId };
 
@@ -48,8 +49,8 @@ export interface ProngMeta {
 export const PRONGS: Record<ProngId, ProngMeta> = {
   1: {
     id: 1,
-    title: "γ-PGA Overexpression",
-    molecule: "poly-γ-glutamic acid",
+    title: PRONG_TITLES[1],
+    molecule: PRONG_MOLECULES[1],
     bacterial: true,
     strengthMetric: "shearModulus",
     icon: Sparkles,
@@ -57,8 +58,8 @@ export const PRONGS: Record<ProngId, ProngMeta> = {
   },
   2: {
     id: 2,
-    title: "Carbonic Anhydrase → CaCO₃",
-    molecule: "calcium carbonate",
+    title: PRONG_TITLES[2],
+    molecule: PRONG_MOLECULES[2],
     bacterial: true,
     strengthMetric: "UCS",
     icon: Layers,
@@ -66,8 +67,8 @@ export const PRONGS: Record<ProngId, ProngMeta> = {
   },
   3: {
     id: 3,
-    title: "Sodium Alginate",
-    molecule: "alginate biopolymer",
+    title: PRONG_TITLES[3],
+    molecule: PRONG_MOLECULES[3],
     bacterial: false,
     strengthMetric: "shearModulus",
     icon: ShieldCheck,
@@ -200,7 +201,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
   },
   {
     id: "protein-3d",
-    title: "3D Protein Explorer",
+    title: PORTAL_NAMES.protein,
     blurb:
       "The actual structures, in 3D: the γ-PGA synthetase complex for Prong 1, carbonic anhydrase for Prong 2.",
     scale: "protein",
@@ -237,7 +238,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
   // The bench assay is glutamate substrate → γ-PGA yield → dune crust, a Prong-1 protocol.
   {
     id: "wetlab",
-    title: "Wet-Lab Sandbox (γ-PGA)",
+    title: PORTAL_NAMES.wetlab,
     blurb:
       "Put real bench numbers in, cell density, glutamate, salinity, and erode a dune with them.",
     scale: "macro",

@@ -8,6 +8,7 @@ import "katex/dist/katex.min.css";
 import { ThemeProvider } from "@/components/theme-context";
 import { GradientBackground } from "@/components/gradient-background";
 import { Providers } from "@/components/providers";
+import { PROJECT_META_DESCRIPTION } from "@/content/copy";
 
 // Body / UI, Lexend loaded as a VARIABLE font (no `weight` array). The weight
 // axis is animated on hover across the site (.wght-link / .wght-head), which
@@ -36,8 +37,7 @@ const pressStart = Press_Start_2P({
 
 export const metadata: Metadata = {
   title: "NYUAD iGEM 2026 Modeling Kit",
-  description:
-    "Interactive dry lab simulation workspace for bacteria-modified sand stabilization, modeling metabolic dynamics, thermodynamic cross-linking, aeolian geology, and protein docking.",
+  description: PROJECT_META_DESCRIPTION,
 };
 
 export default function RootLayout({
