@@ -565,6 +565,15 @@ html {
     line-height: 1.4;
   }
 
+  /* Opt one run of characters out of the uppercase transform, inside a
+     .caption. CSS uppercase maps the symbols it meets: "~100 µm" came out as
+     "~100 MM", which states the wrong unit, and "γ-PGA" came out as "Γ-PGA".
+     Wrap the µ or the Greek letter in this and the register stays uppercase
+     while the unit stays true. */
+  .caption-asis {
+    text-transform: none;
+  }
+
   /* Text thickens under the pointer instead of changing colour. Because this
      animates a variable axis and not `font-weight`, nothing reflows and the
      neighbouring rows do not shift. data-active reuses the hover end state, so
