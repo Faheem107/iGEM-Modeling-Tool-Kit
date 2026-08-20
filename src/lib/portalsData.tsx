@@ -11,6 +11,7 @@ import {
   Flame,
   Coins,
   Waves,
+  Compass,
 } from "lucide-react";
 import {
   PRONG_TITLES,
@@ -153,6 +154,15 @@ export const PORTAL_CARDS: PortalCard[] = [
     title: PORTAL_NAMES.xanthan,
     desc: "Xanthan gum thins as you push it harder. This is what that does to pressure in the delivery tubing.",
     ring: "text-dune-teal",
+  },
+  {
+    id: "wind-sand",
+    href: "/portal/wind-sand",
+    icon: <Compass className="w-6 h-6 text-amber-500" />,
+    title: "Wind & Sand Impact",
+    desc: "Hotspot-to-target sand deposition from a seasonal wind rose.",
+    grad: "from-amber-500/20 via-amber-500/5 to-transparent",
+    ring: "text-amber-500",
   },
 ];
 

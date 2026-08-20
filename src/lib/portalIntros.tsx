@@ -6,6 +6,7 @@ import {
   FlaskConical,
   ShieldAlert,
   Waves,
+  Compass,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { PRONGS } from "./portalsData";
@@ -29,7 +30,7 @@ export interface PortalIntroContent {
 }
 
 export const PORTAL_INTROS: Record<
-  "pipeline" | "wet-lab" | "protein" | "xanthan-flow",
+  "pipeline" | "wet-lab" | "protein" | "xanthan-flow" | "wind-sand",
   PortalIntroContent
 > = {
   pipeline: {
@@ -93,6 +94,25 @@ export const PORTAL_INTROS: Record<
       },
       {
         body: "It reports the pressure required to hit a target flow speed, how strongly dilution loosens the flow, and whether the flow stays laminar, via the Metzner–Reed Reynolds number.",
+      },
+    ],
+  },
+  "wind-sand": {
+    storageKey: "portal-intro:wind-sand",
+    title: "Wind Pattern & Sand Impact Model",
+    icon: <Compass className="w-7 h-7 text-amber-500" />,
+    steps: [
+      {
+        label: "What it is",
+        body: "A v0 prototype for estimating how much mobilized sand from a source hotspot could plausibly reach a downwind target site, built from a seasonal wind rose and the hotspot's sand content.",
+      },
+      {
+        label: "What it does",
+        body: "It finds the compass sector pointing from the hotspot toward the target, looks up how often and how strongly the wind blows that way, and applies a naive exponential decay with distance to estimate what fraction of eroded sand survives the trip.",
+      },
+      {
+        label: "What we plan to model",
+        body: "The deposition fraction reaching the target for a chosen erosion rate and decay length, as a placeholder pending a real plume/dispersion transport model.",
       },
     ],
   },
