@@ -38,6 +38,7 @@ import {
   Boxes,
 } from "lucide-react";
 import { GlossaryText } from "../../GlossaryTerm";
+import { DUNE, STATUS } from "@/src/lib/palette";
 import {
   Panel,
   Slider,
@@ -83,7 +84,7 @@ const TABS: { id: Tab; label: string; icon: React.ComponentType<{ className?: st
 
 export default function KillSwitchModule({ isLightMode }: Themed) {
   const [tab, setTab] = useState<Tab>("dynamics");
-  const shell = isLightMode ? "bg-[#fdfaf3]" : "bg-card";
+  const shell = isLightMode ? "bg-card" : "bg-card";
 
   return (
     <div
@@ -105,7 +106,7 @@ export default function KillSwitchModule({ isLightMode }: Themed) {
                     : "border-dune-orange/50 bg-dune-orange/10 text-dune-orange"
                   : isLightMode
                     ? "border-border bg-white text-muted-foreground hover:bg-background"
-                    : "border-border bg-[#1c1512] text-muted-foreground hover:bg-dune-basalt/50"
+                    : "border-border bg-dune-ink text-muted-foreground hover:bg-dune-basalt/50"
               }`}
             >
               <Icon className="h-3.5 w-3.5" /> {t.label}
@@ -272,14 +273,14 @@ export function DynamicsTab({ isLightMode }: Themed) {
               />
               <Tooltip contentStyle={tooltipStyle(isLightMode)} />
               <Legend wrapperStyle={{ fontSize: 10 }} />
-              <ReferenceLine yAxisId="via" y={-3} stroke="#ef4444" strokeDasharray="4 4" />
+              <ReferenceLine yAxisId="via" y={-3} stroke={STATUS.bad} strokeDasharray="4 4" />
               <Area
                 yAxisId="via"
                 type="monotone"
                 dataKey="viability"
                 name="log₁₀(N/N₀)"
-                stroke="#ef4444"
-                fill="#ef4444"
+                stroke={STATUS.bad}
+                fill={STATUS.bad}
                 fillOpacity={0.12}
               />
               <Line
@@ -287,7 +288,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
                 type="monotone"
                 dataKey="antitoxin"
                 name="MazE (antitoxin)"
-                stroke="#14b8a6"
+                stroke={DUNE.teal}
                 dot={false}
                 strokeWidth={2}
               />
@@ -296,7 +297,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
                 type="monotone"
                 dataKey="toxin"
                 name="MazF (toxin)"
-                stroke="#d97706"
+                stroke={STATUS.warn}
                 dot={false}
                 strokeWidth={2}
               />
@@ -462,7 +463,7 @@ export function HgtTab({ isLightMode }: Themed) {
               />
               <Bar dataKey="pct" radius={[0, 4, 4, 0]}>
                 {routeData.map((_, i) => (
-                  <Cell key={i} fill={["#ef4444", "#f59e0b", "#94a3b8"][i]} />
+                  <Cell key={i} fill={[STATUS.bad, STATUS.warn, DUNE.ash][i]} />
                 ))}
               </Bar>
             </BarChart>
@@ -472,7 +473,7 @@ export function HgtTab({ isLightMode }: Themed) {
               <div key={i} className="flex items-center gap-2 text-[10px]">
                 <span
                   className="inline-block h-2.5 w-2.5 rounded-sm"
-                  style={{ background: ["#ef4444", "#f59e0b", "#94a3b8"][i] }}
+                  style={{ background: [STATUS.bad, STATUS.warn, DUNE.ash][i] }}
                 />
                 <span className={isLightMode ? "text-muted-foreground" : "text-muted-foreground"}>
                   {x.name}, {x.pct}%
@@ -596,7 +597,7 @@ export function SporeTab({ isLightMode }: Themed) {
                 contentStyle={tooltipStyle(isLightMode)}
                 formatter={(v: number, n: string) => [n === "logReduction" ? `${v} log` : `${v}%`, n === "logReduction" ? "reduction" : "viable"]}
               />
-              <Bar dataKey="logReduction" name="logReduction" radius={[4, 4, 0, 0]} fill="#14b8a6" />
+              <Bar dataKey="logReduction" name="logReduction" radius={[4, 4, 0, 0]} fill={DUNE.teal} />
             </BarChart>
           </ResponsiveContainer>
         </Panel>
@@ -680,7 +681,7 @@ export function StructuresTab({ isLightMode }: Themed) {
                     : "border-dune-orange/50 bg-dune-orange/10"
                   : isLightMode
                     ? "border-border bg-white hover:bg-background"
-                    : "border-border bg-[#1c1512] hover:bg-dune-basalt/50"
+                    : "border-border bg-dune-ink hover:bg-dune-basalt/50"
               }`}
             >
               <span className={`block text-[13px] font-bold ${isLightMode ? "text-foreground" : "text-foreground"}`}>

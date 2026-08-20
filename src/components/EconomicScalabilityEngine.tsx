@@ -29,6 +29,7 @@ import {
 } from "../lib/physics";
 import { combinationLabel, type ProngId } from "../lib/prongs";
 import type { ProngContribution } from "../lib/physics";
+import { DUNE, STATUS, TINT } from "@/src/lib/palette";
 import {
   Panel,
   Slider,
@@ -111,14 +112,14 @@ export default function EconomicScalabilityEngine({
 
   const barColor = (kind: string) =>
     kind === "selected"
-      ? "#d6884a"
+      ? DUNE.orange
       : kind === "chemical"
-        ? "#8fb3ac"
+        ? DUNE.teal
         : kind === "concrete"
-          ? "#ef4444"
+          ? STATUS.bad
           : isLightMode
-            ? "#cbb892"
-            : "#475569";
+            ? TINT.sandLight
+            : DUNE.ash;
 
   const controls = (
     <>
@@ -218,8 +219,8 @@ export default function EconomicScalabilityEngine({
     <div
       className={`grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 rounded-[6px] border transition-colors ${
         isLightMode
-          ? "bg-[#fdfaf3] border-dune-orange/10 shadow-[0_4px_24px_rgba(139,94,26,0.06)]"
-          : "bg-[#1c1512] border-border "
+          ? "bg-card border-dune-orange/10 shadow-[0_4px_24px_rgba(139,94,26,0.06)]"
+          : "bg-dune-ink border-border "
       }`}
     >
       <div className="lg:col-span-5 space-y-5">{controls}</div>
@@ -276,7 +277,7 @@ export default function EconomicScalabilityEngine({
               </Bar>
               <ReferenceLine
                 y={conventionalCostPerHa.chemical}
-                stroke="#8fb3ac"
+                stroke={DUNE.teal}
                 strokeDasharray="4 3"
               />
             </BarChart>
@@ -308,7 +309,7 @@ export default function EconomicScalabilityEngine({
               return (
                 <div
                   key={p}
-                  className={`flex items-center justify-between p-3 rounded-[6px] border ${isLightMode ? "bg-white border-dune-orange/10" : "bg-[#181210] border-border"}`}
+                  className={`flex items-center justify-between p-3 rounded-[6px] border ${isLightMode ? "bg-white border-dune-orange/10" : "bg-dune-ink border-border"}`}
                 >
                   <div className="min-w-0">
                     <span

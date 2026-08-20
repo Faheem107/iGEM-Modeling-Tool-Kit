@@ -14,6 +14,7 @@
  *  - Mean speed:             V = Q/(πR²) = (nR/(3n+1)) (ΔP R / 2KL)^(1/n)
  *  - Inverted (ΔP from V):   ΔP(V) = (2KL/R) ((3n+1)V / nR)^n
  */
+import { DUNE, TINT } from "@/src/lib/palette";
 
 /** Tube geometry: D = 1 cm, L = 15 cm, matching the worked example in the source model. */
 export const TUBE = {
@@ -118,11 +119,11 @@ export const CONCENTRATION_LEVELS = [1, 0.75, 0.5, 0.25, 0.1] as const;
 // A sequential ramp on the dune teal: darkest is undiluted, lightest is the
 // most dilute, so the ordering reads without the legend.
 export const CONCENTRATION_COLORS: Record<number, string> = {
-  1: "#2f4f49", // undiluted
-  0.75: "#496b64",
-  0.5: "#6d938b",
-  0.25: "#8fb3ac", // dune-teal
-  0.1: "#bdd4cf",
+  1: TINT.tealDeep, // undiluted
+  0.75: TINT.tealDeep,
+  0.5: TINT.tealDeep,
+  0.25: DUNE.teal, // dune-teal
+  0.1: TINT.tealWash,
 };
 
 /** Format a fraction as a whole-number percentage label, e.g. 0.75 -> "75%". */

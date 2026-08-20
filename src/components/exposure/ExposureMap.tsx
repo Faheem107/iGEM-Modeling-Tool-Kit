@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { DUNE, HAIRLINE, INK, TINT } from "@/src/lib/palette";
 
 /**
  * The shared map for both exposure modules.
@@ -102,7 +103,7 @@ export default function ExposureMap({
     <svg
       viewBox={`0 0 ${W} ${H}`}
       className="w-full h-auto rounded-[6px] border border-border"
-      style={{ background: isLightMode ? "#faf5ec" : "#191311" }}
+      style={{ background: isLightMode ? TINT.sandWash : DUNE.ink }}
       role="img"
       aria-label="Gulf dust source and target site map"
     >
@@ -190,8 +191,8 @@ export default function ExposureMap({
               {on && <circle r={13} fill="var(--dune-orange)" fillOpacity={0.18} />}
               <path
                 d={MARKET_GLYPH[s.market] ?? MARKET_GLYPH.industrial}
-                fill={on ? "var(--dune-orange)" : isLightMode ? "#3a2a24" : "#f3e9db"}
-                stroke={isLightMode ? "#faf5ec" : "#191311"}
+                fill={on ? "var(--dune-orange)" : isLightMode ? HAIRLINE.dark : INK.dark}
+                stroke={isLightMode ? TINT.sandWash : DUNE.ink}
                 strokeWidth={1.2}
               />
               <title>{s.name}</title>
@@ -228,7 +229,7 @@ export default function ExposureMap({
               textAnchor={flip ? "end" : "start"}
               fontSize={13}
               fontWeight={600}
-              fill={isLightMode ? "#2a1a16" : "#f3e9db"}
+              fill={isLightMode ? INK.light : INK.dark}
             >
               {selected.name}
             </text>

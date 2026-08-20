@@ -14,6 +14,9 @@
   --dune-basalt: #241c19;
   --dune-slate: #2e2622;
   --dune-ash: #8a7e75;
+  /* The ground a panel sits on in dark mode. One step below --dune-basalt, and
+   * hardcoded 50 times before it had a name. */
+  --dune-ink: #1c1512;
 
   /* ---- Semantic tokens (light) ---- */
   --background: var(--dune-paper);
@@ -127,6 +130,7 @@
   --color-dune-basalt: var(--dune-basalt);
   --color-dune-slate: var(--dune-slate);
   --color-dune-ash: var(--dune-ash);
+  --color-dune-ink: var(--dune-ink);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -320,7 +324,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 ::-webkit-scrollbar-track {
-  background: #1c1512;
+  background: var(--dune-ink);
 }
 
 ::-webkit-scrollbar-thumb {

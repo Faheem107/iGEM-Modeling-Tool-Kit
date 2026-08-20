@@ -299,7 +299,7 @@ export default function MolstarViewer({
             aria-label="Toggle auto-rotation"
             className={`p-2 rounded-[3px] border border-border transition-colors ${
               spinning
-                ? "bg-dune-orange text-[#241c19]"
+                ? "bg-dune-orange text-dune-basalt"
                 : "bg-card hover:brightness-95"
             }`}
           >

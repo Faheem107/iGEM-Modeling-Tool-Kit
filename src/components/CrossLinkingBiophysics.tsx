@@ -14,6 +14,7 @@ import {
   HelpCircle,
 } from "lucide-react";
 import GlossaryTerm from "./GlossaryTerm";
+import { DUNE, HAIRLINE, INK, STATUS, SURFACE, TINT } from "@/src/lib/palette";
 
 interface CrossLinkingProps {
   params: BiophysicsParams;
@@ -120,77 +121,77 @@ export default function CrossLinkingBiophysics({
         x: 75,
         y: 65,
         radius: 30,
-        color: isLightMode ? "#fef3c7" : "#e0f2fe",
+        color: isLightMode ? TINT.orangeWash : TINT.tealWash,
         z: 0.35,
       }, // Golden / Light ice quartz
       {
         x: 215,
         y: 60,
         radius: 38,
-        color: isLightMode ? "#fed7aa" : "#bae6fd",
+        color: isLightMode ? TINT.orangeWash : TINT.tealLight,
         z: 0.85,
       }, // Orange sand / Medium ice-blue silica
       {
         x: 385,
         y: 70,
         radius: 34,
-        color: isLightMode ? "#ffedd5" : "#e0f2fe",
+        color: isLightMode ? TINT.orangeWash : TINT.tealWash,
         z: 0.55,
       }, // Soft cream / Clear silicon granule
       {
         x: 505,
         y: 65,
         radius: 28,
-        color: isLightMode ? "#fef3c7" : "#cffafe",
+        color: isLightMode ? TINT.orangeWash : TINT.tealWash,
         z: 0.25,
       },
       {
         x: 130,
         y: 175,
         radius: 42,
-        color: isLightMode ? "#f5f5f4" : "#f3e9db",
+        color: isLightMode ? TINT.sandWash : INK.dark,
         z: 0.95,
       }, // Dense frosted quartz
       {
         x: 295,
         y: 185,
         radius: 40,
-        color: isLightMode ? "#fed7aa" : "#bae6fd",
+        color: isLightMode ? TINT.orangeWash : TINT.tealLight,
         z: 0.75,
       }, // Layered silica cluster
       {
         x: 465,
         y: 175,
         radius: 36,
-        color: isLightMode ? "#ffe4e6" : "#cbd5e1",
+        color: isLightMode ? TINT.roseWash : DUNE.ash,
         z: 0.45,
       },
       {
         x: 70,
         y: 290,
         radius: 32,
-        color: isLightMode ? "#ffedd5" : "#cffafe",
+        color: isLightMode ? TINT.orangeWash : TINT.tealWash,
         z: 0.3,
       }, // Lower silica layer
       {
         x: 230,
         y: 280,
         radius: 38,
-        color: isLightMode ? "#f5f5f4" : "#cbd5e1",
+        color: isLightMode ? TINT.sandWash : DUNE.ash,
         z: 0.65,
       },
       {
         x: 395,
         y: 300,
         radius: 44,
-        color: isLightMode ? "#fef3c7" : "#bae6fd",
+        color: isLightMode ? TINT.orangeWash : TINT.tealLight,
         z: 1.0,
       }, // Giant silica dome
       {
         x: 520,
         y: 285,
         radius: 26,
-        color: isLightMode ? "#ffedd5" : "#e0f2fe",
+        color: isLightMode ? TINT.orangeWash : TINT.tealWash,
         z: 0.2,
       },
     ];
@@ -208,11 +209,11 @@ export default function CrossLinkingBiophysics({
       const pxY = mouse.currentY;
 
       // Background backdrop
-      ctx.fillStyle = isLightMode ? "#fdfaf3" : "#03060a";
+      ctx.fillStyle = isLightMode ? SURFACE.light : DUNE.ink;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Render molecular background grids reflecting custom parallax shift
-      ctx.strokeStyle = isLightMode ? "#eae1cd" : "#050c18";
+      ctx.strokeStyle = isLightMode ? TINT.sandWash : DUNE.ink;
       ctx.lineWidth = 1;
       for (let x = -40; x < canvas.width + 40; x += 40) {
         ctx.beginPath();
@@ -341,12 +342,12 @@ export default function CrossLinkingBiophysics({
           ctx.fill();
 
           // Calcium metal sphere dot
-          ctx.fillStyle = "#8fb3ac"; // Sky cyan blue (highly appealing, no gold)
+          ctx.fillStyle = DUNE.teal; // Sky cyan blue (highly appealing, no gold)
           ctx.beginPath();
           ctx.arc(rx, ry, 6, 0, Math.PI * 2);
           ctx.fill();
 
-          ctx.strokeStyle = "#d6884a";
+          ctx.strokeStyle = DUNE.orange;
           ctx.lineWidth = 1.25;
           ctx.beginPath();
           ctx.arc(rx, ry, 6, 0, Math.PI * 2);
@@ -392,13 +393,13 @@ export default function CrossLinkingBiophysics({
           pyVal,
           radiusVal,
         );
-        grainGrad.addColorStop(0, "#ffffff"); // Specular highlight reflection (pure white glow)
+        grainGrad.addColorStop(0, SURFACE.light); // Specular highlight reflection (pure white glow)
         grainGrad.addColorStop(0.25, g.color); // Middle frosted body color (ice-blue/soft gray)
         grainGrad.addColorStop(
           0.72,
           isLightMode ? "rgba(139, 92, 26, 0.22)" : "rgba(15, 23, 42, 0.45)",
         ); // Refractive dark inner curvature
-        grainGrad.addColorStop(1, isLightMode ? "#9a3412" : "#081734"); // Rich sandy brown or oceanic deep slate shadow rim for extreme 3D fullness
+        grainGrad.addColorStop(1, isLightMode ? TINT.orangeDeep : DUNE.ink); // Rich sandy brown or oceanic deep slate shadow rim for extreme 3D fullness
 
         ctx.fillStyle = grainGrad;
         ctx.beginPath();
@@ -417,7 +418,7 @@ export default function CrossLinkingBiophysics({
         ctx.stroke();
 
         // Dark ink borders to provide distinct cartoon-like outlines resembling Protein Imager style
-        ctx.strokeStyle = isLightMode ? "#78350f" : "#02050b";
+        ctx.strokeStyle = isLightMode ? STATUS.bad : DUNE.ink;
         ctx.lineWidth = 1.5;
         ctx.beginPath();
         ctx.arc(gx, gy, g.radius, 0, Math.PI * 2);
@@ -437,11 +438,11 @@ export default function CrossLinkingBiophysics({
         ? "rgba(255, 255, 255, 0.94)"
         : "rgba(10, 15, 24, 0.88)";
       ctx.fillRect(10, canvas.height - 35, canvas.width - 20, 25);
-      ctx.strokeStyle = isLightMode ? "#eae1cd" : "#43362e";
+      ctx.strokeStyle = isLightMode ? TINT.sandWash : HAIRLINE.dark;
       ctx.lineWidth = 1;
       ctx.strokeRect(10, canvas.height - 35, canvas.width - 20, 25);
 
-      ctx.fillStyle = isLightMode ? "#d6884a" : "#8fb3ac";
+      ctx.fillStyle = isLightMode ? DUNE.orange : DUNE.teal;
       ctx.font = 'bold 9px "JetBrains Mono", monospace';
       ctx.textAlign = "left";
       ctx.fillText(
@@ -471,8 +472,8 @@ export default function CrossLinkingBiophysics({
     <div
       className={`grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 rounded-[6px] border transition-all duration-300 ${
         isLightMode
-          ? "bg-[#fdfaf3] border-dune-orange/10 shadow-[0_4px_24px_rgba(139,94,26,0.06)]"
-          : "bg-[#1c1512] border-border "
+          ? "bg-card border-dune-orange/10 shadow-[0_4px_24px_rgba(139,94,26,0.06)]"
+          : "bg-dune-ink border-border "
       }`}
       id="crosslinking-biophysics-panel"
     >
@@ -482,7 +483,7 @@ export default function CrossLinkingBiophysics({
 
       {/* Parameter Controls Panel */}
       <div
-        className={`lg:col-span-12 xl:col-span-5 p-5 rounded-[6px] border transition-colors duration-300 ${isLightMode ? "bg-white border-dune-orange/10" : "bg-[#1c1512] border-border"} space-y-5 flex flex-col justify-between`}
+        className={`lg:col-span-12 xl:col-span-5 p-5 rounded-[6px] border transition-colors duration-300 ${isLightMode ? "bg-white border-dune-orange/10" : "bg-dune-ink border-border"} space-y-5 flex flex-col justify-between`}
       >
         <div className="space-y-4">
           {/* Module Header */}
@@ -500,7 +501,7 @@ export default function CrossLinkingBiophysics({
               Settings
             </h3>
             <div
-              className={`flex gap-1.5 p-1 rounded border ${isLightMode ? "bg-dune-orange/50 border-dune-orange/10" : "bg-[#1c1512] border-border"}`}
+              className={`flex gap-1.5 p-1 rounded border ${isLightMode ? "bg-dune-orange/50 border-dune-orange/10" : "bg-dune-ink border-border"}`}
             >
               <button
                 onClick={() => handlePreset("day")}
@@ -508,7 +509,7 @@ export default function CrossLinkingBiophysics({
                   activePreset === "day"
                     ? isLightMode
                       ? "bg-white text-dune-teal border border-dune-orange/15 "
-                      : "bg-[#152e3d] text-dune-teal border border-dune-teal"
+                      : "bg-dune-ink text-dune-teal border border-dune-teal"
                     : isLightMode
                       ? "text-dune-orange/50 hover:text-dune-orange"
                       : "text-muted-foreground hover:text-foreground"
@@ -522,7 +523,7 @@ export default function CrossLinkingBiophysics({
                   activePreset === "night"
                     ? isLightMode
                       ? "bg-white text-dune-teal border border-dune-orange/15 "
-                      : "bg-[#152e3d] text-dune-teal border border-dune-teal"
+                      : "bg-dune-ink text-dune-teal border border-dune-teal"
                     : isLightMode
                       ? "text-dune-orange/50 hover:text-dune-orange"
                       : "text-muted-foreground hover:text-foreground"
@@ -563,7 +564,7 @@ export default function CrossLinkingBiophysics({
                   className={
                     isLightMode
                       ? "text-dune-teal font-mono font-bold"
-                      : "text-[#cf9d90]"
+                      : "text-dune-rose"
                   }
                 >
                   ρ_poly
@@ -672,7 +673,7 @@ export default function CrossLinkingBiophysics({
                     className={
                       isLightMode
                         ? "text-dune-teal font-mono font-bold"
-                        : "text-[#cf9d90] font-mono"
+                        : "text-dune-rose font-mono"
                     }
                   >
                     ρ_poly
@@ -680,7 +681,7 @@ export default function CrossLinkingBiophysics({
                   )
                 </span>
                 <span
-                  className={`font-mono px-1.5 py-0.5 rounded text-[10px] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/30 border border-dune-teal/30 text-[#cf9d90]"}`}
+                  className={`font-mono px-1.5 py-0.5 rounded text-[10px] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/30 border border-dune-teal/30 text-dune-rose"}`}
                 >
                   {effectiveRhoPolymer.toFixed(2)} kg/m³
                 </span>
@@ -690,7 +691,7 @@ export default function CrossLinkingBiophysics({
                   className={`py-2.5 px-3 rounded text-[10px] border font-mono flex items-center gap-1.5 ${
                     isLightMode
                       ? "bg-dune-teal/55 border-dune-teal text-dune-teal font-bold "
-                      : "bg-dune-basalt/45 text-[#cf9d90] border-dune-teal/20"
+                      : "bg-dune-basalt/45 text-dune-rose border-dune-teal/20"
                   }`}
                 >
                   <span>Dynamic Feed: Math.min(8.0, 0.1 + PGA * 0.04)</span>
@@ -780,8 +781,8 @@ export default function CrossLinkingBiophysics({
               }
               className={`w-full p-1.5 border rounded text-xs font-mono outline-none ${
                 isLightMode
-                  ? "bg-[#fdfaf3] border-dune-orange/15 text-foreground focus:border-dune-teal"
-                  : "bg-[#1c1512] border-border text-foreground focus:border-dune-teal"
+                  ? "bg-card border-dune-orange/15 text-foreground focus:border-dune-teal"
+                  : "bg-dune-ink border-border text-foreground focus:border-dune-teal"
               }`}
             />
           </div>
@@ -805,8 +806,8 @@ export default function CrossLinkingBiophysics({
               }
               className={`w-full p-1.5 border rounded text-xs font-mono outline-none ${
                 isLightMode
-                  ? "bg-[#fdfaf3] border-dune-orange/15 text-foreground focus:border-dune-teal"
-                  : "bg-[#1c1512] border-border text-foreground focus:border-dune-teal"
+                  ? "bg-card border-dune-orange/15 text-foreground focus:border-dune-teal"
+                  : "bg-dune-ink border-border text-foreground focus:border-dune-teal"
               }`}
             />
           </div>
@@ -818,7 +819,7 @@ export default function CrossLinkingBiophysics({
         className={`lg:col-span-12 xl:col-span-7 p-5 rounded-[6px] border flex flex-col justify-between space-y-4 transition-colors duration-300 ${
           isLightMode
             ? "bg-white border-dune-orange/10"
-            : "bg-[#1c1512] border-border"
+            : "bg-dune-ink border-border"
         }`}
       >
         <div>
@@ -852,8 +853,8 @@ export default function CrossLinkingBiophysics({
               <div
                 className={`border rounded-[4px] overflow-hidden relative w-full max-w-[550px] group transition-colors ${
                   isLightMode
-                    ? "border-dune-orange/15 bg-[#fdfaf3]"
-                    : "border-border bg-[#04060a]"
+                    ? "border-dune-orange/15 bg-card"
+                    : "border-border bg-dune-ink"
                 }`}
               >
                 <canvas
@@ -880,8 +881,8 @@ export default function CrossLinkingBiophysics({
             <div
               className={`md:col-span-4 space-y-4 font-mono text-xs p-4 rounded-[6px] shadow self-stretch flex flex-col justify-between transition-colors ${
                 isLightMode
-                  ? "bg-[#fcfaf4] border border-dune-orange/10"
-                  : "bg-[#181210] border border-border shadow"
+                  ? "bg-card border border-dune-orange/10"
+                  : "bg-dune-ink border border-border shadow"
               }`}
             >
               <div>
@@ -899,7 +900,7 @@ export default function CrossLinkingBiophysics({
                       SATURATION DENSITY (θ)
                     </span>
                     <span
-                      className={`font-extrabold text-sm ${isLightMode ? "text-dune-teal" : "text-[#8fb3ac]"}`}
+                      className={`font-extrabold text-sm ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
                     >
                       {(results.theta * 100).toFixed(1)}%
                     </span>
@@ -912,7 +913,7 @@ export default function CrossLinkingBiophysics({
                       PEPTIDIC CROSSLINKS
                     </span>
                     <span
-                      className={`font-extrabold text-[11px] ${isLightMode ? "text-[#b07568]" : "text-[#cf9d90]"}`}
+                      className={`font-extrabold text-[11px] ${isLightMode ? "text-dune-rose" : "text-dune-rose"}`}
                     >
                       {results.nu.toFixed(5)} mol/cm³
                     </span>
@@ -941,7 +942,7 @@ export default function CrossLinkingBiophysics({
                 }`}
               >
                 <Info
-                  className={`w-4 h-4 shrink-0 ${isLightMode ? "text-dune-teal" : "text-[#8fb3ac]"}`}
+                  className={`w-4 h-4 shrink-0 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
                 />
                 <span>
                   An elevated Shear G ratio protects sand bed structures from

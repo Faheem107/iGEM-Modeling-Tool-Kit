@@ -47,6 +47,7 @@ import ModuleErrorBoundary from "@/src/components/ErrorBoundary";
 import Katex from "@/src/components/Katex";
 import { PORTAL_NAMES } from "@/content/copy";
 import { NAV } from "@/content/copy";
+import { DUNE, STATUS } from "@/src/lib/palette";
 import {
   Panel,
   Slider,
@@ -199,7 +200,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
         className={`p-4 rounded-[6px] border flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors duration-300 ${
           isLightMode
             ? "bg-dune-teal border-dune-teal/10"
-            : "bg-[#0f1a1e] border-border"
+            : "bg-dune-ink border-border"
         }`}
       >
         <div className="flex items-center gap-3">
@@ -359,7 +360,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
         </p>
         <div className="grid sm:grid-cols-2 gap-3 mb-3">
           <div
-            className={`p-3 rounded-[4px] border flex flex-col items-center gap-1 ${isLightMode ? "border-dune-orange/10 bg-[#fcfaf5]" : "border-border bg-[#1c1512]"}`}
+            className={`p-3 rounded-[4px] border flex flex-col items-center gap-1 ${isLightMode ? "border-dune-orange/10 bg-card" : "border-border bg-dune-ink"}`}
           >
             <span
               className={`text-[9px] font-bold uppercase tracking-wider ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
@@ -369,7 +370,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
             <Katex tex="V=\dfrac{nR}{3n+1}\left(\dfrac{\Delta P\,R}{2KL}\right)^{1/n}" />
           </div>
           <div
-            className={`p-3 rounded-[4px] border flex flex-col items-center gap-1 ${isLightMode ? "border-dune-orange/10 bg-[#fcfaf5]" : "border-border bg-[#1c1512]"}`}
+            className={`p-3 rounded-[4px] border flex flex-col items-center gap-1 ${isLightMode ? "border-dune-orange/10 bg-card" : "border-border bg-dune-ink"}`}
           >
             <span
               className={`text-[9px] font-bold uppercase tracking-wider ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
@@ -521,7 +522,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
             <Line
               type="monotone"
               dataKey="dP"
-              stroke="#0ea5e9"
+              stroke={DUNE.teal}
               strokeWidth={2.5}
               dot={false}
             />
@@ -552,12 +553,12 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
         </p>
         <div className="grid sm:grid-cols-2 gap-3 mb-3">
           <div
-            className={`p-3 rounded-[4px] border flex flex-col items-center gap-1 ${isLightMode ? "border-dune-orange/10 bg-[#fcfaf5]" : "border-border bg-[#1c1512]"}`}
+            className={`p-3 rounded-[4px] border flex flex-col items-center gap-1 ${isLightMode ? "border-dune-orange/10 bg-card" : "border-border bg-dune-ink"}`}
           >
             <Katex tex="K(\varphi)=K_w+(K_0-K_w)\varphi^{\alpha}" />
           </div>
           <div
-            className={`p-3 rounded-[4px] border flex flex-col items-center gap-1 ${isLightMode ? "border-dune-orange/10 bg-[#fcfaf5]" : "border-border bg-[#1c1512]"}`}
+            className={`p-3 rounded-[4px] border flex flex-col items-center gap-1 ${isLightMode ? "border-dune-orange/10 bg-card" : "border-border bg-dune-ink"}`}
           >
             <Katex tex="n(\varphi)=1-(1-n_0)\varphi^{\beta}" />
           </div>
@@ -642,7 +643,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
       {/* 7. Interactive calculator + Chart B */}
       <div
         className={`grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 rounded-[6px] border border-border transition-colors duration-300 ${
-          isLightMode ? "bg-[#fdfaf3]" : "bg-card"
+          isLightMode ? "bg-card" : "bg-card"
         }`}
       >
         <div className="lg:col-span-5 space-y-5">
@@ -789,19 +790,19 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
                 type="monotone"
                 dataKey="live"
                 name={`Current (${pctLabel(phi)})`}
-                stroke="#f59e0b"
+                stroke={STATUS.warn}
                 strokeWidth={2.6}
                 dot={false}
               />
               {liveSpeedCm >= 0.01 && liveSpeedCm <= 100 && (
                 <ReferenceLine
                   x={+liveSpeedCm.toPrecision(4)}
-                  stroke="#f59e0b"
+                  stroke={STATUS.warn}
                   strokeDasharray="2 2"
                   label={{
                     value: "V now",
                     fontSize: 9,
-                    fill: "#f59e0b",
+                    fill: STATUS.warn,
                     position: "top",
                   }}
                 />

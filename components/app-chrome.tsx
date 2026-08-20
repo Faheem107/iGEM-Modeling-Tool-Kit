@@ -167,7 +167,7 @@ export function AppChrome() {
           scrolled
             ? isLightMode
               ? "border-b border-border bg-dune-paper/92"
-              : "border-b border-border bg-[#0d0a08]/92"
+              : "border-b border-border bg-dune-ink/92"
             : "bg-transparent"
         }`}
       >

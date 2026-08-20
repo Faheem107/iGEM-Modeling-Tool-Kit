@@ -23,6 +23,7 @@ import {
 import { Droplets, ShieldCheck, CloudRain } from "lucide-react";
 import GlossaryTerm, { GlossaryText } from "../../GlossaryTerm";
 import type { AlginateParams } from "../../../types";
+import { DUNE, STATUS } from "@/src/lib/palette";
 import {
   solveAlginateGel,
   moistureRetention,
@@ -261,7 +262,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
             <Line
               type="monotone"
               dataKey="G"
-              stroke="#f43f5e"
+              stroke={DUNE.rose}
               dot={false}
               strokeWidth={2.5}
             />
@@ -269,7 +270,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
               x={+p.calcium.toFixed(1)}
               y={+gel.shearModulus.toFixed(0)}
               r={5}
-              fill="#8fb3ac"
+              fill={DUNE.teal}
               stroke={isLightMode ? "#fff" : "#000"}
             />
           </LineChart>
@@ -314,14 +315,14 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
               <Line
                 type="monotone"
                 dataKey="residual"
-                stroke="#d6884a"
+                stroke={DUNE.orange}
                 dot={false}
                 strokeWidth={2.5}
                 name="residual %"
               />
               <ReferenceLine
                 x={p.rainCycles}
-                stroke="#ef4444"
+                stroke={STATUS.bad}
                 strokeDasharray="4 2"
               />
             </LineChart>
@@ -372,15 +373,15 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
               <Area
                 type="monotone"
                 dataKey="water"
-                stroke="#8fb3ac"
-                fill="#8fb3ac"
+                stroke={DUNE.teal}
+                fill={DUNE.teal}
                 fillOpacity={0.25}
               />
               <ReferenceDot
                 x={+(p.relativeHumidity * 100).toFixed(0)}
                 y={+moisture.toFixed(0)}
                 r={5}
-                fill="#f59e0b"
+                fill={STATUS.warn}
                 stroke={isLightMode ? "#fff" : "#000"}
               />
             </AreaChart>

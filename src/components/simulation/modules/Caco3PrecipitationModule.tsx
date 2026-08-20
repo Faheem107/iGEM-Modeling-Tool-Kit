@@ -23,6 +23,7 @@ import {
 import { Atom, Layers, Wind as WindIcon, Leaf } from "lucide-react";
 import GlossaryTerm, { GlossaryText } from "../../GlossaryTerm";
 import type { Caco3Params } from "../../../types";
+import { DUNE, STATUS, TINT } from "@/src/lib/palette";
 import {
   carbonateSpeciation,
   simulatePrecipitation,
@@ -294,8 +295,8 @@ export default function Caco3PrecipitationModule({
               type="monotone"
               dataKey="CO2"
               stackId="1"
-              stroke="#f59e0b"
-              fill="#f59e0b"
+              stroke={STATUS.warn}
+              fill={STATUS.warn}
               fillOpacity={0.3}
               name="CO₂(aq)"
             />
@@ -303,8 +304,8 @@ export default function Caco3PrecipitationModule({
               type="monotone"
               dataKey="HCO3"
               stackId="1"
-              stroke="#8fb3ac"
-              fill="#8fb3ac"
+              stroke={DUNE.teal}
+              fill={DUNE.teal}
               fillOpacity={0.3}
               name="HCO₃⁻"
             />
@@ -312,14 +313,14 @@ export default function Caco3PrecipitationModule({
               type="monotone"
               dataKey="CO3"
               stackId="1"
-              stroke="#c28a7c"
-              fill="#c28a7c"
+              stroke={DUNE.rose}
+              fill={DUNE.rose}
               fillOpacity={0.4}
               name="CO₃²⁻"
             />
             <ReferenceLine
               x={+p.pH.toFixed(1)}
-              stroke={isLightMode ? "#d6884a" : "#e0a878"}
+              stroke={isLightMode ? DUNE.orange : TINT.orangeLight}
               strokeDasharray="4 2"
             />
           </AreaChart>
@@ -357,7 +358,7 @@ export default function Caco3PrecipitationModule({
               <Line
                 type="monotone"
                 dataKey="Ca"
-                stroke="#8fb3ac"
+                stroke={DUNE.teal}
                 dot={false}
                 strokeWidth={2}
                 name="Ca²⁺ mM"
@@ -365,7 +366,7 @@ export default function Caco3PrecipitationModule({
               <Line
                 type="monotone"
                 dataKey="ACC"
-                stroke="#b9a07f"
+                stroke={TINT.sandDeep}
                 dot={false}
                 strokeWidth={2}
                 name="ACC mM"
@@ -373,7 +374,7 @@ export default function Caco3PrecipitationModule({
               <Line
                 type="monotone"
                 dataKey="Vaterite"
-                stroke="#f59e0b"
+                stroke={STATUS.warn}
                 dot={false}
                 strokeWidth={2}
                 name="Vaterite mM"
@@ -381,7 +382,7 @@ export default function Caco3PrecipitationModule({
               <Line
                 type="monotone"
                 dataKey="Calcite"
-                stroke="#c28a7c"
+                stroke={DUNE.rose}
                 dot={false}
                 strokeWidth={2.5}
                 name="Calcite mM"
@@ -427,7 +428,7 @@ export default function Caco3PrecipitationModule({
               <Line
                 type="monotone"
                 dataKey="ucs"
-                stroke="#f59e0b"
+                stroke={STATUS.warn}
                 dot={false}
                 strokeWidth={2.5}
                 name="UCS (kPa)"
@@ -437,7 +438,7 @@ export default function Caco3PrecipitationModule({
                   x={+result.calciteWtPercent.toFixed(2)}
                   y={+result.ucsKpa.toFixed(1)}
                   r={5}
-                  fill="#ef4444"
+                  fill={STATUS.bad}
                   stroke={isLightMode ? "#fff" : "#000"}
                 />
               )}
