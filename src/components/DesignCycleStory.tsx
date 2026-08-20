@@ -419,7 +419,7 @@ export default function DesignCycleStory({
                   : "border-dune-paper/12 bg-[#120d0a]/78"
               }`}
             >
-              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] text-dune-ash">
+              <span className="text-[length:var(--text-caption)] font-bold uppercase tracking-[0.25em] text-dune-ash">
                 Engineering Design Cycle
               </span>
 
@@ -505,13 +505,13 @@ function BeatBody({
         </span>
       </div>
       <h2
-        className={`mb-4 font-display text-2xl font-black uppercase tracking-tight ${
+        className={`mb-4 font-display text-[length:var(--text-h3)] font-black uppercase tracking-tight ${
           isLightMode ? "text-dune-maroon" : "text-dune-orange"
         }`}
       >
         {beat.title}
       </h2>
-      <dl className="space-y-4 text-sm leading-relaxed text-foreground">
+      <dl className="space-y-4 text-[length:var(--text-micro)] leading-relaxed text-foreground">
         <Line term="Asked">{beat.question}</Line>
         <Line term="Ran">{beat.did}</Line>
         <Line term="Changed">{beat.changed}</Line>

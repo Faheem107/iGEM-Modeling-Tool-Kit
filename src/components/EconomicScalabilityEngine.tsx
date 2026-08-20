@@ -232,7 +232,7 @@ export default function EconomicScalabilityEngine({
           isLightMode={isLightMode}
           right={
             <span
-              className={`text-[10px] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+              className={`text-[length:var(--text-caption)] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
             >
               USD · log scale
             </span>
@@ -251,7 +251,7 @@ export default function EconomicScalabilityEngine({
               <XAxis
                 dataKey="label"
                 stroke={c.axis}
-                tick={{ fontSize: 9 }}
+                tick={{ fontSize: 10 }}
                 angle={-30}
                 textAnchor="end"
                 interval={0}
@@ -259,7 +259,7 @@ export default function EconomicScalabilityEngine({
               />
               <YAxis
                 stroke={c.axis}
-                tick={{ fontSize: 9 }}
+                tick={{ fontSize: 10 }}
                 scale="log"
                 domain={["auto", "auto"]}
                 tickFormatter={(v) =>
@@ -283,7 +283,7 @@ export default function EconomicScalabilityEngine({
             </BarChart>
           </ResponsiveContainer>
           <p
-            className={`mt-1 text-[10px] flex items-center gap-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`mt-1 text-[length:var(--text-caption)] flex items-center gap-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             <Award className="w-3 h-3 text-dune-orange" /> Indigo = your selected
             combination. Every biological combination sits far below the
@@ -313,18 +313,18 @@ export default function EconomicScalabilityEngine({
                 >
                   <div className="min-w-0">
                     <span
-                      className={`text-xs font-bold ${isLightMode ? "text-foreground" : "text-foreground"}`}
+                      className={`text-[length:var(--text-micro)] font-bold ${isLightMode ? "text-foreground" : "text-foreground"}`}
                     >
                       {label}
                     </span>
                     <span
-                      className={`block text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                      className={`block text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                     >
                       {note}
                     </span>
                   </div>
                   <span
-                    className={`font-mono font-black text-sm shrink-0 ${isLightMode ? "text-dune-orange" : "text-dune-orange"}`}
+                    className={`font-mono font-black text-[length:var(--text-micro)] shrink-0 ${isLightMode ? "text-dune-orange" : "text-dune-orange"}`}
                   >
                     ${Math.round(single.opexPerHa).toLocaleString()}/ha
                   </span>
@@ -332,7 +332,7 @@ export default function EconomicScalabilityEngine({
               );
             })}
             <p
-              className={`text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+              className={`text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
             >
               Plus a shared ${Math.round(cost.applicationPerHa)}/ha
               field-application pass

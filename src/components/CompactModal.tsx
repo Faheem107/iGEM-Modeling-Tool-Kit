@@ -135,7 +135,7 @@ export default function CompactModal({
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.18 }}
-                className="text-sm leading-relaxed"
+                className="text-[length:var(--text-micro)] leading-relaxed"
               >
                 {tabs[active]?.body}
               </motion.div>

@@ -165,7 +165,7 @@ export default function MetabolicModel({
         className={`lg:col-span-12 xl:col-span-5 p-6 rounded border transition-colors duration-300 ${isLightMode ? "bg-white border-dune-orange/10" : "bg-dune-ink border-border"}`}
       >
         <h3
-          className={`text-xs font-extrabold uppercase tracking-wider flex items-center gap-2 mb-4 font-sans ${isLightMode ? "text-dune-orange" : "text-foreground"}`}
+          className={`text-[length:var(--text-micro)] font-extrabold uppercase tracking-wider flex items-center gap-2 mb-4 font-sans ${isLightMode ? "text-dune-orange" : "text-foreground"}`}
         >
           <Dna
             className={`w-5 h-5 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
@@ -176,7 +176,7 @@ export default function MetabolicModel({
         {/* Sliders */}
         <div className="space-y-4 font-sans">
           <div>
-            <div className="flex justify-between text-[11px] mb-1">
+            <div className="flex justify-between text-[length:var(--text-caption)] mb-1">
               <div className="group relative flex items-center gap-1 cursor-help">
                 <span
                   className={`underline decoration-dotted underline-offset-2 ${isLightMode ? "text-muted-foreground decoration-border" : "text-muted-foreground decoration-border"}`}
@@ -197,14 +197,14 @@ export default function MetabolicModel({
                   className={`w-3.5 h-3.5 ${isLightMode ? "text-muted-foreground hover:text-dune-teal" : "text-muted-foreground hover:text-dune-teal"} transition`}
                 />
                 <div
-                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[10px] rounded border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
+                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
                 >
                   Rate of transcribing PgsBCA operon mRNA strands from the DNA
                   synthetic promoter.
                 </div>
               </div>
               <span
-                className={`font-mono px-2 py-1 rounded text-[10px] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/50 border border-dune-teal/50 text-dune-teal"}`}
+                className={`font-mono px-2 py-1 rounded text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/50 border border-dune-teal/50 text-dune-teal"}`}
               >
                 {params.alpha_m.toFixed(1)} h⁻¹
               </span>
@@ -226,7 +226,7 @@ export default function MetabolicModel({
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] mb-1">
+            <div className="flex justify-between text-[length:var(--text-caption)] mb-1">
               <div className="group relative flex items-center gap-1 cursor-help">
                 <span
                   className={`underline decoration-dotted underline-offset-2 ${isLightMode ? "text-muted-foreground decoration-border" : "text-muted-foreground decoration-border"}`}
@@ -247,14 +247,14 @@ export default function MetabolicModel({
                   className={`w-3.5 h-3.5 ${isLightMode ? "text-muted-foreground hover:text-dune-teal" : "text-muted-foreground hover:text-dune-teal"} transition`}
                 />
                 <div
-                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[10px] rounded border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
+                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
                 >
                   Rate at which cellular RNases degrade the transcribed mRNA
                   species.
                 </div>
               </div>
               <span
-                className={`font-mono px-2 py-1 rounded text-[10px] ${isLightMode ? "bg-dune-maroon border border-dune-maroon text-dune-maroon font-bold" : "bg-dune-maroon/30 border border-dune-maroon/40 text-dune-maroon"}`}
+                className={`font-mono px-2 py-1 rounded text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-maroon border border-dune-maroon text-dune-maroon font-bold" : "bg-dune-maroon/30 border border-dune-maroon/40 text-dune-maroon"}`}
               >
                 {params.beta_m.toFixed(2)} h⁻¹
               </span>
@@ -273,7 +273,7 @@ export default function MetabolicModel({
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] mb-1">
+            <div className="flex justify-between text-[length:var(--text-caption)] mb-1">
               <div className="group relative flex items-center gap-1 cursor-help">
                 <span
                   className={`underline decoration-dotted underline-offset-2 ${isLightMode ? "text-muted-foreground decoration-border" : "text-muted-foreground decoration-border"}`}
@@ -294,14 +294,14 @@ export default function MetabolicModel({
                   className={`w-3.5 h-3.5 ${isLightMode ? "text-muted-foreground hover:text-dune-teal" : "text-muted-foreground hover:text-dune-teal"} transition`}
                 />
                 <div
-                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[10px] rounded border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
+                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
                 >
                   Ribosome recruitment speed to translate active PgsB, PgsC, and
                   PgsA enzymes.
                 </div>
               </div>
               <span
-                className={`font-mono px-2 py-1 rounded text-[10px] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/50 border border-dune-teal/50 text-dune-teal"}`}
+                className={`font-mono px-2 py-1 rounded text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/50 border border-dune-teal/50 text-dune-teal"}`}
               >
                 {params.alpha_e.toFixed(1)} h⁻¹
               </span>
@@ -323,7 +323,7 @@ export default function MetabolicModel({
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] mb-1">
+            <div className="flex justify-between text-[length:var(--text-caption)] mb-1">
               <div className="group relative flex items-center gap-1 cursor-help">
                 <span
                   className={`underline decoration-dotted underline-offset-2 ${isLightMode ? "text-muted-foreground decoration-border" : "text-muted-foreground decoration-border"}`}
@@ -344,14 +344,14 @@ export default function MetabolicModel({
                   className={`w-3.5 h-3.5 ${isLightMode ? "text-muted-foreground hover:text-dune-teal" : "text-muted-foreground hover:text-dune-teal"} transition`}
                 />
                 <div
-                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[10px] rounded border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
+                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
                 >
                   Intracellular enzyme clearance speed orchestrated by host cell
                   proteasome machinery.
                 </div>
               </div>
               <span
-                className={`font-mono px-2 py-1 rounded text-[10px] ${isLightMode ? "bg-dune-orange border border-dune-orange text-dune-orange font-bold" : "bg-dune-orange/30 border border-dune-orange/40 text-dune-orange"}`}
+                className={`font-mono px-2 py-1 rounded text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-orange border border-dune-orange text-dune-orange font-bold" : "bg-dune-orange/30 border border-dune-orange/40 text-dune-orange"}`}
               >
                 {params.beta_e.toFixed(3)} h⁻¹
               </span>
@@ -370,7 +370,7 @@ export default function MetabolicModel({
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] mb-1">
+            <div className="flex justify-between text-[length:var(--text-caption)] mb-1">
               <div className="group relative flex items-center gap-1 cursor-help">
                 <span
                   className={`underline decoration-dotted underline-offset-2 ${isLightMode ? "text-muted-foreground decoration-border" : "text-muted-foreground decoration-border"}`}
@@ -392,14 +392,14 @@ export default function MetabolicModel({
                   className={`w-3.5 h-3.5 ${isLightMode ? "text-muted-foreground hover:text-dune-teal" : "text-muted-foreground hover:text-dune-teal"} transition`}
                 />
                 <div
-                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[10px] rounded border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
+                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
                 >
                   Maximum polymer chain synthesis turnover cycle count of the
                   PgsBCA complex per hour.
                 </div>
               </div>
               <span
-                className={`font-mono px-2 py-1 rounded text-[10px] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/30 border border-dune-teal/40 text-dune-teal"}`}
+                className={`font-mono px-2 py-1 rounded text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/30 border border-dune-teal/40 text-dune-teal"}`}
               >
                 {params.k_cat.toFixed(2)} h⁻¹
               </span>
@@ -418,7 +418,7 @@ export default function MetabolicModel({
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] mb-1">
+            <div className="flex justify-between text-[length:var(--text-caption)] mb-1">
               <div className="group relative flex items-center gap-1 cursor-help">
                 <span
                   className={`underline decoration-dotted underline-offset-2 ${isLightMode ? "text-muted-foreground decoration-border" : "text-muted-foreground decoration-border"}`}
@@ -439,14 +439,14 @@ export default function MetabolicModel({
                   className={`w-3.5 h-3.5 ${isLightMode ? "text-muted-foreground hover:text-dune-teal" : "text-muted-foreground hover:text-dune-teal"} transition`}
                 />
                 <div
-                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[10px] rounded border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
+                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
                 >
                   Extracellular precursor feeding stock concentration providing
                   monomer units.
                 </div>
               </div>
               <span
-                className={`font-mono px-2 py-1 rounded text-[10px] ${isLightMode ? "bg-dune-orange border border-dune-orange text-dune-orange font-bold" : "bg-dune-orange/30 border border-dune-orange/40 text-dune-orange"}`}
+                className={`font-mono px-2 py-1 rounded text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-orange border border-dune-orange text-dune-orange font-bold" : "bg-dune-orange/30 border border-dune-orange/40 text-dune-orange"}`}
               >
                 {params.s_precursor.toFixed(1)} mM
               </span>
@@ -473,13 +473,13 @@ export default function MetabolicModel({
           className="mt-6 pt-4 border-t border-border"
         >
           <span
-            className={`text-[10px] font-bold block mb-4 uppercase tracking-wider font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`text-[length:var(--text-caption)] font-bold block mb-4 uppercase tracking-wider font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             Gene Knockout Status
           </span>
           <div className="grid grid-cols-2 gap-4">
             <label
-              className={`flex items-center justify-between p-2 rounded border text-xs cursor-pointer transition ${
+              className={`flex items-center justify-between p-2 rounded border text-[length:var(--text-micro)] cursor-pointer transition ${
                 params.ggtKnockout
                   ? isLightMode
                     ? "border-dune-teal bg-dune-teal text-dune-teal"
@@ -492,7 +492,7 @@ export default function MetabolicModel({
               <div className="flex flex-col">
                 <span className="font-mono font-bold">Δggt</span>
                 <span
-                  className={`text-[9px] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`text-[length:var(--text-caption)] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                 >
                   Glutamyl-Tferase
                 </span>
@@ -508,7 +508,7 @@ export default function MetabolicModel({
             </label>
 
             <label
-              className={`flex items-center justify-between p-2 rounded border text-xs cursor-pointer transition ${
+              className={`flex items-center justify-between p-2 rounded border text-[length:var(--text-micro)] cursor-pointer transition ${
                 params.pgcAKnockout
                   ? isLightMode
                     ? "border-dune-teal bg-dune-teal text-dune-teal"
@@ -521,7 +521,7 @@ export default function MetabolicModel({
               <div className="flex flex-col">
                 <span className="font-mono font-bold">ΔpgcA</span>
                 <span
-                  className={`text-[9px] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`text-[length:var(--text-caption)] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                 >
                   Glutamic Hydrolase
                 </span>
@@ -546,14 +546,14 @@ export default function MetabolicModel({
         <div>
           <div className="flex flex-wrap justify-between items-center gap-4 mb-4">
             <h3
-              className={`text-xs font-bold uppercase tracking-wider flex items-center gap-2 ${isLightMode ? "text-dune-orange" : "text-foreground"}`}
+              className={`text-[length:var(--text-micro)] font-bold uppercase tracking-wider flex items-center gap-2 ${isLightMode ? "text-dune-orange" : "text-foreground"}`}
             >
               <Database
                 className={`w-4 h-4 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
               />
               Real-time Concentration Dynamics
             </h3>
-            <div className="flex gap-4 text-[10px] font-mono">
+            <div className="flex gap-4 text-[length:var(--text-caption)] font-mono">
               <span
                 className={`flex items-center gap-2 ${isLightMode ? "text-dune-teal font-bold" : "text-dune-teal"}`}
               >
@@ -680,7 +680,7 @@ export default function MetabolicModel({
                 x={paddingLeft - 8}
                 y={paddingTop + 5}
                 fill={isLightMode ? STATUS.bad : DUNE.ash}
-                fontSize="9"
+                fontSize="10"
                 textAnchor="end"
                 fontWeight="bold"
                 fontFamily="monospace"
@@ -691,7 +691,7 @@ export default function MetabolicModel({
                 x={paddingLeft - 8}
                 y={height - paddingBottom}
                 fill={isLightMode ? STATUS.bad : DUNE.ash}
-                fontSize="9"
+                fontSize="10"
                 textAnchor="end"
                 fontWeight="bold"
                 fontFamily="monospace"
@@ -703,7 +703,7 @@ export default function MetabolicModel({
                 y={height / 2}
                 transform={`rotate(-90, ${paddingLeft - 32}, ${height / 2})`}
                 fill={isLightMode ? DUNE.orange : DUNE.teal}
-                fontSize="9"
+                fontSize="10"
                 textAnchor="middle"
                 fontWeight="bold"
                 fontFamily="monospace"
@@ -716,7 +716,7 @@ export default function MetabolicModel({
                 x={width - paddingRight + 8}
                 y={paddingTop + 5}
                 fill={isLightMode ? STATUS.good : STATUS.good}
-                fontSize="9"
+                fontSize="10"
                 textAnchor="start"
                 fontWeight="bold"
                 fontFamily="monospace"
@@ -727,7 +727,7 @@ export default function MetabolicModel({
                 x={width - paddingRight + 8}
                 y={height - paddingBottom}
                 fill={isLightMode ? STATUS.good : STATUS.good}
-                fontSize="9"
+                fontSize="10"
                 textAnchor="start"
                 fontWeight="bold"
                 fontFamily="monospace"
@@ -739,7 +739,7 @@ export default function MetabolicModel({
                 y={height / 2}
                 transform={`rotate(90, ${width - paddingRight + 32}, ${height / 2})`}
                 fill={isLightMode ? STATUS.good : STATUS.good}
-                fontSize="9"
+                fontSize="10"
                 textAnchor="middle"
                 fontWeight="bold"
                 fontFamily="monospace"
@@ -758,7 +758,7 @@ export default function MetabolicModel({
                     x={x}
                     y={height - paddingBottom + 16}
                     fill={isLightMode ? STATUS.bad : DUNE.ash}
-                    fontSize="9"
+                    fontSize="10"
                     textAnchor="middle"
                     fontWeight="bold"
                     fontFamily="monospace"
@@ -771,7 +771,7 @@ export default function MetabolicModel({
                 x={width / 2}
                 y={height - 5}
                 fill={isLightMode ? STATUS.bad : DUNE.ash}
-                fontSize="9"
+                fontSize="10"
                 fontWeight="bold"
                 textAnchor="middle"
                 fontFamily="monospace"
@@ -817,14 +817,14 @@ export default function MetabolicModel({
             {/* Hover tooltip absolute overlay */}
             {activeHoverPoint && (
               <div
-                className={`absolute top-4 left-16 select-none pointer-events-none space-y-1 p-4 text-[10px] font-mono rounded border ${
+                className={`absolute top-4 left-16 select-none pointer-events-none space-y-1 p-4 text-[length:var(--text-caption)] font-mono rounded border ${
                   isLightMode
                     ? "bg-white/95 border-dune-orange/15 text-foreground "
                     : "bg-dune-ink/95 border border-border text-foreground"
                 }`}
               >
                 <p
-                  className={`font-bold text-xs ${isLightMode ? "text-foreground" : "text-foreground"}`}
+                  className={`font-bold text-[length:var(--text-micro)] ${isLightMode ? "text-foreground" : "text-foreground"}`}
                 >
                   T-Epoch: {activeHoverPoint.time.toFixed(2)} hrs
                 </p>
@@ -874,7 +874,7 @@ export default function MetabolicModel({
             />
           </div>
           <h4
-            className={`text-xs font-bold font-mono uppercase tracking-widest flex items-center gap-2 mb-2 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
+            className={`text-[length:var(--text-micro)] font-bold font-mono uppercase tracking-widest flex items-center gap-2 mb-2 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
           >
             <Sparkles
               className={`w-4 h-4 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
@@ -882,7 +882,7 @@ export default function MetabolicModel({
             iGEM Wet Lab Calibration Interface
           </h4>
           <p
-            className={`text-[11px] leading-relaxed mb-4 ${isLightMode ? "text-muted-foreground font-medium" : "text-muted-foreground"}`}
+            className={`text-[length:var(--text-caption)] leading-relaxed mb-4 ${isLightMode ? "text-muted-foreground font-medium" : "text-muted-foreground"}`}
           >
             To integrate our dry-lab model with NYUAD laboratory assays: enter
             your spectrophotometric experimental yield to reverse-calibrate and
@@ -893,7 +893,7 @@ export default function MetabolicModel({
               className={`flex items-center gap-2 px-4 py-2 rounded border ${isLightMode ? "bg-white border-dune-orange/15" : "bg-dune-ink border-border"}`}
             >
               <span
-                className={`text-[10px] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                className={`text-[length:var(--text-caption)] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
               >
                 EXPERIMENTAL YIELD:
               </span>
@@ -903,17 +903,17 @@ export default function MetabolicModel({
                 onChange={(e) =>
                   setTargetYield(Math.max(1, parseFloat(e.target.value) || 0))
                 }
-                className={`w-16 bg-transparent font-mono text-xs font-bold outline-none border-b border-transparent focus:border-dune-teal ${isLightMode ? "text-foreground" : "text-foreground"}`}
+                className={`w-16 bg-transparent font-mono text-[length:var(--text-micro)] font-bold outline-none border-b border-transparent focus:border-dune-teal ${isLightMode ? "text-foreground" : "text-foreground"}`}
               />
               <span
-                className={`text-[10px] font-mono ${isLightMode ? "text-dune-teal font-bold" : "text-dune-teal"}`}
+                className={`text-[length:var(--text-caption)] font-mono ${isLightMode ? "text-dune-teal font-bold" : "text-dune-teal"}`}
               >
                 mol/m³
               </span>
             </div>
             <button
               onClick={handleCalibrate}
-              className={`px-4 py-2 text-[10px] font-mono font-bold rounded uppercase tracking-wider transition flex items-center gap-1 cursor-pointer ${
+              className={`px-4 py-2 text-[length:var(--text-caption)] font-mono font-bold rounded uppercase tracking-wider transition flex items-center gap-1 cursor-pointer ${
                 isLightMode
                   ? "text-foreground bg-dune-teal hover:bg-dune-teal"
                   : "text-black bg-dune-teal hover:bg-dune-teal"
@@ -924,7 +924,7 @@ export default function MetabolicModel({
             </button>
             {calibratedKcat !== null && (
               <span
-                className={`text-[10px] font-mono px-2 py-1 rounded border ${
+                className={`text-[length:var(--text-caption)] font-mono px-2 py-1 rounded border ${
                   isLightMode
                     ? "bg-dune-teal border-dune-teal text-dune-teal font-bold"
                     : "bg-dune-teal/50 border border-dune-teal"

@@ -171,7 +171,7 @@ export default function ExposureWorkspace() {
               key={id}
               {...hl}
               onClick={() => setMode(id)}
-              className={`inline-flex items-center gap-2 rounded-[6px] border px-4 py-2 text-sm font-semibold plate-interactive ${
+              className={`inline-flex items-center gap-2 rounded-[6px] border px-4 py-2 text-[length:var(--text-micro)] font-semibold plate-interactive ${
                 mode === id
                   ? "border-dune-orange/60 bg-dune-orange/10 text-dune-orange"
                   : "border-border text-muted-foreground"
@@ -212,7 +212,7 @@ export default function ExposureWorkspace() {
             <span className="caption text-dune-rose">anthropogenic</span>
             <span className="caption text-dune-teal">hydrologic</span>
           </div>
-          <p className="text-xs leading-relaxed text-muted-foreground">
+          <p className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
             Source polygons are frequency of occurrence on a 0.1 degree grid, about 11 km.
             The dashed arrow is the drift and suspension pathway, pointing back toward where
             the sand comes from. It is not the path of saltating grains, which land within
@@ -228,19 +228,19 @@ export default function ExposureWorkspace() {
               <select
                 value={market}
                 onChange={(e) => setMarket(e.target.value)}
-                className="w-full rounded-[4px] border border-border bg-transparent px-4 py-2 text-sm"
+                className="w-full rounded-[4px] border border-border bg-transparent px-4 py-2 text-[length:var(--text-micro)]"
               >
                 {markets.map((m) => (
                   <option key={m.id} value={m.id}>{m.label}</option>
                 ))}
               </select>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-[length:var(--text-micro)] text-muted-foreground">
                 {markets.find((m) => m.id === market)?.note}
               </p>
               <select
                 value={selectedId ?? ""}
                 onChange={(e) => setSelectedId(e.target.value)}
-                className="w-full rounded-[4px] border border-border bg-transparent px-4 py-2 text-sm"
+                className="w-full rounded-[4px] border border-border bg-transparent px-4 py-2 text-[length:var(--text-micro)]"
               >
                 {visible.map((s) => (
                   <option key={s.id} value={s.id}>{s.name}</option>
@@ -262,7 +262,7 @@ export default function ExposureWorkspace() {
                     key={s.id}
                     {...hl}
                     onClick={() => setSeason(s.id)}
-                    className={`rounded-[4px] border px-2 py-1 text-xs font-semibold plate-interactive ${
+                    className={`rounded-[4px] border px-2 py-1 text-[length:var(--text-micro)] font-semibold plate-interactive ${
                       season === s.id
                         ? "border-dune-orange/60 text-dune-orange"
                         : "border-border text-muted-foreground"
@@ -274,7 +274,7 @@ export default function ExposureWorkspace() {
               </div>
               <div className="mb-4 flex items-start gap-2 rounded-[4px] border border-dune-rose/40 bg-dune-rose/5 p-4">
                 <AlertTriangle className="mt-1 h-4 w-4 shrink-0 text-dune-rose" />
-                <p className="text-xs leading-relaxed">
+                <p className="text-[length:var(--text-micro)] leading-relaxed">
                   These wind values are your inputs, not a climatology. The ERA5 monthly
                   Weibull fit is not built yet, so the season buttons label the window but do
                   not yet load different data. Nothing here should be read as measured.
@@ -286,9 +286,9 @@ export default function ExposureWorkspace() {
             </Panel>
           ) : (
             <Panel title="Live conditions" icon={Radio} isLightMode={isLightMode}>
-              {liveLoading && <p className="text-sm text-muted-foreground">Loading the feed.</p>}
+              {liveLoading && <p className="text-[length:var(--text-micro)] text-muted-foreground">Loading the feed.</p>}
               {liveErr && (
-                <p className="text-sm text-dune-rose">
+                <p className="text-[length:var(--text-micro)] text-dune-rose">
                   The live feed is unavailable right now. {liveErr}
                 </p>
               )}
@@ -307,14 +307,14 @@ export default function ExposureWorkspace() {
           <Panel title="Surface and treatment" icon={Layers} isLightMode={isLightMode}>
             <Slider label="Soil clay content" value={clay} onChange={setClay} min={0} max={25} step={0.5} unit="%" isLightMode={isLightMode} />
             {blast.capped && (
-              <p className="mb-4 text-xs text-dune-rose">
+              <p className="mb-4 text-[length:var(--text-micro)] text-dune-rose">
                 Clamped at 20 percent. Chappell Eq 3 is not valid above that, and SoilGrids
                 reads about 20 percent over UAE dune fields where the petrography says nearer
                 two. Read the value with that in mind.
               </p>
             )}
             <Slider label="Crust cohesion from the wet lab" value={cohesion} onChange={setCohesion} min={0} max={0.01} step={0.0002} unit="N/m" isLightMode={isLightMode} />
-            <p className="-mt-2 mb-4 text-xs text-muted-foreground">
+            <p className="-mt-2 mb-4 text-[length:var(--text-micro)] text-muted-foreground">
               About {(cohesion / 1.5e-5).toFixed(0)} kPa unconfined compressive strength at
               the repo's current UCS scaling, which is itself a placeholder awaiting the
               wet lab.
@@ -348,7 +348,7 @@ export default function ExposureWorkspace() {
               }
             />
           </div>
-          <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+          <p className="mt-4 text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
             The near-field figure is an upper bound. It ignores repeated re-launch, which
             extends transport, and it ignores turbulence.
           </p>
@@ -379,18 +379,18 @@ export default function ExposureWorkspace() {
               isLightMode={isLightMode}
             />
           </div>
-          <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+          <p className="mt-4 text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
             Cohesion is the only thing the product changes. It raises the threshold, which
             raises the lower limit of the flux integral, which drops both fluxes at once.
           </p>
           {noTransport && (
-            <p className="mt-2 text-xs leading-relaxed text-dune-rose">
+            <p className="mt-2 text-[length:var(--text-micro)] leading-relaxed text-dune-rose">
               At this wind the untreated bed does not move either, so there is no transport
               to reduce. Raise the wind above about {(utFree0).toFixed(1)} m/s to see an effect.
             </p>
           )}
           {fullyArrested && (
-            <p className="mt-2 text-xs leading-relaxed text-dune-teal">
+            <p className="mt-2 text-[length:var(--text-micro)] leading-relaxed text-dune-teal">
               The treated bed does not move at all at this wind. That is a real result of the
               threshold shift, not a rounded figure, but it holds only up to about{" "}
               {(utFreeT).toFixed(1)} m/s. Above that the crust starts transporting again.
@@ -412,7 +412,7 @@ export default function ExposureWorkspace() {
               <StatCard label="DEWA industrial" value="0.126" unit="USD/kWh" accent="text-muted-foreground" isLightMode={isLightMode} sub="retail, not PPA" />
               <StatCard label="Capacity factor" value="needs source" accent="text-dune-rose" isLightMode={isLightMode} />
             </div>
-            <p className="text-xs leading-relaxed text-muted-foreground">
+            <p className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
               Annual revenue loss needs a capacity factor and the price the site actually
               earns. The DEWA figure is the retail consumption tariff. A generator earns its
               PPA price, which in the UAE has been far lower, so the two must not be swapped.
@@ -422,7 +422,7 @@ export default function ExposureWorkspace() {
         ) : (
           <div className="flex items-start gap-4">
             <AlertTriangle className="mt-1 h-4 w-4 shrink-0 text-dune-rose" />
-            <p className="text-sm leading-relaxed">
+            <p className="text-[length:var(--text-micro)] leading-relaxed">
               No cost coefficient exists for this market yet. The mass reaching the site is
               modelled above and is sound. What is missing is the conversion from that mass
               to money. For roads the drift rate is measured, about 20 cubic metres per metre

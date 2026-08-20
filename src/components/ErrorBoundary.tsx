@@ -48,17 +48,17 @@ export default class ModuleErrorBoundary extends React.Component<Props, State> {
       >
         <div className="flex items-center gap-2">
           <AlertTriangle className="w-5 h-5" />
-          <h3 className="text-sm font-black uppercase tracking-wide">
+          <h3 className="text-[length:var(--text-micro)] font-black uppercase tracking-wide">
             {label ? `${label} hit a snag` : "This module hit a snag"}
           </h3>
         </div>
-        <p className="text-xs leading-relaxed opacity-80 max-w-md">
+        <p className="text-[length:var(--text-micro)] leading-relaxed opacity-80 max-w-md">
           A value from one of the controls pushed this simulation out of range.
           Nothing else on the page was affected, reset the module to continue.
         </p>
         <button
           onClick={this.reset}
-          className={`flex items-center gap-2 px-4 py-2 rounded-[6px] text-xs font-bold transition ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-[6px] text-[length:var(--text-micro)] font-bold transition ${
             isLightMode
               ? "bg-dune-orange hover:bg-dune-orange text-dune-orange"
               : "bg-dune-orange/40 hover:bg-dune-orange/60 text-dune-orange"

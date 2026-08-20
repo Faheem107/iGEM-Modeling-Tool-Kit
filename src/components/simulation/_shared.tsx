@@ -107,10 +107,10 @@ export function Slider({
 }) {
   return (
     <div>
-      <div className="mb-2 flex items-center justify-between gap-4 text-[11px]">
+      <div className="mb-2 flex items-center justify-between gap-4 text-[length:var(--text-caption)]">
         <span className="font-medium text-foreground">{label}</span>
         {/* The value is information, not a badge: mono and tabular, no chip. */}
-        <span className="font-mono text-[10px] tabular-nums text-muted-foreground">
+        <span className="font-mono text-[length:var(--text-caption)] tabular-nums text-muted-foreground">
           {format ? format(value) : value}
           {unit ? ` ${unit}` : ""}
         </span>
@@ -126,7 +126,7 @@ export function Slider({
       />
       {hint && (
         <span
-          className="mt-2 block text-[10px] leading-snug text-muted-foreground opacity-80"
+          className="mt-2 block text-[length:var(--text-caption)] leading-snug text-muted-foreground opacity-80"
         >
           <GlossaryText max={3}>{hint}</GlossaryText>
         </span>
@@ -162,19 +162,19 @@ export function StatCard({
       <span className="caption mb-2 block">{label}</span>
       <div className="flex items-baseline gap-2">
         <span
-          className={`tabular-nums ${emphasize ? "text-2xl" : "text-lg"} ${accent}`}
+          className={`tabular-nums ${emphasize ? "text-[length:var(--text-h3)]" : "text-[length:var(--text-body)]"} ${accent}`}
           style={{ fontVariationSettings: '"wght" 620' }}
         >
           {value}
         </span>
         {unit && (
-          <span className="font-mono text-[10px] text-muted-foreground">
+          <span className="font-mono text-[length:var(--text-caption)] text-muted-foreground">
             {unit}
           </span>
         )}
       </div>
       {sub && (
-        <span className="mt-1 block text-[10px] leading-snug text-muted-foreground">
+        <span className="mt-1 block text-[length:var(--text-caption)] leading-snug text-muted-foreground">
           {sub}
         </span>
       )}
@@ -206,7 +206,7 @@ export function MathDisclosure({
       </button>
       {open && (
         <div
-          className="border-t border-border px-4 py-4 font-mono text-[11px] leading-relaxed text-foreground"
+          className="border-t border-border px-4 py-4 font-mono text-[length:var(--text-caption)] leading-relaxed text-foreground"
         >
           {children}
         </div>

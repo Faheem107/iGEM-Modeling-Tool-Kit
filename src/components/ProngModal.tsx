@@ -49,7 +49,7 @@ export default function ProngModal({
                   id: "why",
                   label: "Why not",
                   body: (
-                    <ol className="list-decimal space-y-2 pl-4 text-sm leading-relaxed text-muted-foreground">
+                    <ol className="list-decimal space-y-2 pl-4 text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
                       {activeProng.whyDropped.map((r, i) => (
                         <li key={i}>
                           <GlossaryText>{r}</GlossaryText>
@@ -93,7 +93,7 @@ export default function ProngModal({
 
 function Body({ text }: { text: string }) {
   return (
-    <p className="text-sm leading-relaxed text-muted-foreground">
+    <p className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
       <GlossaryText>{text}</GlossaryText>
     </p>
   );

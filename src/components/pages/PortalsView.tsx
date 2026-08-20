@@ -18,7 +18,7 @@ export default function PortalsView() {
         <h1 className="text-[length:var(--text-h1)] text-foreground">
           Sandbox portals
         </h1>
-        <p className="mt-4 max-w-[60ch] text-[length:var(--text-lede)] leading-relaxed text-muted-foreground">
+        <p className="mt-4 max-w-[60ch] text-[length:var(--text-body)] leading-relaxed text-muted-foreground">
           Each portal is its own workspace, separate from the prong-tailored
           simulation.
         </p>
@@ -43,7 +43,7 @@ export default function PortalsView() {
                     {card.title}
                   </span>
                 </span>
-                <span className="mt-2 block max-w-[58ch] text-[0.9375rem] leading-relaxed text-muted-foreground">
+                <span className="mt-2 block max-w-[58ch] text-[length:var(--text-body)] leading-relaxed text-muted-foreground">
                   {card.desc}
                 </span>
               </span>

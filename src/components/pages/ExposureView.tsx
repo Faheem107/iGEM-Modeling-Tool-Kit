@@ -20,10 +20,10 @@ export default function ExposureView() {
       </Link>
 
       <header className="mb-12 max-w-3xl">
-        <h1 className="mb-4 text-4xl font-extrabold tracking-tight md:text-5xl">
+        <h1 className="mb-4 text-[length:var(--text-h1)] font-extrabold tracking-tight">
           Where the sand comes from, and what reaches a site
         </h1>
-        <p className="text-base leading-relaxed text-muted-foreground">
+        <p className="text-[length:var(--text-body)] leading-relaxed text-muted-foreground">
           Pick a market, pick a site, and the model estimates how much wind-blown sand
           reaches it and how much less would reach it if the source were treated. The
           seasonal view uses a wind climatology window. The live view runs the same model

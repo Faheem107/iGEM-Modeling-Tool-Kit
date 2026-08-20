@@ -145,11 +145,11 @@ export default function ModelIndex({
           label: s.label,
           body: (
             <div className="space-y-4">
-              <h3 className="text-[0.9375rem] leading-snug text-foreground">
+              <h3 className="text-[length:var(--text-body)] leading-snug text-foreground">
                 {s.heading}
               </h3>
               {s.body.map((para, i) => (
-                <p key={i} className="text-sm leading-relaxed text-muted-foreground">
+                <p key={i} className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
                   {para}
                 </p>
               ))}
@@ -158,7 +158,7 @@ export default function ModelIndex({
         }))}
         footer={
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <p className="text-xs leading-relaxed text-muted-foreground">
+            <p className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
               {BUSINESS_SUMMARY}
             </p>
             <button
@@ -227,7 +227,7 @@ function Group({
           </span>
         </span>
         <span
-          className={`mt-2 block text-[0.875rem] leading-snug text-muted-foreground ${
+          className={`mt-2 block text-[length:var(--text-micro)] leading-snug text-muted-foreground ${
             wide ? "max-w-[62ch]" : "max-w-[32ch]"
           }`}
         >
@@ -273,7 +273,7 @@ function ModuleList({
               {String(i + 1).padStart(2, "0")}
             </span>
             <span>
-              <span className="wght-link rule-link block text-[0.9375rem] leading-snug">
+              <span className="wght-link rule-link block text-[length:var(--text-body)] leading-snug">
                 {m.title}
               </span>
               <span className="caption mt-1 block opacity-60">{m.scale}</span>
@@ -301,7 +301,7 @@ function LinkList({
               {String(i + 1).padStart(2, "0")}
             </span>
             <span>
-              <span className="wght-link rule-link block text-[0.9375rem] leading-snug">
+              <span className="wght-link rule-link block text-[length:var(--text-body)] leading-snug">
                 {l.title}
               </span>
               <span className="caption mt-1 block opacity-60">{l.meta}</span>

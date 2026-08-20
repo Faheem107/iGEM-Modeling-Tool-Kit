@@ -467,7 +467,7 @@ export default function LandingCinematic({
                     ? "0 1px 8px rgba(255,255,255,0.45)"
                     : "0 1px 10px rgba(0,0,0,0.45)",
                 }}
-                className={`hero-reveal hero-reveal-3 mt-6 max-w-[46ch] text-[length:var(--text-lede)] leading-relaxed ${
+                className={`hero-reveal hero-reveal-3 mt-6 max-w-[46ch] text-[length:var(--text-body)] leading-relaxed ${
                   isLightMode ? "text-dune-maroon/85" : "text-dune-paper/85"
                 }`}
               >
@@ -534,7 +534,7 @@ export default function LandingCinematic({
                       <span className="caption text-dune-orange">{b.label}</span>
                       <span className="caption">{b.scale} across</span>
                     </div>
-                    <p className="text-lg font-medium leading-snug">{b.line}</p>
+                    <p className="text-[length:var(--text-body)] font-medium leading-snug">{b.line}</p>
                     <Link href={b.model.href} className="caption rule-link mt-1 inline-block">
                       {b.model.label}
                     </Link>
@@ -578,7 +578,7 @@ export default function LandingCinematic({
                       </span>
                     </div>
                     <p
-                      className={`font-display text-2xl font-black leading-tight tracking-tight sm:text-4xl ${
+                      className={`font-display text-[length:var(--text-h3)] font-black leading-tight tracking-tight ${
                         isLightMode ? "text-dune-maroon" : "text-dune-paper"
                       }`}
                     >

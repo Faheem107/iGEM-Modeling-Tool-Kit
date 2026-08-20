@@ -422,12 +422,12 @@ export default function WetLabSandbox2D({
         </div>
         <div>
           <h3
-            className={`text-sm font-black uppercase tracking-wider ${isLightMode ? "text-foreground" : "text-foreground"}`}
+            className={`text-[length:var(--text-micro)] font-black uppercase tracking-wider ${isLightMode ? "text-foreground" : "text-foreground"}`}
           >
             {PORTAL_NAMES.wetlab}
           </h3>
           <p
-            className={`text-[11px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             Feed real bench values, OD₆₀₀, glutamate, calcium salt, temperature, into the same erosion physics: a γ-PGA dune-crust assay.
           </p>
@@ -449,7 +449,7 @@ export default function WetLabSandbox2D({
               <Thermometer
                 className={`w-4 h-4 ${isLightMode ? "text-dune-rose" : "text-dune-rose"}`}
               />
-              <h3 className="font-bold text-sm uppercase tracking-wider font-mono">
+              <h3 className="font-bold text-[length:var(--text-micro)] uppercase tracking-wider font-mono">
                 1. Lab Inputs
               </h3>
             </div>
@@ -457,7 +457,7 @@ export default function WetLabSandbox2D({
             <div className="space-y-6 px-1">
               <div>
                 <div
-                  className={`flex justify-between text-[11px] mb-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`flex justify-between text-[length:var(--text-caption)] mb-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                 >
                   <span
                     className={`font-semibold ${isLightMode ? "text-foreground" : "text-foreground"}`}
@@ -465,7 +465,7 @@ export default function WetLabSandbox2D({
                     Inoculum Cell Density (<GlossaryTerm term="OD600" />)
                   </span>
                   <span
-                    className={`font-mono px-2 py-1 rounded text-[10px] border ${isLightMode ? "bg-dune-orange border-dune-orange text-dune-orange font-bold" : "text-dune-orange bg-dune-orange/40 border border-dune-orange/30"}`}
+                    className={`font-mono px-2 py-1 rounded text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange border-dune-orange text-dune-orange font-bold" : "text-dune-orange bg-dune-orange/40 border border-dune-orange/30"}`}
                   >
                     {labOD600.toFixed(2)} Abs
                   </span>
@@ -485,7 +485,7 @@ export default function WetLabSandbox2D({
 
               <div>
                 <div
-                  className={`flex justify-between text-[11px] mb-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`flex justify-between text-[length:var(--text-caption)] mb-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                 >
                   <span
                     className={`font-semibold ${isLightMode ? "text-foreground" : "text-foreground"}`}
@@ -493,7 +493,7 @@ export default function WetLabSandbox2D({
                     Inoculation Vol (Per dm³ soil)
                   </span>
                   <span
-                    className={`font-mono px-2 py-1 rounded text-[10px] border ${isLightMode ? "bg-dune-orange border-dune-orange text-dune-orange font-bold" : "text-dune-orange bg-dune-orange/40 border border-dune-orange/30"}`}
+                    className={`font-mono px-2 py-1 rounded text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange border-dune-orange text-dune-orange font-bold" : "text-dune-orange bg-dune-orange/40 border border-dune-orange/30"}`}
                   >
                     {labInocVolume.toFixed(0)} mL
                   </span>
@@ -513,7 +513,7 @@ export default function WetLabSandbox2D({
 
               <div>
                 <div
-                  className={`flex justify-between text-[11px] mb-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`flex justify-between text-[length:var(--text-caption)] mb-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                 >
                   <span
                     className={`font-semibold ${isLightMode ? "text-foreground" : "text-foreground"}`}
@@ -521,7 +521,7 @@ export default function WetLabSandbox2D({
                     <GlossaryTerm term="L-Glutamate" /> Substrate Feed
                   </span>
                   <span
-                    className={`font-mono px-2 py-1 rounded text-[10px] border ${isLightMode ? "bg-dune-teal border-dune-teal text-dune-teal font-bold" : "text-dune-teal bg-dune-teal/40 border border-dune-teal/30"}`}
+                    className={`font-mono px-2 py-1 rounded text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-teal border-dune-teal text-dune-teal font-bold" : "text-dune-teal bg-dune-teal/40 border border-dune-teal/30"}`}
                   >
                     {labGlutamate.toFixed(0)} mM
                   </span>
@@ -541,7 +541,7 @@ export default function WetLabSandbox2D({
 
               <div>
                 <div
-                  className={`flex justify-between text-[11px] mb-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`flex justify-between text-[length:var(--text-caption)] mb-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                 >
                   <span
                     className={`font-semibold ${isLightMode ? "text-foreground" : "text-foreground"}`}
@@ -549,7 +549,7 @@ export default function WetLabSandbox2D({
                     Ca2+ Salinity Additive
                   </span>
                   <span
-                    className={`font-mono px-2 py-1 rounded text-[10px] border ${isLightMode ? "bg-dune-orange border-dune-orange text-dune-orange font-bold" : "text-dune-orange bg-dune-orange/40 border border-dune-orange/30"}`}
+                    className={`font-mono px-2 py-1 rounded text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange border-dune-orange text-dune-orange font-bold" : "text-dune-orange bg-dune-orange/40 border border-dune-orange/30"}`}
                   >
                     {labSalinity.toFixed(1)} g/L
                   </span>
@@ -566,7 +566,7 @@ export default function WetLabSandbox2D({
                   />
                 </div>
                 <span
-                  className={`text-[9px] block mt-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`text-[length:var(--text-caption)] block mt-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                 >
                   Divalent calcium sources to crosslink polymeric carboxylate
                   chains.
@@ -575,7 +575,7 @@ export default function WetLabSandbox2D({
 
               <div>
                 <div
-                  className={`flex justify-between text-[11px] mb-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`flex justify-between text-[length:var(--text-caption)] mb-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                 >
                   <span
                     className={`font-semibold ${isLightMode ? "text-foreground" : "text-foreground"}`}
@@ -593,7 +593,7 @@ export default function WetLabSandbox2D({
                     )
                   </span>
                   <span
-                    className={`font-mono px-2 py-1 rounded text-[10px] border ${isLightMode ? "bg-dune-rose border-dune-rose text-dune-rose font-bold" : "text-dune-rose bg-dune-rose/40 border border-dune-rose/30"}`}
+                    className={`font-mono px-2 py-1 rounded text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-rose border-dune-rose text-dune-rose font-bold" : "text-dune-rose bg-dune-rose/40 border border-dune-rose/30"}`}
                   >
                     {labTemp.toFixed(1)} °C
                   </span>
@@ -620,7 +620,7 @@ export default function WetLabSandbox2D({
               <Wind
                 className={`w-4 h-4 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
               />
-              <h3 className="font-bold text-sm uppercase tracking-wider font-mono">
+              <h3 className="font-bold text-[length:var(--text-micro)] uppercase tracking-wider font-mono">
                 2. Storm Simulation
               </h3>
             </div>
@@ -628,7 +628,7 @@ export default function WetLabSandbox2D({
             <div className="space-y-4 px-1">
               <div>
                 <div
-                  className={`flex justify-between text-[11px] mb-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`flex justify-between text-[length:var(--text-caption)] mb-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                 >
                   <span>
                     Custom Wind Friction speed (
@@ -644,7 +644,7 @@ export default function WetLabSandbox2D({
                     )
                   </span>
                   <span
-                    className={`font-mono px-2 py-1 rounded text-[10px] border ${isLightMode ? "bg-dune-teal border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/30 text-dune-teal border border-dune-teal/30"}`}
+                    className={`font-mono px-2 py-1 rounded text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-teal border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/30 text-dune-teal border border-dune-teal/30"}`}
                   >
                     {windFriction.toFixed(2)} m/s
                   </span>
@@ -668,7 +668,7 @@ export default function WetLabSandbox2D({
                   className="rounded border-border text-dune-maroon focus:ring-dune-maroon bg-dune-basalt w-4 h-4"
                 />
                 <span
-                  className={`text-[11px] font-bold uppercase transition-colors ${stormActive ? "text-dune-maroon" : isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`text-[length:var(--text-caption)] font-bold uppercase transition-colors ${stormActive ? "text-dune-maroon" : isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                 >
                   {stormActive
                     ? "⚠ GALE FORCE EVENT ACTIVE"
@@ -681,7 +681,7 @@ export default function WetLabSandbox2D({
           <div className="flex gap-2 mt-4">
             <button
               onClick={() => setIsSimulating(!isSimulating)}
-              className={`flex-1 py-2 rounded-[4px] font-bold font-mono text-[10px] uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer border ${
+              className={`flex-1 py-2 rounded-[4px] font-bold font-mono text-[length:var(--text-caption)] uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer border ${
                 isLightMode
                   ? "bg-background hover:bg-muted text-foreground border-border"
                   : "bg-dune-basalt hover:bg-card text-foreground hover:text-foreground border-border"
@@ -697,7 +697,7 @@ export default function WetLabSandbox2D({
 
             <button
               onClick={handleRefreshGrid}
-              className={`py-2 px-4 rounded-[4px] font-bold font-mono text-[10px] uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer border transition-colors ${
+              className={`py-2 px-4 rounded-[4px] font-bold font-mono text-[length:var(--text-caption)] uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer border transition-colors ${
                 isLightMode
                   ? "bg-dune-teal hover:bg-dune-teal text-dune-teal border-dune-teal"
                   : "bg-dune-teal/40 hover:bg-dune-teal/60 text-dune-teal border-dune-teal/30"
@@ -713,27 +713,27 @@ export default function WetLabSandbox2D({
         <div className="lg:col-span-7 space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="p-4 bg-dune-maroon/15 border border-dune-maroon/40 rounded-[6px] relative overflow-hidden flex flex-col justify-between">
-              <span className="text-[10px] font-mono font-bold text-dune-maroon uppercase tracking-wider mb-2">
+              <span className="text-[length:var(--text-caption)] font-mono font-bold text-dune-maroon uppercase tracking-wider mb-2">
                 Control (Bare Sand)
               </span>
               <div className="flex justify-between items-end">
-                <span className="text-3xl font-black text-dune-maroon">
+                <span className="text-[length:var(--text-h1)] font-black text-dune-maroon">
                   {erosionUntreated}%
                 </span>
-                <span className="text-[10px] text-dune-maroon/70 font-mono pb-1">
+                <span className="text-[length:var(--text-caption)] text-dune-maroon/70 font-mono pb-1">
                   Erosion
                 </span>
               </div>
             </div>
             <div className="p-4 bg-dune-teal/15 border border-dune-teal/40 rounded-[6px] relative overflow-hidden flex flex-col justify-between">
-              <span className="text-[10px] font-mono font-bold text-dune-teal uppercase tracking-wider mb-2">
+              <span className="text-[length:var(--text-caption)] font-mono font-bold text-dune-teal uppercase tracking-wider mb-2">
                 Treated (Bio-stabilized)
               </span>
               <div className="flex justify-between items-end">
-                <span className="text-3xl font-black text-dune-teal">
+                <span className="text-[length:var(--text-h1)] font-black text-dune-teal">
                   {erosionTreated}%
                 </span>
-                <span className="text-[10px] text-dune-teal/70 font-mono pb-1">
+                <span className="text-[length:var(--text-caption)] text-dune-teal/70 font-mono pb-1">
                   Erosion
                 </span>
               </div>
@@ -762,28 +762,28 @@ export default function WetLabSandbox2D({
               }`}
             >
               <div className="flex flex-col">
-                <span className="text-[10px] font-bold font-mono text-dune-orange mb-1">
+                <span className="text-[length:var(--text-caption)] font-bold font-mono text-dune-orange mb-1">
                   Calculated Modulus (Gs)
                 </span>
-                <span className="text-sm font-black">
+                <span className="text-[length:var(--text-micro)] font-black">
                   {derivedShearModulus.toFixed(0)} Pa
                 </span>
               </div>
               <div className="w-px h-8 bg-muted/50" />
               <div className="flex flex-col">
-                <span className="text-[10px] font-bold font-mono text-dune-teal mb-1">
+                <span className="text-[length:var(--text-caption)] font-bold font-mono text-dune-teal mb-1">
                   Yield Target (PGA)
                 </span>
-                <span className="text-sm font-black">
+                <span className="text-[length:var(--text-micro)] font-black">
                   {derivedPGA.toFixed(1)} g/L
                 </span>
               </div>
               <div className="w-px h-8 bg-muted/50" />
               <div className="flex flex-col">
-                <span className="text-[10px] font-bold font-mono text-dune-rose mb-1">
+                <span className="text-[length:var(--text-caption)] font-bold font-mono text-dune-rose mb-1">
                   Critical Friction (u*t)
                 </span>
-                <span className="text-sm font-black">
+                <span className="text-[length:var(--text-micro)] font-black">
                   {u_star_critical.toFixed(2)} m/s
                 </span>
               </div>
@@ -800,19 +800,19 @@ export default function WetLabSandbox2D({
             <div className="flex border-b border-inherit">
               <button
                 onClick={() => setExplainTab("context")}
-                className={`flex-1 py-2 text-[10px] font-mono font-bold uppercase tracking-wider ${explainTab === "context" ? (isLightMode ? "bg-dune-orange text-dune-orange" : "bg-card text-foreground") : isLightMode ? "text-muted-foreground hover:bg-muted" : "text-muted-foreground hover:bg-dune-basalt/50"}`}
+                className={`flex-1 py-2 text-[length:var(--text-caption)] font-mono font-bold uppercase tracking-wider ${explainTab === "context" ? (isLightMode ? "bg-dune-orange text-dune-orange" : "bg-card text-foreground") : isLightMode ? "text-muted-foreground hover:bg-muted" : "text-muted-foreground hover:bg-dune-basalt/50"}`}
               >
                 Wet-Lab Context
               </button>
               <button
                 onClick={() => setExplainTab("math")}
-                className={`flex-1 py-2 text-[10px] font-mono font-bold uppercase tracking-wider ${explainTab === "math" ? (isLightMode ? "bg-dune-orange text-dune-orange" : "bg-card text-foreground") : isLightMode ? "text-muted-foreground hover:bg-muted" : "text-muted-foreground hover:bg-dune-basalt/50"}`}
+                className={`flex-1 py-2 text-[length:var(--text-caption)] font-mono font-bold uppercase tracking-wider ${explainTab === "math" ? (isLightMode ? "bg-dune-orange text-dune-orange" : "bg-card text-foreground") : isLightMode ? "text-muted-foreground hover:bg-muted" : "text-muted-foreground hover:bg-dune-basalt/50"}`}
               >
                 Bio-Physical Math Models
               </button>
             </div>
 
-            <div className="p-4 text-xs">
+            <div className="p-4 text-[length:var(--text-micro)]">
               {explainTab === "context" ? (
                 <div className="animate-fadeIn space-y-4 leading-relaxed">
                   <p
@@ -871,7 +871,7 @@ export default function WetLabSandbox2D({
                         1. Temperature Viability:
                       </span>
                       <code>Yield ∝ Feed * (1 - α|T - T_opt|)</code>
-                      <p className="text-[10px] text-muted-foreground mt-1 leading-normal font-sans">
+                      <p className="text-[length:var(--text-caption)] text-muted-foreground mt-1 leading-normal font-sans">
                         Metabolic productivity penalty function tracking
                         divergence from ideal 37°C.
                       </p>
@@ -883,7 +883,7 @@ export default function WetLabSandbox2D({
                         2. Salinity Saturation:
                       </span>
                       <code>θ = S / (Kd + S)</code>
-                      <p className="text-[10px] text-muted-foreground mt-1 leading-normal font-sans">
+                      <p className="text-[length:var(--text-caption)] text-muted-foreground mt-1 leading-normal font-sans">
                         Michaelis-Menten coordination saturation scaling for
                         matrix cohesiveness.
                       </p>
@@ -895,7 +895,7 @@ export default function WetLabSandbox2D({
                         3. Sand Shear Modulus Gs:
                       </span>
                       <code>Gs = G_base + Yield_PGA * θ * Elasticity</code>
-                      <p className="text-[10px] text-muted-foreground mt-1 leading-normal font-sans">
+                      <p className="text-[length:var(--text-caption)] text-muted-foreground mt-1 leading-normal font-sans">
                         Affinement elastomer network model calculating
                         structural stiffness (measured in Pascals).
                       </p>
@@ -911,7 +911,7 @@ export default function WetLabSandbox2D({
                           "u*t = u_base + sqrt(Cohesion_Gs * Thickness / Air_Density)"
                         }
                       </code>
-                      <p className="text-[10px] text-muted-foreground mt-1 leading-normal font-sans">
+                      <p className="text-[length:var(--text-caption)] text-muted-foreground mt-1 leading-normal font-sans">
                         The absolute wind friction speed limit before the dune
                         starts suffering aeolian erosion.
                       </p>

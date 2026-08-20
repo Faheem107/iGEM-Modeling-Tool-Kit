@@ -69,7 +69,7 @@ export default function GlobalSandyx({
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25 }}
-                className={`mb-1 max-w-[140px] text-center text-[9.5px] font-semibold leading-tight px-2 py-1 rounded-[6px] border ${
+                className={`mb-1 max-w-[140px] text-center text-[length:var(--text-caption)] font-semibold leading-tight px-2 py-1 rounded-[6px] border ${
                   isLightMode
                     ? "bg-white/85 border-dune-teal text-muted-foreground"
                     : "bg-dune-basalt/85 border-dune-teal/25 text-foreground"

@@ -809,10 +809,10 @@ export default function AdvancedFbaPortal({
             />
           </div>
           <div>
-            <h2 className="text-sm font-black uppercase tracking-wider font-mono">
+            <h2 className="text-[length:var(--text-micro)] font-black uppercase tracking-wider font-mono">
               {PORTAL_NAMES.pipeline}
             </h2>
-            <p className="text-[10px] text-muted-foreground mt-1">
+            <p className="text-[length:var(--text-caption)] text-muted-foreground mt-1">
               Simulating{" "}
               <GlossaryTerm
                 term="flux balance analysis"
@@ -826,7 +826,7 @@ export default function AdvancedFbaPortal({
         </div>
 
         {/* Diagnostic indicators */}
-        <div className="flex gap-2 flex-wrap font-mono text-[10px]">
+        <div className="flex gap-2 flex-wrap font-mono text-[length:var(--text-caption)]">
           <div
             className={`px-2 py-1 rounded border flex items-center gap-2 ${
               fbaResults.status === "Optimal" ||
@@ -874,7 +874,7 @@ export default function AdvancedFbaPortal({
             }`}
           >
             <h3
-              className={`text-xs font-black uppercase tracking-wider font-mono pb-2 border-b flex justify-between items-center ${
+              className={`text-[length:var(--text-micro)] font-black uppercase tracking-wider font-mono pb-2 border-b flex justify-between items-center ${
                 isLightMode
                   ? "text-foreground border-dune-orange/10"
                   : "text-foreground border-border"
@@ -886,7 +886,7 @@ export default function AdvancedFbaPortal({
               </span>
               <button
                 onClick={handleResetParameters}
-                className={`p-1 rounded cursor-pointer transition text-[9px] font-semibold border ${
+                className={`p-1 rounded cursor-pointer transition text-[length:var(--text-caption)] font-semibold border ${
                   isLightMode
                     ? "bg-muted text-muted-foreground border-border hover:bg-secondary"
                     : "bg-dune-basalt text-muted-foreground border-border hover:bg-card"
@@ -900,12 +900,12 @@ export default function AdvancedFbaPortal({
             {/* Objective Selector */}
             <div className="space-y-2">
               <label
-                className={`text-[10px] font-extrabold uppercase font-mono block ${isLightMode ? "text-dune-orange" : "text-dune-teal"}`}
+                className={`text-[length:var(--text-caption)] font-extrabold uppercase font-mono block ${isLightMode ? "text-dune-orange" : "text-dune-teal"}`}
               >
                 Mathematical Objective (Maximize)
               </label>
               <div
-                className={`grid grid-cols-2 p-1 rounded border text-[10px] font-mono gap-1 ${
+                className={`grid grid-cols-2 p-1 rounded border text-[length:var(--text-caption)] font-mono gap-1 ${
                   isLightMode
                     ? "bg-background border-border"
                     : "bg-dune-ink border-border"
@@ -945,7 +945,7 @@ export default function AdvancedFbaPortal({
             {/* Sliders */}
             <div className="space-y-4 pt-2">
               <div className="space-y-1">
-                <div className="flex justify-between text-[11px]">
+                <div className="flex justify-between text-[length:var(--text-caption)]">
                   <span className="font-semibold">
                     Glucose Max Uptake Rate:
                   </span>
@@ -967,7 +967,7 @@ export default function AdvancedFbaPortal({
               </div>
 
               <div className="space-y-1">
-                <div className="flex justify-between text-[11px]">
+                <div className="flex justify-between text-[length:var(--text-caption)]">
                   <span className="font-semibold">Oxygen Substrate Limit:</span>
                   <span className="font-mono font-bold text-dune-teal">
                     {hypoxiaMode
@@ -991,17 +991,17 @@ export default function AdvancedFbaPortal({
 
               {/* Hypoxia Toggle Switches */}
               <div
-                className={`p-2 rounded-[4px] border flex items-center justify-between text-xs transition-colors ${
+                className={`p-2 rounded-[4px] border flex items-center justify-between text-[length:var(--text-micro)] transition-colors ${
                   isLightMode
                     ? "bg-card/40 border-dune-orange/10"
                     : "bg-dune-ink border-border"
                 }`}
               >
                 <div>
-                  <span className="font-bold font-mono block text-[10px] uppercase">
+                  <span className="font-bold font-mono block text-[length:var(--text-caption)] uppercase">
                     Hypoxic/Anaerobic Soil Mode
                   </span>
-                  <span className="text-[9px] text-muted-foreground block mt-1">
+                  <span className="text-[length:var(--text-caption)] text-muted-foreground block mt-1">
                     Shuts oxygen exchange inflow to zero
                   </span>
                 </div>
@@ -1025,7 +1025,7 @@ export default function AdvancedFbaPortal({
           >
             <div>
               <h3
-                className={`text-xs font-black uppercase tracking-wider font-mono flex items-center gap-2 pb-2 border-b ${
+                className={`text-[length:var(--text-micro)] font-black uppercase tracking-wider font-mono flex items-center gap-2 pb-2 border-b ${
                   isLightMode
                     ? "text-foreground border-dune-orange/10"
                     : "text-foreground border-border"
@@ -1033,13 +1033,13 @@ export default function AdvancedFbaPortal({
               >
                 <Dna className="w-4 h-4 text-dune-rose" /> iGEM Knockout Sandbox
               </h3>
-              <p className="text-[9px] text-muted-foreground mt-1">
+              <p className="text-[length:var(--text-caption)] text-muted-foreground mt-1">
                 Induce single gene deletions. Simplex reroutes carbon fluxes
                 dynamically.
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 text-[10px] font-mono">
+            <div className="grid grid-cols-2 gap-2 text-[length:var(--text-caption)] font-mono">
               {[
                 { gene: "ptsG", label: "∆ptsG (Glucose Transport)" },
                 { gene: "pgi", label: "∆pgi (Glycolysis check)" },
@@ -1082,7 +1082,7 @@ export default function AdvancedFbaPortal({
             }`}
           >
             <h3
-              className={`text-xs font-black uppercase tracking-wider font-mono flex items-center gap-2 pb-1 border-b ${
+              className={`text-[length:var(--text-micro)] font-black uppercase tracking-wider font-mono flex items-center gap-2 pb-1 border-b ${
                 isLightMode
                   ? "text-foreground border-dune-orange/10"
                   : "text-foreground border-border"
@@ -1101,15 +1101,15 @@ export default function AdvancedFbaPortal({
                     : "bg-dune-basalt/40 border-border"
                 }`}
               >
-                <span className="text-[9px] text-muted-foreground uppercase font-mono tracking-wider block">
+                <span className="text-[length:var(--text-caption)] text-muted-foreground uppercase font-mono tracking-wider block">
                   ATP Production Rate
                 </span>
                 <span
-                  className={`font-mono text-xl font-black block my-1 ${isLightMode ? "text-dune-orange" : "text-dune-orange"}`}
+                  className={`font-mono text-[length:var(--text-h3)] font-black block my-1 ${isLightMode ? "text-dune-orange" : "text-dune-orange"}`}
                 >
                   {atpProductionRate.toFixed(2)}
                 </span>
-                <span className="text-[8px] text-muted-foreground">mmol / gDCW·h</span>
+                <span className="text-[length:var(--text-caption)] text-muted-foreground">mmol / gDCW·h</span>
               </div>
 
               {/* NADPH efficiency circle */}
@@ -1120,20 +1120,20 @@ export default function AdvancedFbaPortal({
                     : "bg-dune-basalt/40 border-border"
                 }`}
               >
-                <span className="text-[9px] text-muted-foreground uppercase font-mono tracking-wider block">
+                <span className="text-[length:var(--text-caption)] text-muted-foreground uppercase font-mono tracking-wider block">
                   Anabolic NADPH Yield
                 </span>
                 <span
-                  className={`font-mono text-xl font-black block my-1 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
+                  className={`font-mono text-[length:var(--text-h3)] font-black block my-1 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
                 >
                   {nadphProductionRate.toFixed(2)}
                 </span>
-                <span className="text-[8px] text-muted-foreground">mmol / gDCW·h</span>
+                <span className="text-[length:var(--text-caption)] text-muted-foreground">mmol / gDCW·h</span>
               </div>
             </div>
 
             {/* Explainer note */}
-            <div className="p-2 bg-dune-orange/20 rounded border border-dune-orange/10 text-[9.5px] text-muted-foreground leading-tight">
+            <div className="p-2 bg-dune-orange/20 rounded border border-dune-orange/10 text-[length:var(--text-caption)] text-muted-foreground leading-tight">
               Glutamate synthesis pathways require 1 full mole of{" "}
               <strong
                 className={isLightMode ? "text-dune-teal" : "text-dune-teal"}
@@ -1162,7 +1162,7 @@ export default function AdvancedFbaPortal({
           >
             <div className="flex justify-between items-center mb-4">
               <h3
-                className={`text-xs font-black uppercase tracking-wider font-mono flex items-center gap-2 ${
+                className={`text-[length:var(--text-micro)] font-black uppercase tracking-wider font-mono flex items-center gap-2 ${
                   isLightMode ? "text-foreground" : "text-foreground"
                 }`}
               >
@@ -1170,7 +1170,7 @@ export default function AdvancedFbaPortal({
                 Active Analytical Metabolic Flux Map
               </h3>
               <span
-                className={`text-[9px] font-mono px-2 py-1 rounded border ${
+                className={`text-[length:var(--text-caption)] font-mono px-2 py-1 rounded border ${
                   isLightMode
                     ? "bg-dune-sand border-dune-orange"
                     : "bg-dune-ink border-border"
@@ -1182,13 +1182,13 @@ export default function AdvancedFbaPortal({
 
             {/* Non-overlapping flow channel legend bar */}
             <div
-              className={`flex flex-wrap items-center gap-4 text-[9.5px] font-mono p-2 rounded-[4px] border mb-4 transition-all ${
+              className={`flex flex-wrap items-center gap-4 text-[length:var(--text-caption)] font-mono p-2 rounded-[4px] border mb-4 transition-all ${
                 isLightMode
                   ? "bg-card border-dune-orange/10 text-foreground"
                   : "bg-dune-ink/90 border-border text-foreground"
               }`}
             >
-              <span className="font-extrabold uppercase text-[9pt] text-dune-rose select-none">
+              <span className="font-extrabold uppercase text-[length:var(--text-caption)] text-dune-rose select-none">
                 Flow Channels Legend:
               </span>
               <div className="flex items-center gap-2">
@@ -1307,7 +1307,7 @@ export default function AdvancedFbaPortal({
                   x="50"
                   y="83"
                   textAnchor="middle"
-                  fontSize="8"
+                  fontSize="10"
                   fontWeight="bold"
                   fill={labelColor}
                   className="font-sans select-none pointer-events-none"
@@ -1328,7 +1328,7 @@ export default function AdvancedFbaPortal({
                   x="160"
                   y="83"
                   textAnchor="middle"
-                  fontSize="8"
+                  fontSize="10"
                   fontWeight="bold"
                   fill={labelColor}
                   className="font-sans select-none pointer-events-none"
@@ -1349,7 +1349,7 @@ export default function AdvancedFbaPortal({
                   x="280"
                   y="83"
                   textAnchor="middle"
-                  fontSize="8"
+                  fontSize="10"
                   fontWeight="bold"
                   fill={labelColor}
                   className="font-sans select-none pointer-events-none"
@@ -1370,7 +1370,7 @@ export default function AdvancedFbaPortal({
                   x="280"
                   y="183"
                   textAnchor="middle"
-                  fontSize="8"
+                  fontSize="10"
                   fontWeight="semibold"
                   fill={labelColor}
                   className="font-sans select-none pointer-events-none"
@@ -1391,7 +1391,7 @@ export default function AdvancedFbaPortal({
                   x="160"
                   y="233"
                   textAnchor="middle"
-                  fontSize="8"
+                  fontSize="10"
                   fontWeight="semibold"
                   fill={labelColor}
                   className="font-sans select-none pointer-events-none"
@@ -1412,7 +1412,7 @@ export default function AdvancedFbaPortal({
                   x="160"
                   y="333"
                   textAnchor="middle"
-                  fontSize="8"
+                  fontSize="10"
                   fontWeight="semibold"
                   fill={labelColor}
                   className="font-sans select-none pointer-events-none"
@@ -1433,7 +1433,7 @@ export default function AdvancedFbaPortal({
                   x="290"
                   y="333"
                   textAnchor="middle"
-                  fontSize="8"
+                  fontSize="10"
                   fontWeight="semibold"
                   fill={labelColor}
                   className="font-sans select-none pointer-events-none"
@@ -1454,7 +1454,7 @@ export default function AdvancedFbaPortal({
                   x="160"
                   y="153"
                   textAnchor="middle"
-                  fontSize="8"
+                  fontSize="10"
                   fontWeight="semibold"
                   fill={labelColor}
                   className="font-sans select-none pointer-events-none"
@@ -1475,7 +1475,7 @@ export default function AdvancedFbaPortal({
                   x="80"
                   y="193"
                   textAnchor="middle"
-                  fontSize="8"
+                  fontSize="10"
                   fontWeight="semibold"
                   fill={labelColor}
                   className="font-sans select-none pointer-events-none"
@@ -1496,7 +1496,7 @@ export default function AdvancedFbaPortal({
                   x="390"
                   y="373"
                   textAnchor="middle"
-                  fontSize="8"
+                  fontSize="10"
                   fontWeight="semibold"
                   fill={labelColor}
                   className="font-sans select-none pointer-events-none"
@@ -1517,7 +1517,7 @@ export default function AdvancedFbaPortal({
                   x="410"
                   y="273"
                   textAnchor="middle"
-                  fontSize="8"
+                  fontSize="10"
                   fontWeight="semibold"
                   fill={labelColor}
                   className="font-sans select-none pointer-events-none"
@@ -1538,7 +1538,7 @@ export default function AdvancedFbaPortal({
                   x="530"
                   y="273"
                   textAnchor="middle"
-                  fontSize="8"
+                  fontSize="10"
                   fontWeight="semibold"
                   fill={labelColor}
                   className="font-sans select-none pointer-events-none"
@@ -1559,7 +1559,7 @@ export default function AdvancedFbaPortal({
                   x="630"
                   y="223"
                   textAnchor="middle"
-                  fontSize="8"
+                  fontSize="10"
                   fontWeight="semibold"
                   fill={labelColor}
                   className="font-sans select-none pointer-events-none"
@@ -1580,7 +1580,7 @@ export default function AdvancedFbaPortal({
                   x="530"
                   y="153"
                   textAnchor="middle"
-                  fontSize="8"
+                  fontSize="10"
                   fontWeight="extrabold"
                   fill={labelColor}
                   className="font-sans select-none pointer-events-none"
@@ -1601,7 +1601,7 @@ export default function AdvancedFbaPortal({
                   x="530"
                   y="63"
                   textAnchor="middle"
-                  fontSize="8"
+                  fontSize="10"
                   fontWeight="extrabold"
                   fill={labelColor}
                   className="font-sans select-none pointer-events-none"
@@ -1622,7 +1622,7 @@ export default function AdvancedFbaPortal({
                   x="680"
                   y="63"
                   textAnchor="middle"
-                  fontSize="9"
+                  fontSize="10"
                   fontWeight="black"
                   fill={isLightMode ? TINT.tealDeep : STATUS.good}
                   className="font-sans select-none pointer-events-none"
@@ -1643,7 +1643,7 @@ export default function AdvancedFbaPortal({
                   x="650"
                   y="323"
                   textAnchor="middle"
-                  fontSize="8"
+                  fontSize="10"
                   fontWeight="semibold"
                   fill={labelColor}
                   className="font-sans select-none pointer-events-none"
@@ -1664,7 +1664,7 @@ export default function AdvancedFbaPortal({
                   x="530"
                   y="383"
                   textAnchor="middle"
-                  fontSize="8"
+                  fontSize="10"
                   fontWeight="semibold"
                   fill={labelColor}
                   className="font-sans select-none pointer-events-none"
@@ -1685,7 +1685,7 @@ export default function AdvancedFbaPortal({
                   x="410"
                   y="183"
                   textAnchor="middle"
-                  fontSize="8"
+                  fontSize="10"
                   fontWeight="semibold"
                   fill={labelColor}
                   className="font-sans select-none pointer-events-none"
@@ -1703,7 +1703,7 @@ export default function AdvancedFbaPortal({
                 <text
                   x="105"
                   y="55"
-                  fontSize="7.5"
+                  fontSize="10"
                   fontWeight="bold"
                   fill={labelColor}
                   textAnchor="middle"
@@ -1721,7 +1721,7 @@ export default function AdvancedFbaPortal({
                 <text
                   x="220"
                   y="55"
-                  fontSize="7.5"
+                  fontSize="10"
                   fontWeight="bold"
                   fill={labelColor}
                   textAnchor="middle"
@@ -1739,7 +1739,7 @@ export default function AdvancedFbaPortal({
                 <text
                   x="302"
                   y="130"
-                  fontSize="7.5"
+                  fontSize="10"
                   fontWeight="bold"
                   fill={labelColor}
                   textAnchor="start"
@@ -1764,7 +1764,7 @@ export default function AdvancedFbaPortal({
                 <text
                   x="96"
                   y="280"
-                  fontSize="7.5"
+                  fontSize="10"
                   fontWeight="black"
                   fill={labelColor}
                   textAnchor="start"
@@ -1782,7 +1782,7 @@ export default function AdvancedFbaPortal({
                 <text
                   x="225"
                   y="358"
-                  fontSize="7.5"
+                  fontSize="10"
                   fontWeight="bold"
                   fill={labelColor}
                   textAnchor="middle"
@@ -1800,7 +1800,7 @@ export default function AdvancedFbaPortal({
                 <text
                   x="178"
                   y="118"
-                  fontSize="7.5"
+                  fontSize="10"
                   fontWeight="black"
                   fill={labelColor}
                   textAnchor="start"
@@ -1832,7 +1832,7 @@ export default function AdvancedFbaPortal({
                 <text
                   x="360"
                   y="308"
-                  fontSize="7.5"
+                  fontSize="10"
                   fontWeight="bold"
                   fill={labelColor}
                   textAnchor="middle"
@@ -1850,7 +1850,7 @@ export default function AdvancedFbaPortal({
                 <text
                   x="415"
                   y="322"
-                  fontSize="7.5"
+                  fontSize="10"
                   fontWeight="bold"
                   fill={labelColor}
                   textAnchor="start"
@@ -1882,7 +1882,7 @@ export default function AdvancedFbaPortal({
                 <text
                   x="590"
                   y="196"
-                  fontSize="7.5"
+                  fontSize="10"
                   fontWeight="black"
                   fill={labelColor}
                   textAnchor="middle"
@@ -1900,7 +1900,7 @@ export default function AdvancedFbaPortal({
                 <text
                   x="600"
                   y="242"
-                  fontSize="7.5"
+                  fontSize="10"
                   fontWeight="bold"
                   fill={labelColor}
                   textAnchor="start"
@@ -1940,7 +1940,7 @@ export default function AdvancedFbaPortal({
                 <text
                   x="452"
                   y="105"
-                  fontSize="8"
+                  fontSize="10"
                   fontWeight="black"
                   fill={roseColor}
                   textAnchor="start"
@@ -1980,14 +1980,14 @@ export default function AdvancedFbaPortal({
           >
             <div className="flex justify-between items-center">
               <h3
-                className={`text-xs font-black uppercase tracking-wider font-mono flex items-center gap-2 ${
+                className={`text-[length:var(--text-micro)] font-black uppercase tracking-wider font-mono flex items-center gap-2 ${
                   isLightMode ? "text-foreground" : "text-foreground"
                 }`}
               >
                 <Database className="w-4 h-4 text-dune-teal" /> Micro
                 Stoichiometric Coefficient Matrix (S)
               </h3>
-              <span className="font-mono text-[9px] text-muted-foreground">
+              <span className="font-mono text-[length:var(--text-caption)] text-muted-foreground">
                 26 Metabolites x 24 Reactions
               </span>
             </div>
@@ -2000,7 +2000,7 @@ export default function AdvancedFbaPortal({
                   : "bg-dune-ink border-border"
               }`}
             >
-              <div className="min-w-[700px] text-[8px] font-mono select-none">
+              <div className="min-w-[700px] text-[length:var(--text-caption)] font-mono select-none">
                 {/* Header row */}
                 <div className="flex border-b border-border pb-1 mb-1">
                   <div className="w-[85px] shrink-0 font-bold truncate">
@@ -2046,7 +2046,7 @@ export default function AdvancedFbaPortal({
                         return (
                           <div
                             key={`${met.id}-${rxn.id}`}
-                            className={`w-[32px] h-[18px] shrink-0 flex items-center justify-center rounded-sm mx-1 text-[9px] ${bgClass}`}
+                            className={`w-[32px] h-[18px] shrink-0 flex items-center justify-center rounded-sm mx-1 text-[length:var(--text-caption)] ${bgClass}`}
                             title={`Reaction: ${rxn.name}\nMetabolite: ${met.name}\nCoefficient: ${coeff}`}
                           >
                             {coeff !== 0 ? coeff : "."}
@@ -2059,7 +2059,7 @@ export default function AdvancedFbaPortal({
               </div>
             </div>
 
-            <p className="text-[9px] text-muted-foreground leading-normal">
+            <p className="text-[length:var(--text-caption)] text-muted-foreground leading-normal">
               Heatmap representation of chemical formulas. Red cells indicate
               substrate consumption (negative entry). Green cells signify
               synthesis products (positive stoichiometry entry).
@@ -2076,7 +2076,7 @@ export default function AdvancedFbaPortal({
           >
             <div className="flex justify-between items-center">
               <h3
-                className={`text-xs font-black uppercase tracking-wider font-mono flex items-center gap-2 ${
+                className={`text-[length:var(--text-micro)] font-black uppercase tracking-wider font-mono flex items-center gap-2 ${
                   isLightMode ? "text-foreground" : "text-foreground"
                 }`}
               >
@@ -2084,7 +2084,7 @@ export default function AdvancedFbaPortal({
                 Metabolic Flux Leaderboard
               </h3>
               <span
-                className={`text-[9.5px] font-mono px-2 py-1 rounded border ${
+                className={`text-[length:var(--text-caption)] font-mono px-2 py-1 rounded border ${
                   isLightMode
                     ? "bg-dune-sand border-dune-orange"
                     : "bg-dune-ink border-border"
@@ -2107,7 +2107,7 @@ export default function AdvancedFbaPortal({
                   <div>
                     <div className="flex justify-between items-start mb-2 gap-1">
                       <span
-                        className={`text-[9.5px] font-extrabold uppercase tracking-wide truncate max-w-[100px] ${isLightMode ? "text-foreground" : "text-foreground"}`}
+                        className={`text-[length:var(--text-caption)] font-extrabold uppercase tracking-wide truncate max-w-[100px] ${isLightMode ? "text-foreground" : "text-foreground"}`}
                         title={item.name}
                       >
                         {item.name}
@@ -2115,7 +2115,7 @@ export default function AdvancedFbaPortal({
                       {item.toggleGene && (
                         <button
                           onClick={() => handleToggleKnockout(item.toggleGene)}
-                          className={`text-[8px] px-2 py-1 rounded font-black uppercase tracking-wider transition-all duration-200 shrink-0 ${
+                          className={`text-[length:var(--text-caption)] px-2 py-1 rounded font-black uppercase tracking-wider transition-all duration-200 shrink-0 ${
                             item.isKnockedOut
                               ? "bg-dune-rose/10 text-dune-rose border border-dune-rose/30"
                               : "bg-dune-teal/10 text-dune-teal border border-dune-teal/30 hover:bg-dune-rose/20 hover:text-dune-rose hover:border-dune-rose"
@@ -2126,16 +2126,16 @@ export default function AdvancedFbaPortal({
                         </button>
                       )}
                     </div>
-                    <div className="text-xl font-mono font-black tracking-tight leading-none text-foreground flex items-baseline gap-1 my-2">
+                    <div className="text-[length:var(--text-h3)] font-mono font-black tracking-tight leading-none text-foreground flex items-baseline gap-1 my-2">
                       <span className={item.textColor}>
                         {item.flux.toFixed(3)}
                       </span>
-                      <span className="text-[7.5px] font-semibold text-muted-foreground font-sans tracking-normal block ml-1 shrink-0 truncate">
+                      <span className="text-[length:var(--text-caption)] font-semibold text-muted-foreground font-sans tracking-normal block ml-1 shrink-0 truncate">
                         {item.unit}
                       </span>
                     </div>
                     <div
-                      className="text-[9px] text-muted-foreground leading-tight mt-1 line-clamp-2"
+                      className="text-[length:var(--text-caption)] text-muted-foreground leading-tight mt-1 line-clamp-2"
                       title={item.desc}
                     >
                       {item.desc}
@@ -2168,14 +2168,14 @@ export default function AdvancedFbaPortal({
               }`}
             >
               <h4
-                className={`text-xs font-black uppercase tracking-wider font-mono flex items-center gap-2 ${
+                className={`text-[length:var(--text-micro)] font-black uppercase tracking-wider font-mono flex items-center gap-2 ${
                   isLightMode ? "text-dune-orange" : "text-foreground"
                 }`}
               >
                 <TrendingUp className="w-4 h-4 text-dune-teal" /> Matrix
                 Constraint Shadow Prices
               </h4>
-              <p className="text-[9.5px] text-muted-foreground leading-normal">
+              <p className="text-[length:var(--text-caption)] text-muted-foreground leading-normal">
                 Shadow price identifies the fractional increase in the objective
                 function if we relax a nutrient barrier by 1 unit.
               </p>
@@ -2183,7 +2183,7 @@ export default function AdvancedFbaPortal({
               <div className="space-y-4 pt-1">
                 {fbaResults.bottlenecks.map((b, i) => (
                   <div key={i} className="space-y-1">
-                    <div className="flex justify-between text-[10px] items-center">
+                    <div className="flex justify-between text-[length:var(--text-caption)] items-center">
                       <span className="font-bold">{b.label}</span>
                       <span className="font-mono text-dune-teal font-extrabold">
                         {b.price.toFixed(3)}
@@ -2214,20 +2214,20 @@ export default function AdvancedFbaPortal({
               }`}
             >
               <h4
-                className={`text-xs font-black uppercase tracking-wider font-mono flex items-center gap-2 ${
+                className={`text-[length:var(--text-micro)] font-black uppercase tracking-wider font-mono flex items-center gap-2 ${
                   isLightMode ? "text-dune-orange" : "text-foreground"
                 }`}
               >
                 <HelpCircle className="w-4 h-4 text-dune-teal" /> iGEM FBA
                 Science Deck
               </h4>
-              <p className="text-[9.5px] text-muted-foreground leading-relaxed font-sans">
+              <p className="text-[length:var(--text-caption)] text-muted-foreground leading-relaxed font-sans">
                 FBA calculates intracellular reaction speeds (fluxes) assuming
                 static internal metabolite pools at equilibrium (the S • v = 0
                 balance constraint).
               </p>
               <div
-                className={`p-2 rounded border text-[9px] font-mono text-left leading-normal ${
+                className={`p-2 rounded border text-[length:var(--text-caption)] font-mono text-left leading-normal ${
                   isLightMode
                     ? "bg-background border-border"
                     : "bg-dune-basalt/45 border-border"
@@ -2266,15 +2266,15 @@ export default function AdvancedFbaPortal({
           isLightMode ? "bg-white/70 text-foreground" : "bg-card/70 text-dune-teal"
         }`}
       >
-        <span className="text-[10px] uppercase font-mono tracking-widest text-dune-rose font-black block mb-1">
+        <span className="text-[length:var(--text-caption)] uppercase font-mono tracking-widest text-dune-rose font-black block mb-1">
           SYSTEM METABOLIC SIMULATION OUTCOME
         </span>
-        <h4 className="text-sm font-bold uppercase tracking-wider font-sans mb-2">
+        <h4 className="text-[length:var(--text-micro)] font-bold uppercase tracking-wider font-sans mb-2">
           Optimized Precursor Synthesis (PGA Yield)
         </h4>
         <div className="flex flex-col items-center justify-center">
           <div
-            className={`text-4xl md:text-5xl font-black font-mono tracking-tight my-2 flex items-center justify-center gap-2 transition-all ${
+            className={`text-[length:var(--text-h1)] font-black font-mono tracking-tight my-2 flex items-center justify-center gap-2 transition-all ${
               pulseMetric
                 ? "text-dune-teal scale-105"
                 : isLightMode
@@ -2284,13 +2284,13 @@ export default function AdvancedFbaPortal({
           >
             <span className="font-mono">{pgaSynthesisFlux.toFixed(4)}</span>
             <span
-              className={`text-xs md:text-sm font-semibold tracking-normal font-sans text-muted-foreground shrink-0`}
+              className={`text-[length:var(--text-micro)] font-semibold tracking-normal font-sans text-muted-foreground shrink-0`}
             >
               mmol / gDCW · h
             </span>
           </div>
         </div>
-        <p className="text-[10.5px] text-muted-foreground max-w-2xl mx-auto leading-relaxed mt-2 font-sans">
+        <p className="text-[length:var(--text-caption)] text-muted-foreground max-w-2xl mx-auto leading-relaxed mt-2 font-sans">
           This optimized Precursor Export represents the mathematical maximum
           solution of the linear system <strong>S • v = 0</strong>. Knocking out
           metabolic side channels like <strong>pta</strong> (acetate excretion)

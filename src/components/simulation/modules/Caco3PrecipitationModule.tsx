@@ -276,7 +276,7 @@ export default function Caco3PrecipitationModule({
         isLightMode={isLightMode}
         right={
           <span
-            className={`text-[10px] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`text-[length:var(--text-caption)] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             operating pH {p.pH.toFixed(1)}
           </span>
@@ -288,8 +288,8 @@ export default function Caco3PrecipitationModule({
             margin={{ top: 4, right: 8, left: -18, bottom: 0 }}
           >
             <CartesianGrid stroke={c.grid} strokeDasharray="3 3" />
-            <XAxis dataKey="pH" stroke={c.axis} tick={{ fontSize: 9 }} />
-            <YAxis stroke={c.axis} tick={{ fontSize: 9 }} unit="%" />
+            <XAxis dataKey="pH" stroke={c.axis} tick={{ fontSize: 10 }} />
+            <YAxis stroke={c.axis} tick={{ fontSize: 10 }} unit="%" />
             <Tooltip contentStyle={tooltipStyle(isLightMode)} />
             <Area
               type="monotone"
@@ -349,12 +349,12 @@ export default function Caco3PrecipitationModule({
               <XAxis
                 dataKey="t"
                 stroke={c.axis}
-                tick={{ fontSize: 9 }}
+                tick={{ fontSize: 10 }}
                 unit="h"
               />
-              <YAxis stroke={c.axis} tick={{ fontSize: 9 }} />
+              <YAxis stroke={c.axis} tick={{ fontSize: 10 }} />
               <Tooltip contentStyle={tooltipStyle(isLightMode)} />
-              <Legend wrapperStyle={{ fontSize: 9 }} />
+              <Legend wrapperStyle={{ fontSize: 10 }} />
               <Line
                 type="monotone"
                 dataKey="Ca"
@@ -390,7 +390,7 @@ export default function Caco3PrecipitationModule({
             </LineChart>
           </ResponsiveContainer>
           <p
-            className={`mt-2 text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`mt-2 text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             <GlossaryText>
               Once the solution is supersaturated the pathway is not direct:
@@ -416,10 +416,10 @@ export default function Caco3PrecipitationModule({
               <XAxis
                 dataKey="pct"
                 stroke={c.axis}
-                tick={{ fontSize: 9 }}
+                tick={{ fontSize: 10 }}
                 unit="%"
               />
-              <YAxis stroke={c.axis} tick={{ fontSize: 9 }} />
+              <YAxis stroke={c.axis} tick={{ fontSize: 10 }} />
               <Tooltip
                 contentStyle={tooltipStyle(isLightMode)}
                 formatter={(v: number) => [`${v} kPa`, "UCS"]}
@@ -445,7 +445,7 @@ export default function Caco3PrecipitationModule({
             </LineChart>
           </ResponsiveContainer>
           <p
-            className={`mt-2 text-[10px] flex items-start gap-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`mt-2 text-[length:var(--text-caption)] flex items-start gap-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             <Leaf className="w-3 h-3 text-dune-teal mt-1 shrink-0" />
             <GlossaryText>
