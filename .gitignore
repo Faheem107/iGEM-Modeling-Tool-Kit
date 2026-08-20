@@ -14,7 +14,6 @@ next-env.d.ts
 tsconfig.tsbuildinfo
 
 # Local-only project notes & references (kept on disk, kept off GitHub)
-CLAUDE.md
 DESIGN.md
 WRITING_STYLE.md
 DESIGN_SYSTEM.md
@@ -40,9 +39,14 @@ manim_videos/README.md
 project reframe/
 docs/
 
-# AI assistant skills / config (kept local only)
+# Machine-local assistant config. CLAUDE.md and the shared .claude/ files are
+# tracked, so they are re-included here against any global ignore rules.
+!CLAUDE.md
 .agents/
-.claude/
+!.claude/
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
+.claude/skills/
 .mcp.json
 cobrapy/
 
