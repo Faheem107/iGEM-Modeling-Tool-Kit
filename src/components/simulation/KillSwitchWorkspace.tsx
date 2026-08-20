@@ -125,7 +125,7 @@ export default function KillSwitchWorkspace({ isLightMode, onBack }: Props) {
           onClick={onBack}
           className="caption mb-6 inline-flex items-center gap-2 transition-colors hover:text-foreground"
         >
-          <ArrowLeft className="h-3.5 w-3.5" /> Back to the models
+          <ArrowLeft className="h-3.5 w-3.5" /> Back to the overview
         </button>
         <h1 className="flex items-center gap-2.5 text-[length:var(--text-h1)] text-foreground">
           <ShieldAlert className="h-6 w-6 shrink-0 text-dune-orange" />

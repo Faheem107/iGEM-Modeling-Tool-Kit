@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Wind, Radio, Layers, AlertTriangle } from "lucide-react";
 import { useTheme } from "@/components/theme-context";
 import { Panel, Slider, StatCard } from "@/src/components/simulation/_shared";
@@ -37,7 +38,12 @@ function Grade({ grade }: { grade: "measured" | "literature" | "unsourced" }) {
 
 export default function ExposureWorkspace() {
   const { isLightMode } = useTheme();
-  const [mode, setMode] = useState<Mode>("seasonal");
+  // The index links here twice, once per view, so the link has to land on the
+  // view it names. Without the param both rows opened the same screen.
+  const searchParams = useSearchParams();
+  const [mode, setMode] = useState<Mode>(
+    searchParams.get("mode") === "live" ? "live" : "seasonal",
+  );
   const [sources, setSources] = useState<SourceFeature[]>([]);
   const [sites, setSites] = useState<TargetSite[]>([]);
   const [markets, setMarkets] = useState<{ id: string; label: string; note: string }[]>([]);

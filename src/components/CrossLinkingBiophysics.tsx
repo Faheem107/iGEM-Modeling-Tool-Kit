@@ -487,7 +487,7 @@ export default function CrossLinkingBiophysics({
         <div className="space-y-4">
           {/* Module Header */}
           <div
-            className={`flex justify-between items-center pb-3 border-b ${isLightMode ? "border-amber-905_10" : "border-border"}`}
+            className="flex justify-between items-center pb-3 border-b border-border"
           >
             <h3
               className={`text-xs font-black uppercase tracking-wider flex items-center gap-2 font-mono ${isLightMode ? "text-dune-orange" : "text-foreground"}`}

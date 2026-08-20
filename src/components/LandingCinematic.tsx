@@ -528,9 +528,9 @@ export default function LandingCinematic({
               >
                 {BEATS.map((b, i) => (
                   <li key={i}>
-                    <div className="flex flex-wrap items-baseline gap-x-3 text-[11px] font-bold uppercase tracking-[0.24em] text-dune-orange">
-                      <span>{b.label}</span>
-                      <span className="opacity-60">{b.scale} across</span>
+                    <div className="flex flex-wrap items-baseline gap-x-3">
+                      <span className="caption text-dune-orange">{b.label}</span>
+                      <span className="caption">{b.scale} across</span>
                     </div>
                     <p className="text-lg font-medium leading-snug">{b.line}</p>
                     <Link href={b.model.href} className="caption rule-link mt-1 inline-block">
@@ -558,12 +558,22 @@ export default function LandingCinematic({
                     style={{ opacity: i === active ? 1 : 0 }}
                     aria-hidden={i !== active}
                   >
-                    <div className="mb-2 flex flex-wrap items-baseline gap-x-4 text-[11px] font-bold uppercase tracking-[0.28em] text-dune-orange">
-                      <span>
+                    {/* The scale label is the reader's only cue that this is one
+                        continuous zoom, so it has to survive every ground the
+                        story passes over. It used to be dune-orange at 60% with
+                        no scrim, which is ~1.3:1 against MicroScene's pale mint
+                        in light mode. .caption resolves to --muted-foreground,
+                        which is defined per theme. */}
+                    <div className="mb-2 flex flex-wrap items-baseline gap-x-4">
+                      <span className="caption text-dune-orange">
                         {String(i + 1).padStart(2, "0")} / {String(BEATS.length).padStart(2, "0")}
                       </span>
-                      <span>{b.label}</span>
-                      <span className="opacity-60">{b.scale} across</span>
+                      <span className="caption text-dune-orange">{b.label}</span>
+                      <span
+                        className={`caption ${isLightMode ? "text-dune-maroon/75" : "text-dune-paper/70"}`}
+                      >
+                        {b.scale} across
+                      </span>
                     </div>
                     <p
                       className={`font-display text-2xl font-black leading-tight tracking-tight sm:text-4xl ${

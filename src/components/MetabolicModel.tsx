@@ -469,7 +469,7 @@ export default function MetabolicModel({
 
         {/* Gene Knockouts (Biosafety & Yield Hack) */}
         <div
-          className={`mt-5 pt-4 border-t ${isLightMode ? "border-amber-905_10" : "border-border"}`}
+          className="mt-5 pt-4 border-t border-border"
         >
           <span
             className={`text-[10px] font-bold block mb-3 uppercase tracking-wider font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}

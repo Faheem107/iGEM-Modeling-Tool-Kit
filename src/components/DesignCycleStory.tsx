@@ -497,9 +497,9 @@ function BeatBody({
 }) {
   return (
     <>
-      <div className="mb-2 flex flex-wrap items-baseline gap-x-3 text-[11px] font-bold uppercase tracking-[0.2em] text-dune-orange">
-        <span>{beat.stage}</span>
-        <span className="opacity-60">
+      <div className="mb-2 flex flex-wrap items-baseline gap-x-3">
+        <span className="caption text-dune-orange">{beat.stage}</span>
+        <span className="caption">
           {beat.turn === 1 ? "first turn" : "second turn"}
         </span>
       </div>
