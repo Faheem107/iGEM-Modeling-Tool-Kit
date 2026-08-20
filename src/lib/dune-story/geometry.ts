@@ -107,6 +107,62 @@ export function microGrains(): Grain[] {
   }));
 }
 
+/**
+ * A ring of small grains set further back than the eight in `microGrains`.
+ * They exist only for depth: drawn first, blurred and dimmed, they fill the
+ * black voids the front cluster leaves and give the scene a floor to sit on
+ * instead of a hole to float over.
+ */
+export function backGrains(): Grain[] {
+  const spots: [number, number, number][] = [
+    [80, 150, 74],
+    [1130, 130, 80],
+    [130, 720, 78],
+    [1090, 730, 70],
+    [400, 70, 62],
+    [800, 780, 66],
+    [1175, 430, 58],
+    [20, 450, 54],
+    [470, 180, 44],
+    [740, 160, 40],
+    [250, 620, 46],
+    [960, 660, 42],
+  ];
+  return spots.map(([cx, cy, r], i) => ({
+    cx,
+    cy,
+    r,
+    path: blobPath(cx, cy, r, i * 13 + 61, 10, 0.2),
+  }));
+}
+
+/**
+ * Speckle for a grain's surface: seeded dots scattered inside its radius, drawn
+ * clipped to the grain. Sand is not a flat colour, and a scatter of grit reads
+ * as material far more cheaply than an feTurbulence filter, which would have to
+ * re-rasterise on every frame of the scrubbed zoom.
+ */
+export function speckle(
+  cx: number,
+  cy: number,
+  radius: number,
+  count: number,
+  seedBase: number,
+): { x: number; y: number; r: number }[] {
+  const pts: { x: number; y: number; r: number }[] = [];
+  for (let i = 0; i < count; i++) {
+    const ang = seeded(seedBase + i * 2.3) * Math.PI * 2;
+    // sqrt keeps the scatter even across the disc instead of piling at the centre
+    const rad = Math.sqrt(seeded(seedBase + i * 3.7)) * radius * 0.93;
+    pts.push({
+      x: r2(cx + Math.cos(ang) * rad),
+      y: r2(cy + Math.sin(ang) * rad),
+      r: r2(1.1 + seeded(seedBase + i * 5.1) * 2.6),
+    });
+  }
+  return pts;
+}
+
 export interface Bridge {
   path: string;
   ax: number;
