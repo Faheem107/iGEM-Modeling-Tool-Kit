@@ -136,7 +136,7 @@ export default function KillSwitchWorkspace({ isLightMode, onBack }: Props) {
         <p className="caption mt-4 flex flex-wrap items-center gap-x-4">
           <span>Biosafety element</span>
         </p>
-        <p className="mt-4 max-w-[70ch] text-[0.9375rem] leading-relaxed text-muted-foreground">
+        <p className="mt-4 max-w-[70ch] text-[length:var(--text-body)] leading-relaxed text-muted-foreground">
           <GlossaryText>
             Three ways the strain ends, modelled separately: induced with aTc,
             diluted out over generations, or killed in a wild microbe that
@@ -241,7 +241,7 @@ function SectionHeader({
         <Icon className="h-4 w-4 shrink-0 text-dune-orange" />
         {title}
       </h2>
-      <p className="mt-2 max-w-[70ch] text-[0.875rem] leading-snug text-muted-foreground">
+      <p className="mt-2 max-w-[70ch] text-[length:var(--text-micro)] leading-snug text-muted-foreground">
         <GlossaryText max={4}>{blurb}</GlossaryText>
       </p>
     </div>
@@ -271,13 +271,13 @@ function HeadlineStat({
       </span>
       <div className="flex items-baseline gap-2">
         <span
-          className={`tabular-nums ${emphasize ? "text-3xl text-dune-orange" : "text-2xl text-foreground"}`}
+          className={`tabular-nums ${emphasize ? "text-[length:var(--text-h1)] text-dune-orange" : "text-[length:var(--text-h3)] text-foreground"}`}
           style={{ fontVariationSettings: '"wght" 620' }}
         >
           {value}
         </span>
         <span
-          className={`text-[10px] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+          className={`text-[length:var(--text-caption)] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           {unit}
         </span>

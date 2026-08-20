@@ -17,7 +17,7 @@ export default function ProteinView() {
       <PortalIntro content={PORTAL_INTROS.protein} />
       <button
         onClick={() => router.push("/portals")}
-        className="mb-6 flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-[3px] border border-border bg-secondary hover:brightness-95 transition"
+        className="mb-6 flex items-center gap-2 px-4 py-2 text-[length:var(--text-micro)] font-semibold rounded-[3px] border border-border bg-secondary hover:brightness-95 transition"
       >
         <ArrowLeft className="w-4 h-4" /> {NAV.backToPortals}
       </button>

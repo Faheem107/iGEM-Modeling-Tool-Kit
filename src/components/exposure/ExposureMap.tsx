@@ -118,7 +118,7 @@ export default function ExposureMap({
       </g>
 
       {/* degree labels, so the extent is readable without a basemap */}
-      <g fontSize={9} fill={isLightMode ? "rgb(0 0 0 / 0.38)" : "rgb(255 255 255 / 0.34)"}>
+      <g fontSize={10} fill={isLightMode ? "rgb(0 0 0 / 0.38)" : "rgb(255 255 255 / 0.34)"}>
         {Array.from({ length: 5 }, (_, i) => EXTENT.lonMin + i * 4).map((lon) => (
           <text key={`lx${lon}`} x={project(lon, 0).x + 3} y={H - 5}>{lon}E</text>
         ))}

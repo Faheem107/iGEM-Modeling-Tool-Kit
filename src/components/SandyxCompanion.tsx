@@ -100,7 +100,7 @@ export default function SandyxCompanion({ items, isLightMode }: Props) {
           <motion.p
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mx-auto mb-2 max-w-[190px] text-center text-[11px] leading-snug text-muted-foreground"
+            className="mx-auto mb-2 max-w-[190px] text-center text-[length:var(--text-caption)] leading-snug text-muted-foreground"
           >
             Drop me at any{" "}
             <span className="text-dune-teal underline decoration-dotted underline-offset-2">
@@ -128,7 +128,7 @@ export default function SandyxCompanion({ items, isLightMode }: Props) {
                       onClick={() => scrollTo(it.id)}
                       data-active={active}
                       aria-current={active ? "true" : undefined}
-                      className="wght-link -ml-px block w-full border-l border-transparent py-2 pl-4 text-left text-[0.8125rem] leading-snug data-[active=true]:border-dune-orange"
+                      className="wght-link -ml-px block w-full border-l border-transparent py-2 pl-4 text-left text-[length:var(--text-micro)] leading-snug data-[active=true]:border-dune-orange"
                     >
                       {it.label}
                     </button>

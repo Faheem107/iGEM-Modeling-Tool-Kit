@@ -173,7 +173,7 @@ export default function CompositeSynthesisPanel({
       >
         {interactions.length === 0 ? (
           <p
-            className={`text-[11px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             No cross-prong interactions for this combination.
           </p>
@@ -202,18 +202,18 @@ export default function CompositeSynthesisPanel({
               return (
                 <div key={i} className={`p-4 rounded-[6px] border ${tone}`}>
                   <div className="flex items-center justify-between gap-4 mb-1">
-                    <span className="flex items-center gap-2 text-[11px] font-bold">
+                    <span className="flex items-center gap-2 text-[length:var(--text-caption)] font-bold">
                       <Icon className="w-3.5 h-3.5" />
                       {e.prongs.map((p) => PRONG_LABEL[p]).join(" ↔ ")} ·{" "}
                       {e.mechanism}
                     </span>
-                    <span className="font-mono font-black text-xs shrink-0">
+                    <span className="font-mono font-black text-[length:var(--text-micro)] shrink-0">
                       {neg ? "" : "+"}
                       {e.percent.toFixed(0)}%
                     </span>
                   </div>
                   <p
-                    className={`text-[10px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                    className={`text-[length:var(--text-caption)] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                   >
                     {e.description}
                   </p>
@@ -221,7 +221,7 @@ export default function CompositeSynthesisPanel({
               );
             })}
             <p
-              className={`text-[10px] leading-relaxed pt-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+              className={`text-[length:var(--text-caption)] leading-relaxed pt-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
             >
               Competition (Ca²⁺) and metabolic burden are applied to each
               prong's cohesion <b>before</b> the synergy term above, so the
@@ -246,11 +246,11 @@ export default function CompositeSynthesisPanel({
               <PolarGrid stroke={c.grid} />
               <PolarAngleAxis
                 dataKey="scenario"
-                tick={{ fontSize: 9, fill: c.axis }}
+                tick={{ fontSize: 10, fill: c.axis }}
               />
               <PolarRadiusAxis
                 domain={[0, 100]}
-                tick={{ fontSize: 8, fill: c.axis }}
+                tick={{ fontSize: 10, fill: c.axis }}
                 angle={90}
               />
               {prongs.map((p) => (
@@ -280,7 +280,7 @@ export default function CompositeSynthesisPanel({
             </RadarChart>
           </ResponsiveContainer>
           <div
-            className={`mt-2 p-2 rounded-[4px] text-[11px] flex items-center gap-2 ${isLightMode ? "bg-dune-orange text-dune-orange" : "bg-dune-orange/20 text-dune-orange"}`}
+            className={`mt-2 p-2 rounded-[4px] text-[length:var(--text-caption)] flex items-center gap-2 ${isLightMode ? "bg-dune-orange text-dune-orange" : "bg-dune-orange/20 text-dune-orange"}`}
           >
             <ShieldAlert className="w-4 h-4 shrink-0" />
             <span>
@@ -309,7 +309,7 @@ export default function CompositeSynthesisPanel({
               <XAxis
                 type="number"
                 stroke={c.axis}
-                tick={{ fontSize: 9 }}
+                tick={{ fontSize: 10 }}
                 unit=" mN/m"
               />
               <YAxis
@@ -331,7 +331,7 @@ export default function CompositeSynthesisPanel({
             </BarChart>
           </ResponsiveContainer>
           <p
-            className={`mt-2 text-[10px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`mt-2 text-[length:var(--text-caption)] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             Each binder reduces to an interparticle cohesion (γ-PGA &amp;
             alginate via shear modulus G; CaCO₃ via UCS). The combined radar

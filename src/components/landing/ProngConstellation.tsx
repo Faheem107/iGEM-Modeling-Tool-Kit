@@ -451,7 +451,7 @@ function Leaf({
           transition={{ duration: 0.55, ease: EASE }}
         />
       </h3>
-      <p className="mx-auto mt-2 max-w-[24ch] text-[0.875rem] leading-snug text-muted-foreground">
+      <p className="mx-auto mt-2 max-w-[24ch] text-[length:var(--text-micro)] leading-snug text-muted-foreground">
         {lede}
       </p>
     </button>

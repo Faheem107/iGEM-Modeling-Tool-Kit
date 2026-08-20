@@ -138,7 +138,7 @@ export default function GrainSizeCoveragePanel({
               domain={[20, 600]}
               ticks={[20, 40, 63, 100, 125, 200, 300, 500]}
               stroke={c.axis}
-              tick={{ fontSize: 9 }}
+              tick={{ fontSize: 10 }}
               label={{
                 value: "grain diameter (µm)",
                 position: "insideBottom",
@@ -150,7 +150,7 @@ export default function GrainSizeCoveragePanel({
             <YAxis
               domain={[0, 100]}
               stroke={c.axis}
-              tick={{ fontSize: 9 }}
+              tick={{ fontSize: 10 }}
               unit="%"
               width={38}
             />
@@ -198,7 +198,7 @@ export default function GrainSizeCoveragePanel({
               strokeDasharray="2 2"
               label={{
                 value: "D₅₀",
-                fontSize: 9,
+                fontSize: 10,
                 fill: c.axis,
                 position: "top",
               }}
@@ -206,7 +206,7 @@ export default function GrainSizeCoveragePanel({
           </ComposedChart>
         </ResponsiveContainer>
         <p
-          className={`mt-2 text-[10px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+          className={`mt-2 text-[length:var(--text-caption)] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           Dashed lines are each binder's per-grain effectiveness. The solid band
           is the union (a grain is held if <b>any</b> mechanism binds it: 1 −
@@ -216,7 +216,7 @@ export default function GrainSizeCoveragePanel({
       </Panel>
 
       <div
-        className={`p-4 rounded-[6px] border text-[11px] flex items-start gap-2 ${
+        className={`p-4 rounded-[6px] border text-[length:var(--text-caption)] flex items-start gap-2 ${
           multi
             ? isLightMode
               ? "bg-dune-teal text-dune-teal border-dune-teal"

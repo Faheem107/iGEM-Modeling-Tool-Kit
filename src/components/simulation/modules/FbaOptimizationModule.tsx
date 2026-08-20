@@ -362,7 +362,7 @@ function PathwayFlowMap({
                 <text
                   x={g.mx + (e.color === "spine" ? 12 : 0)}
                   y={g.my - 2}
-                  fontSize="7.5"
+                  fontSize="10"
                   fill={dead ? muted : col}
                   fontWeight="700"
                   textAnchor="middle"
@@ -621,7 +621,7 @@ export default function FbaOptimizationModule({
           />
           <div>
             <span
-              className={`text-[11px] font-semibold block mb-2 ${isLightMode ? "text-foreground" : "text-foreground"}`}
+              className={`text-[length:var(--text-caption)] font-semibold block mb-2 ${isLightMode ? "text-foreground" : "text-foreground"}`}
             >
               Objective cᵀv
             </span>
@@ -632,7 +632,7 @@ export default function FbaOptimizationModule({
                 <button
                   key={k}
                   onClick={() => setObjective(k)}
-                  className={`flex-1 py-2 rounded-[4px] text-[11px] font-bold transition ${objective === k ? (isLightMode ? "bg-dune-orange text-foreground" : "bg-dune-orange text-foreground") : isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`flex-1 py-2 rounded-[4px] text-[length:var(--text-caption)] font-bold transition ${objective === k ? (isLightMode ? "bg-dune-orange text-foreground" : "bg-dune-orange text-foreground") : isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                 >
                   {lbl}
                 </button>
@@ -656,7 +656,7 @@ export default function FbaOptimizationModule({
           {KNOCKOUTS.map((k) => (
             <label
               key={k.id}
-              className={`flex items-center gap-2 p-2 rounded-[4px] border text-[11px] cursor-pointer transition ${
+              className={`flex items-center gap-2 p-2 rounded-[4px] border text-[length:var(--text-caption)] cursor-pointer transition ${
                 knockouts.has(k.id)
                   ? isLightMode
                     ? "border-dune-rose bg-dune-rose text-dune-rose"
@@ -677,7 +677,7 @@ export default function FbaOptimizationModule({
           ))}
         </div>
         <p
-          className={`mt-2 text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+          className={`mt-2 text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           <GlossaryText>
             Setting lb=ub=0 forces the LP to reroute carbon. Watch the flow map,
@@ -786,7 +786,7 @@ export default function FbaOptimizationModule({
         isLightMode={isLightMode}
         right={
           analysis.status !== "optimal" ? (
-            <span className="text-[10px] font-semibold text-dune-maroon">
+            <span className="text-[length:var(--text-caption)] font-semibold text-dune-maroon">
               Solver could not reach an optimum
             </span>
           ) : undefined
@@ -801,7 +801,7 @@ export default function FbaOptimizationModule({
           isLightMode={isLightMode}
         />
         <div
-          className={`mt-1 flex flex-wrap gap-x-4 gap-y-1 text-[9px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+          className={`mt-1 flex flex-wrap gap-x-4 gap-y-1 text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           {legendDot(isLightMode ? DUNE.orange : TINT.orangeLight, "glycolysis")}
           {legendDot(isLightMode ? TINT.tealDeep : DUNE.teal, "TCA cycle")}
@@ -813,7 +813,7 @@ export default function FbaOptimizationModule({
           {legendDot(STATUS.bad, "overflow (acetate/lactate)")}
         </div>
         <p
-          className={`mt-2 text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+          className={`mt-2 text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           <GlossaryText>
             Arrow thickness and flow speed track each reaction&apos;s pFBA
@@ -845,23 +845,23 @@ export default function FbaOptimizationModule({
             <XAxis
               dataKey="growth"
               stroke={c.axis}
-              tick={{ fontSize: 9 }}
+              tick={{ fontSize: 10 }}
               label={{
                 value: "growth µ (h⁻¹)",
                 position: "insideBottom",
                 offset: -2,
-                fontSize: 9,
+                fontSize: 10,
                 fill: c.axis,
               }}
             />
             <YAxis
               stroke={c.axis}
-              tick={{ fontSize: 9 }}
+              tick={{ fontSize: 10 }}
               label={{
                 value: `${productLabel} flux`,
                 angle: -90,
                 position: "insideLeft",
-                fontSize: 9,
+                fontSize: 10,
                 fill: c.axis,
               }}
             />
@@ -887,7 +887,7 @@ export default function FbaOptimizationModule({
           </LineChart>
         </ResponsiveContainer>
         <p
-          className={`mt-1 text-[10px] flex items-center gap-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+          className={`mt-1 text-[length:var(--text-caption)] flex items-center gap-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           <Beaker className="w-3 h-3" /> Marker = current objective&apos;s
           operating point. The downward slope is the growth that must be traded
@@ -917,7 +917,7 @@ export default function FbaOptimizationModule({
             ] as [string, number, string][]
           ).map(([lbl, pct, hex]) => (
             <div key={lbl}>
-              <div className="flex justify-between text-[10px] font-mono mb-1">
+              <div className="flex justify-between text-[length:var(--text-caption)] font-mono mb-1">
                 <span
                   className={
                     isLightMode ? "text-muted-foreground font-bold" : "text-foreground"
@@ -943,7 +943,7 @@ export default function FbaOptimizationModule({
           ))}
         </div>
         <p
-          className={`text-[10px] mt-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+          className={`text-[length:var(--text-caption)] mt-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           <GlossaryText>
             Carbon-mole balance on the fixed glucose feed. Deleting acetate
@@ -974,12 +974,12 @@ export default function FbaOptimizationModule({
                 strokeDasharray="3 3"
                 horizontal={false}
               />
-              <XAxis type="number" stroke={c.axis} tick={{ fontSize: 9 }} />
+              <XAxis type="number" stroke={c.axis} tick={{ fontSize: 10 }} />
               <YAxis
                 type="category"
                 dataKey="id"
                 stroke={c.axis}
-                tick={{ fontSize: 9 }}
+                tick={{ fontSize: 10 }}
                 width={56}
               />
               <Tooltip
@@ -1032,7 +1032,7 @@ export default function FbaOptimizationModule({
               );
               return (
                 <div key={id}>
-                  <div className="flex justify-between text-[10px] font-mono mb-1">
+                  <div className="flex justify-between text-[length:var(--text-caption)] font-mono mb-1">
                     <span
                       className={
                         isLightMode
@@ -1065,7 +1065,7 @@ export default function FbaOptimizationModule({
               );
             })}
             <p
-              className={`text-[10px] mt-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+              className={`text-[length:var(--text-caption)] mt-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
             >
               Wide bars = flexible reactions with alternate optima. Pinpoints =
               rigid, rate-limiting steps.
@@ -1075,7 +1075,7 @@ export default function FbaOptimizationModule({
       </div>
 
       <div
-        className={`px-4 py-4 rounded-[6px] border text-[10px] font-mono leading-relaxed ${
+        className={`px-4 py-4 rounded-[6px] border text-[length:var(--text-caption)] font-mono leading-relaxed ${
           isLightMode
             ? "bg-card border-dune-orange/10 text-muted-foreground"
             : "bg-dune-ink border-border text-muted-foreground"

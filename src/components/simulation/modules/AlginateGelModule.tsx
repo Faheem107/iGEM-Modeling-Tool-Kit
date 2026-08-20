@@ -250,10 +250,10 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
             <XAxis
               dataKey="ca"
               stroke={c.axis}
-              tick={{ fontSize: 9 }}
+              tick={{ fontSize: 10 }}
               unit=" mM"
             />
-            <YAxis stroke={c.axis} tick={{ fontSize: 9 }} />
+            <YAxis stroke={c.axis} tick={{ fontSize: 10 }} />
             <Tooltip
               contentStyle={tooltipStyle(isLightMode)}
               formatter={(v: number) => [`${v} Pa`, "G"]}
@@ -276,7 +276,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
           </LineChart>
         </ResponsiveContainer>
         <p
-          className={`mt-2 text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+          className={`mt-2 text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           <GlossaryText>
             Calcium binds the buckled G-blocks into egg-box junctions, and the
@@ -305,8 +305,8 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
               margin={{ top: 4, right: 10, left: -20, bottom: 0 }}
             >
               <CartesianGrid stroke={c.grid} strokeDasharray="3 3" />
-              <XAxis dataKey="cycle" stroke={c.axis} tick={{ fontSize: 9 }} />
-              <YAxis stroke={c.axis} tick={{ fontSize: 9 }} unit="%" />
+              <XAxis dataKey="cycle" stroke={c.axis} tick={{ fontSize: 10 }} />
+              <YAxis stroke={c.axis} tick={{ fontSize: 10 }} unit="%" />
               <Tooltip
                 contentStyle={tooltipStyle(isLightMode)}
                 formatter={(v: number) => [`${v}%`, "residual"]}
@@ -328,7 +328,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
             </LineChart>
           </ResponsiveContainer>
           <p
-            className={`mt-2 text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`mt-2 text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             <GlossaryText>
               The honest limit: alginate is soluble, so each wet cycle removes a
@@ -361,10 +361,10 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
               <XAxis
                 dataKey="rh"
                 stroke={c.axis}
-                tick={{ fontSize: 9 }}
+                tick={{ fontSize: 10 }}
                 unit="%"
               />
-              <YAxis stroke={c.axis} tick={{ fontSize: 9 }} />
+              <YAxis stroke={c.axis} tick={{ fontSize: 10 }} />
               <Tooltip
                 contentStyle={tooltipStyle(isLightMode)}
                 formatter={(v: number) => [`${v} g/L`, "water"]}

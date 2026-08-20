@@ -227,8 +227,8 @@ export default function CommandPalette() {
               onChange={(e) => setQ(e.target.value)}
               onKeyDown={onInputKey}
               placeholder="Search models, prongs and portals"
-              // text-base so iOS Safari does not zoom the page on focus.
-              className="w-full border-b border-border bg-transparent px-6 py-4 text-base text-foreground outline-none placeholder:text-muted-foreground"
+              // text-[length:var(--text-body)] so iOS Safari does not zoom the page on focus.
+              className="w-full border-b border-border bg-transparent px-6 py-4 text-[length:var(--text-body)] text-foreground outline-none placeholder:text-muted-foreground"
             />
             <ul data-lenis-prevent className="max-h-[52vh] overflow-y-auto overscroll-contain py-2">
               {results.length === 0 && (
@@ -244,10 +244,10 @@ export default function CommandPalette() {
                     className="grid w-full grid-cols-[1fr_auto] items-baseline gap-4 px-6 py-2 text-left data-[active=true]:bg-dune-orange/10"
                   >
                     <span>
-                      <span className="wght-link block text-[0.9375rem] leading-snug" data-active={i === cursor}>
+                      <span className="wght-link block text-[length:var(--text-body)] leading-snug" data-active={i === cursor}>
                         {e.label}
                       </span>
-                      <span className="mt-1 block truncate text-[0.8125rem] text-muted-foreground">
+                      <span className="mt-1 block truncate text-[length:var(--text-micro)] text-muted-foreground">
                         {e.hint}
                       </span>
                     </span>

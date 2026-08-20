@@ -10,7 +10,7 @@ import { PORTAL_NAMES } from "@/content/copy";
 const MolstarViewer = dynamic(() => import("@/components/molstar-viewer"), {
   ssr: false,
   loading: () => (
-    <div className="absolute inset-0 flex items-center justify-center text-sm text-dune-ash">
+    <div className="absolute inset-0 flex items-center justify-center text-[length:var(--text-micro)] text-dune-ash">
       Preparing 3D viewer…
     </div>
   ),
@@ -90,11 +90,11 @@ export default function MolstarProteinExplorer({
     <div>
       {showHeader && (
         <div className="mb-6">
-          <h2 className="text-3xl font-extrabold tracking-tight flex items-center gap-4">
+          <h2 className="text-[length:var(--text-h1)] font-extrabold tracking-tight flex items-center gap-4">
             <Dna className="w-7 h-7 text-dune-rose" />
             {PORTAL_NAMES.protein}
           </h2>
-          <p className="opacity-70 text-sm mt-1 max-w-2xl">
+          <p className="opacity-70 text-[length:var(--text-micro)] mt-1 max-w-2xl">
             Real deposited structures behind the engineered enzymes, rendered in
             3-D with Mol*. Drag to rotate, scroll to zoom.
           </p>
@@ -120,12 +120,12 @@ export default function MolstarProteinExplorer({
                   <Atom
                     className={`w-4 h-4 ${s.prong === 1 ? "text-dune-orange" : "text-dune-teal"}`}
                   />
-                  <span className="font-bold text-sm">{s.label}</span>
-                  <span className="ml-auto text-[10px] font-bold uppercase tracking-[0.12em] opacity-50">
+                  <span className="font-bold text-[length:var(--text-micro)]">{s.label}</span>
+                  <span className="ml-auto text-[length:var(--text-caption)] font-bold uppercase tracking-[0.12em] opacity-50">
                     Prong {s.prong}
                   </span>
                 </div>
-                <p className="text-[11px] opacity-60 leading-snug">
+                <p className="text-[length:var(--text-caption)] opacity-60 leading-snug">
                   {s.sublabel}
                 </p>
               </button>
@@ -143,8 +143,8 @@ export default function MolstarProteinExplorer({
             />
           </Reveal>
           <div className="p-4 rounded-[4px] border border-border bg-card">
-            <h3 className="font-bold text-sm mb-1">{selected.label}</h3>
-            <p className="text-sm opacity-80 leading-relaxed">
+            <h3 className="font-bold text-[length:var(--text-micro)] mb-1">{selected.label}</h3>
+            <p className="text-[length:var(--text-micro)] opacity-80 leading-relaxed">
               {selected.description}
             </p>
           </div>

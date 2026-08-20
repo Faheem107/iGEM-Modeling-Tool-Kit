@@ -584,12 +584,12 @@ export default function AeolianWindTunnel({
             <div className="space-y-6">
               {/* SLIDER 1: WIND SPEED */}
               <div className="space-y-2">
-                <div className="mb-2 flex items-center justify-between gap-4 text-[11px]">
+                <div className="mb-2 flex items-center justify-between gap-4 text-[length:var(--text-caption)]">
                   <span className="flex items-center gap-2 font-medium text-foreground">
                     <Wind className="h-3.5 w-3.5 text-dune-orange" /> Simulated
                     wind speed
                   </span>
-                  <span className="font-mono text-[11px] tabular-nums text-muted-foreground">
+                  <span className="font-mono text-[length:var(--text-caption)] tabular-nums text-muted-foreground">
                     {currentFreestreamWind} m/s
                   </span>
                 </div>
@@ -605,7 +605,7 @@ export default function AeolianWindTunnel({
                   className="w-full"
                   id="aeolian-slider-wind"
                 />
-                <div className="flex justify-between font-mono text-[10px] text-muted-foreground">
+                <div className="flex justify-between font-mono text-[length:var(--text-caption)] text-muted-foreground">
                   <span>Fresh Gale (5 m/s)</span>
                   <span>Hurricane (50 m/s)</span>
                 </div>
@@ -613,12 +613,12 @@ export default function AeolianWindTunnel({
 
               {/* SLIDER 2: CRUST RESISTANCE THICKNESS */}
               <div className="space-y-2">
-                <div className="mb-2 flex items-center justify-between gap-4 text-[11px]">
+                <div className="mb-2 flex items-center justify-between gap-4 text-[length:var(--text-caption)]">
                   <span className="flex items-center gap-2 font-medium text-foreground">
                     <ShieldCheck className="h-3.5 w-3.5 text-dune-teal" />
                     Bio-crust thickness
                   </span>
-                  <span className="font-mono text-[11px] tabular-nums text-muted-foreground">
+                  <span className="font-mono text-[length:var(--text-caption)] tabular-nums text-muted-foreground">
                     {crustThickness.toFixed(1)} mm
                   </span>
                 </div>
@@ -634,7 +634,7 @@ export default function AeolianWindTunnel({
                   className="w-full"
                   id="aeolian-slider-thickness"
                 />
-                <div className="flex justify-between font-mono text-[10px] text-muted-foreground">
+                <div className="flex justify-between font-mono text-[length:var(--text-caption)] text-muted-foreground">
                   <span>Micro Spray Coating (1.0 mm)</span>
                   <span>Dense Gel Shield (25.0 mm)</span>
                 </div>
@@ -642,27 +642,27 @@ export default function AeolianWindTunnel({
 
               {/* SLIDER 3: CRUST STIFFNESS (G-EQUIVALENT) */}
               <div className="space-y-2 border-t border-border pt-4">
-                <div className="mb-2 flex items-center justify-between gap-4 text-[11px]">
+                <div className="mb-2 flex items-center justify-between gap-4 text-[length:var(--text-caption)]">
                   <span className="flex items-center gap-2 font-medium text-foreground">
                     <Link2
                       className={`h-3.5 w-3.5 ${isLinked ? "text-dune-teal" : "text-muted-foreground"}`}
                     />
                     Crust stiffness, G-equiv ({crustLabel})
                   </span>
-                  <span className="font-mono text-[11px] tabular-nums text-muted-foreground">
+                  <span className="font-mono text-[length:var(--text-caption)] tabular-nums text-muted-foreground">
                     {activeGs.toFixed(0)} Pa
                   </span>
                 </div>
 
                 {isLinked ? (
                   <div
-                    className="flex items-center justify-between gap-4 rounded-[4px] border border-dune-teal/40 p-4 text-xs"
+                    className="flex items-center justify-between gap-4 rounded-[4px] border border-dune-teal/40 p-4 text-[length:var(--text-micro)]"
                   >
                     <div className="space-y-1">
                       <span className="caption block">
                         Linked to cross-linking model
                       </span>
-                      <span className="text-[11px] text-muted-foreground">
+                      <span className="text-[length:var(--text-caption)] text-muted-foreground">
                         Crust stiffness comes from that module.
                       </span>
                     </div>
@@ -688,7 +688,7 @@ export default function AeolianWindTunnel({
                       className="w-full"
                       id="aeolian-slider-modulus"
                     />
-                    <div className="flex items-center justify-between font-mono text-[10px] text-muted-foreground">
+                    <div className="flex items-center justify-between font-mono text-[length:var(--text-caption)] text-muted-foreground">
                       <span>Loose (100 Pa)</span>
                       <button
                         type="button"
@@ -707,7 +707,7 @@ export default function AeolianWindTunnel({
 
           {/* DIAGNOSTIC FORMULA LABELS OVERVIEW */}
           <div
-            className="space-y-2 rounded-[4px] border border-border p-4 font-mono text-xs"
+            className="space-y-2 rounded-[4px] border border-border p-4 font-mono text-[length:var(--text-micro)]"
           >
             <div className="caption border-b border-border pb-2">
               Aeolian shear profile
@@ -743,7 +743,7 @@ export default function AeolianWindTunnel({
 
             {/* PHYSICAL SHATTER ALERTS */}
             {physicsResult.isShattered && (
-              <div className="flex items-start gap-2 border-t border-dune-maroon pt-2 text-[10.5px] leading-relaxed text-dune-maroon">
+              <div className="flex items-start gap-2 border-t border-dune-maroon pt-2 text-[length:var(--text-caption)] leading-relaxed text-dune-maroon">
                 <Flame className="mt-1 h-3.5 w-3.5 shrink-0" />
                 <span>
                   <strong>ALERT: INSTANT FAILURE.</strong> Wind-tunnel shear
@@ -768,7 +768,7 @@ export default function AeolianWindTunnel({
                 <h4 className="caption text-foreground">
                   Erosion over time, % of grains lost
                 </h4>
-                <p className="mt-2 text-[11px] text-muted-foreground">
+                <p className="mt-2 text-[length:var(--text-caption)] text-muted-foreground">
                   Traces how fast grains are stripped away over a simulated
                   15-second gust.
                 </p>
@@ -797,7 +797,7 @@ export default function AeolianWindTunnel({
               className="relative flex h-44 w-full flex-col justify-between rounded-[4px] border border-border p-4"
             >
               {/* Plot Info Title Indicators */}
-              <div className="z-15 flex select-none justify-center gap-4 font-mono text-[9px] text-muted-foreground">
+              <div className="z-15 flex select-none justify-center gap-4 font-mono text-[length:var(--text-caption)] text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <span className="inline-block h-px w-3 bg-dune-orange" />{" "}
                   Control Group (Untreated Sand)
@@ -811,11 +811,11 @@ export default function AeolianWindTunnel({
               <div className="flex-1 min-h-[110px] w-full relative mt-1">
                 {liveControlErosion.length === 0 ? (
                   <div
-                    className="absolute inset-0 flex select-none flex-col items-center justify-center gap-2 p-4 text-center text-xs text-muted-foreground"
+                    className="absolute inset-0 flex select-none flex-col items-center justify-center gap-2 p-4 text-center text-[length:var(--text-micro)] text-muted-foreground"
                   >
                     <Wind className="h-5 w-5 opacity-50" />
                     <span className="caption">Ready</span>
-                    <span className="text-[11px]">
+                    <span className="text-[length:var(--text-caption)]">
                       Run the wind tunnel to plot the erosion curve.
                     </span>
                   </div>
@@ -872,7 +872,7 @@ export default function AeolianWindTunnel({
                       x="-5"
                       y="15"
                       fill={isLightMode ? DUNE.ash : DUNE.ash}
-                      fontSize="8"
+                      fontSize="10"
                       fontFamily="monospace"
                       textAnchor="end"
                     >
@@ -882,7 +882,7 @@ export default function AeolianWindTunnel({
                       x="-5"
                       y="55"
                       fill={isLightMode ? DUNE.ash : DUNE.ash}
-                      fontSize="8"
+                      fontSize="10"
                       fontFamily="monospace"
                       textAnchor="end"
                     >
@@ -892,7 +892,7 @@ export default function AeolianWindTunnel({
                       x="-5"
                       y="93"
                       fill={isLightMode ? DUNE.ash : DUNE.ash}
-                      fontSize="8"
+                      fontSize="10"
                       fontFamily="monospace"
                       textAnchor="end"
                     >
@@ -936,7 +936,7 @@ export default function AeolianWindTunnel({
               </div>
 
               {/* Chart floor axes numbers */}
-              <div className="flex justify-between items-center text-[8px] font-mono text-muted-foreground px-1 mt-1 border-t border-border pt-1">
+              <div className="flex justify-between items-center text-[length:var(--text-caption)] font-mono text-muted-foreground px-1 mt-1 border-t border-border pt-1">
                 <span>0.0s (Start Gale)</span>
                 <span>3.7s</span>
                 <span>7.5s (Middle Storm)</span>
@@ -945,7 +945,7 @@ export default function AeolianWindTunnel({
               </div>
             </div>
 
-            <div className="flex justify-between items-center text-[10.5px] font-mono mt-4 text-muted-foreground">
+            <div className="flex justify-between items-center text-[length:var(--text-caption)] font-mono mt-4 text-muted-foreground">
               <span className="flex items-center gap-1">
                 <Clock className="w-3.5 h-3.5 text-dune-orange" /> Elapsed
               </span>
@@ -962,18 +962,18 @@ export default function AeolianWindTunnel({
             }`}
           >
             <div className="flex justify-between items-center px-1 gap-2 flex-wrap">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+              <span className="text-[length:var(--text-caption)] font-mono uppercase tracking-wider text-muted-foreground flex items-center gap-1">
                 <Gauge className="w-3.5 h-3.5 text-dune-rose" /> Grain-Motion
                 Viewport
               </span>
-              <span className="text-[10px] text-dune-orange font-bold font-mono">
+              <span className="text-[length:var(--text-caption)] text-dune-orange font-bold font-mono">
                 friction velocity u* = {params.wind_velocity.toFixed(3)} m/s
               </span>
             </div>
 
             {/* Binder legend, the crust is coloured by whichever prong(s) actually formed it. */}
             <div className="flex items-center gap-4 px-1 flex-wrap">
-              <span className="flex items-center gap-1 text-[9px] font-mono text-muted-foreground">
+              <span className="flex items-center gap-1 text-[length:var(--text-caption)] font-mono text-muted-foreground">
                 <span
                   className="w-2.5 h-2.5 rounded-full inline-block"
                   style={{ background: TINT.sandLight }}
@@ -983,7 +983,7 @@ export default function AeolianWindTunnel({
               {activeBinders.map((p) => (
                 <span
                   key={p}
-                  className="flex items-center gap-1 text-[9px] font-mono text-muted-foreground"
+                  className="flex items-center gap-1 text-[length:var(--text-caption)] font-mono text-muted-foreground"
                 >
                   <span
                     className="w-2.5 h-2.5 rounded-full inline-block"
@@ -1028,32 +1028,32 @@ export default function AeolianWindTunnel({
             }`}
           >
             <div className="space-y-1">
-              <span className="text-[9.5px] uppercase font-mono font-black tracking-wider text-dune-orange block mb-1">
+              <span className="text-[length:var(--text-caption)] uppercase font-mono font-black tracking-wider text-dune-orange block mb-1">
                 Durability stopwatch
               </span>
-              <p className="text-[10px] text-muted-foreground leading-normal mb-4">
+              <p className="text-[length:var(--text-caption)] text-muted-foreground leading-normal mb-4">
                 Simulated time until the crust fails at the set wind speed.
               </p>
             </div>
 
             <div className="space-y-4 pt-4 border-t border-border font-mono">
               <div className="flex justify-between items-center">
-                <span className="text-xs text-muted-foreground">
+                <span className="text-[length:var(--text-micro)] text-muted-foreground">
                   Control Sand Time:
                 </span>
-                <span className="text-xs text-dune-orange font-extrabold">
+                <span className="text-[length:var(--text-micro)] text-dune-orange font-extrabold">
                   {stopwatchMetrics.controlFailSec === 15.0
                     ? "UNFAILING (15s)"
                     : `${stopwatchMetrics.controlFailSec.toFixed(2)}s`}
                 </span>
               </div>
 
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-xs text-muted-foreground font-bold">
+              <div className="flex justify-between items-center text-[length:var(--text-micro)]">
+                <span className="text-[length:var(--text-micro)] text-muted-foreground font-bold">
                   Bio-Treated Time:
                 </span>
                 <span
-                  className={`text-xs font-black px-2 py-1 rounded ${
+                  className={`text-[length:var(--text-micro)] font-black px-2 py-1 rounded ${
                     physicsResult.isShattered
                       ? "text-dune-maroon bg-dune-maroon"
                       : stopwatchMetrics.treatedFailSec > 15
@@ -1070,10 +1070,10 @@ export default function AeolianWindTunnel({
               </div>
 
               <div className="pt-2 border-t border-dashed border-border flex justify-between items-center">
-                <span className="text-[10.5px] text-muted-foreground font-bold">
+                <span className="text-[length:var(--text-caption)] text-muted-foreground font-bold">
                   Lifespan Extension:
                 </span>
-                <span className="text-sm font-black text-dune-orange">
+                <span className="text-[length:var(--text-micro)] font-black text-dune-orange">
                   {physicsResult.isShattered
                     ? "1.0x (Crust crack)"
                     : stopwatchMetrics.lifespanMultiplier === Infinity
@@ -1093,15 +1093,15 @@ export default function AeolianWindTunnel({
             }`}
           >
             <div className="space-y-1">
-              <span className="text-[9.5px] uppercase font-mono font-black tracking-wider text-dune-teal block mb-1">
+              <span className="text-[length:var(--text-caption)] uppercase font-mono font-black tracking-wider text-dune-teal block mb-1">
                 Wet-lab directives
               </span>
-              <p className="text-[10px] text-muted-foreground leading-normal mb-4">
+              <p className="text-[length:var(--text-caption)] text-muted-foreground leading-normal mb-4">
                 Model outputs turned into wet-lab settings to target.
               </p>
             </div>
 
-            <div className="space-y-2 pt-4 border-t border-border font-mono text-xs">
+            <div className="space-y-2 pt-4 border-t border-border font-mono text-[length:var(--text-micro)]">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">
                   Cultivation Period:
@@ -1149,7 +1149,7 @@ export default function AeolianWindTunnel({
 
         {/* CROSS-REFERENCE: macro deployment cost & LCA are owned by the Economic module */}
         <div
-          className={`mt-6 p-4 rounded-[4px] border flex items-start gap-2 text-[11px] font-mono ${
+          className={`mt-6 p-4 rounded-[4px] border flex items-start gap-2 text-[length:var(--text-caption)] font-mono ${
             isLightMode
               ? "bg-dune-orange/60 border-dune-orange text-foreground"
               : "bg-dune-ink border-dune-teal/50 text-dune-teal"

@@ -190,7 +190,7 @@ export default function CuringTimelinePanel({
           isLightMode={isLightMode}
           right={
             <span
-              className={`text-[10px] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+              className={`text-[length:var(--text-caption)] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
             >
               0–48 h
             </span>
@@ -208,18 +208,18 @@ export default function CuringTimelinePanel({
                 domain={[0, 48]}
                 ticks={[0, 8, 16, 24, 32, 40, 48]}
                 stroke={c.axis}
-                tick={{ fontSize: 9 }}
+                tick={{ fontSize: 10 }}
                 unit="h"
               />
               <YAxis
                 stroke={c.axis}
-                tick={{ fontSize: 9 }}
+                tick={{ fontSize: 10 }}
                 width={40}
                 label={{
                   value: "mN/m",
                   angle: -90,
                   position: "insideLeft",
-                  fontSize: 9,
+                  fontSize: 10,
                   fill: c.axis,
                 }}
               />
@@ -246,7 +246,7 @@ export default function CuringTimelinePanel({
                   strokeOpacity={0.6}
                   label={{
                     value: `${h}h`,
-                    fontSize: 8,
+                    fontSize: 10,
                     fill: c.axis,
                     position: "top",
                   }}
@@ -255,7 +255,7 @@ export default function CuringTimelinePanel({
             </AreaChart>
           </ResponsiveContainer>
           <p
-            className={`mt-2 text-[10px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`mt-2 text-[length:var(--text-caption)] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             Dashed lines are the protocol spray times (0/8/16/24/32 h). Alginate
             gels on contact, γ-PGA sets within hours, and MICP calcite ripens
@@ -270,7 +270,7 @@ export default function CuringTimelinePanel({
           isLightMode={isLightMode}
           right={
             <span
-              className={`text-[10px] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+              className={`text-[length:var(--text-caption)] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
             >
               months
             </span>
@@ -287,18 +287,18 @@ export default function CuringTimelinePanel({
                 type="number"
                 domain={[0, "dataMax"]}
                 stroke={c.axis}
-                tick={{ fontSize: 9 }}
+                tick={{ fontSize: 10 }}
                 unit="mo"
               />
               <YAxis
                 stroke={c.axis}
-                tick={{ fontSize: 9 }}
+                tick={{ fontSize: 10 }}
                 width={40}
                 label={{
                   value: "mN/m",
                   angle: -90,
                   position: "insideLeft",
-                  fontSize: 9,
+                  fontSize: 10,
                   fill: c.axis,
                 }}
               />
@@ -307,7 +307,7 @@ export default function CuringTimelinePanel({
                 formatter={(v: number, n: string) => [`${v} mN/m`, n]}
                 labelFormatter={(m) => `${m} mo`}
               />
-              <Legend wrapperStyle={{ fontSize: 9 }} />
+              <Legend wrapperStyle={{ fontSize: 10 }} />
               {active.map((p) => (
                 <Area
                   key={p}
@@ -326,7 +326,7 @@ export default function CuringTimelinePanel({
                 strokeDasharray="5 3"
                 label={{
                   value: `survive ${designWind} m/s`,
-                  fontSize: 8,
+                  fontSize: 10,
                   fill: isLightMode ? DUNE.maroon : TINT.roseLight,
                   position: "insideTopRight",
                 }}
@@ -339,7 +339,7 @@ export default function CuringTimelinePanel({
                     strokeDasharray="2 2"
                     label={{
                       value: "re-apply",
-                      fontSize: 8,
+                      fontSize: 10,
                       fill: c.axis,
                       position: "top",
                     }}
@@ -363,7 +363,7 @@ export default function CuringTimelinePanel({
       </div>
 
       <div
-        className={`p-4 rounded-[6px] border text-[11px] flex items-start gap-2 ${
+        className={`p-4 rounded-[6px] border text-[length:var(--text-caption)] flex items-start gap-2 ${
           !meetsDesign
             ? isLightMode
               ? "bg-dune-rose text-dune-rose border-dune-rose"

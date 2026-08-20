@@ -179,7 +179,7 @@ export function AppChrome() {
               aria-label="Dunelock, back to top"
             >
               {logoMark}
-              <span className="wght-link text-[0.9375rem] tracking-tight text-foreground">
+              <span className="wght-link text-[length:var(--text-body)] tracking-tight text-foreground">
                 dunelock.
               </span>
             </button>
@@ -190,7 +190,7 @@ export function AppChrome() {
               aria-label="Dunelock, return home"
             >
               {logoMark}
-              <span className="wght-link text-[0.9375rem] tracking-tight text-foreground">
+              <span className="wght-link text-[length:var(--text-body)] tracking-tight text-foreground">
                 dunelock.
               </span>
             </Link>
@@ -203,7 +203,7 @@ export function AppChrome() {
                     <button
                       key={l.label}
                       onClick={() => scrollToId(l.to)}
-                      className="wght-link text-[0.9375rem] tracking-tight"
+                      className="wght-link text-[length:var(--text-body)] tracking-tight"
                     >
                       {l.label}
                     </button>
@@ -213,7 +213,7 @@ export function AppChrome() {
                       key={l.label}
                       href={l.href}
                       data-active={pathname.startsWith(l.href)}
-                      className="wght-link text-[0.9375rem] tracking-tight"
+                      className="wght-link text-[length:var(--text-body)] tracking-tight"
                     >
                       {l.label}
                     </Link>

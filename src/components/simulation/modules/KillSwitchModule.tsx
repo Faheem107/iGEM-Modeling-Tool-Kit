@@ -67,7 +67,7 @@ import {
 const MolstarViewer = dynamic(() => import("@/components/molstar-viewer"), {
   ssr: false,
   loading: () => (
-    <div className="absolute inset-0 flex items-center justify-center text-sm text-dune-ash">
+    <div className="absolute inset-0 flex items-center justify-center text-[length:var(--text-micro)] text-dune-ash">
       Preparing 3D viewer…
     </div>
   ),
@@ -99,7 +99,7 @@ export default function KillSwitchModule({ isLightMode }: Themed) {
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`flex items-center gap-2 rounded-[4px] border px-4 py-2 text-[11px] font-bold uppercase tracking-wider transition-colors ${
+              className={`flex items-center gap-2 rounded-[4px] border px-4 py-2 text-[length:var(--text-caption)] font-bold uppercase tracking-wider transition-colors ${
                 active
                   ? isLightMode
                     ? "border-dune-orange bg-dune-orange text-dune-orange"
@@ -158,7 +158,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
       <div className="space-y-4 lg:col-span-5">
         <Panel title="Kill trigger" icon={Syringe} isLightMode={isLightMode}>
           <div className="space-y-4">
-            <label className="flex items-center justify-between gap-2 text-[11px] font-semibold">
+            <label className="flex items-center justify-between gap-2 text-[length:var(--text-caption)] font-semibold">
               <span className={isLightMode ? "text-foreground" : "text-foreground"}>
                 Add aTc trigger
               </span>
@@ -261,14 +261,14 @@ export function DynamicsTab({ isLightMode }: Themed) {
               <YAxis
                 yAxisId="conc"
                 stroke={c.axis}
-                tick={{ fontSize: 9 }}
-                label={{ value: "MazE / MazF", angle: -90, position: "insideLeft", fontSize: 9, fill: c.axis }}
+                tick={{ fontSize: 10 }}
+                label={{ value: "MazE / MazF", angle: -90, position: "insideLeft", fontSize: 10, fill: c.axis }}
               />
               <YAxis
                 yAxisId="via"
                 orientation="right"
                 stroke={c.axis}
-                tick={{ fontSize: 9 }}
+                tick={{ fontSize: 10 }}
                 domain={[-10, 0]}
               />
               <Tooltip contentStyle={tooltipStyle(isLightMode)} />
@@ -332,7 +332,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
           />
         </div>
 
-        <p className={`text-[10px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
+        <p className={`text-[length:var(--text-caption)] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
           <GlossaryText>
             Two independent kill modes: the aTc trigger over-produces MazF on demand, while plasmid
             dilution slowly removes the antitoxin so the strain self-limits even with no inducer.
@@ -455,7 +455,7 @@ export function HgtTab({ isLightMode }: Themed) {
               margin={{ top: 4, right: 16, left: 4, bottom: 0 }}
             >
               <CartesianGrid stroke={chartColors(isLightMode).grid} strokeDasharray="3 3" horizontal={false} />
-              <XAxis type="number" stroke={chartColors(isLightMode).axis} tick={{ fontSize: 9 }} unit="%" />
+              <XAxis type="number" stroke={chartColors(isLightMode).axis} tick={{ fontSize: 10 }} unit="%" />
               <YAxis type="category" dataKey="name" hide />
               <Tooltip
                 contentStyle={tooltipStyle(isLightMode)}
@@ -470,7 +470,7 @@ export function HgtTab({ isLightMode }: Themed) {
           </ResponsiveContainer>
           <div className="mt-2 space-y-1">
             {routeData.map((x, i) => (
-              <div key={i} className="flex items-center gap-2 text-[10px]">
+              <div key={i} className="flex items-center gap-2 text-[length:var(--text-caption)]">
                 <span
                   className="inline-block h-2.5 w-2.5 rounded-sm"
                   style={{ background: [STATUS.bad, STATUS.warn, DUNE.ash][i] }}
@@ -483,7 +483,7 @@ export function HgtTab({ isLightMode }: Themed) {
           </div>
         </Panel>
 
-        <p className={`text-[10px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
+        <p className={`text-[length:var(--text-caption)] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
           <GlossaryText>
             The plasmid carries an E. coli MazF linked to the biofilm payload, so a wild recipient
             gets the toxin but not the cognate E. coli MazE, so it self-eliminates. Splitting and
@@ -591,8 +591,8 @@ export function SporeTab({ isLightMode }: Themed) {
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={data} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
               <CartesianGrid stroke={c.grid} strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="round" stroke={c.axis} tick={{ fontSize: 10 }} label={{ value: "round", position: "insideBottom", offset: -2, fontSize: 9, fill: c.axis }} />
-              <YAxis stroke={c.axis} tick={{ fontSize: 9 }} label={{ value: "−log₁₀ viable", angle: -90, position: "insideLeft", fontSize: 9, fill: c.axis }} />
+              <XAxis dataKey="round" stroke={c.axis} tick={{ fontSize: 10 }} label={{ value: "round", position: "insideBottom", offset: -2, fontSize: 10, fill: c.axis }} />
+              <YAxis stroke={c.axis} tick={{ fontSize: 10 }} label={{ value: "−log₁₀ viable", angle: -90, position: "insideLeft", fontSize: 10, fill: c.axis }} />
               <Tooltip
                 contentStyle={tooltipStyle(isLightMode)}
                 formatter={(v: number, n: string) => [n === "logReduction" ? `${v} log` : `${v}%`, n === "logReduction" ? "reduction" : "viable"]}
@@ -621,7 +621,7 @@ export function SporeTab({ isLightMode }: Themed) {
           />
         </div>
 
-        <p className={`text-[10px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
+        <p className={`text-[length:var(--text-caption)] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
           <GlossaryText>
             MazF needs active translation, so it cannot touch a dormant spore, the spore must be
             germinated first. gerB* and multiple germinants wake more spores each round, but a
@@ -684,16 +684,16 @@ export function StructuresTab({ isLightMode }: Themed) {
                     : "border-border bg-dune-ink hover:bg-dune-basalt/50"
               }`}
             >
-              <span className={`block text-[13px] font-bold ${isLightMode ? "text-foreground" : "text-foreground"}`}>
+              <span className={`block text-[length:var(--text-micro)] font-bold ${isLightMode ? "text-foreground" : "text-foreground"}`}>
                 {st.label}
               </span>
-              <span className={`block font-mono text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
+              <span className={`block font-mono text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
                 {st.sub}
               </span>
             </button>
           );
         })}
-        <p className={`text-[11px] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
+        <p className={`text-[length:var(--text-caption)] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
           {s.desc}
         </p>
       </div>
@@ -701,7 +701,7 @@ export function StructuresTab({ isLightMode }: Themed) {
         <div className="relative h-[360px] w-full overflow-hidden rounded-[6px] border border-border bg-black/5 dark:bg-black/30">
           <MolstarViewer key={s.file} url={s.file} className="absolute inset-0 h-full w-full" />
         </div>
-        <p className={`mt-2 text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
+        <p className={`mt-2 text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
           Real experimental coordinates served from <code>/public/pdb</code>. Drag to rotate; scroll to zoom.
         </p>
       </div>
@@ -721,7 +721,7 @@ function Toggle({
 }: Themed & { label: string; on: boolean; onToggle: () => void; hint?: string }) {
   return (
     <div>
-      <label className="flex items-center justify-between gap-2 text-[11px] font-semibold">
+      <label className="flex items-center justify-between gap-2 text-[length:var(--text-caption)] font-semibold">
         <span className={isLightMode ? "text-foreground" : "text-foreground"}>{label}</span>
         <button
           onClick={onToggle}
@@ -734,7 +734,7 @@ function Toggle({
         </button>
       </label>
       {hint && (
-        <span className={`mt-1 block text-[9px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
+        <span className={`mt-1 block text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
           <GlossaryText max={3}>{hint}</GlossaryText>
         </span>
       )}

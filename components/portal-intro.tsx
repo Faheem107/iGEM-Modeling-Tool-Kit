@@ -97,7 +97,7 @@ export function PortalIntro({ content }: { content: PortalIntroContent }) {
                     >
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <p className="text-[0.9375rem] leading-relaxed text-muted-foreground">
+                    <p className="text-[length:var(--text-body)] leading-relaxed text-muted-foreground">
                       {step.body}
                     </p>
                   </div>
@@ -106,7 +106,7 @@ export function PortalIntro({ content }: { content: PortalIntroContent }) {
             </ol>
 
             <div className="mt-12 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <label className="flex cursor-pointer select-none items-center gap-2 text-[0.875rem] text-muted-foreground">
+              <label className="flex cursor-pointer select-none items-center gap-2 text-[length:var(--text-micro)] text-muted-foreground">
                 <input
                   type="checkbox"
                   checked={dontShow}

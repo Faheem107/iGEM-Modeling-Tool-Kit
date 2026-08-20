@@ -281,11 +281,11 @@ export default function MolstarViewer({
       {(loading || error) && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           {error ? (
-            <span className="text-sm font-semibold text-dune-maroon dark:text-dune-rose px-4 text-center">
+            <span className="text-[length:var(--text-micro)] font-semibold text-dune-maroon dark:text-dune-rose px-4 text-center">
               {error}
             </span>
           ) : (
-            <span className="flex items-center gap-2 text-sm text-dune-ash">
+            <span className="flex items-center gap-2 text-[length:var(--text-micro)] text-dune-ash">
               <Loader2 className="w-4 h-4 animate-spin" /> Loading structure…
             </span>
           )}

@@ -464,7 +464,7 @@ export default function SimulationWorkspace({
         <m.icon className="h-4 w-4 shrink-0 text-dune-teal" />
         {m.title}
       </h2>
-      <p className="mt-2 max-w-[70ch] text-[0.875rem] leading-snug text-muted-foreground">
+      <p className="mt-2 max-w-[70ch] text-[length:var(--text-micro)] leading-snug text-muted-foreground">
         <GlossaryText max={4}>{m.blurb}</GlossaryText>
       </p>
     </div>
@@ -574,12 +574,12 @@ function AlginateRationaleBanner({ isLightMode }: { isLightMode: boolean }) {
         <Ban className="h-3.5 w-3.5 shrink-0" />
         <h2 className="caption text-dune-rose">{ALGINATE_STATUS}</h2>
       </div>
-      <p className="mb-4 max-w-[70ch] text-[0.875rem] leading-relaxed text-muted-foreground">
+      <p className="mb-4 max-w-[70ch] text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
         Alginate was scoped as a third prong, a binder you spread on rather
         than one the cells make. Three findings took it out, each of which
         stands on its own:
       </p>
-      <ol className="max-w-[70ch] list-decimal space-y-2 pl-6 text-[0.875rem] leading-relaxed text-muted-foreground">
+      <ol className="max-w-[70ch] list-decimal space-y-2 pl-6 text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
         {reasons.map((r, i) => (
           <li key={i}>{r}</li>
         ))}
@@ -615,12 +615,12 @@ function HeadlineStat({
       </span>
       <div className="flex items-baseline gap-2">
         <span
-          className={`tabular-nums ${emphasize ? "text-3xl text-dune-orange" : "text-2xl text-foreground"}`}
+          className={`tabular-nums ${emphasize ? "text-[length:var(--text-h1)] text-dune-orange" : "text-[length:var(--text-h3)] text-foreground"}`}
           style={{ fontVariationSettings: '"wght" 620' }}
         >
           {value}
         </span>
-        <span className="font-mono text-[10px] text-muted-foreground">
+        <span className="font-mono text-[length:var(--text-caption)] text-muted-foreground">
           {unit}
         </span>
       </div>

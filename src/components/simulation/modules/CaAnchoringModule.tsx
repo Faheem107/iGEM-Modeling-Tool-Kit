@@ -97,7 +97,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
       >
         <div className="space-y-4">
           <span
-            className={`text-[10px] font-bold uppercase tracking-wider ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`text-[length:var(--text-caption)] font-bold uppercase tracking-wider ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             Shared (Sec pathway physiology)
           </span>
@@ -129,7 +129,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
             className={`pt-2 border-t ${isLightMode ? "border-dune-orange/10" : "border-border"}`}
           />
           <span
-            className={`text-[10px] font-bold uppercase tracking-wider ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`text-[length:var(--text-caption)] font-bold uppercase tracking-wider ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             Route-specific anchoring
           </span>
@@ -172,17 +172,17 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
         />
         <div>
           <span
-            className={`block text-[9px] font-bold uppercase tracking-wider ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`block text-[length:var(--text-caption)] font-bold uppercase tracking-wider ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             Recommended route
           </span>
           <span
-            className={`font-black text-sm ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
+            className={`font-black text-[length:var(--text-micro)] ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
           >
             {recommend}
           </span>
           <span
-            className={`block text-[10px] font-mono mt-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`block text-[length:var(--text-caption)] font-mono mt-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             {(best * 100).toFixed(1)}% functional CA displayed
           </span>
@@ -219,7 +219,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
             <XAxis dataKey="stage" stroke={c.axis} tick={{ fontSize: 10 }} />
             <YAxis
               stroke={c.axis}
-              tick={{ fontSize: 9 }}
+              tick={{ fontSize: 10 }}
               unit="%"
               domain={[0, 100]}
             />
@@ -271,7 +271,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
         />
       </div>
       <p
-        className={`text-[10px] flex items-start gap-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+        className={`text-[length:var(--text-caption)] flex items-start gap-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
       >
         <Link2 className="w-3.5 h-3.5 text-dune-teal mt-1 shrink-0" />
         <GlossaryText>

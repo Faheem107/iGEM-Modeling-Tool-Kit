@@ -59,13 +59,14 @@
   --plate: rgb(255 255 255 / 0.55);
   --plate-border: rgb(42 26 22 / 0.1);
 
-  /* ---- Fluid type scale ---- */
+  /* ---- The type scale. Five sizes, floor at 11px. ----
+   * Nothing on the site renders below --text-caption. --text-display is the one
+   * documented exception, used once, on the hero. --text-h2 and --text-lede were
+   * retired: h2 never had a consumer, and lede was --text-body with extra steps. */
   --text-caption: 0.6875rem;
   --text-micro: 0.8125rem;
   --text-body: 1.0625rem;
-  --text-lede: clamp(1.0625rem, 1.4vw, 1.1875rem);
   --text-h3: clamp(1.125rem, 1.6vw, 1.3125rem);
-  --text-h2: clamp(1.5rem, 2.6vw, 2rem);
   --text-h1: clamp(2rem, 4.6vw, 3.25rem);
   --text-display: clamp(2.75rem, 8vw, 6rem);
 
