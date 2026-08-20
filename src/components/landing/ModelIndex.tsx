@@ -20,9 +20,9 @@ import { PRONG_TITLES, ALGINATE_RATIONALE } from "@/content/copy";
  * Every model on the site, grouped, with nothing open until it is asked for.
  * ==========================================================================
  * Six groups: the two engineered prongs, the two layers they share, the field
- * and cost view, and the archived option. Each one shows its name, what it
- * covers and how many models sit under it. The list itself stays folded, so the
- * reader picks a layer before reading forty link titles.
+ * and cost view, and the archived option. Each one shows its name and what it
+ * covers. The list itself stays folded, so the reader picks a layer before
+ * reading forty link titles.
  *
  * The four model columns come from MODULE_REGISTRY via src/lib/modelIndex.ts,
  * so adding a module to the registry lists it here automatically.
@@ -68,7 +68,6 @@ export default function ModelIndex({
               eyebrow={col.eyebrow}
               title={col.title}
               lede={col.lede}
-              count={col.modules.length}
               aside={
                 prongId && onView ? (
                   <button
@@ -95,8 +94,6 @@ export default function ModelIndex({
           <Group
             title="Exposure and the commercial case"
             lede="The prongs set how well a treated surface holds. These take that outward: how much sand reaches a given site, and what stopping it is worth to whoever owns it."
-            count={FIELD_LINKS.length}
-            unit="view"
             wide
           >
             <LinkList
@@ -115,7 +112,6 @@ export default function ModelIndex({
             <Group
               title={PRONG_TITLES[3]}
               lede={ALGINATE_RATIONALE}
-              count={ARCHIVED_MODULES.length}
               muted
               wide
               aside={
@@ -186,8 +182,6 @@ function Group({
   eyebrow,
   title,
   lede,
-  count,
-  unit = "model",
   children,
   aside,
   muted,
@@ -196,8 +190,6 @@ function Group({
   eyebrow?: string;
   title: string;
   lede: string;
-  count: number;
-  unit?: string;
   children: React.ReactNode;
   aside?: React.ReactNode;
   muted?: boolean;
@@ -221,9 +213,8 @@ function Group({
           >
             {title}
           </span>
-          <span aria-hidden className="caption shrink-0 pt-2 tabular-nums text-dune-orange">
+          <span aria-hidden className="caption shrink-0 pt-2 text-dune-orange">
             {open ? "−" : "+"}
-            {count}
           </span>
         </span>
         <span
