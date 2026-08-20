@@ -88,10 +88,10 @@ export default function KillSwitchModule({ isLightMode }: Themed) {
 
   return (
     <div
-      className={`rounded-[6px] border border-border p-5 md:p-6 transition-colors ${shell}`}
+      className={`rounded-[6px] border border-border p-6 md:p-6 transition-colors ${shell}`}
     >
       {/* Tab bar */}
-      <div className="mb-5 flex flex-wrap gap-2">
+      <div className="mb-6 flex flex-wrap gap-2">
         {TABS.map((t) => {
           const active = tab === t.id;
           const Icon = t.icon;
@@ -99,7 +99,7 @@ export default function KillSwitchModule({ isLightMode }: Themed) {
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`flex items-center gap-1.5 rounded-[4px] border px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider transition-colors ${
+              className={`flex items-center gap-2 rounded-[4px] border px-4 py-2 text-[11px] font-bold uppercase tracking-wider transition-colors ${
                 active
                   ? isLightMode
                     ? "border-dune-orange bg-dune-orange text-dune-orange"
@@ -305,7 +305,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
           </ResponsiveContainer>
         </Panel>
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-4">
           <StatCard
             isLightMode={isLightMode}
             label="Time to 3-log kill"
@@ -428,7 +428,7 @@ export function HgtTab({ isLightMode }: Themed) {
       </div>
 
       <div className="space-y-4 lg:col-span-7">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-4">
           <StatCard
             isLightMode={isLightMode}
             label="Containment efficiency"
@@ -602,7 +602,7 @@ export function SporeTab({ isLightMode }: Themed) {
           </ResponsiveContainer>
         </Panel>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-4">
           <StatCard
             isLightMode={isLightMode}
             label="Total log-reduction"
@@ -667,14 +667,14 @@ export function StructuresTab({ isLightMode }: Themed) {
   const s = KS_STRUCTURES[sel];
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-      <div className="space-y-3 lg:col-span-4">
+      <div className="space-y-4 lg:col-span-4">
         {KS_STRUCTURES.map((st, i) => {
           const active = i === sel;
           return (
             <button
               key={st.id}
               onClick={() => setSel(i)}
-              className={`w-full rounded-[5px] border p-3 text-left transition-colors ${
+              className={`w-full rounded-[5px] border p-4 text-left transition-colors ${
                 active
                   ? isLightMode
                     ? "border-dune-orange bg-dune-orange"

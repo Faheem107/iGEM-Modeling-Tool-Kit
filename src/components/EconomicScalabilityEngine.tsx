@@ -158,7 +158,7 @@ export default function EconomicScalabilityEngine({
         </div>
       </Panel>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-4">
         <StatCard
           isLightMode={isLightMode}
           label="All-in cost / ha"
@@ -223,9 +223,9 @@ export default function EconomicScalabilityEngine({
           : "bg-dune-ink border-border "
       }`}
     >
-      <div className="lg:col-span-5 space-y-5">{controls}</div>
+      <div className="lg:col-span-5 space-y-6">{controls}</div>
 
-      <div className="lg:col-span-7 space-y-5">
+      <div className="lg:col-span-7 space-y-6">
         <Panel
           title="Cost per Hectare, Combination Comparison"
           icon={TrendingDown}
@@ -283,7 +283,7 @@ export default function EconomicScalabilityEngine({
             </BarChart>
           </ResponsiveContainer>
           <p
-            className={`mt-1 text-[10px] flex items-center gap-1.5 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`mt-1 text-[10px] flex items-center gap-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
             <Award className="w-3 h-3 text-dune-orange" /> Indigo = your selected
             combination. Every biological combination sits far below the
@@ -296,7 +296,7 @@ export default function EconomicScalabilityEngine({
           icon={Sprout}
           isLightMode={isLightMode}
         >
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             {selected.map((p) => {
               const single = combinationCost([p], ctx);
               const label = combinationLabel([p]);
@@ -309,7 +309,7 @@ export default function EconomicScalabilityEngine({
               return (
                 <div
                   key={p}
-                  className={`flex items-center justify-between p-3 rounded-[6px] border ${isLightMode ? "bg-white border-dune-orange/10" : "bg-dune-ink border-border"}`}
+                  className={`flex items-center justify-between p-4 rounded-[6px] border ${isLightMode ? "bg-white border-dune-orange/10" : "bg-dune-ink border-border"}`}
                 >
                   <div className="min-w-0">
                     <span

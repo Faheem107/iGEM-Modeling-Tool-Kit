@@ -40,7 +40,7 @@ export default class ModuleErrorBoundary extends React.Component<Props, State> {
     const { isLightMode, label } = this.props;
     return (
       <div
-        className={`p-6 rounded-[6px] border flex flex-col items-start gap-3 ${
+        className={`p-6 rounded-[6px] border flex flex-col items-start gap-4 ${
           isLightMode
             ? "bg-dune-orange/70 border-dune-orange text-dune-orange"
             : "bg-dune-orange/20 border-dune-orange/40 text-dune-orange"
@@ -58,7 +58,7 @@ export default class ModuleErrorBoundary extends React.Component<Props, State> {
         </p>
         <button
           onClick={this.reset}
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-[6px] text-xs font-bold transition ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-[6px] text-xs font-bold transition ${
             isLightMode
               ? "bg-dune-orange hover:bg-dune-orange text-dune-orange"
               : "bg-dune-orange/40 hover:bg-dune-orange/60 text-dune-orange"

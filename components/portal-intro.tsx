@@ -63,12 +63,12 @@ export function PortalIntro({ content }: { content: PortalIntroContent }) {
             exit={{ scale: 0.96, opacity: 0, y: 20 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
             onClick={(e) => e.stopPropagation()}
-            className="plate-solid relative w-full max-w-2xl p-8 text-popover-foreground md:p-10"
+            className="plate-solid relative w-full max-w-2xl p-6 text-popover-foreground md:p-12"
           >
             <button
               onClick={enter}
               aria-label="Close and enter"
-              className="absolute right-6 top-6 rounded-[4px] border border-border p-1.5 text-muted-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
+              className="absolute right-6 top-6 rounded-[4px] border border-border p-2 text-muted-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
             >
               <X className="h-4 w-4" />
             </button>
@@ -77,7 +77,7 @@ export function PortalIntro({ content }: { content: PortalIntroContent }) {
               as="h2"
               per="word"
               preset="fade-in-blur"
-              className="mb-8 text-[length:var(--text-h1)]"
+              className="mb-6 text-[length:var(--text-h1)]"
             >
               {content.title}
             </TextEffect>
@@ -90,7 +90,7 @@ export function PortalIntro({ content }: { content: PortalIntroContent }) {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15 + i * 0.12, duration: 0.4 }}
                 >
-                  <div className="flex gap-3">
+                  <div className="flex gap-4">
                     <span
                       aria-hidden
                       className={`caption shrink-0 pt-1 tabular-nums ${STEP_ACCENTS[i]}`}
@@ -105,7 +105,7 @@ export function PortalIntro({ content }: { content: PortalIntroContent }) {
               ))}
             </ol>
 
-            <div className="mt-9 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="mt-12 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <label className="flex cursor-pointer select-none items-center gap-2 text-[0.875rem] text-muted-foreground">
                 <input
                   type="checkbox"
@@ -117,7 +117,7 @@ export function PortalIntro({ content }: { content: PortalIntroContent }) {
               </label>
               <button
                 onClick={enter}
-                className="caption flex items-center justify-center gap-2 border border-border px-6 py-3 text-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
+                className="caption flex items-center justify-center gap-2 border border-border px-6 py-4 text-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
               >
                 Enter <ArrowRight className="h-3.5 w-3.5" />
               </button>

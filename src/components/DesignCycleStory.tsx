@@ -223,7 +223,7 @@ export default function DesignCycleStory({
     <section id="design-cycle" className="relative w-full">
       <div
         ref={stageRef}
-        className="relative flex min-h-screen w-full flex-col overflow-hidden py-20 md:justify-center md:py-0"
+        className="relative flex min-h-screen w-full flex-col overflow-hidden py-24 md:justify-center md:py-0"
       >
         {/* Skip / Escape / progress rule, inside the pinned stage. */}
         {!staticMode && (
@@ -410,7 +410,7 @@ export default function DesignCycleStory({
         </svg>
 
         {/* Panel + dots (left). Sits above the SVG. */}
-        <div className="relative z-10 mx-auto w-full max-w-6xl px-5 sm:px-8">
+        <div className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-6">
           <div className="max-w-xl">
             <div
               className={`rounded-[16px] border p-6 ${
@@ -425,7 +425,7 @@ export default function DesignCycleStory({
 
               {staticMode ? (
                 // Mobile / reduced motion: every turn of the loop as a list.
-                <ol className="mt-4 space-y-8">
+                <ol className="mt-4 space-y-6">
                   {BEATS.map((b, i) => (
                     <li key={i}>
                       <BeatBody beat={b} isLightMode={isLightMode} />
@@ -460,7 +460,7 @@ export default function DesignCycleStory({
                       </div>
                     ))}
                   </div>
-                  <div className="mt-4 flex items-center gap-2.5">
+                  <div className="mt-4 flex items-center gap-2">
                     {BEATS.map((_, i) => (
                       <span
                         key={i}
@@ -498,20 +498,20 @@ function BeatBody({
 }) {
   return (
     <>
-      <div className="mb-2 flex flex-wrap items-baseline gap-x-3">
+      <div className="mb-2 flex flex-wrap items-baseline gap-x-4">
         <span className="caption text-dune-orange">{beat.stage}</span>
         <span className="caption">
           {beat.turn === 1 ? "first turn" : "second turn"}
         </span>
       </div>
       <h2
-        className={`mb-3.5 font-display text-2xl font-black uppercase tracking-tight ${
+        className={`mb-4 font-display text-2xl font-black uppercase tracking-tight ${
           isLightMode ? "text-dune-maroon" : "text-dune-orange"
         }`}
       >
         {beat.title}
       </h2>
-      <dl className="space-y-3 text-sm leading-relaxed text-foreground">
+      <dl className="space-y-4 text-sm leading-relaxed text-foreground">
         <Line term="Asked">{beat.question}</Line>
         <Line term="Ran">{beat.did}</Line>
         <Line term="Changed">{beat.changed}</Line>
@@ -531,7 +531,7 @@ function BeatBody({
 
 function Line({ term, children }: { term: string; children: string }) {
   return (
-    <div className="grid grid-cols-[4.5rem_1fr] gap-x-3">
+    <div className="grid grid-cols-[4.5rem_1fr] gap-x-4">
       <dt className="caption pt-1">{term}</dt>
       <dd>
         <GlossaryText>{children}</GlossaryText>
@@ -558,7 +558,7 @@ function CycleRing({
   const seg = C / 4;
   const idx = CYCLE_STAGES.indexOf(stage as never);
   return (
-    <div className="mb-5 mt-3 flex items-center gap-4">
+    <div className="mb-6 mt-4 flex items-center gap-4">
       <svg viewBox="0 0 64 64" className="h-12 w-12 shrink-0" aria-hidden>
         <g transform="rotate(-90 32 32)">
           {CYCLE_STAGES.map((_, i) => (
@@ -589,7 +589,7 @@ function CycleRing({
           {turn}
         </text>
       </svg>
-      <div className="flex flex-wrap gap-x-3 gap-y-1">
+      <div className="flex flex-wrap gap-x-4 gap-y-1">
         {CYCLE_STAGES.map((st, i) => (
           <span
             key={st}

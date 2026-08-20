@@ -194,7 +194,7 @@ export default function ProngConstellation({
   return (
     <section
       id="models"
-      className="relative w-full scroll-mt-24 overflow-hidden pb-28 pt-[8vh]"
+      className="relative w-full scroll-mt-24 overflow-hidden pb-24 pt-[8vh]"
     >
       {/* Sand, at the strength of paper texture. The section this sits behind is
           about ground, so the ground is present rather than described. */}
@@ -209,11 +209,11 @@ export default function ProngConstellation({
         }}
       />
 
-      <div className="relative mx-auto w-full max-w-6xl px-5 sm:px-8">
+      <div className="relative mx-auto w-full max-w-6xl px-6 sm:px-6">
         {/* Section head */}
         <div className="mb-4 flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p className="caption mb-3">The design, and every model in it</p>
+            <p className="caption mb-4">The design, and every model in it</p>
             <h2 className="text-[length:var(--text-h1)] text-foreground">
               {settled ? "Two prongs, and a kill switch" : "Three prongs"}
             </h2>
@@ -238,7 +238,7 @@ export default function ProngConstellation({
         <DuneRule className="mb-12" />
 
       {/* ---- The figure. Desktop only; below md the index speaks for itself. ---- */}
-      <div ref={hostRef} className="relative mb-20 hidden md:block">
+      <div ref={hostRef} className="relative mb-24 hidden md:block">
         {/* 1:1 with the host, so a line drawn to a measured rect lands on it.
             No preserveAspectRatio override and no non-scaling-stroke: those two
             together are what made the old branches stop short. */}
@@ -263,7 +263,7 @@ export default function ProngConstellation({
 
         {/* Leaves. Dropping the third item is what recentres the survivors, and
             the branches follow because they are measured, not positioned. */}
-        <div className="flex items-start justify-around gap-8 pt-28">
+        <div className="flex items-start justify-around gap-6 pt-24">
           <AnimatePresence onExitComplete={remeasure}>
             {LEAVES.map((l) => {
               const isAlg = l.key === "alg";

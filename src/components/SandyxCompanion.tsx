@@ -115,7 +115,7 @@ export default function SandyxCompanion({ items, isLightMode }: Props) {
 
           {/* Module tree */}
           <div className="mt-6">
-            <p className="caption mb-3">Your path</p>
+            <p className="caption mb-4">Your path</p>
             {/* The <ul> carries the rule; each item carries a transparent one
                 pulled back over it, so the active item claims the shared line
                 instead of adding a second bar next to it. */}
@@ -128,7 +128,7 @@ export default function SandyxCompanion({ items, isLightMode }: Props) {
                       onClick={() => scrollTo(it.id)}
                       data-active={active}
                       aria-current={active ? "true" : undefined}
-                      className="wght-link -ml-px block w-full border-l border-transparent py-1.5 pl-4 text-left text-[0.8125rem] leading-snug data-[active=true]:border-dune-orange"
+                      className="wght-link -ml-px block w-full border-l border-transparent py-2 pl-4 text-left text-[0.8125rem] leading-snug data-[active=true]:border-dune-orange"
                     >
                       {it.label}
                     </button>
@@ -160,7 +160,7 @@ export default function SandyxCompanion({ items, isLightMode }: Props) {
       {/* ---------------- Mobile current-section pill ---------------- */}
       {activeId && (
         <div className="lg:hidden fixed top-3 left-1/2 -translate-x-1/2 z-[70] pointer-events-none">
-          <div className="caption plate px-3 py-1.5 text-foreground">
+          <div className="caption plate px-4 py-2 text-foreground">
             {items.find((i) => i.id === activeId)?.label}
           </div>
         </div>

@@ -436,7 +436,7 @@ export default function LandingCinematic({
         {!staticMode && (
           <div
             ref={heroRef}
-            className="absolute inset-0 z-20 flex items-center px-5 sm:px-8"
+            className="absolute inset-0 z-20 flex items-center px-6 sm:px-6"
           >
             <div className="mx-auto w-full max-w-6xl">
               <span className="hero-reveal hero-reveal-1 caption mb-6 block text-dune-orange">
@@ -477,7 +477,7 @@ export default function LandingCinematic({
               </p>
 
               <div
-                className={`hero-reveal hero-reveal-3 relative mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 ${
+                className={`hero-reveal hero-reveal-3 relative mt-12 flex flex-wrap items-center gap-x-6 gap-y-4 ${
                   isLightMode ? "text-dune-maroon" : "text-dune-paper"
                 }`}
               >
@@ -517,7 +517,7 @@ export default function LandingCinematic({
 
         {/* Captions + rail (react-spring), or static list on mobile. */}
         {staticMode ? (
-          <div className="relative z-10 mx-auto flex min-h-screen max-w-6xl items-end px-4 pb-14">
+          <div className="relative z-10 mx-auto flex min-h-screen max-w-6xl items-end px-4 pb-12">
             <div
               className={`w-full rounded-[16px] border p-6 backdrop-blur-[3px] ${
                 isLightMode
@@ -530,7 +530,7 @@ export default function LandingCinematic({
               >
                 {BEATS.map((b, i) => (
                   <li key={i}>
-                    <div className="flex flex-wrap items-baseline gap-x-3">
+                    <div className="flex flex-wrap items-baseline gap-x-4">
                       <span className="caption text-dune-orange">{b.label}</span>
                       <span className="caption">{b.scale} across</span>
                     </div>
@@ -548,7 +548,7 @@ export default function LandingCinematic({
             className="pointer-events-none absolute inset-x-0 bottom-0 z-10 transition-opacity duration-300"
             style={{ opacity: showCaption ? 1 : 0 }}
           >
-            <div className="mx-auto max-w-6xl px-5 pb-14 sm:px-8">
+            <div className="mx-auto max-w-6xl px-6 pb-12 sm:px-6">
               {/* Stacked opacity cross-fade: only the active beat is shown, so a
                   fast scroll (or a jump to the top) can never pile up several
                   half-faded captions on top of each other. */}
@@ -587,7 +587,7 @@ export default function LandingCinematic({
                     <Link
                       href={b.model.href}
                       tabIndex={i === active ? 0 : -1}
-                      className={`caption rule-link pointer-events-auto mt-3 inline-block ${
+                      className={`caption rule-link pointer-events-auto mt-4 inline-block ${
                         isLightMode ? "text-dune-maroon/80" : "text-dune-paper/75"
                       }`}
                     >
@@ -596,7 +596,7 @@ export default function LandingCinematic({
                   </div>
                 ))}
               </div>
-              <div className="mt-5 flex items-center gap-2.5">
+              <div className="mt-6 flex items-center gap-2">
                 {BEATS.map((_, i) => (
                   <span
                     key={i}

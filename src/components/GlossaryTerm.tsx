@@ -166,7 +166,7 @@ function VideoPanel({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className={`absolute inset-0 flex flex-col items-center justify-center gap-3 text-center ${
+            className={`absolute inset-0 flex flex-col items-center justify-center gap-4 text-center ${
               isLightMode ? "bg-dune-basalt" : "bg-dune-basalt"
             }`}
           >
@@ -257,7 +257,7 @@ function CodePanel({
           <button
             onClick={copy}
             disabled={!code}
-            className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1.5 rounded-[3px] border transition-colors disabled:opacity-50 ${
+            className={`inline-flex items-center gap-2 text-[11px] font-bold px-2 py-2 rounded-[3px] border transition-colors disabled:opacity-50 ${
               isLightMode
                 ? "border-border text-muted-foreground hover:bg-muted"
                 : "border-white/15 text-foreground hover:bg-white/10"
@@ -273,7 +273,7 @@ function CodePanel({
           <a
             href={codeUrl}
             download={filename}
-            className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1.5 rounded-[3px] bg-dune-orange text-dune-basalt transition-opacity hover:opacity-90"
+            className="inline-flex items-center gap-2 text-[11px] font-bold px-2 py-2 rounded-[3px] bg-dune-orange text-dune-basalt transition-opacity hover:opacity-90"
           >
             <Download className="w-3.5 h-3.5" /> Download .py
           </a>
@@ -533,9 +533,9 @@ export const GlossaryProvider: React.FC<{
                 glowA="bg-dune-teal/20"
                 glowB="bg-dune-orange/20"
               >
-                <div className="relative p-6 sm:p-7">
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className="flex items-center gap-3 min-w-0">
+                <div className="relative p-6 sm:p-6">
+                  <div className="flex items-start justify-between gap-4 mb-4">
+                    <div className="flex items-center gap-4 min-w-0">
                       <img
                         src="/sandyx.png"
                         alt="Sandyx"
@@ -555,7 +555,7 @@ export const GlossaryProvider: React.FC<{
                     <button
                       onClick={close}
                       aria-label="Close explanation"
-                      className={`shrink-0 flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full border transition-colors ${
+                      className={`shrink-0 flex items-center gap-2 text-[11px] font-bold px-4 py-2 rounded-full border transition-colors ${
                         isLightMode
                           ? "border-border text-muted-foreground hover:bg-muted"
                           : "border-white/15 text-foreground hover:bg-white/10"
@@ -570,7 +570,7 @@ export const GlossaryProvider: React.FC<{
                     per="char"
                     preset="fade-in-blur"
                     speedReveal={2.4}
-                    className="text-lg sm:text-xl font-black tracking-tight mb-2.5"
+                    className="text-lg sm:text-xl font-black tracking-tight mb-2"
                   >
                     {entry.title}
                   </TextEffect>
@@ -589,9 +589,9 @@ export const GlossaryProvider: React.FC<{
 
                   {entry.derivation && (
                     <div
-                      className={`mt-4 pt-3 border-t ${isLightMode ? "border-border" : "border-white/10"}`}
+                      className={`mt-4 pt-4 border-t ${isLightMode ? "border-border" : "border-white/10"}`}
                     >
-                      <h4 className="text-[10px] font-black uppercase tracking-[0.15em] text-dune-orange mb-1.5">
+                      <h4 className="text-[10px] font-black uppercase tracking-[0.15em] text-dune-orange mb-2">
                         How we got it
                       </h4>
                       <p
@@ -631,7 +631,7 @@ export const GlossaryProvider: React.FC<{
 
                   {entry.module && !entry.derivation && (
                     <p
-                      className={`mt-4 pt-3 border-t text-[11px] font-mono ${
+                      className={`mt-4 pt-4 border-t text-[11px] font-mono ${
                         isLightMode
                           ? "border-border text-muted-foreground"
                           : "border-white/10 text-muted-foreground"
@@ -662,9 +662,9 @@ export const GlossaryProvider: React.FC<{
                 glowA="bg-dune-orange/20"
                 glowB="bg-dune-teal/20"
               >
-                <div className="relative p-6 sm:p-7">
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className="flex items-center gap-3 min-w-0">
+                <div className="relative p-6 sm:p-6">
+                  <div className="flex items-start justify-between gap-4 mb-4">
+                    <div className="flex items-center gap-4 min-w-0">
                       <img
                         src="/sandyx.png"
                         alt="Sandyx"
@@ -684,7 +684,7 @@ export const GlossaryProvider: React.FC<{
                     <button
                       onClick={closeMath}
                       aria-label="Close mathematics"
-                      className={`shrink-0 flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full border transition-colors ${
+                      className={`shrink-0 flex items-center gap-2 text-[11px] font-bold px-4 py-2 rounded-full border transition-colors ${
                         isLightMode
                           ? "border-border text-muted-foreground hover:bg-muted"
                           : "border-white/15 text-foreground hover:bg-white/10"
@@ -702,7 +702,7 @@ export const GlossaryProvider: React.FC<{
                     per="word"
                     preset="fade-in-blur"
                     speedReveal={2.2}
-                    className={`text-sm leading-relaxed mb-5 ${isLightMode ? "text-foreground" : "text-foreground"}`}
+                    className={`text-sm leading-relaxed mb-6 ${isLightMode ? "text-foreground" : "text-foreground"}`}
                   >
                     {math.intro}
                   </TextEffect>
@@ -721,7 +721,7 @@ export const GlossaryProvider: React.FC<{
                           <Katex tex={b.tex} />
                         </div>
                         <p
-                          className={`mt-2.5 text-xs leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                          className={`mt-2 text-xs leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                         >
                           {b.caption}
                         </p>
@@ -750,9 +750,9 @@ export const GlossaryProvider: React.FC<{
                 glowA="bg-dune-rose/20"
                 glowB="bg-dune-orange/20"
               >
-                <div className="relative p-6 sm:p-7">
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className="flex items-center gap-3 min-w-0">
+                <div className="relative p-6 sm:p-6">
+                  <div className="flex items-start justify-between gap-4 mb-4">
+                    <div className="flex items-center gap-4 min-w-0">
                       <img
                         src="/sandyx.png"
                         alt="Sandyx"
@@ -760,7 +760,7 @@ export const GlossaryProvider: React.FC<{
                         draggable={false}
                       />
                       <span
-                        className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.15em] px-2 py-1 rounded-full ${
+                        className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.15em] px-2 py-1 rounded-full ${
                           isLightMode
                             ? "bg-dune-rose text-dune-rose"
                             : "bg-dune-rose/15 text-dune-rose"
@@ -772,7 +772,7 @@ export const GlossaryProvider: React.FC<{
                     <button
                       onClick={closeVideo}
                       aria-label="Close video"
-                      className={`shrink-0 flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full border transition-colors ${
+                      className={`shrink-0 flex items-center gap-2 text-[11px] font-bold px-4 py-2 rounded-full border transition-colors ${
                         isLightMode
                           ? "border-border text-muted-foreground hover:bg-muted"
                           : "border-white/15 text-foreground hover:bg-white/10"
@@ -782,7 +782,7 @@ export const GlossaryProvider: React.FC<{
                     </button>
                   </div>
 
-                  <h3 className="text-lg sm:text-xl font-black tracking-tight mb-3">
+                  <h3 className="text-lg sm:text-xl font-black tracking-tight mb-4">
                     {video.title}
                   </h3>
 
@@ -820,7 +820,7 @@ export const GlossaryProvider: React.FC<{
                     {video.plain}
                   </TextEffect>
                   <p
-                    className={`mt-3 pt-3 border-t text-[11px] font-mono ${isLightMode ? "border-border text-muted-foreground" : "border-white/10 text-muted-foreground"}`}
+                    className={`mt-4 pt-4 border-t text-[11px] font-mono ${isLightMode ? "border-border text-muted-foreground" : "border-white/10 text-muted-foreground"}`}
                   >
                     {video.length} · narrated · subtitles included
                   </p>
@@ -846,9 +846,9 @@ export const GlossaryProvider: React.FC<{
                 glowA="bg-dune-orange/20"
                 glowB="bg-dune-teal/20"
               >
-                <div className="relative p-6 sm:p-7">
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className="flex items-center gap-3 min-w-0">
+                <div className="relative p-6 sm:p-6">
+                  <div className="flex items-start justify-between gap-4 mb-4">
+                    <div className="flex items-center gap-4 min-w-0">
                       <img
                         src="/sandyx.png"
                         alt="Sandyx"
@@ -856,7 +856,7 @@ export const GlossaryProvider: React.FC<{
                         draggable={false}
                       />
                       <span
-                        className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.15em] px-2 py-1 rounded-full ${
+                        className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.15em] px-2 py-1 rounded-full ${
                           isLightMode
                             ? "bg-dune-orange text-dune-orange"
                             : "bg-dune-orange/15 text-dune-orange"
@@ -868,7 +868,7 @@ export const GlossaryProvider: React.FC<{
                     <button
                       onClick={closeSources}
                       aria-label="Close sources"
-                      className={`shrink-0 flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full border transition-colors ${
+                      className={`shrink-0 flex items-center gap-2 text-[11px] font-bold px-4 py-2 rounded-full border transition-colors ${
                         isLightMode
                           ? "border-border text-muted-foreground hover:bg-muted"
                           : "border-white/15 text-foreground hover:bg-white/10"
@@ -883,23 +883,23 @@ export const GlossaryProvider: React.FC<{
                     per="word"
                     preset="fade-in-blur"
                     speedReveal={2.2}
-                    className={`text-sm leading-relaxed mb-5 ${isLightMode ? "text-foreground" : "text-foreground"}`}
+                    className={`text-sm leading-relaxed mb-6 ${isLightMode ? "text-foreground" : "text-foreground"}`}
                   >
                     {sources.intro}
                   </TextEffect>
 
-                  <ol className="space-y-3">
+                  <ol className="space-y-4">
                     {sources.sources.map((s, i) => (
                       <li
                         key={i}
-                        className={`rounded-[6px] border p-4 flex gap-3 ${
+                        className={`rounded-[6px] border p-4 flex gap-4 ${
                           isLightMode
                             ? "bg-white/70 border-border"
                             : "bg-dune-basalt/50 border-white/10"
                         }`}
                       >
                         <FileText
-                          className={`w-4 h-4 mt-0.5 shrink-0 ${
+                          className={`w-4 h-4 mt-1 shrink-0 ${
                             s.kind === "internal"
                               ? isLightMode
                                 ? "text-dune-teal"
@@ -929,7 +929,7 @@ export const GlossaryProvider: React.FC<{
                               <ExternalLink className="w-3 h-3 shrink-0 self-center opacity-60 group-hover/src:opacity-100" />
                             </a>
                             <span
-                              className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full ${
+                              className={`text-[8px] font-black uppercase tracking-wider px-2 py-1 rounded-full ${
                                 s.kind === "internal"
                                   ? isLightMode
                                     ? "bg-dune-teal text-dune-teal"
@@ -961,7 +961,7 @@ export const GlossaryProvider: React.FC<{
                   </ol>
 
                   <p
-                    className={`mt-4 pt-3 border-t text-[11px] leading-relaxed ${isLightMode ? "border-border text-muted-foreground" : "border-white/10 text-muted-foreground"}`}
+                    className={`mt-4 pt-4 border-t text-[11px] leading-relaxed ${isLightMode ? "border-border text-muted-foreground" : "border-white/10 text-muted-foreground"}`}
                   >
                     These are the model&apos;s grounding references, drawn from
                     the calibration provenance in the code. Each title links out
@@ -990,9 +990,9 @@ export const GlossaryProvider: React.FC<{
                 glowA="bg-dune-teal/20"
                 glowB="bg-dune-orange/20"
               >
-                <div className="relative p-6 sm:p-7">
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className="flex items-center gap-3 min-w-0">
+                <div className="relative p-6 sm:p-6">
+                  <div className="flex items-start justify-between gap-4 mb-4">
+                    <div className="flex items-center gap-4 min-w-0">
                       <img
                         src="/sandyx.png"
                         alt="Sandyx"
@@ -1000,7 +1000,7 @@ export const GlossaryProvider: React.FC<{
                         draggable={false}
                       />
                       <span
-                        className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.15em] px-2 py-1 rounded-full ${
+                        className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.15em] px-2 py-1 rounded-full ${
                           isLightMode
                             ? "bg-dune-teal text-dune-teal"
                             : "bg-dune-teal/15 text-dune-teal"
@@ -1012,7 +1012,7 @@ export const GlossaryProvider: React.FC<{
                     <button
                       onClick={closeCode}
                       aria-label="Close code"
-                      className={`shrink-0 flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full border transition-colors ${
+                      className={`shrink-0 flex items-center gap-2 text-[11px] font-bold px-4 py-2 rounded-full border transition-colors ${
                         isLightMode
                           ? "border-border text-muted-foreground hover:bg-muted"
                           : "border-white/15 text-foreground hover:bg-white/10"
@@ -1022,7 +1022,7 @@ export const GlossaryProvider: React.FC<{
                     </button>
                   </div>
 
-                  <h3 className="text-lg sm:text-xl font-black tracking-tight mb-1.5">
+                  <h3 className="text-lg sm:text-xl font-black tracking-tight mb-2">
                     {code.title}
                   </h3>
                   <TextEffect
@@ -1046,7 +1046,7 @@ export const GlossaryProvider: React.FC<{
                     isLightMode={isLightMode}
                   />
 
-                  <h4 className="mt-6 mb-3 text-[10px] font-black uppercase tracking-[0.15em] text-dune-orange">
+                  <h4 className="mt-6 mb-4 text-[10px] font-black uppercase tracking-[0.15em] text-dune-orange">
                     Preliminary output
                   </h4>
                   <div className="space-y-4">
@@ -1066,7 +1066,7 @@ export const GlossaryProvider: React.FC<{
                           className="w-full h-auto block"
                         />
                         <figcaption
-                          className={`px-4 py-2.5 text-xs leading-relaxed border-t ${
+                          className={`px-4 py-2 text-xs leading-relaxed border-t ${
                             isLightMode
                               ? "border-border text-muted-foreground"
                               : "border-white/10 text-muted-foreground"
@@ -1079,7 +1079,7 @@ export const GlossaryProvider: React.FC<{
                   </div>
 
                   <p
-                    className={`mt-4 pt-3 border-t text-[11px] leading-relaxed ${isLightMode ? "border-border text-muted-foreground" : "border-white/10 text-muted-foreground"}`}
+                    className={`mt-4 pt-4 border-t text-[11px] leading-relaxed ${isLightMode ? "border-border text-muted-foreground" : "border-white/10 text-muted-foreground"}`}
                   >
                     This script ports the module&apos;s physics from the toolkit
                     source, and running it reproduces the plots above. Every constant
@@ -1141,7 +1141,7 @@ export const Term: React.FC<TermProps> = ({ k, term, children, className }) => {
         }
       }}
       title={`${resolved.entry.title}, tap or drop Sandyx for an explanation`}
-      className={`sandyx-term cursor-help underline decoration-dotted decoration-2 underline-offset-2 font-semibold transition-colors duration-150 rounded px-0.5 -mx-0.5 py-1 -my-1 ${
+      className={`sandyx-term cursor-help underline decoration-dotted decoration-2 underline-offset-2 font-semibold transition-colors duration-150 rounded px-1 -mx-0.5 py-1 -my-1 ${
         isLightMode
           ? "decoration-dune-teal/70 text-foreground hover:text-dune-teal"
           : "decoration-dune-teal/70 text-foreground hover:text-dune-teal"

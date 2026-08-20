@@ -50,14 +50,14 @@ export default function ModelIndex({
       style={{ pointerEvents: show ? "auto" : "none" }}
     >
       {heading && (
-        <div className="mb-10 border-b border-border pb-5">
+        <div className="mb-12 border-b border-border pb-6">
           <h2 className="text-[length:var(--text-h1)] text-foreground">
             {heading}
           </h2>
         </div>
       )}
 
-      <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-x-12 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
         {INDEX_COLUMNS.map((col) => {
           // The two prong columns double as the way into their explainer.
           const prongId =
@@ -74,7 +74,7 @@ export default function ModelIndex({
                   <button
                     type="button"
                     onClick={() => onView(prongId)}
-                    className="caption rule-link mt-3 inline-block text-dune-orange"
+                    className="caption rule-link mt-4 inline-block text-dune-orange"
                   >
                     How it works
                   </button>
@@ -89,7 +89,7 @@ export default function ModelIndex({
 
       {/* Where the crust ends up: the sand that arrives at a site, and what
           stopping it is worth. Same fold, same rail, one section. */}
-      <div className="mt-16 border-t border-border pt-8">
+      <div className="mt-12 border-t border-border pt-6">
         <div className="rail-row">
           <p className="caption pt-1">Wind and cost</p>
           <Group
@@ -109,7 +109,7 @@ export default function ModelIndex({
 
       {/* The archived option keeps its models, set apart rather than hidden. */}
       {ARCHIVED_MODULES.length > 0 && (
-        <div className="mt-12 border-t border-border pt-8">
+        <div className="mt-12 border-t border-border pt-6">
           <div className="rail-row">
             <p className="caption pt-1">Archived</p>
             <Group
@@ -123,7 +123,7 @@ export default function ModelIndex({
                   <button
                     type="button"
                     onClick={() => onView(3)}
-                    className="caption rule-link mt-3 inline-block text-dune-orange"
+                    className="caption rule-link mt-4 inline-block text-dune-orange"
                   >
                     Why it was dropped
                   </button>
@@ -144,7 +144,7 @@ export default function ModelIndex({
           id: s.id,
           label: s.label,
           body: (
-            <div className="space-y-3">
+            <div className="space-y-4">
               <h3 className="text-[0.9375rem] leading-snug text-foreground">
                 {s.heading}
               </h3>
@@ -157,7 +157,7 @@ export default function ModelIndex({
           ),
         }))}
         footer={
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <p className="text-xs leading-relaxed text-muted-foreground">
               {BUSINESS_SUMMARY}
             </p>
@@ -166,7 +166,7 @@ export default function ModelIndex({
                 setShowBusiness(false);
                 router.push("/exposure");
               }}
-              className="caption shrink-0 border border-border px-4 py-2.5 text-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
+              className="caption shrink-0 border border-border px-4 py-2 text-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
             >
               Open the model
             </button>
@@ -221,7 +221,7 @@ function Group({
           >
             {title}
           </span>
-          <span aria-hidden className="caption shrink-0 pt-1.5 tabular-nums text-dune-orange">
+          <span aria-hidden className="caption shrink-0 pt-2 tabular-nums text-dune-orange">
             {open ? "−" : "+"}
             {count}
           </span>
@@ -267,7 +267,7 @@ function ModuleList({
         <li key={m.id}>
           <Link
             href={moduleHref(prongs, m.id)}
-            className="rail-row-tight border-t border-border py-2.5"
+            className="rail-row-tight border-t border-border py-2"
           >
             <span className="caption pt-1">
               {String(i + 1).padStart(2, "0")}
@@ -313,7 +313,7 @@ function LinkList({
             {l.href ? (
               <Link
                 href={l.href}
-                className="rail-row-tight border-t border-border py-2.5"
+                className="rail-row-tight border-t border-border py-2"
               >
                 {inner}
               </Link>
@@ -321,7 +321,7 @@ function LinkList({
               <button
                 type="button"
                 onClick={onAction}
-                className="rail-row-tight w-full border-t border-border py-2.5 text-left"
+                className="rail-row-tight w-full border-t border-border py-2 text-left"
               >
                 {inner}
               </button>

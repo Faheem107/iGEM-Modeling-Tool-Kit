@@ -11,7 +11,7 @@ export default function ModelsIndexView() {
   const [viewing, setViewing] = useState<ProngTarget | null>(null);
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-5 pb-32 pt-32 sm:px-8">
+    <div className="mx-auto w-full max-w-6xl px-6 pb-24 pt-24">
       <ModelIndex heading="Every model" onView={(t) => setViewing(t)} />
 
       <ProngModal

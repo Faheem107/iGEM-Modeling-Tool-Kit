@@ -90,7 +90,7 @@ export default function MolstarProteinExplorer({
     <div>
       {showHeader && (
         <div className="mb-6">
-          <h2 className="text-3xl font-extrabold tracking-tight flex items-center gap-3">
+          <h2 className="text-3xl font-extrabold tracking-tight flex items-center gap-4">
             <Dna className="w-7 h-7 text-dune-rose" />
             {PORTAL_NAMES.protein}
           </h2>
@@ -103,7 +103,7 @@ export default function MolstarProteinExplorer({
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Structure selector */}
-        <div className="lg:col-span-4 space-y-3">
+        <div className="lg:col-span-4 space-y-4">
           {available.map((s) => {
             const isSel = s.id === selected.id;
             return (

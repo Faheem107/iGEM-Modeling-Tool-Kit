@@ -128,7 +128,7 @@ export function AppChrome() {
         )
       }
       aria-label="Search the toolkit"
-      className="caption inline-flex items-center border border-border px-3 py-1.5 text-muted-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
+      className="caption inline-flex items-center border border-border px-4 py-2 text-muted-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
     >
       Search
     </button>
@@ -171,11 +171,11 @@ export function AppChrome() {
             : "bg-transparent"
         }`}
       >
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-5 py-4 sm:px-8">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4 sm:px-6">
           {isLanding ? (
             <button
               onClick={scrollTop}
-              className="flex items-center gap-2.5"
+              className="flex items-center gap-2"
               aria-label="Dunelock, back to top"
             >
               {logoMark}
@@ -186,7 +186,7 @@ export function AppChrome() {
           ) : (
             <Link
               href="/"
-              className="flex items-center gap-2.5"
+              className="flex items-center gap-2"
               aria-label="Dunelock, return home"
             >
               {logoMark}

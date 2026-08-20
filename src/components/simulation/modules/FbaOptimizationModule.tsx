@@ -621,7 +621,7 @@ export default function FbaOptimizationModule({
           />
           <div>
             <span
-              className={`text-[11px] font-semibold block mb-1.5 ${isLightMode ? "text-foreground" : "text-foreground"}`}
+              className={`text-[11px] font-semibold block mb-2 ${isLightMode ? "text-foreground" : "text-foreground"}`}
             >
               Objective cᵀv
             </span>
@@ -632,7 +632,7 @@ export default function FbaOptimizationModule({
                 <button
                   key={k}
                   onClick={() => setObjective(k)}
-                  className={`flex-1 py-1.5 rounded-[4px] text-[11px] font-bold transition ${objective === k ? (isLightMode ? "bg-dune-orange text-foreground" : "bg-dune-orange text-foreground") : isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`flex-1 py-2 rounded-[4px] text-[11px] font-bold transition ${objective === k ? (isLightMode ? "bg-dune-orange text-foreground" : "bg-dune-orange text-foreground") : isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                 >
                   {lbl}
                 </button>
@@ -687,7 +687,7 @@ export default function FbaOptimizationModule({
         </p>
       </Panel>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-4">
         <StatCard
           isLightMode={isLightMode}
           label="Max growth µ"
@@ -801,7 +801,7 @@ export default function FbaOptimizationModule({
           isLightMode={isLightMode}
         />
         <div
-          className={`mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[9px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+          className={`mt-1 flex flex-wrap gap-x-4 gap-y-1 text-[9px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           {legendDot(isLightMode ? DUNE.orange : TINT.orangeLight, "glycolysis")}
           {legendDot(isLightMode ? TINT.tealDeep : DUNE.teal, "TCA cycle")}
@@ -813,7 +813,7 @@ export default function FbaOptimizationModule({
           {legendDot(STATUS.bad, "overflow (acetate/lactate)")}
         </div>
         <p
-          className={`mt-1.5 text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+          className={`mt-2 text-[10px] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           <GlossaryText>
             Arrow thickness and flow speed track each reaction&apos;s pFBA
@@ -887,7 +887,7 @@ export default function FbaOptimizationModule({
           </LineChart>
         </ResponsiveContainer>
         <p
-          className={`mt-1 text-[10px] flex items-center gap-1.5 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+          className={`mt-1 text-[10px] flex items-center gap-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
           <Beaker className="w-3 h-3" /> Marker = current objective&apos;s
           operating point. The downward slope is the growth that must be traded
@@ -900,7 +900,7 @@ export default function FbaOptimizationModule({
         icon={Sigma}
         isLightMode={isLightMode}
       >
-        <div className="space-y-2.5">
+        <div className="space-y-2">
           {(
             [
               [
@@ -917,7 +917,7 @@ export default function FbaOptimizationModule({
             ] as [string, number, string][]
           ).map(([lbl, pct, hex]) => (
             <div key={lbl}>
-              <div className="flex justify-between text-[10px] font-mono mb-0.5">
+              <div className="flex justify-between text-[10px] font-mono mb-1">
                 <span
                   className={
                     isLightMode ? "text-muted-foreground font-bold" : "text-foreground"
@@ -952,7 +952,7 @@ export default function FbaOptimizationModule({
         </p>
       </Panel>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <Panel
           title={
             <>
@@ -1020,7 +1020,7 @@ export default function FbaOptimizationModule({
           icon={GitBranch}
           isLightMode={isLightMode}
         >
-          <div className="space-y-2.5 mt-1">
+          <div className="space-y-2 mt-1">
             {Object.entries(analysis.fva).map(([id, range]) => {
               const lo = Number.isFinite(range.min) ? range.min : 0;
               const hi = Number.isFinite(range.max) ? range.max : 0;
@@ -1032,7 +1032,7 @@ export default function FbaOptimizationModule({
               );
               return (
                 <div key={id}>
-                  <div className="flex justify-between text-[10px] font-mono mb-0.5">
+                  <div className="flex justify-between text-[10px] font-mono mb-1">
                     <span
                       className={
                         isLightMode
@@ -1075,7 +1075,7 @@ export default function FbaOptimizationModule({
       </div>
 
       <div
-        className={`px-4 py-3 rounded-[6px] border text-[10px] font-mono leading-relaxed ${
+        className={`px-4 py-4 rounded-[6px] border text-[10px] font-mono leading-relaxed ${
           isLightMode
             ? "bg-card border-dune-orange/10 text-muted-foreground"
             : "bg-dune-ink border-border text-muted-foreground"

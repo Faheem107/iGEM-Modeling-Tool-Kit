@@ -784,7 +784,7 @@ export default function AdvancedFbaPortal({
 
   return (
     <div
-      className={`p-5 transition-colors duration-300 font-sans ${
+      className={`p-6 transition-colors duration-300 font-sans ${
         isLightMode
           ? "bg-dune-sand text-foreground"
           : "bg-dune-ink text-foreground"
@@ -799,7 +799,7 @@ export default function AdvancedFbaPortal({
             : "bg-dune-ink border-border"
         }`}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <div
             className={`p-2 rounded-[4px] ${isLightMode ? "bg-dune-orange text-dune-orange" : "bg-dune-orange/50 text-dune-teal border border-dune-orange/50"}`}
           >
@@ -812,7 +812,7 @@ export default function AdvancedFbaPortal({
             <h2 className="text-sm font-black uppercase tracking-wider font-mono">
               {PORTAL_NAMES.pipeline}
             </h2>
-            <p className="text-[10px] text-muted-foreground mt-0.5">
+            <p className="text-[10px] text-muted-foreground mt-1">
               Simulating{" "}
               <GlossaryTerm
                 term="flux balance analysis"
@@ -826,9 +826,9 @@ export default function AdvancedFbaPortal({
         </div>
 
         {/* Diagnostic indicators */}
-        <div className="flex gap-2.5 flex-wrap font-mono text-[10px]">
+        <div className="flex gap-2 flex-wrap font-mono text-[10px]">
           <div
-            className={`px-2 py-1 rounded border flex items-center gap-1.5 ${
+            className={`px-2 py-1 rounded border flex items-center gap-2 ${
               fbaResults.status === "Optimal" ||
               fbaResults.status === "Feasible"
                 ? isLightMode
@@ -864,10 +864,10 @@ export default function AdvancedFbaPortal({
       {/* Grid Architecture */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* ----------------- LEFT COLUMN: CONTROLS & GAUGES (4 Cols) ----------------- */}
-        <div className="lg:col-span-4 space-y-5">
+        <div className="lg:col-span-4 space-y-6">
           {/* Objective Target & Inputs */}
           <div
-            className={`p-5 rounded-[6px] border space-y-4 ${
+            className={`p-6 rounded-[6px] border space-y-4 ${
               isLightMode
                 ? "bg-white border-dune-orange/10 "
                 : "bg-dune-ink border-border"
@@ -898,7 +898,7 @@ export default function AdvancedFbaPortal({
             </h3>
 
             {/* Objective Selector */}
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <label
                 className={`text-[10px] font-extrabold uppercase font-mono block ${isLightMode ? "text-dune-orange" : "text-dune-teal"}`}
               >
@@ -913,7 +913,7 @@ export default function AdvancedFbaPortal({
               >
                 <button
                   onClick={() => setCurrentObjective("R_PGAsyn")}
-                  className={`py-1.5 rounded cursor-pointer transition text-center ${
+                  className={`py-2 rounded cursor-pointer transition text-center ${
                     currentObjective === "R_PGAsyn"
                       ? isLightMode
                         ? "bg-dune-orange text-foreground font-bold"
@@ -927,7 +927,7 @@ export default function AdvancedFbaPortal({
                 </button>
                 <button
                   onClick={() => setCurrentObjective("R_Biomass")}
-                  className={`py-1.5 rounded cursor-pointer transition text-center ${
+                  className={`py-2 rounded cursor-pointer transition text-center ${
                     currentObjective === "R_Biomass"
                       ? isLightMode
                         ? "bg-dune-orange text-foreground font-bold"
@@ -991,7 +991,7 @@ export default function AdvancedFbaPortal({
 
               {/* Hypoxia Toggle Switches */}
               <div
-                className={`p-2.5 rounded-[4px] border flex items-center justify-between text-xs transition-colors ${
+                className={`p-2 rounded-[4px] border flex items-center justify-between text-xs transition-colors ${
                   isLightMode
                     ? "bg-card/40 border-dune-orange/10"
                     : "bg-dune-ink border-border"
@@ -1001,7 +1001,7 @@ export default function AdvancedFbaPortal({
                   <span className="font-bold font-mono block text-[10px] uppercase">
                     Hypoxic/Anaerobic Soil Mode
                   </span>
-                  <span className="text-[9px] text-muted-foreground block mt-0.5">
+                  <span className="text-[9px] text-muted-foreground block mt-1">
                     Shuts oxygen exchange inflow to zero
                   </span>
                 </div>
@@ -1017,7 +1017,7 @@ export default function AdvancedFbaPortal({
 
           {/* Genetic Knockout Sandbox (Simulating ∆zwf, ∆pta, etc) */}
           <div
-            className={`p-5 rounded-[6px] border space-y-3.5 ${
+            className={`p-6 rounded-[6px] border space-y-4 ${
               isLightMode
                 ? "bg-white border-dune-orange/10 "
                 : "bg-dune-ink border-border"
@@ -1025,7 +1025,7 @@ export default function AdvancedFbaPortal({
           >
             <div>
               <h3
-                className={`text-xs font-black uppercase tracking-wider font-mono flex items-center gap-1.5 pb-2 border-b ${
+                className={`text-xs font-black uppercase tracking-wider font-mono flex items-center gap-2 pb-2 border-b ${
                   isLightMode
                     ? "text-foreground border-dune-orange/10"
                     : "text-foreground border-border"
@@ -1075,14 +1075,14 @@ export default function AdvancedFbaPortal({
 
           {/* Energy Co-Factor Yield Dashboard (Gauges) */}
           <div
-            className={`p-4 rounded-[6px] border space-y-3 ${
+            className={`p-4 rounded-[6px] border space-y-4 ${
               isLightMode
                 ? "bg-white border-dune-orange/10 "
                 : "bg-dune-ink border-border"
             }`}
           >
             <h3
-              className={`text-xs font-black uppercase tracking-wider font-mono flex items-center gap-1.5 pb-1 border-b ${
+              className={`text-xs font-black uppercase tracking-wider font-mono flex items-center gap-2 pb-1 border-b ${
                 isLightMode
                   ? "text-foreground border-dune-orange/10"
                   : "text-foreground border-border"
@@ -1092,10 +1092,10 @@ export default function AdvancedFbaPortal({
               Biosynthetic Yields
             </h3>
 
-            <div className="grid grid-cols-2 gap-3 pt-1">
+            <div className="grid grid-cols-2 gap-4 pt-1">
               {/* ATP production box */}
               <div
-                className={`p-2.5 rounded border text-center ${
+                className={`p-2 rounded border text-center ${
                   isLightMode
                     ? "bg-background border-border"
                     : "bg-dune-basalt/40 border-border"
@@ -1114,7 +1114,7 @@ export default function AdvancedFbaPortal({
 
               {/* NADPH efficiency circle */}
               <div
-                className={`p-2.5 rounded border text-center ${
+                className={`p-2 rounded border text-center ${
                   isLightMode
                     ? "bg-background border-border"
                     : "bg-dune-basalt/40 border-border"
@@ -1154,15 +1154,15 @@ export default function AdvancedFbaPortal({
         <div className="lg:col-span-8 space-y-6">
           {/* SVG Metabolic Map */}
           <div
-            className={`p-5 rounded-[6px] border relative ${
+            className={`p-6 rounded-[6px] border relative ${
               isLightMode
                 ? "bg-card border-dune-orange/10 "
                 : "bg-dune-ink border-border"
             }`}
           >
-            <div className="flex justify-between items-center mb-3">
+            <div className="flex justify-between items-center mb-4">
               <h3
-                className={`text-xs font-black uppercase tracking-wider font-mono flex items-center gap-1.5 ${
+                className={`text-xs font-black uppercase tracking-wider font-mono flex items-center gap-2 ${
                   isLightMode ? "text-foreground" : "text-foreground"
                 }`}
               >
@@ -1170,7 +1170,7 @@ export default function AdvancedFbaPortal({
                 Active Analytical Metabolic Flux Map
               </h3>
               <span
-                className={`text-[9px] font-mono px-2 py-0.5 rounded border ${
+                className={`text-[9px] font-mono px-2 py-1 rounded border ${
                   isLightMode
                     ? "bg-dune-sand border-dune-orange"
                     : "bg-dune-ink border-border"
@@ -1182,7 +1182,7 @@ export default function AdvancedFbaPortal({
 
             {/* Non-overlapping flow channel legend bar */}
             <div
-              className={`flex flex-wrap items-center gap-4 text-[9.5px] font-mono p-2.5 rounded-[4px] border mb-4 transition-all ${
+              className={`flex flex-wrap items-center gap-4 text-[9.5px] font-mono p-2 rounded-[4px] border mb-4 transition-all ${
                 isLightMode
                   ? "bg-card border-dune-orange/10 text-foreground"
                   : "bg-dune-ink/90 border-border text-foreground"
@@ -1191,7 +1191,7 @@ export default function AdvancedFbaPortal({
               <span className="font-extrabold uppercase text-[9pt] text-dune-rose select-none">
                 Flow Channels Legend:
               </span>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <span
                   className="w-2.5 h-2.5 rounded-full"
                   style={{ backgroundColor: skyColor }}
@@ -1200,7 +1200,7 @@ export default function AdvancedFbaPortal({
                   Sky Blue = Glycolytic transport
                 </span>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <span
                   className="w-2.5 h-2.5 rounded-full"
                   style={{ backgroundColor: roseColor }}
@@ -1209,7 +1209,7 @@ export default function AdvancedFbaPortal({
                   Rose Pink = Pentose & Glutamate synthesis
                 </span>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <span
                   className="w-2.5 h-2.5 rounded-full"
                   style={{ backgroundColor: emeraldColor }}
@@ -1218,7 +1218,7 @@ export default function AdvancedFbaPortal({
                   Emerald = TCA & PGA final export
                 </span>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <span
                   className="w-2.5 h-2.5 rounded-full border border-border"
                   style={{ backgroundColor: dormantColor }}
@@ -1972,7 +1972,7 @@ export default function AdvancedFbaPortal({
 
           {/* Stoichiometric Heatmap Matrix Grid (Y: Metabolites, X: Reactions) */}
           <div
-            className={`p-5 rounded-[6px] border space-y-4 ${
+            className={`p-6 rounded-[6px] border space-y-4 ${
               isLightMode
                 ? "bg-white border-dune-orange/10 "
                 : "bg-dune-ink border-border"
@@ -1980,7 +1980,7 @@ export default function AdvancedFbaPortal({
           >
             <div className="flex justify-between items-center">
               <h3
-                className={`text-xs font-black uppercase tracking-wider font-mono flex items-center gap-1.5 ${
+                className={`text-xs font-black uppercase tracking-wider font-mono flex items-center gap-2 ${
                   isLightMode ? "text-foreground" : "text-foreground"
                 }`}
               >
@@ -2046,7 +2046,7 @@ export default function AdvancedFbaPortal({
                         return (
                           <div
                             key={`${met.id}-${rxn.id}`}
-                            className={`w-[32px] h-[18px] shrink-0 flex items-center justify-center rounded-sm mx-0.5 text-[9px] ${bgClass}`}
+                            className={`w-[32px] h-[18px] shrink-0 flex items-center justify-center rounded-sm mx-1 text-[9px] ${bgClass}`}
                             title={`Reaction: ${rxn.name}\nMetabolite: ${met.name}\nCoefficient: ${coeff}`}
                           >
                             {coeff !== 0 ? coeff : "."}
@@ -2068,7 +2068,7 @@ export default function AdvancedFbaPortal({
 
           {/* Live Metabolic Flux Leaderboard */}
           <div
-            className={`p-5 rounded-[6px] border space-y-4 transition-all duration-300 ${
+            className={`p-6 rounded-[6px] border space-y-4 transition-all duration-300 ${
               isLightMode
                 ? "bg-white border-dune-orange/10 "
                 : "bg-dune-ink border-border"
@@ -2076,7 +2076,7 @@ export default function AdvancedFbaPortal({
           >
             <div className="flex justify-between items-center">
               <h3
-                className={`text-xs font-black uppercase tracking-wider font-mono flex items-center gap-1.5 ${
+                className={`text-xs font-black uppercase tracking-wider font-mono flex items-center gap-2 ${
                   isLightMode ? "text-foreground" : "text-foreground"
                 }`}
               >
@@ -2084,7 +2084,7 @@ export default function AdvancedFbaPortal({
                 Metabolic Flux Leaderboard
               </h3>
               <span
-                className={`text-[9.5px] font-mono px-2 py-0.5 rounded border ${
+                className={`text-[9.5px] font-mono px-2 py-1 rounded border ${
                   isLightMode
                     ? "bg-dune-sand border-dune-orange"
                     : "bg-dune-ink border-border"
@@ -2094,18 +2094,18 @@ export default function AdvancedFbaPortal({
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
               {leaderboardFluxes.map((item) => (
                 <div
                   key={item.id}
-                  className={`p-3 rounded-[6px] border flex flex-col justify-between transition-all hover:scale-[1.02] ${
+                  className={`p-4 rounded-[6px] border flex flex-col justify-between transition-all hover:scale-[1.02] ${
                     isLightMode
                       ? "bg-card border-dune-orange/10 "
                       : "bg-dune-ink/80 border-border "
                   }`}
                 >
                   <div>
-                    <div className="flex justify-between items-start mb-1.5 gap-1">
+                    <div className="flex justify-between items-start mb-2 gap-1">
                       <span
                         className={`text-[9.5px] font-extrabold uppercase tracking-wide truncate max-w-[100px] ${isLightMode ? "text-foreground" : "text-foreground"}`}
                         title={item.name}
@@ -2115,7 +2115,7 @@ export default function AdvancedFbaPortal({
                       {item.toggleGene && (
                         <button
                           onClick={() => handleToggleKnockout(item.toggleGene)}
-                          className={`text-[8px] px-1.5 py-0.5 rounded font-black uppercase tracking-wider transition-all duration-200 shrink-0 ${
+                          className={`text-[8px] px-2 py-1 rounded font-black uppercase tracking-wider transition-all duration-200 shrink-0 ${
                             item.isKnockedOut
                               ? "bg-dune-rose/10 text-dune-rose border border-dune-rose/30"
                               : "bg-dune-teal/10 text-dune-teal border border-dune-teal/30 hover:bg-dune-rose/20 hover:text-dune-rose hover:border-dune-rose"
@@ -2126,11 +2126,11 @@ export default function AdvancedFbaPortal({
                         </button>
                       )}
                     </div>
-                    <div className="text-xl font-mono font-black tracking-tight leading-none text-foreground flex items-baseline gap-0.5 my-1.5">
+                    <div className="text-xl font-mono font-black tracking-tight leading-none text-foreground flex items-baseline gap-1 my-2">
                       <span className={item.textColor}>
                         {item.flux.toFixed(3)}
                       </span>
-                      <span className="text-[7.5px] font-semibold text-muted-foreground font-sans tracking-normal block ml-0.5 shrink-0 truncate">
+                      <span className="text-[7.5px] font-semibold text-muted-foreground font-sans tracking-normal block ml-1 shrink-0 truncate">
                         {item.unit}
                       </span>
                     </div>
@@ -2142,7 +2142,7 @@ export default function AdvancedFbaPortal({
                     </div>
                   </div>
                   {/* Mini visual indicator */}
-                  <div className="mt-2.5">
+                  <div className="mt-2">
                     <div className="w-full h-1 bg-muted/50 rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all duration-500 ${item.color}`}
@@ -2161,14 +2161,14 @@ export default function AdvancedFbaPortal({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Bottleneck tracking card */}
             <div
-              className={`p-4 rounded-[6px] border space-y-3.5 ${
+              className={`p-4 rounded-[6px] border space-y-4 ${
                 isLightMode
                   ? "bg-white border-dune-orange/10 "
                   : "bg-dune-ink border-border"
               }`}
             >
               <h4
-                className={`text-xs font-black uppercase tracking-wider font-mono flex items-center gap-1.5 ${
+                className={`text-xs font-black uppercase tracking-wider font-mono flex items-center gap-2 ${
                   isLightMode ? "text-dune-orange" : "text-foreground"
                 }`}
               >
@@ -2180,7 +2180,7 @@ export default function AdvancedFbaPortal({
                 function if we relax a nutrient barrier by 1 unit.
               </p>
 
-              <div className="space-y-3 pt-1">
+              <div className="space-y-4 pt-1">
                 {fbaResults.bottlenecks.map((b, i) => (
                   <div key={i} className="space-y-1">
                     <div className="flex justify-between text-[10px] items-center">
@@ -2207,14 +2207,14 @@ export default function AdvancedFbaPortal({
 
             {/* FBA Theory Explainer */}
             <div
-              className={`p-4 rounded-[6px] border space-y-2.5 ${
+              className={`p-4 rounded-[6px] border space-y-2 ${
                 isLightMode
                   ? "bg-white border-dune-orange/10 "
                   : "bg-dune-ink border-border"
               }`}
             >
               <h4
-                className={`text-xs font-black uppercase tracking-wider font-mono flex items-center gap-1.5 ${
+                className={`text-xs font-black uppercase tracking-wider font-mono flex items-center gap-2 ${
                   isLightMode ? "text-dune-orange" : "text-foreground"
                 }`}
               >
@@ -2269,12 +2269,12 @@ export default function AdvancedFbaPortal({
         <span className="text-[10px] uppercase font-mono tracking-widest text-dune-rose font-black block mb-1">
           SYSTEM METABOLIC SIMULATION OUTCOME
         </span>
-        <h4 className="text-sm font-bold uppercase tracking-wider font-sans mb-1.5">
+        <h4 className="text-sm font-bold uppercase tracking-wider font-sans mb-2">
           Optimized Precursor Synthesis (PGA Yield)
         </h4>
         <div className="flex flex-col items-center justify-center">
           <div
-            className={`text-4xl md:text-5xl font-black font-mono tracking-tight my-2 flex items-center justify-center gap-1.5 transition-all ${
+            className={`text-4xl md:text-5xl font-black font-mono tracking-tight my-2 flex items-center justify-center gap-2 transition-all ${
               pulseMetric
                 ? "text-dune-teal scale-105"
                 : isLightMode

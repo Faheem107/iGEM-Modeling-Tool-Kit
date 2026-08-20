@@ -95,7 +95,7 @@ export default function CompactModal({
             <div className="border-b border-border px-6 pb-4 pt-6">
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0">
-                  {eyebrow && <p className="caption mb-1.5 text-dune-orange">{eyebrow}</p>}
+                  {eyebrow && <p className="caption mb-2 text-dune-orange">{eyebrow}</p>}
                   <h2 className="text-[length:var(--text-h3)] leading-tight">{title}</h2>
                 </div>
                 <button
@@ -103,21 +103,21 @@ export default function CompactModal({
                   onClick={onClose}
                   aria-label="Close"
                   data-cursor-radius="4"
-                  className="-mr-1 -mt-1 shrink-0 rounded-[4px] border border-border p-1.5 text-muted-foreground transition-colors hover:border-dune-orange/50 hover:text-dune-orange"
+                  className="-mr-1 -mt-1 shrink-0 rounded-[4px] border border-border p-2 text-muted-foreground transition-colors hover:border-dune-orange/50 hover:text-dune-orange"
                 >
                   <X className="h-4 w-4" />
                 </button>
               </div>
 
               {tabs.length > 1 && (
-                <div className="-mb-4 mt-5 flex flex-wrap gap-5">
+                <div className="-mb-4 mt-6 flex flex-wrap gap-6">
                   {tabs.map((t, i) => (
                     <button
                       key={t.id}
                       {...hl}
                       onClick={() => setActive(i)}
                       data-active={i === active}
-                      className="caption border-b-2 border-transparent pb-2.5 transition-colors data-[active=true]:border-dune-orange data-[active=true]:text-dune-orange hover:text-foreground"
+                      className="caption border-b-2 border-transparent pb-2 transition-colors data-[active=true]:border-dune-orange data-[active=true]:text-dune-orange hover:text-foreground"
                     >
                       {t.label}
                     </button>
@@ -128,7 +128,7 @@ export default function CompactModal({
 
             <div
               data-lenis-prevent
-              className="max-h-[46vh] overflow-y-auto overscroll-contain px-6 py-5"
+              className="max-h-[46vh] overflow-y-auto overscroll-contain px-6 py-6"
             >
               <motion.div
                 key={tabs[active]?.id}

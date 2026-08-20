@@ -114,9 +114,9 @@ export default function StoryEscape({
   return (
     <div
       ref={hostRef}
-      className="pointer-events-none absolute inset-x-0 bottom-0 z-[45] px-5 pb-6 sm:px-8"
+      className="pointer-events-none absolute inset-x-0 bottom-0 z-[45] px-6 pb-6 sm:px-6"
     >
-      <div className="mx-auto flex max-w-6xl items-center gap-5">
+      <div className="mx-auto flex max-w-6xl items-center gap-6">
         {playing && (
           <span className="caption shrink-0 text-dune-orange">
             Playing. Scroll to take over.

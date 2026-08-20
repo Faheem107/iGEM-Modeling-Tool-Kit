@@ -127,7 +127,7 @@ export default function CuringTimelinePanel({
 
       <ModuleActions moduleId="curing" isLightMode={isLightMode} />
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard
           isLightMode={isLightMode}
           label="Time to mature"
@@ -178,7 +178,7 @@ export default function CuringTimelinePanel({
         />
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <Panel
           title={
             <>
@@ -363,7 +363,7 @@ export default function CuringTimelinePanel({
       </div>
 
       <div
-        className={`p-3 rounded-[6px] border text-[11px] flex items-start gap-2 ${
+        className={`p-4 rounded-[6px] border text-[11px] flex items-start gap-2 ${
           !meetsDesign
             ? isLightMode
               ? "bg-dune-rose text-dune-rose border-dune-rose"
@@ -378,9 +378,9 @@ export default function CuringTimelinePanel({
         }`}
       >
         {meetsDesign && timeline.survivesToScheduledReapply ? (
-          <Sprout className="w-4 h-4 shrink-0 mt-0.5" />
+          <Sprout className="w-4 h-4 shrink-0 mt-1" />
         ) : (
-          <TriangleAlert className="w-4 h-4 shrink-0 mt-0.5" />
+          <TriangleAlert className="w-4 h-4 shrink-0 mt-1" />
         )}
         <span>
           {!meetsDesign ? (
