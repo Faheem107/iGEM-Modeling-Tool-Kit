@@ -1,14 +1,18 @@
-import { moduleHref } from "./modelIndex";
 import { MECHANISM } from "@/content/copy";
 
 /**
  * The engineering design cycle, as it actually ran.
  * ==========================================================================
- * Each beat carries four things rather than one paragraph: what we were trying
- * to answer, what we ran, what the result changed in the project, and where the
- * evidence lives. The third of those is the one a narrative usually leaves out,
- * and it is the only thing that makes a loop a loop. A stage that changed
- * nothing was not a turn of the cycle.
+ * One paragraph per beat, told the way you would say it out loud: what we were
+ * trying to answer, what happened, and what it changed. It used to be three
+ * separately labelled blocks, Asked / Ran / Changed, five times over, which is
+ * a lab report rather than a story. The labels are gone because each paragraph
+ * already opens with the question and closes with the consequence.
+ *
+ * The third part is the one a narrative usually leaves out, and it is the only
+ * thing that makes a loop a loop. A stage that changed nothing was not a turn
+ * of the cycle, so every body below has to end somewhere different from where
+ * it started.
  */
 
 export type CycleStage = "Design" | "Build" | "Test" | "Learn";
@@ -20,13 +24,8 @@ export interface CycleBeat {
   /** Which pass through the loop this belongs to. */
   turn: 1 | 2;
   title: string;
-  /** What we were trying to answer. */
-  question: string;
-  /** What we ran. */
-  did: string;
-  /** What the answer changed. */
-  changed: string;
-  evidence?: { label: string; href: string };
+  /** The whole beat, in two to four sentences. */
+  body: string;
 }
 
 export const CYCLE_BEATS: CycleBeat[] = [
@@ -34,50 +33,37 @@ export const CYCLE_BEATS: CycleBeat[] = [
     stage: "Design",
     turn: 1,
     title: "Wind moves the sand",
-    question: "How strong does a crust have to be before the wind stops lifting grains?",
-    did: "Turned the question into numbers: the grain sizes in UAE dune sand, the wind speeds those grains see, and the threshold friction velocity that separates a still surface from a moving one.",
-    changed:
-      "Gave every later module the same target. " + MECHANISM + " That one number is what all three routes were later judged against.",
-    evidence: { label: "Aeolian Wind Tunnel", href: moduleHref("1,2", "aeolian") },
+    body:
+      "We started with how strong a crust has to be before the wind stops lifting grains. That meant putting numbers on the grain sizes in UAE dune sand, the wind speeds those grains see, and the threshold friction velocity that separates a still surface from a moving one. " +
+      MECHANISM +
+      " Every module built after this was aimed at that same target.",
   },
   {
     stage: "Build",
     turn: 1,
     title: "Three prongs",
-    question: "Which biological route can reach that threshold?",
-    did: "Built three separately: γ-PGA overexpression as a sticky matrix, carbonic anhydrase for calcium-carbonate cement, and sodium alginate as an applied binder. Each got its own model rather than a shared score.",
-    changed:
-      "Modelling them apart is what made them comparable. The same wind target, three independent paths to it, no route flattered by being averaged with another.",
-    evidence: { label: "Grain-Size Coverage", href: moduleHref("1,2", "grainsize") },
+    body:
+      "With a target to hit, the question became which biological route could reach it. We built three of them separately: γ-PGA overexpression as a sticky matrix, carbonic anhydrase for calcium-carbonate cement, and sodium alginate as an applied binder. Modelling them apart is what made them comparable, because no route was flattered by being averaged with another.",
   },
   {
     stage: "Test",
     turn: 1,
     title: "One route drops out, one layer goes on",
-    question: "Do all three hold up when you run them?",
-    did: "Ran the three. Alginate absorbs water the cells need and needs a calcium supply the site does not guarantee. Separately, we worked out what releasing a live engineered strain would require to be reversible.",
-    changed:
-      "Two decisions, taken for unrelated reasons. Alginate stopped being a prong. A MazE/MazF kill switch was added over both engineered prongs, so the deployment can be ended rather than only started.",
-    evidence: { label: "Biocontainment Kill Switch", href: moduleHref("1,2", "killswitch") },
+    body:
+      "Running all three did not leave all three standing. Alginate absorbs water the cells need and depends on a calcium supply the site does not guarantee, so it stopped being a prong. Separately we worked out what releasing a live engineered strain would take to be reversible, and added a MazE/MazF kill switch over both remaining prongs. The deployment can now be ended, not only started.",
   },
   {
     stage: "Learn",
     turn: 1,
     title: "From cell to crust",
-    question: "Does a change inside the cell reach the surface?",
-    did: "Chained the modules: flux balance analysis into polymer kinetics, kinetics into cross-linking, cross-linking into the cohesion the wind model reads. One grain can be traced from metabolism to cured crust.",
-    changed:
-      "The prongs turned out to be complementary rather than redundant. Calcite covers the 63 to 125 µm band well and γ-PGA closes the coarse and fine gaps, which is why they are deployed together.",
-    evidence: { label: "Composite Strength", href: moduleHref("1,2", "composite") },
+    body:
+      "Next we checked whether a change inside the cell reaches the surface. Flux balance analysis feeds polymer kinetics, kinetics feeds cross-linking, and cross-linking feeds the cohesion the wind model reads, so one grain can be traced from metabolism to cured crust. The two prongs turned out to be complementary rather than redundant. Calcite covers the 63 to 125 µm band well and γ-PGA closes the coarse and fine gaps, which is why they are deployed together.",
   },
   {
     stage: "Design",
     turn: 2,
     title: "From bench to field",
-    question: "Which experiment is worth doing next?",
-    did: "Ran the chain backwards. The wind target sets the cohesion needed, cohesion sets the polymer yield, and yield sets the glutamate and OD600 the bench has to hit.",
-    changed:
-      "The model now names the assay instead of waiting for one. Measurements come back from the lab, replace an assumed parameter, and the loop runs again.",
-    evidence: { label: "Wet-Lab Sandbox", href: moduleHref("1", "wetlab") },
+    body:
+      "The second turn asks which experiment is worth doing next. We ran the same chain backwards: the wind target sets the cohesion needed, cohesion sets the polymer yield, and yield sets the glutamate and OD600 the bench has to hit. The model names the assay instead of waiting for one, and when a measurement comes back it replaces an assumed parameter and the loop runs again.",
   },
 ];

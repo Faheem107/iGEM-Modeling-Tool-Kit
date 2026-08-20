@@ -6,7 +6,6 @@ import { gsap } from "gsap";
 import StoryEscape from "@/src/components/landing/StoryEscape";
 import { storyPinLength } from "@/src/lib/scrollRestore";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Link from "next/link";
 import SandParticles from "./dune-story/SandParticles";
 import { GlossaryText } from "@/src/components/GlossaryTerm";
 import { DUNE } from "@/src/lib/palette";
@@ -432,8 +431,10 @@ export default function DesignCycleStory({
                     isLightMode={isLightMode}
                   />
                   {/* Cross-fade the active beat. Sized for the longest one so
-                      the text never spills onto the ring. */}
-                  <div className="relative min-h-[310px] sm:min-h-[290px]">
+                      the text never spills onto the rule below it. Measured,
+                      not guessed: the tallest body renders at 266px in this
+                      column, so 280 leaves a line of slack. */}
+                  <div className="relative min-h-[280px]">
                     {BEATS.map((b, i) => (
                       <div
                         key={i}
@@ -444,11 +445,7 @@ export default function DesignCycleStory({
                         }}
                         aria-hidden={i !== active}
                       >
-                        <BeatBody
-                          beat={b}
-                          isLightMode={isLightMode}
-                          active={i === active}
-                        />
+                        <BeatBody beat={b} isLightMode={isLightMode} />
                       </div>
                     ))}
                   </div>
@@ -475,18 +472,22 @@ export default function DesignCycleStory({
 }
 
 /**
- * One beat: the question, what was run, what it changed, and where the evidence
- * is. Four labelled lines rather than a paragraph, because a judge reading the
- * page is checking for exactly those four things.
+ * One beat: a title that states the claim, then the whole turn of the loop in
+ * one paragraph. It used to be three blocks tagged Asked / Ran / Changed, which
+ * labelled every sentence with the category it belonged to and read as a lab
+ * report five times over. The paragraph carries the same three things in the
+ * same order, without announcing each one.
+ *
+ * There is no "Evidence: X" link either. The model is one click away through
+ * the index below, and citing it under every paragraph that mentions it was
+ * over-citing (DESIGN_SYSTEM.md C.3b).
  */
 function BeatBody({
   beat,
   isLightMode,
-  active = true,
 }: {
   beat: CycleBeat;
   isLightMode: boolean;
-  active?: boolean;
 }) {
   return (
     <>
@@ -503,32 +504,10 @@ function BeatBody({
       >
         {beat.title}
       </h2>
-      <dl className="space-y-4 text-[length:var(--text-micro)] leading-relaxed text-foreground">
-        <Line term="Asked">{beat.question}</Line>
-        <Line term="Ran">{beat.did}</Line>
-        <Line term="Changed">{beat.changed}</Line>
-      </dl>
-      {beat.evidence && (
-        <Link
-          href={beat.evidence.href}
-          tabIndex={active ? 0 : -1}
-          className="caption rule-link mt-4 inline-block text-dune-orange"
-        >
-          {beat.evidence.label}
-        </Link>
-      )}
+      <p className="text-[length:var(--text-body)] leading-relaxed text-foreground">
+        <GlossaryText>{beat.body}</GlossaryText>
+      </p>
     </>
-  );
-}
-
-function Line({ term, children }: { term: string; children: string }) {
-  return (
-    <div className="grid grid-cols-[4.5rem_1fr] gap-x-4">
-      <dt className="caption pt-1">{term}</dt>
-      <dd>
-        <GlossaryText>{children}</GlossaryText>
-      </dd>
-    </div>
   );
 }
 
