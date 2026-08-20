@@ -581,7 +581,7 @@ export default function EcologicalSpread({
                 >
                   Moisture Spread Probability
                 </span>
-                <Info className="w-3.5 h-3.5 text-muted-foreground hover:text-dune-teal transition" />
+                <Info className="h-3.5 w-3.5 text-muted-foreground hover:text-dune-teal transition" />
                 <div
                   className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border border-border"}`}
                 >
@@ -679,7 +679,7 @@ export default function EcologicalSpread({
                 >
                   Ca²⁺ Dose (sliding suppression)
                 </span>
-                <Info className="w-3.5 h-3.5 text-muted-foreground hover:text-dune-teal transition" />
+                <Info className="h-3.5 w-3.5 text-muted-foreground hover:text-dune-teal transition" />
                 <div
                   className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border border-border"}`}
                 >
@@ -716,7 +716,7 @@ export default function EcologicalSpread({
                 >
                   Water Consumption Efficiency
                 </span>
-                <Info className="w-3.5 h-3.5 text-muted-foreground hover:text-dune-teal transition" />
+                <Info className="h-3.5 w-3.5 text-muted-foreground hover:text-dune-teal transition" />
                 <div
                   className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border border-border"}`}
                 >
@@ -899,13 +899,13 @@ export default function EcologicalSpread({
               >
                 {escape.containedAtScale ? (
                   <>
-                    <ShieldCheck className="w-3.5 h-3.5" /> Contained at hectare
+                    <ShieldCheck className="h-3.5 w-3.5" /> Contained at hectare
                     scale, fewer than one escapee expected (vs NIH 10⁻⁸
                     single-cell target: {escape.meetsNIH ? "met" : "not met"}).
                   </>
                 ) : (
                   <>
-                    <ShieldAlert className="w-3.5 h-3.5" />{" "}
+                    <ShieldAlert className="h-3.5 w-3.5" />{" "}
                     {escape.expectedEscapees.toExponential(1)} escapees expected
                     per ha, enable the redundant switch or tighten the design.
                   </>
@@ -993,7 +993,7 @@ export default function EcologicalSpread({
                     : "bg-dune-ink border-border hover:text-foreground text-muted-foreground"
                 }`}
               >
-                <RefreshCw className="w-3.5 h-3.5" /> Re-seed
+                <RefreshCw className="h-3.5 w-3.5" /> Re-seed
               </button>
               <button
                 onClick={() =>
@@ -1087,7 +1087,7 @@ export default function EcologicalSpread({
                 </div>
                 <div className="flex items-center gap-2">
                   <span
-                    className="w-3 h-3 rounded inline-block"
+                    className="h-3.5 w-3.5 rounded inline-block"
                     style={{
                       background: `rgb(${crustRGB[0]},${crustRGB[1]},${crustRGB[2]})`,
                     }}

@@ -168,7 +168,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
                 aria-pressed={p.induce}
               >
                 <span
-                  className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${p.induce ? "left-[22px]" : "left-0.5"}`}
+                  className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition-all ${p.induce ? "left-[22px]" : "left-0.5"}`}
                 />
               </button>
             </label>
@@ -472,7 +472,7 @@ export function HgtTab({ isLightMode }: Themed) {
             {routeData.map((x, i) => (
               <div key={i} className="flex items-center gap-2 text-[length:var(--text-caption)]">
                 <span
-                  className="inline-block h-2.5 w-2.5 rounded-sm"
+                  className="inline-block h-3.5 w-3.5 rounded-sm"
                   style={{ background: [STATUS.bad, STATUS.warn, DUNE.ash][i] }}
                 />
                 <span className={isLightMode ? "text-muted-foreground" : "text-muted-foreground"}>
@@ -729,7 +729,7 @@ function Toggle({
           className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${on ? "bg-dune-teal" : isLightMode ? "bg-muted" : "bg-muted"}`}
         >
           <span
-            className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${on ? "left-[22px]" : "left-0.5"}`}
+            className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition-all ${on ? "left-[22px]" : "left-0.5"}`}
           />
         </button>
       </label>

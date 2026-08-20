@@ -183,7 +183,7 @@ function VideoPanel({
               }}
             />
             <div className="flex items-center gap-2 text-foreground">
-              <Loader2 className="w-4 h-4 animate-spin text-dune-rose" />
+              <Loader2 className="h-4 w-4 animate-spin text-dune-rose" />
               <span className="text-[length:var(--text-micro)] font-bold">
                 Please wait, loading the animation…
               </span>
@@ -264,9 +264,9 @@ function CodePanel({
             }`}
           >
             {copied ? (
-              <Check className="w-3.5 h-3.5" />
+              <Check className="h-3.5 w-3.5" />
             ) : (
-              <Copy className="w-3.5 h-3.5" />
+              <Copy className="h-3.5 w-3.5" />
             )}
             {copied ? "Copied" : "Copy"}
           </button>
@@ -275,7 +275,7 @@ function CodePanel({
             download={filename}
             className="inline-flex items-center gap-2 text-[length:var(--text-caption)] font-bold px-2 py-2 rounded-[3px] bg-dune-orange text-dune-basalt transition-opacity hover:opacity-90"
           >
-            <Download className="w-3.5 h-3.5" /> Download .py
+            <Download className="h-3.5 w-3.5" /> Download .py
           </a>
         </div>
       </div>
@@ -286,7 +286,7 @@ function CodePanel({
       >
         {code === null && !failed ? (
           <div className="flex items-center gap-2 p-4 text-[length:var(--text-micro)] text-muted-foreground">
-            <Loader2 className="w-4 h-4 animate-spin" /> Loading code…
+            <Loader2 className="h-4 w-4 animate-spin" /> Loading code…
           </div>
         ) : failed ? (
           <div className="p-4 text-[length:var(--text-micro)] text-muted-foreground">
@@ -561,7 +561,7 @@ export const GlossaryProvider: React.FC<{
                           : "border-white/15 text-foreground hover:bg-white/10"
                       }`}
                     >
-                      <X className="w-3.5 h-3.5" /> Close
+                      <X className="h-3.5 w-3.5" /> Close
                     </button>
                   </div>
 
@@ -624,7 +624,7 @@ export const GlossaryProvider: React.FC<{
                         className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-[3px] bg-dune-orange text-dune-basalt text-[length:var(--text-micro)] font-bold uppercase tracking-[0.1em] transition-opacity hover:opacity-90"
                       >
                         {entry.jumpLabel ?? "Go to the module"}
-                        <ArrowRight className="w-3.5 h-3.5" />
+                        <ArrowRight className="h-3.5 w-3.5" />
                       </button>
                     );
                   })()}
@@ -690,7 +690,7 @@ export const GlossaryProvider: React.FC<{
                           : "border-white/15 text-foreground hover:bg-white/10"
                       }`}
                     >
-                      <X className="w-3.5 h-3.5" /> Close
+                      <X className="h-3.5 w-3.5" /> Close
                     </button>
                   </div>
 
@@ -766,7 +766,7 @@ export const GlossaryProvider: React.FC<{
                             : "bg-dune-rose/15 text-dune-rose"
                         }`}
                       >
-                        <PlayCircle className="w-3.5 h-3.5" /> Video Explanation
+                        <PlayCircle className="h-3.5 w-3.5" /> Video Explanation
                       </span>
                     </div>
                     <button
@@ -778,7 +778,7 @@ export const GlossaryProvider: React.FC<{
                           : "border-white/15 text-foreground hover:bg-white/10"
                       }`}
                     >
-                      <X className="w-3.5 h-3.5" /> Close
+                      <X className="h-3.5 w-3.5" /> Close
                     </button>
                   </div>
 
@@ -862,7 +862,7 @@ export const GlossaryProvider: React.FC<{
                             : "bg-dune-orange/15 text-dune-orange"
                         }`}
                       >
-                        <BookText className="w-3.5 h-3.5" /> Sources
+                        <BookText className="h-3.5 w-3.5" /> Sources
                       </span>
                     </div>
                     <button
@@ -874,7 +874,7 @@ export const GlossaryProvider: React.FC<{
                           : "border-white/15 text-foreground hover:bg-white/10"
                       }`}
                     >
-                      <X className="w-3.5 h-3.5" /> Close
+                      <X className="h-3.5 w-3.5" /> Close
                     </button>
                   </div>
 
@@ -926,7 +926,7 @@ export const GlossaryProvider: React.FC<{
                               }`}
                             >
                               <span>{s.label}</span>
-                              <ExternalLink className="w-3 h-3 shrink-0 self-center opacity-60 group-hover/src:opacity-100" />
+                              <ExternalLink className="h-3.5 w-3.5 shrink-0 self-center opacity-60 group-hover/src:opacity-100" />
                             </a>
                             <span
                               className={`text-[length:var(--text-caption)] font-black uppercase tracking-wider px-2 py-1 rounded-full ${
@@ -1006,7 +1006,7 @@ export const GlossaryProvider: React.FC<{
                             : "bg-dune-teal/15 text-dune-teal"
                         }`}
                       >
-                        <Code2 className="w-3.5 h-3.5" /> Code &amp; Plots
+                        <Code2 className="h-3.5 w-3.5" /> Code &amp; Plots
                       </span>
                     </div>
                     <button
@@ -1018,7 +1018,7 @@ export const GlossaryProvider: React.FC<{
                           : "border-white/15 text-foreground hover:bg-white/10"
                       }`}
                     >
-                      <X className="w-3.5 h-3.5" /> Close
+                      <X className="h-3.5 w-3.5" /> Close
                     </button>
                   </div>
 

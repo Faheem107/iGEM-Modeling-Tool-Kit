@@ -226,7 +226,7 @@ export default function GrainSizeCoveragePanel({
               : "bg-dune-orange/20 text-dune-orange border-dune-orange/40"
         }`}
       >
-        <TriangleAlert className="w-4 h-4 shrink-0 mt-1" />
+        <TriangleAlert className="h-4 w-4 shrink-0 mt-1" />
         <span>
           {multi ? (
             <>

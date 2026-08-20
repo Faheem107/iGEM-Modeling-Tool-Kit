@@ -273,7 +273,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
       <p
         className={`text-[length:var(--text-caption)] flex items-start gap-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
       >
-        <Link2 className="w-3.5 h-3.5 text-dune-teal mt-1 shrink-0" />
+        <Link2 className="h-3.5 w-3.5 text-dune-teal mt-1 shrink-0" />
         <GlossaryText>
           Display efficiency is the product of three independent steps, export
           times dimerization times anchoring, so it can never exceed the worst

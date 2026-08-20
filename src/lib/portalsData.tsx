@@ -1,9 +1,10 @@
 import {
   Sparkles,
   Layers,
-  ShieldCheck,
+  Droplets,
   ShieldAlert,
   Bug,
+  Beaker,
   Workflow,
   Dna,
   Wind,
@@ -42,7 +43,7 @@ export const PRONGS: Prong[] = [
   {
     id: 1,
     title: PRONG_TITLES[1],
-    icon: <Sparkles className="w-8 h-8 text-dune-orange" />,
+    icon: <Sparkles className="h-4 w-4 text-dune-orange" />,
     short: PRONG_SHORTS[1],
     whatItIs:
       "Bacillus subtilis already makes poly-γ-glutamic acid, a long sticky chain it secretes to hold water. We raise how much of it the cells make, so the sand around them is held in a mesh of the stuff rather than lying loose.",
@@ -56,7 +57,7 @@ export const PRONGS: Prong[] = [
   {
     id: 2,
     title: PRONG_TITLES[2],
-    icon: <Layers className="w-8 h-8 text-dune-teal" />,
+    icon: <Layers className="h-4 w-4 text-dune-teal" />,
     short: PRONG_SHORTS[2],
     whatItIs:
       "Carbonic anhydrase is an enzyme that speeds up one reaction: CO₂ plus water becomes bicarbonate. We engineer B. subtilis to make it and to pin it to the outside of the cell, using sortase, an enzyme that stitches proteins onto the cell wall. More bicarbonate next to available calcium means calcium carbonate comes out of solution as solid cement. The usual way to do this uses urease and releases ammonia. This route does not.",
@@ -70,7 +71,7 @@ export const PRONGS: Prong[] = [
   {
     id: 3,
     title: PRONG_TITLES[3],
-    icon: <ShieldCheck className="w-8 h-8 text-dune-rose" />,
+    icon: <Droplets className="h-4 w-4 text-dune-rose" />,
     short: PRONG_SHORTS[3],
     whatItIs:
       "Sodium alginate comes from seaweed and is sold by the tonne for food. Add calcium and the chains clamp around it in a shape called an egg-box, and the liquid sets to a gel. It was scoped as a third prong, an applied binder rather than anything the bacteria make, and later dropped.",
@@ -99,7 +100,7 @@ export const PRONGS: Prong[] = [
 export const KILL_SWITCH = {
   id: "killswitch" as const,
   title: KILL_SWITCH_TITLE,
-  icon: <ShieldAlert className="w-8 h-8 text-dune-orange" />,
+  icon: <ShieldAlert className="h-4 w-4 text-dune-orange" />,
   short: KILL_SWITCH_SHORT,
   whatItIs:
     "A genetically-encoded control layer that limits the engineered B. subtilis population and, when needed, eliminates it. It runs over both engineered prongs rather than standing in for one. It binds nothing and adds no strength to the crust. What it adds is the ability to end the deployment.",
@@ -125,7 +126,7 @@ export const PORTAL_CARDS: PortalCard[] = [
   {
     id: "wetlab-sandbox",
     href: "/portal/wet-lab",
-    icon: <Bug className="w-6 h-6 text-dune-orange" />,
+    icon: <Beaker className="h-4 w-4 text-dune-orange" />,
     title: PORTAL_NAMES.wetlab,
     desc: "Set the bench conditions, then watch how far the polymer spreads and how much dune survives the wind.",
     grad: "from-dune-orange/20 via-dune-orange/5 to-transparent",
@@ -134,7 +135,7 @@ export const PORTAL_CARDS: PortalCard[] = [
   {
     id: "pipeline",
     href: "/portal/pipeline",
-    icon: <Workflow className="w-6 h-6 text-dune-teal" />,
+    icon: <Workflow className="h-4 w-4 text-dune-teal" />,
     title: PORTAL_NAMES.pipeline,
     desc: "One grain traced end to end: metabolism, cross-linking, then the wind it has to hold against.",
     grad: "from-dune-teal/20 via-dune-teal/5 to-transparent",
@@ -143,7 +144,7 @@ export const PORTAL_CARDS: PortalCard[] = [
   {
     id: "protein-suite",
     href: "/portal/protein",
-    icon: <Dna className="w-6 h-6 text-dune-rose" />,
+    icon: <Dna className="h-4 w-4 text-dune-rose" />,
     title: PORTAL_NAMES.protein,
     desc: "The real structures in 3D, and what heat does to them.",
     grad: "from-dune-rose/20 via-dune-rose/5 to-transparent",
@@ -152,7 +153,7 @@ export const PORTAL_CARDS: PortalCard[] = [
   {
     id: "xanthan-flow",
     href: "/portal/xanthan-flow",
-    icon: <Waves className="w-6 h-6 text-dune-teal" />,
+    icon: <Waves className="h-4 w-4 text-dune-teal" />,
     title: PORTAL_NAMES.xanthan,
     desc: "Xanthan gum thins as you push it harder. This is what that does to pressure in the delivery tubing.",
     grad: "from-dune-teal/20 via-dune-teal/5 to-transparent",
@@ -176,13 +177,13 @@ export interface NavItem {
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { slug: "fba", label: "Advanced FBA", icon: <Workflow className="w-4 h-4" /> },
-  { slug: "metabolic", label: "Metabolic Matrix", icon: <Dna className="w-4 h-4" /> },
-  { slug: "crosslink", label: "Cross-Link Biophysics", icon: <Layers className="w-4 h-4" /> },
-  { slug: "thermal", label: "Thermal Kinetics", icon: <Flame className="w-4 h-4" /> },
-  { slug: "aeolian", label: "Aeolian Tunnel", icon: <Wind className="w-4 h-4" /> },
-  { slug: "ecological", label: "Ecological Spread", icon: <Bug className="w-4 h-4" /> },
-  { slug: "economic", label: "Economic Scalability", icon: <Coins className="w-4 h-4" /> },
+  { slug: "fba", label: "Advanced FBA", icon: <Workflow className="h-4 w-4" /> },
+  { slug: "metabolic", label: "Metabolic Matrix", icon: <Dna className="h-4 w-4" /> },
+  { slug: "crosslink", label: "Cross-Link Biophysics", icon: <Layers className="h-4 w-4" /> },
+  { slug: "thermal", label: "Thermal Kinetics", icon: <Flame className="h-4 w-4" /> },
+  { slug: "aeolian", label: "Aeolian Tunnel", icon: <Wind className="h-4 w-4" /> },
+  { slug: "ecological", label: "Ecological Spread", icon: <Bug className="h-4 w-4" /> },
+  { slug: "economic", label: "Economic Scalability", icon: <Coins className="h-4 w-4" /> },
 ];
 
 /** Encode a set of prong ids for the /model?prongs= query (e.g. [1,2] → "1,2"). */

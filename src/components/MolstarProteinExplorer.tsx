@@ -91,7 +91,7 @@ export default function MolstarProteinExplorer({
       {showHeader && (
         <div className="mb-6">
           <h2 className="text-[length:var(--text-h1)] font-extrabold tracking-tight flex items-center gap-4">
-            <Dna className="w-7 h-7 text-dune-rose" />
+            <Dna className="h-4 w-4 text-dune-rose" />
             {PORTAL_NAMES.protein}
           </h2>
           <p className="opacity-70 text-[length:var(--text-micro)] mt-1 max-w-2xl">

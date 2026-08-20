@@ -150,7 +150,7 @@ export default function SandyxCompanion({ items, isLightMode }: Props) {
                 transition={{ type: "spring", stiffness: 300, damping: 28 }}
                 className="caption flex items-center gap-2 pl-4 transition-colors hover:text-foreground"
               >
-                <ArrowUp className="h-3 w-3" /> Back to top
+                <ArrowUp className="h-3.5 w-3.5" /> Back to top
               </motion.button>
             )}
           </AnimatePresence>

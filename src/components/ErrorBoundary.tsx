@@ -47,7 +47,7 @@ export default class ModuleErrorBoundary extends React.Component<Props, State> {
         }`}
       >
         <div className="flex items-center gap-2">
-          <AlertTriangle className="w-5 h-5" />
+          <AlertTriangle className="h-4 w-4" />
           <h3 className="text-[length:var(--text-micro)] font-black uppercase tracking-wide">
             {label ? `${label} hit a snag` : "This module hit a snag"}
           </h3>
@@ -64,7 +64,7 @@ export default class ModuleErrorBoundary extends React.Component<Props, State> {
               : "bg-dune-orange/40 hover:bg-dune-orange/60 text-dune-orange"
           }`}
         >
-          <RotateCcw className="w-3.5 h-3.5" /> Try again
+          <RotateCcw className="h-3.5 w-3.5" /> Try again
         </button>
       </div>
     );

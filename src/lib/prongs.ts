@@ -23,6 +23,8 @@ import {
   Globe,
   Combine,
   Droplets,
+  Timer,
+  Link2,
   Beaker,
   Ruler,
   CalendarClock,
@@ -71,7 +73,7 @@ export const PRONGS: Record<ProngId, ProngMeta> = {
     molecule: PRONG_MOLECULES[3],
     bacterial: false,
     strengthMetric: "shearModulus",
-    icon: ShieldCheck,
+    icon: Droplets,
     accent: "text-dune-rose",
   },
 };
@@ -154,7 +156,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
     title: "Intracellular γ-PGA Kinetics",
     blurb: "Gene to mRNA to enzyme to polymer, as four coupled rates integrated step by step. Knock out a degradation gene and the loss term drops toward zero.",
     scale: "molecular",
-    icon: Dna,
+    icon: Timer,
     appliesTo: (s) => has(s, 1),
   },
   {
@@ -179,7 +181,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
     title: "γ-PGA Ca²⁺ Cross-Linking",
     blurb: "Calcium ions bind the polymer chains and bridge them. Count the bridges and you have the network density, which is the stiffness.",
     scale: "material",
-    icon: Layers,
+    icon: Link2,
     appliesTo: (s) => has(s, 1),
   },
   {

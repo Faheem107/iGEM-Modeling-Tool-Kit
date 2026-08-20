@@ -285,7 +285,7 @@ export default function EconomicScalabilityEngine({
           <p
             className={`mt-1 text-[length:var(--text-caption)] flex items-center gap-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
-            <Award className="w-3 h-3 text-dune-orange" /> Indigo = your selected
+            <Award className="h-3.5 w-3.5 text-dune-orange" /> Indigo = your selected
             combination. Every biological combination sits far below the
             conventional chemical (blue) and concrete (red) baselines.
           </p>

@@ -813,7 +813,7 @@ export default function AeolianWindTunnel({
                   <div
                     className="absolute inset-0 flex select-none flex-col items-center justify-center gap-2 p-4 text-center text-[length:var(--text-micro)] text-muted-foreground"
                   >
-                    <Wind className="h-5 w-5 opacity-50" />
+                    <Wind className="h-4 w-4 opacity-50" />
                     <span className="caption">Ready</span>
                     <span className="text-[length:var(--text-caption)]">
                       Run the wind tunnel to plot the erosion curve.
@@ -947,7 +947,7 @@ export default function AeolianWindTunnel({
 
             <div className="flex justify-between items-center text-[length:var(--text-caption)] font-mono mt-4 text-muted-foreground">
               <span className="flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5 text-dune-orange" /> Elapsed
+                <Clock className="h-3.5 w-3.5 text-dune-orange" /> Elapsed
               </span>
               <span>15 s run</span>
             </div>
@@ -963,7 +963,7 @@ export default function AeolianWindTunnel({
           >
             <div className="flex justify-between items-center px-1 gap-2 flex-wrap">
               <span className="text-[length:var(--text-caption)] font-mono uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-                <Gauge className="w-3.5 h-3.5 text-dune-rose" /> Grain-Motion
+                <Gauge className="h-3.5 w-3.5 text-dune-rose" /> Grain-Motion
                 Viewport
               </span>
               <span className="text-[length:var(--text-caption)] text-dune-orange font-bold font-mono">
@@ -1155,7 +1155,7 @@ export default function AeolianWindTunnel({
               : "bg-dune-ink border-dune-teal/50 text-dune-teal"
           }`}
         >
-          <Coins className="w-4 h-4 shrink-0 mt-1 text-dune-orange" />
+          <Coins className="h-4 w-4 shrink-0 mt-1 text-dune-orange" />
           <span className="leading-relaxed">
             <strong className="font-bold">Deployment economics moved.</strong>{" "}
             Cost, yield per hectare, and life-cycle numbers now live in the{" "}

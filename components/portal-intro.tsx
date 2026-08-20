@@ -111,7 +111,7 @@ export function PortalIntro({ content }: { content: PortalIntroContent }) {
                   type="checkbox"
                   checked={dontShow}
                   onChange={(e) => setDontShow(e.target.checked)}
-                  className="w-4 h-4"
+                  className="h-4 w-4"
                 />
                 Don&apos;t show this again
               </label>
