@@ -603,7 +603,7 @@ export default function FbaOptimizationModule({
             step={0.5}
             unit="mmol/gDCW/h"
             onChange={setGlucoseUb}
-            hint="Upper bound on EX_glc, the measured substrate uptake flux that scales the whole linear program."
+            hint="The most glucose the cell is allowed to take up, the measured uptake flux that scales the whole linear program."
           />
           <Slider
             isLightMode={isLightMode}

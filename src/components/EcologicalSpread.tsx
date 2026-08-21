@@ -620,7 +620,7 @@ export default function EcologicalSpread({
                 </span>
               </div>
               <div className="flex justify-between">
-                <span>doubling t_d = ln2/µ</span>
+                <span>doubling time = ln2 / growth rate</span>
                 <span>{kin.doubling_h.toFixed(1)} h</span>
               </div>
               <div className="flex justify-between">

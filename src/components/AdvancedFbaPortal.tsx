@@ -65,7 +65,7 @@ const METABOLITES: Metabolite[] = [
   { id: "ac_ext", name: "Acetate (Ext)", compartment: "extracellular" },
   { id: "lac_ext", name: "Lactate (Ext)", compartment: "extracellular" },
   { id: "l_glu", name: "L-Glutamate", compartment: "cytosol" },
-  { id: "pga_ext", name: "PGA Biopolymer(Ext)", compartment: "extracellular" },
+  { id: "pga_ext", name: "PGA Biopolymer (Ext)", compartment: "extracellular" },
   { id: "nh3", name: "Ammonia", compartment: "cytosol" },
   { id: "o2", name: "Oxygen", compartment: "cytosol" },
   { id: "co2", name: "Carbon Dioxide", compartment: "cytosol" },

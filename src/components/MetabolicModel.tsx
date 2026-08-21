@@ -351,17 +351,9 @@ export default function MetabolicModel({
                   className={`underline decoration-dotted underline-offset-2 ${isLightMode ? "text-muted-foreground decoration-border" : "text-muted-foreground decoration-border"}`}
                 >
                   <GlossaryTerm term="k-cat">Catalytic Efficiency</GlossaryTerm>{" "}
-                  (
-                  <code
-                    className={
-                      isLightMode
-                        ? "text-dune-teal font-mono font-bold"
-                        : "text-dune-teal font-mono"
-                    }
-                  >
-                    k_cat
-                  </code>
-                  )
+                  <span className="whitespace-nowrap text-dune-teal">
+                    (k<sub>cat</sub>)
+                  </span>
                 </span>
                 <div
                   className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
@@ -846,7 +838,7 @@ export default function MetabolicModel({
           >
             To integrate our dry-lab model with NYUAD laboratory assays: enter
             your spectrophotometric experimental yield to reverse-calibrate and
-            store our synthetic enzyme efficiency rate (<code>k_cat</code>).
+            store our synthetic enzyme efficiency rate (turnover number).
           </p>
           <div className="flex flex-wrap items-center gap-4">
             <div
@@ -879,7 +871,7 @@ export default function MetabolicModel({
                   : "text-black bg-dune-teal hover:bg-dune-teal"
               }`}
             >
-              Calibrate k_cat
+              Calibrate the turnover number
             </button>
             {calibratedKcat !== null && (
               <span
@@ -893,7 +885,7 @@ export default function MetabolicModel({
                 <code
                   className={isLightMode ? "text-dune-teal" : "text-foreground"}
                 >
-                  k_cat = {calibratedKcat}
+                  turnover number {calibratedKcat}
                 </code>
               </span>
             )}
