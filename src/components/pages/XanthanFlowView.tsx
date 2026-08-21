@@ -308,7 +308,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
             isLightMode={isLightMode}
             label="K (consistency)"
             value={BASE_XANTHAN.K0.toFixed(2)}
-            unit={`Pa s^${BASE_XANTHAN.n0}`}
+            unit="Pa sⁿ"
             emphasize
             accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
           />
@@ -570,7 +570,8 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           <StatCard
             isLightMode={isLightMode}
             label="Halving K"
-            value={`≈${Math.pow(2, DILUTION.alpha).toFixed(1)}×`}
+            value={`Math.pow(2, DILUTION.alpha).toFixed(1)}`}
+            unit="×"
             accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
             sub="per halved concentration"
           />
