@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { DUNE, HAIRLINE, INK, TINT } from "@/src/lib/palette";
 import { EXTENT, H, W, project } from "./mapExtent";
+import { useMapView } from "./useMapView";
 import WindFieldCanvas from "./WindFieldCanvas";
 import type { WindField } from "@/src/lib/windField";
 
@@ -69,14 +70,51 @@ export interface TargetSite {
   nearestSourceLon?: number;
 }
 
-/** Nested contours: a flat opacity turns four overlapping bands into one wash. */
-const FOO_ALPHA: Record<number, number> = { 10: 0.1, 20: 0.2, 40: 0.42, 60: 0.66 };
+/**
+ * Nested contours: a flat opacity turns four overlapping bands into one wash,
+ * so the alpha steps.
+ *
+ * The alphas are close to what they were. The reason the source areas were hard
+ * to see was never the opacity, it was the hue: dune-orange over the sand-wash
+ * land fill is the same warm family as the ground it sits on, so band 10, which
+ * covers most of the map, disappeared into it. Changing the light-mode hue fixes
+ * that at the same alpha. Raising the alpha instead was tried first and buried
+ * the coastline under a wash, which trades one unreadable map for another.
+ *
+ * The outline on the weakest band does the rest of the work: it gives a source
+ * area a boundary you can follow even where the fill is faint.
+ */
+const FOO_ALPHA: Record<number, number> = { 10: 0.13, 20: 0.24, 40: 0.42, 60: 0.62 };
 
-const SOURCE_COLOR: Record<string, string> = {
-  natural: "var(--dune-orange)",
-  anthro: "var(--dune-rose)",
-  hydro: "var(--dune-teal)",
+/**
+ * Source colours, per theme.
+ *
+ * In light mode the land is a warm sand wash, so orange sits in the same family
+ * as the ground it is drawn on. Maroon is the token that separates cleanly from
+ * both the sand land and the teal sea. In dark mode the land is near-black and
+ * orange reads well, so it stays.
+ *
+ * These are the dune tokens either way. `MapLegend` imports this table rather
+ * than repeating the values, because the two drifted apart last time.
+ */
+export const SOURCE_COLOR_LIGHT: Record<string, string> = {
+  natural: DUNE.maroon,
+  anthro: "#8a5a2b",
+  hydro: "#2f6f66",
 };
+
+export const SOURCE_COLOR_DARK: Record<string, string> = {
+  natural: DUNE.orange,
+  anthro: DUNE.rose,
+  hydro: DUNE.teal,
+};
+
+export const sourceColor = (kind: string, isLightMode: boolean) =>
+  (isLightMode ? SOURCE_COLOR_LIGHT : SOURCE_COLOR_DARK)[kind] ??
+  (isLightMode ? DUNE.maroon : DUNE.orange);
+
+export const FOO_BANDS = [10, 20, 40, 60] as const;
+export { FOO_ALPHA };
 
 const MARKET_GLYPH: Record<string, string> = {
   solar: "M0,-5 L4.3,2.5 L-4.3,2.5 Z",
@@ -172,13 +210,26 @@ export default function ExposureMap({
   const selected = sites.find((s) => s.id === selectedId) ?? null;
   const grid = isLightMode ? "rgb(0 0 0 / 0.07)" : "rgb(255 255 255 / 0.07)";
 
+  // Pan and zoom. `k` is how many times the extent has been magnified, and
+  // every stroke width and font size below is divided by it so a hairline stays
+  // a hairline and a label stays the size it was drawn at.
+  const { view, scale: k, atFullExtent, hostRef, reset, zoomBy, moved, handlers } = useMapView();
+  const box = `${view.x} ${view.y} ${view.w} ${view.h}`;
+
+  // 353 markers at full extent would be a wall of text, so names appear only
+  // once the reader has zoomed in far enough to be asking about a place.
+  const showSiteLabels = k >= 3.5;
+
   return (
     <div
-      className="relative w-full overflow-hidden rounded-[6px] border border-border"
-      style={{ aspectRatio: `${W} / ${H}` }}
+      ref={hostRef}
+      data-lenis-prevent
+      className="relative w-full touch-none overflow-hidden rounded-[6px] border border-border"
+      style={{ aspectRatio: `${W} / ${H}`, cursor: atFullExtent ? "default" : "grab" }}
+      {...handlers}
     >
     <svg
-      viewBox={`0 0 ${W} ${H}`}
+      viewBox={box}
       className="absolute inset-0 h-full w-full"
       style={{ background: isLightMode ? TINT.tealWash : DUNE.ink }}
       role="img"
@@ -199,7 +250,7 @@ export default function ExposureMap({
       </g>
 
       {/* graticule, every 2 degrees */}
-      <g stroke={grid} strokeWidth={1}>
+      <g stroke={grid} strokeWidth={1 / k}>
         {Array.from({ length: 9 }, (_, i) => EXTENT.lonMin + i * 2).map((lon) => (
           <line key={`v${lon}`} x1={project(lon, 0).x} x2={project(lon, 0).x} y1={0} y2={H} />
         ))}
@@ -209,12 +260,18 @@ export default function ExposureMap({
       </g>
 
       {/* degree labels, so the extent is readable without a basemap */}
-      <g fontSize={10} fill={isLightMode ? "rgb(0 0 0 / 0.38)" : "rgb(255 255 255 / 0.34)"}>
-        {Array.from({ length: 5 }, (_, i) => EXTENT.lonMin + i * 4).map((lon) => (
-          <text key={`lx${lon}`} x={project(lon, 0).x + 3} y={H - 5}>{lon}°E</text>
+      {/* Degree labels are pinned to the edge of the visible window rather than
+          to the edge of the extent, so they stay on screen when zoomed. */}
+      <g fontSize={10 / k} fill={isLightMode ? "rgb(0 0 0 / 0.38)" : "rgb(255 255 255 / 0.34)"}>
+        {Array.from({ length: 17 }, (_, i) => EXTENT.lonMin + i).map((lon) => (
+          <text key={`lx${lon}`} x={project(lon, 0).x + 3 / k} y={view.y + view.h - 5 / k}>
+            {lon}°E
+          </text>
         ))}
-        {Array.from({ length: 5 }, (_, i) => EXTENT.latMin + i * 4).map((lat) => (
-          <text key={`ly${lat}`} x={4} y={project(0, lat).y - 4}>{lat}°N</text>
+        {Array.from({ length: 18 }, (_, i) => EXTENT.latMin + i).map((lat) => (
+          <text key={`ly${lat}`} x={view.x + 4 / k} y={project(0, lat).y - 4 / k}>
+            {lat}°N
+          </text>
         ))}
       </g>
 
@@ -223,7 +280,7 @@ export default function ExposureMap({
           opacity smears the whole map into one wash. */}
       {showSources && (
         <g>
-          {[10, 20, 40, 60].map((band) => (
+          {FOO_BANDS.map((band) => (
             <g key={band}>
               {paths
                 .filter((p) => p.foo_threshold === band)
@@ -231,9 +288,15 @@ export default function ExposureMap({
                   <path
                     key={p.key}
                     d={p.d}
-                    fill={SOURCE_COLOR[p.source_type]}
+                    fill={sourceColor(p.source_type, isLightMode)}
                     fillOpacity={FOO_ALPHA[band]}
-                    stroke="none"
+                    /* A hairline on the weakest band so the boundary of a
+                       source area is visible even where the fill is faint.
+                       The inner bands are read by their fill, so outlining
+                       them as well would just crosshatch the map. */
+                    stroke={band === 10 ? sourceColor(p.source_type, isLightMode) : "none"}
+                    strokeWidth={band === 10 ? 1 / k : 0}
+                    strokeOpacity={band === 10 ? 0.75 : 0}
                   />
                 ))}
             </g>
@@ -247,7 +310,7 @@ export default function ExposureMap({
       <g
         fill="none"
         stroke={isLightMode ? "rgb(0 0 0 / 0.30)" : "rgb(255 255 255 / 0.30)"}
-        strokeWidth={1}
+        strokeWidth={1 / k}
         strokeLinejoin="round"
       >
         {land.map((c) => (
@@ -258,8 +321,8 @@ export default function ExposureMap({
       {/* Country names. Set in the caption register and kept quiet: they place
           the reader, they are not data. */}
       <g
-        fontSize={11}
-        letterSpacing={1.6}
+        fontSize={11 / k}
+        letterSpacing={1.6 / k}
         fill={isLightMode ? "rgb(0 0 0 / 0.42)" : "rgb(255 255 255 / 0.38)"}
         textAnchor="middle"
         aria-hidden
@@ -278,10 +341,10 @@ export default function ExposureMap({
       {/* The moving wind field sits between the basemap and the marks. Streaks
           over a coastline read as wind; streaks over a site marker just hide
           it, which is why this is two SVG layers and not one. */}
-      <WindFieldCanvas field={windField} isLightMode={isLightMode} />
+      <WindFieldCanvas field={windField} view={view} isLightMode={isLightMode} />
 
     <svg
-      viewBox={`0 0 ${W} ${H}`}
+      viewBox={box}
       className="pointer-events-none absolute inset-0 h-full w-full"
       aria-hidden
     >
@@ -292,7 +355,7 @@ export default function ExposureMap({
         (() => {
           const p = project(selected.lon, selected.lat);
           const up = ((driftDeg + 180) % 360) * (Math.PI / 180);
-          const len = 130;
+          const len = 130 / k;
           const x1 = p.x + Math.sin(up) * len;
           const y1 = p.y - Math.cos(up) * len;
           return (
@@ -307,8 +370,8 @@ export default function ExposureMap({
               </defs>
               <line
                 x1={x1} y1={y1} x2={p.x} y2={p.y}
-                stroke="var(--dune-orange)" strokeWidth={2}
-                strokeDasharray="6 4" markerEnd="url(#exposure-drift-arrow)"
+                stroke="var(--dune-orange)" strokeWidth={2 / k}
+                strokeDasharray={`${6 / k} ${4 / k}`} markerEnd="url(#exposure-drift-arrow)"
                 opacity={0.9}
               />
             </g>
@@ -316,16 +379,30 @@ export default function ExposureMap({
         })()
       )}
 
-      {/* target sites */}
+      {/* Target sites. There are a few hundred of them now, so markers off the
+          visible window are skipped rather than drawn and clipped, and the
+          glyph carries its own inverse scale so it stays the size it was drawn
+          at instead of growing into a blob as the reader zooms in. */}
       <g>
         {sites.map((s) => {
           const p = project(s.lon, s.lat);
+          const pad = 20 / k;
+          if (
+            p.x < view.x - pad || p.x > view.x + view.w + pad ||
+            p.y < view.y - pad || p.y > view.y + view.h + pad
+          ) {
+            return null;
+          }
           const on = s.id === selectedId;
+          const flip = p.x > view.x + view.w * 0.7;
           return (
             <g
               key={s.id}
-              transform={`translate(${p.x},${p.y})`}
-              onClick={() => onSelect(s.id)}
+              transform={`translate(${p.x},${p.y}) scale(${1 / k})`}
+              /* A pan that happens to start on a marker must not also select
+                 it, so a release counts as a click only if the pointer barely
+                 moved. */
+              onClick={(e) => { if (!moved(e)) onSelect(s.id); }}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
@@ -348,6 +425,18 @@ export default function ExposureMap({
                 stroke={isLightMode ? TINT.sandWash : DUNE.ink}
                 strokeWidth={1.2}
               />
+              {showSiteLabels && !on && (
+                <text
+                  x={flip ? -9 : 9}
+                  y={3.5}
+                  textAnchor={flip ? "end" : "start"}
+                  fontSize={10}
+                  fill={isLightMode ? "rgb(0 0 0 / 0.62)" : "rgb(255 255 255 / 0.6)"}
+                  style={{ pointerEvents: "none" }}
+                >
+                  {s.name}
+                </text>
+              )}
               <title>{s.name}</title>
             </g>
           );
@@ -363,9 +452,10 @@ export default function ExposureMap({
           return (
             <g>
               <line x1={a.x} y1={a.y} x2={b.x} y2={b.y}
-                    stroke="var(--dune-teal)" strokeWidth={1.4} strokeDasharray="3 3" opacity={0.75} />
-              <circle cx={a.x} cy={a.y} r={4} fill="none"
-                      stroke="var(--dune-teal)" strokeWidth={1.6} />
+                    stroke="var(--dune-teal)" strokeWidth={1.4 / k}
+                    strokeDasharray={`${3 / k} ${3 / k}`} opacity={0.75} />
+              <circle cx={a.x} cy={a.y} r={4 / k} fill="none"
+                      stroke="var(--dune-teal)" strokeWidth={1.6 / k} />
             </g>
           );
         })()
@@ -374,13 +464,13 @@ export default function ExposureMap({
       {selected && (
         (() => {
           const p = project(selected.lon, selected.lat);
-          const flip = p.x > W * 0.62;
+          const flip = p.x > view.x + view.w * 0.62;
           return (
             <text
               x={p.x + (flip ? -12 : 12)}
               y={p.y + 4}
               textAnchor={flip ? "end" : "start"}
-              fontSize={13}
+              fontSize={13 / k}
               fontWeight={600}
               fill={isLightMode ? INK.light : INK.dark}
             >
@@ -390,6 +480,49 @@ export default function ExposureMap({
         })()
       )}
     </svg>
+
+      {/* Zoom controls. Wheel and drag do the same job, but a visible control
+          says the map is zoomable at all, and a reset is the only way back from
+          a deep zoom without a lot of scrolling.
+
+          These sit on the map, so they carry `plate-solid` for their own
+          ground. The glyphs are set larger than the caption register on
+          purpose: a plus sign at caption size in muted-foreground is not
+          legible over a coastline, which is what the first version did. */}
+      <div className="absolute right-2 top-2 flex flex-col items-end gap-1">
+        <button
+          type="button"
+          onClick={() => zoomBy(1.6)}
+          aria-label="Zoom in"
+          className="plate-solid plate-interactive flex h-7 w-7 items-center justify-center rounded-[4px] border border-border text-[15px] leading-none text-foreground"
+        >
+          +
+        </button>
+        <button
+          type="button"
+          onClick={() => zoomBy(1 / 1.6)}
+          aria-label="Zoom out"
+          disabled={atFullExtent}
+          className="plate-solid plate-interactive flex h-7 w-7 items-center justify-center rounded-[4px] border border-border text-[15px] leading-none text-foreground disabled:opacity-35"
+        >
+          −
+        </button>
+        {!atFullExtent && (
+          <button
+            type="button"
+            onClick={reset}
+            aria-label="Reset the map view"
+            className="plate-solid plate-interactive caption rounded-[4px] border border-border px-1.5 py-1"
+          >
+            reset
+          </button>
+        )}
+        {!atFullExtent && (
+          <p className="plate-solid caption rounded-[4px] px-1.5 py-0.5">
+            {k.toFixed(1)}x
+          </p>
+        )}
+      </div>
     </div>
   );
 }

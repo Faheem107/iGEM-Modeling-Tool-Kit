@@ -1,6 +1,7 @@
 "use client";
 
 import { DUNE } from "@/src/lib/palette";
+import { FOO_ALPHA, FOO_BANDS, sourceColor } from "./ExposureMap";
 
 /**
  * A key for every mark on the map.
@@ -20,10 +21,15 @@ const MARKETS: [string, string, string][] = [
   ["agriculture", "M0,-5 A5,5 0 1,1 -0.01,-5 Z", "Farmland"],
 ];
 
-const SOURCE_KINDS: [string, string, string][] = [
-  ["natural", DUNE.orange, "Natural, mostly sand seas"],
-  ["anthro", DUNE.rose, "Anthropogenic"],
-  ["hydro", DUNE.teal, "Hydrologic, ephemeral water"],
+/**
+ * Colours and the opacity ramp come from ExposureMap rather than being repeated
+ * here. They were duplicated as hex literals before and drifted apart, so the
+ * legend described a map that was no longer being drawn.
+ */
+const SOURCE_KINDS: [string, string][] = [
+  ["natural", "Natural, mostly sand seas"],
+  ["anthro", "Anthropogenic"],
+  ["hydro", "Hydrologic, ephemeral water"],
 ];
 
 export default function MapLegend({
@@ -67,11 +73,11 @@ export default function MapLegend({
           Dust source areas
         </label>
         <ul className="space-y-2">
-          {SOURCE_KINDS.map(([id, colour, label]) => (
+          {SOURCE_KINDS.map(([id, label]) => (
             <li key={id} className="flex items-center gap-3">
               <span
                 className="h-3 w-6 shrink-0 rounded-[2px]"
-                style={{ background: colour, opacity: 0.55 }}
+                style={{ background: sourceColor(id, isLightMode), opacity: 0.62 }}
                 aria-hidden
               />
               <span className="text-[length:var(--text-caption)] text-muted-foreground">
@@ -82,11 +88,14 @@ export default function MapLegend({
         </ul>
         <div className="mt-3 flex items-center gap-2">
           <span className="flex shrink-0" aria-hidden>
-            {[0.1, 0.2, 0.42, 0.66].map((a) => (
+            {FOO_BANDS.map((band) => (
               <span
-                key={a}
+                key={band}
                 className="h-3 w-3"
-                style={{ background: DUNE.orange, opacity: a }}
+                style={{
+                  background: sourceColor("natural", isLightMode),
+                  opacity: FOO_ALPHA[band],
+                }}
               />
             ))}
           </span>
