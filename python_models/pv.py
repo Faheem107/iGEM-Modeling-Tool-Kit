@@ -1,60 +1,31 @@
 """
-Photovoltaic yield, and the capacity factor the money chain was missing.
+Photovoltaic yield, and the capacity factor the money chain needs.
 
-Why this exists
----------------
-The exposure module could estimate how much sand arrives at a solar plant and
-how much light that sand costs the glass, and then it stopped. Turning a
-transmittance loss into an energy loss needs a capacity factor, the fraction of
-its nameplate rating a plant actually averages over a year, and the toolkit did
-not have one. It was carried in scripts/transport_model.py's NEEDS_SOURCE dict,
-which raises rather than inventing a number, so the UI printed "no source yet"
-where the money should have been.
+Turning a light loss into an energy loss needs a capacity factor, and the
+toolkit did not have one: it sat in transport_model.py's NEEDS_SOURCE dict.
+A single published national figure cannot vary by site or by season, while
+everything else in this module does, so it is computed here instead and checked
+against published anchors in scripts/fetch_pv_climatology.py.
 
-The obvious fix is to quote one published figure. That was rejected for two
-reasons. A single national number cannot distinguish Abu Dhabi from Ras Al
-Khaimah, and more importantly it cannot vary through the year, while everything
-else in this module does: the sand arrives seasonally, so the loss is seasonal,
-so the capacity factor it multiplies has to be seasonal too or the two are
-being combined at different time resolutions.
+Carries NO soiling loss. Soiling is what the rest of the exposure module
+computes; applying it here too would count it twice.
 
-So the capacity factor is computed from irradiance the same way the wind
-statistics are computed from ERA5, through the same keyless Open-Meteo archive,
-and then checked against two independent published anchors. The checks live in
-scripts/fetch_pv_climatology.py and they refuse to write a file that fails.
-
-What this is not
-----------------
-This is a yield model, not a plant model. It does not know about a specific
-plant's module type, row spacing, inverter loading ratio, curtailment, or
-outages. It carries no soiling loss at all, deliberately: soiling is what the
-rest of the exposure module computes, and applying it here as well would count
-the same effect twice. So the capacity factor here is the clean-panel one, and
-the sand is subtracted from it downstream.
+A yield model, not a plant model: no module type, row spacing, inverter loading,
+curtailment or outages.
 
 Mirror of src/lib/physics/pv.ts. Keep the two in step.
 
-Sources
--------
-Duffie and Beckman, Solar Engineering of Thermal Processes, for the solar
-position, the extraterrestrial irradiance and the HDKR transposition.
-  Reindl, Beckman and Duffie (1990), Solar Energy 45, 9, is the HDKR form used.
-King, Boyson and Kratochvil (2004), SAND2004-3535, Sandia PV Array Performance
-Model, for the module temperature relation and its a, b coefficients.
+Sources: Duffie & Beckman for solar position and extraterrestrial irradiance;
+Reindl, Beckman & Duffie (1990) for HDKR transposition; King, Boyson &
+Kratochvil (2004) SAND2004-3535 for module temperature.
 """
 
 import math
 from dataclasses import dataclass
 from typing import Optional, Sequence
 
-# -----------------------------------------------------------------------------
-# Module and system constants.
-#
-# These are the generic crystalline-silicon values, not a measurement of any
-# particular UAE plant. They are stated here rather than buried so that a reader
-# can see exactly what the capacity factor rests on, and the validation in
-# scripts/fetch_pv_climatology.py is what says whether they are good enough.
-# -----------------------------------------------------------------------------
+# Generic crystalline-silicon values, not a measurement of any UAE plant.
+# The validation in scripts/fetch_pv_climatology.py says whether they suffice.
 
 #: Power temperature coefficient, per degree C, crystalline silicon.
 GAMMA_PMP_PER_C = -0.0035
@@ -66,13 +37,10 @@ SANDIA_B = -0.0750
 #: Cell above back-surface temperature at 1000 W/m2, same table.
 SANDIA_DELTA_T = 3.0
 
-#: Ground reflectance. Desert sand is brighter than the 0.2 usually assumed for
-#: grass, which matters for a tilted plane and matters more for bifacial modules
-#: that this model does not otherwise represent.
+#: Ground reflectance. Desert sand is brighter than the 0.2 assumed for grass.
 ALBEDO = 0.3
 
-#: Losses between DC nameplate and the meter, as fractions kept. No soiling
-#: term: see the module docstring.
+#: Losses between DC nameplate and meter, as fractions kept. No soiling term.
 LOSS_INVERTER = 0.975
 LOSS_DC_WIRING = 0.98
 LOSS_MISMATCH = 0.98
@@ -98,12 +66,8 @@ def _system_loss() -> float:
 
 
 def solar_position(day_of_year: int, hour_utc: float, lat_deg: float, lon_deg: float):
-    """Solar zenith and azimuth, in degrees.
-
-    Cooper's declination and the standard equation of time. Accurate to a few
-    tenths of a degree, which is far finer than a 0.25 degree reanalysis grid
-    warrants.
-    """
+    """Solar zenith and azimuth in degrees. Cooper's declination plus the
+    standard equation of time, good to a few tenths of a degree."""
     b = math.radians(360.0 / 365.0 * (day_of_year - 81))
     eot_min = 9.87 * math.sin(2 * b) - 7.53 * math.cos(b) - 1.5 * math.sin(b)
     decl = math.radians(23.45) * math.sin(math.radians(360.0 / 365.0 * (284 + day_of_year)))
@@ -138,20 +102,13 @@ def _cos_incidence(zenith, azimuth, tilt, surface_azimuth):
 
 
 def tracker_tilt(zenith, azimuth, max_angle_deg=60.0):
-    """Rotation of a horizontal single-axis tracker with a north-south axis.
+    """Rotation of a horizontal north-south-axis tracker, as (tilt, azimuth).
 
-    The axis runs north to south, so the panel can only lean east or west. It
-    follows the east-west component of the sun vector and lies flat at solar
-    noon, when the sun is due south and there is nothing for it to lean toward.
+    The panel leans only east or west and lies flat at solar noon. The east
+    component is sin(zenith)*sin(azimuth), positive in the morning. Inverting
+    that sign points the array away from the sun and costs half the yield.
 
-    With azimuth measured clockwise from north, that component is
-    sin(zenith)*sin(azimuth): positive in the morning, when the sun is east, so
-    the panel faces east. Getting that sign backwards points the array away from
-    the sun all day and costs about half the annual yield, which is how this was
-    caught.
-
-    Returns (tilt, surface_azimuth) in degrees. Backtracking is not modelled, so
-    at low sun this overstates what a real row-spaced array collects.
+    No backtracking, so this overstates a row-spaced array at low sun.
     """
     z, a = math.radians(zenith), math.radians(azimuth)
     east = math.sin(z) * math.sin(a)
@@ -165,11 +122,8 @@ def poa_irradiance(ghi, dni, dhi, zenith, azimuth, tilt, surface_azimuth,
                    day_of_year, albedo=ALBEDO):
     """Plane-of-array irradiance by HDKR transposition.
 
-    HDKR (Reindl, Beckman and Duffie 1990) rather than the isotropic sky,
-    because it carries the circumsolar brightening and the horizon band. Over a
-    desert with a high direct fraction, the isotropic model understates a tilted
-    plane by several percent, which would propagate straight into the capacity
-    factor.
+    Not the isotropic sky: over a desert with a high direct fraction that
+    understates a tilted plane by several percent, straight into the CF.
     """
     if zenith >= 90.0 or ghi <= 0.0:
         return 0.0
@@ -194,38 +148,27 @@ def poa_irradiance(ghi, dni, dhi, zenith, azimuth, tilt, surface_azimuth,
 
 
 def cell_temperature(poa, air_temp_c, wind_ms):
-    """Cell temperature from the Sandia array performance model.
+    """Cell temperature, King et al. 2004 Eq 11 and 12.
 
-    King et al. 2004 Eq 11 and 12. The wind term is why wind speed is pulled
-    alongside the irradiance: at 45 C ambient a still day and a breezy one
-    differ by several degrees of cell temperature, and the power coefficient is
-    -0.35 percent per degree.
+    The wind term is why wind speed is fetched alongside irradiance: at 45 C a
+    still day and a breezy one differ by several degrees.
     """
     back = poa * math.exp(SANDIA_A + SANDIA_B * wind_ms) + air_temp_c
     return back + (poa / 1000.0) * SANDIA_DELTA_T
 
 
 def dc_fraction(poa, cell_temp_c):
-    """Output as a fraction of nameplate DC, before system losses.
-
-    Linear in irradiance and linear in temperature about 25 C. Low-light
-    efficiency fall-off is not modelled; in this climate the hours it would
-    affect carry very little energy.
-    """
+    """Fraction of nameplate DC before system losses. Linear in irradiance and
+    in temperature about 25 C. No low-light fall-off: those hours carry little
+    energy in this climate."""
     if poa <= 0.0:
         return 0.0
     return (poa / 1000.0) * (1.0 + GAMMA_PMP_PER_C * (cell_temp_c - 25.0))
 
 
 def optimal_tilt(lat_deg: float) -> float:
-    """Fixed tilt for maximum annual yield, as a function of latitude.
-
-    The usual rule of thumb is tilt equals latitude. In the Gulf the optimum
-    sits below that, because a shallower tilt collects more of the very strong
-    summer sun and there is almost no winter cloud to compensate for. This is
-    the standard low-latitude correction, and the resulting yield is what the
-    Global Solar Atlas check in the fetch script actually tests.
-    """
+    """Fixed tilt for maximum annual yield. Below latitude at low latitudes,
+    where a shallower tilt collects more of the strong summer sun."""
     lat = abs(lat_deg)
     return round(0.87 * lat + 3.1, 1)
 
@@ -243,11 +186,7 @@ def annual_yield(
     tracking: str = "fixed",
     years: float = 1.0,
 ) -> PvResult:
-    """Run the chain over an hourly series and return the yield.
-
-    `years` divides the totals, so a multi-year series returns an annual
-    average rather than a sum.
-    """
+    """Run the chain over an hourly series. `years` divides the totals."""
     if tilt is None:
         tilt = optimal_tilt(lat)
 
@@ -306,24 +245,13 @@ def _month_of(day_of_year: int) -> int:
     return 11
 
 
-# =============================================================================
-# Money.
-#
-# The tariff a site earns is not one number, and treating it as one is the
-# single easiest way to overstate the value of this product by an order of
-# magnitude. See the note on PPA versus retail in damage.py.
-# =============================================================================
+# Money. The tariff a site earns is not one number: see PPA versus retail in
+# damage.py.
 
 def energy_loss_mwh(capacity_mw: float, capacity_factor: float, loss_percent: float,
                     hours: float = 8760.0) -> float:
-    """Annual generation lost to a transmittance loss.
-
-    Assumes the transmittance loss passes straight through to power, one for
-    one. That is the usual assumption and it is an approximation: a partly
-    shaded or non-uniformly soiled module loses more than its average
-    transmittance suggests, because the series string follows its worst cell.
-    So this is a lower bound on the electrical loss for a given deposit.
-    """
+    """Generation lost to a light loss. Assumes it passes to power one for one,
+    which is a lower bound: a series string follows its worst cell."""
     return capacity_mw * capacity_factor * hours * (loss_percent / 100.0)
 
 

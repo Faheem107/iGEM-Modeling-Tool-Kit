@@ -1,27 +1,21 @@
 /**
- * The seasonal dust climatology, read in the app.
+ * Seasonal dust climatology, read in the app.
  *
- * Built by scripts/fetch_cams_dust_climatology.py from CAMS global via
- * Open-Meteo. Monthly means over 2020 to 2024 on a 1 degree grid across the
- * Gulf, with the spread between individual years alongside each mean.
+ * CAMS global monthly means 2020-2024 on a 1 degree Gulf grid, built by
+ * scripts/fetch_cams_dust_climatology.py.
  *
- * What this is FOR, and the distinction the module depends on: this is the
- * regional dust that is already in the air and arrives at a site from hundreds
- * of kilometres away. The treatment does not reduce it. It is separated from
- * the dust raised on the treated patch precisely so the two are never added
- * together and then both claimed as addressable.
+ * This is the regional dust arriving from hundreds of kilometres away, which
+ * treatment does not reduce. Kept separate from dust raised on the treated
+ * patch so the two are never both claimed as addressable.
  *
- * It is also not an emission map. It says where dust IS, not where it left the
- * ground. See DUST_EXPOSURE_MODULE_SPEC.md section 7.
+ * Not an emission map: it says where dust IS, not where it left the ground.
  */
 
 export interface CamsCell {
-  /** Twelve monthly means in ug/m3, January first. Null where a month is
-   *  missing rather than zero, because zero is a claim. */
+  /** Twelve monthly means, ug/m3, January first. Null, not 0, when missing. */
   monthly: (number | null)[];
-  /** Standard deviation between individual years, same units. A monthly mean
-   *  on its own hides how variable dust is: July is high because July has
-   *  storms, not because every July day is dusty. */
+  /** Between-year standard deviation. July is high because July has storms,
+   *  not because every July day is dusty. */
   spread: (number | null)[];
 }
 
@@ -52,11 +46,8 @@ export function camsCellFor(
 }
 
 /**
- * Mean regional dust concentration at a site over a set of months.
- *
- * Months are 1-based, matching the season definitions in the workspace.
- * Returns null rather than 0 when there is no data, so the caller has to say
- * so rather than quietly pricing a site at zero dust.
+ * Mean regional dust over a set of 1-based months. Null, not 0, when absent, so
+ * a caller cannot quietly price a site at zero dust.
  */
 export function camsFor(
   clim: CamsClimatology | null,

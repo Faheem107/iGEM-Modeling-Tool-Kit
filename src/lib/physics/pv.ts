@@ -1,17 +1,12 @@
 /**
- * PV yield and capacity factor, in the app.
+ * PV yield and capacity factor in the app. Mirror of python_models/pv.py.
  *
- * Mirror of python_models/pv.py. Keep the two in step.
- *
- * The app does not re-run the hourly yield model: that is done once by
- * scripts/fetch_pv_climatology.py and shipped as
- * public/data/uae_pv_climatology.json. What lives here is the part the UI needs
- * at interaction time, which is sampling that grid for a site and carrying the
+ * The hourly yield model runs once in scripts/fetch_pv_climatology.py and ships
+ * as public/data/uae_pv_climatology.json. This samples that grid and carries the
  * result through to money.
  *
- * The capacity factor in that file is for CLEAN glass. Soiling is what the rest
- * of the exposure module computes, so it is subtracted here rather than being
- * baked in twice.
+ * The shipped capacity factor is for CLEAN glass. Soiling is computed elsewhere
+ * in this module and subtracted downstream, not baked in twice.
  */
 
 export interface PvCell {
@@ -37,13 +32,9 @@ export interface PvClimatology {
 export type Mounting = "fixed" | "tracking";
 
 /**
- * The grid cell covering a site.
- *
- * Nearest cell rather than a bilinear blend, unlike the wind. Capacity factor
- * varies by only a couple of percent across the whole country, well inside the
- * yield model's own uncertainty, so interpolating between cells would be
- * smoothing something that is already flat and would imply a precision the
- * model does not have.
+ * Nearest cell, not a bilinear blend as the wind uses. Capacity factor varies by
+ * a couple of percent nationally, inside the model's own uncertainty, so
+ * interpolating would imply precision that is not there.
  */
 export function pvCellFor(
   clim: PvClimatology | null,
@@ -93,12 +84,10 @@ export function seasonCapacityFactor(
 }
 
 /**
- * Annual generation lost to a transmittance loss, in MWh.
+ * Generation lost to a transmittance loss, MWh/yr.
  *
- * Assumes transmittance loss passes to power one for one. That is the usual
- * assumption and it is optimistic: a series string follows its worst cell, so
- * unevenly deposited dust costs more than its average transmittance suggests.
- * So this is a lower bound on the electrical loss for a given deposit.
+ * Assumes light loss passes to power one for one. Optimistic: a series string
+ * follows its worst cell, so uneven dust costs more. A lower bound.
  */
 export function energyLossMwh(
   capacityMw: number,
@@ -119,22 +108,14 @@ export function annualGenerationMwh(capacityMw: number, cf: number, hours = 8760
 }
 
 /**
- * Dust deposited on a horizontal surface from an airborne concentration.
+ * Deposit from an airborne concentration: conc x deposition velocity x time.
  *
- * deposit [g/m2/yr] = concentration [ug/m3] * deposition velocity [m/s] * seconds
+ * Deposition velocity is the unmeasured number here. Coarse mineral dust runs
+ * 0.5 to 3 cm/s in the literature; 1 cm/s is conventional. Exposed as an
+ * argument because the answer scales linearly with it.
  *
- * The deposition velocity is the one number here that is not measured locally.
- * For the coarse mode of mineral dust over a flat surface the literature range
- * is roughly 0.5 to 3 cm/s, and 1 cm/s is the conventional working value. It is
- * exposed as an argument rather than buried, because the answer scales linearly
- * with it.
- *
- * This exists to separate two things the module was previously conflating. Dust
- * that settles on a panel arrives from two places: from the ground immediately
- * upwind, which treatment acts on, and from regional sources hundreds of
- * kilometres away, which it does not. Pricing only the first and presenting it
- * as the total makes the treatment look like it removes almost all soiling,
- * which contradicts what this project's own physics says.
+ * Exists to keep regional dust, which treatment cannot reduce, separate from
+ * dust raised on the treated patch, which it can.
  */
 export const DEFAULT_DEPOSITION_VELOCITY_MS = 0.01;
 
