@@ -79,3 +79,6 @@ references/
 # Local scratch
 .playwright-mcp/
 .era5_cache/
+# Resume cache for scripts/fetch_pv_climatology.py, deleted on a successful run
+.pv_cache.json
+.cams_cache.json
