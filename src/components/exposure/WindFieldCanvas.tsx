@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { EXTENT, H, W, project } from "./mapExtent";
+import { EXTENT, H, W, project, unproject } from "./mapExtent";
+import { FULL_VIEW, type MapView } from "./useMapView";
 import { sampleField, type WindField } from "@/src/lib/windField";
 import { DUNE } from "@/src/lib/palette";
 
@@ -72,11 +73,22 @@ function speedColor(speed: number) {
 
 export default function WindFieldCanvas({
   field,
+  view,
   isLightMode,
   className = "",
 }: {
   /** Null while loading, or when there is no field to draw. */
   field: WindField | null;
+  /**
+   * The map's pan and zoom window, in the same units `project()` returns.
+   *
+   * This canvas draws with `project()` straight into the SVG's coordinate
+   * space, so without the window the streaks stay pinned to the full extent
+   * and slide off the coastline the moment the reader zooms. It is read
+   * through a ref for the same reason `field` is: panning should move the
+   * wind, not restart the particles.
+   */
+  view?: MapView;
   isLightMode: boolean;
   className?: string;
 }) {
@@ -85,6 +97,8 @@ export default function WindFieldCanvas({
   // reading swaps the vectors without tearing down the particles.
   const fieldRef = useRef<WindField | null>(field);
   fieldRef.current = field;
+  const viewRef = useRef<MapView>(view ?? FULL_VIEW);
+  viewRef.current = view ?? FULL_VIEW;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -96,9 +110,15 @@ export default function WindFieldCanvas({
     const coarse = window.matchMedia("(pointer: coarse)").matches;
     let dpr = 1;
 
+    // Seed inside the visible window rather than the whole extent. At the full
+    // extent the two are the same; zoomed in, seeding over the extent would put
+    // almost every tracer off screen and leave the visible area empty.
     const spawn = (t: Tracer) => {
-      t.lon = EXTENT.lonMin + Math.random() * (EXTENT.lonMax - EXTENT.lonMin);
-      t.lat = EXTENT.latMin + Math.random() * (EXTENT.latMax - EXTENT.latMin);
+      const win = viewRef.current;
+      const a = unproject(win.x, win.y + win.h);
+      const b = unproject(win.x + win.w, win.y);
+      t.lon = a.lon + Math.random() * (b.lon - a.lon);
+      t.lat = a.lat + Math.random() * (b.lat - a.lat);
       t.age = 0;
       t.life = LIFE_MIN + Math.random() * LIFE_RANGE;
     };
@@ -140,13 +160,24 @@ export default function WindFieldCanvas({
       // Fade the previous frame by erasing alpha rather than painting over it.
       // The canvas has to stay transparent: the map, its coastline and its
       // source polygons are the SVG underneath.
+      // Match the SVG viewBox. The canvas is a fixed W by H pixel buffer, so
+      // the window becomes a scale and a translate rather than a resize.
+      const win = viewRef.current;
+      const k = W / win.w;
+      ctx!.setTransform(dpr * k, 0, 0, dpr * k, -win.x * dpr * k, -win.y * dpr * k);
+
       ctx!.globalCompositeOperation = "destination-out";
-      ctx!.fillStyle = `rgba(0,0,0,${TRAIL_FADE})`;
-      ctx!.fillRect(0, 0, W, H);
+      // The tracer step is in lon/lat, so magnifying the window magnifies the
+      // on-screen step too and a trail that read as wind at full extent reads as
+      // rain at 8x. Fade faster in proportion, which keeps the drawn streak the
+      // same length without touching the advection, so the speed the field
+      // represents is unchanged.
+      ctx!.fillStyle = `rgba(0,0,0,${Math.min(0.4, TRAIL_FADE * k)})`;
+      ctx!.fillRect(win.x, win.y, win.w, win.h);
       ctx!.globalCompositeOperation = "source-over";
 
       if (f) {
-        ctx!.lineWidth = 1.25;
+        ctx!.lineWidth = 1.25 / k;
         ctx!.lineCap = "round";
         for (const t of tracers) {
           const { u, v } = sampleField(f, t.lon, t.lat);
@@ -163,7 +194,10 @@ export default function WindFieldCanvas({
           t.lat += (v * SPEED_SCALE) / 60;
           const b = project(t.lon, t.lat);
 
-          if (b.x < 0 || b.y < 0 || b.x > W || b.y > H) { spawn(t); continue; }
+          if (b.x < win.x || b.y < win.y || b.x > win.x + win.w || b.y > win.y + win.h) {
+            spawn(t);
+            continue;
+          }
 
           // Fade in and out over the life so respawns are never a visible pop.
           const edge = Math.min(1, t.age / 14, (t.life - t.age) / 22);
