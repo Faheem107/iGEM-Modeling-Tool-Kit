@@ -1,14 +1,20 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DUNE, HAIRLINE, INK, TINT } from "@/src/lib/palette";
 
 /**
  * The shared map for both exposure modules.
  *
- * Plain SVG on an equirectangular projection rather than a tile library: the
- * extent is fixed to the Gulf, there is no basemap to licence, and the whole
- * thing is a few hundred kB of GeoJSON we already ship.
+ * Plain SVG rather than a tile library: the extent is fixed to the Gulf, there
+ * is no basemap to licence, and the whole thing is a few hundred kB of GeoJSON
+ * we already ship.
+ *
+ * The projection is equirectangular with the standard parallel at the middle of
+ * the extent, so a degree of longitude is drawn cos(lat) times a degree of
+ * latitude. Plate carree without that factor stretches the Gulf about 9 percent
+ * horizontally, which is enough to make a coastline look wrong once one is
+ * drawn on it.
  *
  * The two marker layers mean different things and are drawn differently on
  * purpose. Ginoux polygons are REGIONAL dust source activity on a 0.1 degree
@@ -18,13 +24,36 @@ import { DUNE, HAIRLINE, INK, TINT } from "@/src/lib/palette";
  */
 
 export const EXTENT = { lonMin: 44, lonMax: 60, latMin: 16, latMax: 33 };
-const W = 800;
-const H = Math.round((W * (EXTENT.latMax - EXTENT.latMin)) / (EXTENT.lonMax - EXTENT.lonMin));
+export const W = 800;
+
+/** Standard parallel: the middle of the extent, about 24.5 N. */
+const LAT_MID = (EXTENT.latMin + EXTENT.latMax) / 2;
+const COS_MID = Math.cos((LAT_MID * Math.PI) / 180);
+
+export const H = Math.round(
+  (W * (EXTENT.latMax - EXTENT.latMin)) /
+    ((EXTENT.lonMax - EXTENT.lonMin) * COS_MID),
+);
 
 export const project = (lon: number, lat: number) => ({
   x: ((lon - EXTENT.lonMin) / (EXTENT.lonMax - EXTENT.lonMin)) * W,
   y: ((EXTENT.latMax - lat) / (EXTENT.latMax - EXTENT.latMin)) * H,
 });
+
+interface BoundaryFeature {
+  properties: { name: string; iso: string };
+  geometry: { type: "MultiPolygon"; coordinates: number[][][][] };
+}
+
+/**
+ * Countries worth naming on the map. The rest are drawn but left unlabelled:
+ * a reader needs the Gulf states to place a site, not every land mass at the
+ * edge of the frame.
+ */
+const LABELLED = new Set([
+  "United Arab Emirates", "Oman", "Saudi Arabia", "Qatar",
+  "Bahrain", "Kuwait", "Iraq", "Iran",
+]);
 
 export interface SourceFeature {
   type: "Feature";
@@ -80,6 +109,53 @@ export default function ExposureMap({
   showSources?: boolean;
   isLightMode: boolean;
 }) {
+  // Country outlines are a map concern, so the map fetches them rather than
+  // threading another prop through the workspace. Public domain Natural Earth,
+  // clipped and rounded by scripts/fetch_boundaries.py.
+  const [borders, setBorders] = useState<BoundaryFeature[]>([]);
+  useEffect(() => {
+    let live = true;
+    fetch("/data/gulf_boundaries.geojson")
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then((d) => { if (live) setBorders(d.features ?? []); })
+      .catch(() => undefined);   // the map still reads without them
+    return () => { live = false; };
+  }, []);
+
+  const land = useMemo(
+    () =>
+      borders.map((f) => {
+        const d = f.geometry.coordinates
+          .map(([ring]) =>
+            ring
+              .map(([lon, lat], j) => {
+                const q = project(lon, lat);
+                return `${j === 0 ? "M" : "L"}${q.x.toFixed(1)},${q.y.toFixed(1)}`;
+              })
+              .join(" ") + " Z",
+          )
+          .join(" ");
+
+        // Label at the centroid of the largest ring, which after clipping is
+        // the part of the country actually on screen.
+        let best: number[][] = [];
+        let bestArea = -1;
+        for (const [ring] of f.geometry.coordinates) {
+          let a = 0;
+          for (let i = 0; i < ring.length; i++) {
+            const [x1, y1] = ring[i];
+            const [x2, y2] = ring[(i + 1) % ring.length];
+            a += x1 * y2 - x2 * y1;
+          }
+          if (Math.abs(a) > bestArea) { bestArea = Math.abs(a); best = ring; }
+        }
+        const cx = best.reduce((t, c) => t + c[0], 0) / (best.length || 1);
+        const cy = best.reduce((t, c) => t + c[1], 0) / (best.length || 1);
+        return { d, name: f.properties.name, at: project(cx, cy) };
+      }),
+    [borders],
+  );
+
   const paths = useMemo(
     () =>
       sources.map((f, i) => {
@@ -103,10 +179,24 @@ export default function ExposureMap({
     <svg
       viewBox={`0 0 ${W} ${H}`}
       className="w-full h-auto rounded-[6px] border border-border"
-      style={{ background: isLightMode ? TINT.sandWash : DUNE.ink }}
+      style={{ background: isLightMode ? TINT.tealWash : DUNE.ink }}
       role="img"
       aria-label="Gulf dust source and target site map"
     >
+      {/* Land first, so everything else sits on it. The ground colour behind is
+          the sea, which is why the Gulf and the Arabian Sea read as water
+          without a single extra path. */}
+      <g>
+        {land.map((c) => (
+          <path
+            key={c.name}
+            d={c.d}
+            fill={isLightMode ? TINT.sandWash : "rgb(255 255 255 / 0.05)"}
+            stroke="none"
+          />
+        ))}
+      </g>
+
       {/* graticule, every 2 degrees */}
       <g stroke={grid} strokeWidth={1}>
         {Array.from({ length: 9 }, (_, i) => EXTENT.lonMin + i * 2).map((lon) => (
@@ -120,10 +210,10 @@ export default function ExposureMap({
       {/* degree labels, so the extent is readable without a basemap */}
       <g fontSize={10} fill={isLightMode ? "rgb(0 0 0 / 0.38)" : "rgb(255 255 255 / 0.34)"}>
         {Array.from({ length: 5 }, (_, i) => EXTENT.lonMin + i * 4).map((lon) => (
-          <text key={`lx${lon}`} x={project(lon, 0).x + 3} y={H - 5}>{lon}E</text>
+          <text key={`lx${lon}`} x={project(lon, 0).x + 3} y={H - 5}>{lon}°E</text>
         ))}
         {Array.from({ length: 5 }, (_, i) => EXTENT.latMin + i * 4).map((lat) => (
-          <text key={`ly${lat}`} x={4} y={project(0, lat).y - 4}>{lat}N</text>
+          <text key={`ly${lat}`} x={4} y={project(0, lat).y - 4}>{lat}°N</text>
         ))}
       </g>
 
@@ -149,6 +239,38 @@ export default function ExposureMap({
           ))}
         </g>
       )}
+
+      {/* Coastline and borders are drawn AFTER the source polygons, not before.
+          Four nested bands of orange over a sand fill will otherwise bury the
+          one thing that tells a reader where they are. */}
+      <g
+        fill="none"
+        stroke={isLightMode ? "rgb(0 0 0 / 0.30)" : "rgb(255 255 255 / 0.30)"}
+        strokeWidth={1}
+        strokeLinejoin="round"
+      >
+        {land.map((c) => (
+          <path key={c.name} d={c.d} />
+        ))}
+      </g>
+
+      {/* Country names. Set in the caption register and kept quiet: they place
+          the reader, they are not data. */}
+      <g
+        fontSize={11}
+        letterSpacing={1.6}
+        fill={isLightMode ? "rgb(0 0 0 / 0.42)" : "rgb(255 255 255 / 0.38)"}
+        textAnchor="middle"
+        aria-hidden
+      >
+        {land
+          .filter((c) => LABELLED.has(c.name))
+          .map((c) => (
+            <text key={c.name} x={c.at.x} y={c.at.y}>
+              {c.name.toUpperCase()}
+            </text>
+          ))}
+      </g>
 
       {/* drift pathway from the selected site, pointing upwind to the origin */}
       {selected && driftDeg != null && Number.isFinite(driftDeg) && (
