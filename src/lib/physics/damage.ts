@@ -197,3 +197,99 @@ export function dewaTariffUsdPerKwh(
   if (includeVat) aed *= 1 + DEWA_VAT;
   return aed / AED_PER_USD;
 }
+
+// ---------------------------------------------------------------------------
+// The price a site actually earns.
+//
+// This is the single easiest place in the whole chain to overstate the value of
+// the product by an order of magnitude, so it carries two prices rather than
+// one and makes the reader choose.
+//
+// A utility-scale plant SELLS its output at the price it contracted for, which
+// in the UAE has been between 1.35 and 2.42 US cents. A factory or a farm that
+// puts panels on its own roof AVOIDS buying retail electricity, which DEWA
+// bills at about 12.6 US cents delivered. The two differ by roughly a factor of
+// ten, and using the retail figure for a generator inflates every result on the
+// cost panel by that factor.
+// ---------------------------------------------------------------------------
+
+export interface PpaPrice {
+  usdPerKwh: number;
+  source: string;
+}
+
+/**
+ * Contracted PPA prices for the UAE utility-scale plants that have published
+ * one. Keyed on a substring of the site name as it appears in
+ * public/data/uae_target_sites.json.
+ *
+ * These are the auction-winning bid prices as announced. A real settlement can
+ * include indexation and availability terms that are not public, so treat them
+ * as the contracted headline rather than as revenue per kWh delivered.
+ */
+export const UAE_PPA_USD_PER_KWH: Record<string, PpaPrice> = {
+  "Al-Dhafra": {
+    usdPerKwh: 0.0135,
+    source: "EWEC award for the 2 GW Al Dhafra project, announced April 2020",
+  },
+  "Mohammed bin Rashid": {
+    usdPerKwh: 0.016953,
+    source: "DEWA 25-year PPA for the 900 MW MBR Phase V, signed April 2020",
+  },
+  "Noor Abu Dhabi": {
+    usdPerKwh: 0.0242,
+    source: "Winning bid for the 1177 MW Noor Abu Dhabi plant, 2017",
+  },
+};
+
+/**
+ * The range the UAE has actually contracted at, used for a plant with no
+ * published price of its own. Shown as a range on purpose: a single midpoint
+ * would look like a figure for that specific plant, which it is not.
+ */
+export const UAE_PPA_RANGE_USD_PER_KWH = { low: 0.0135, high: 0.0242 } as const;
+
+/** The published PPA for a named site, or null if that site has none. */
+export function ppaForSite(siteName: string): PpaPrice | null {
+  for (const [key, price] of Object.entries(UAE_PPA_USD_PER_KWH)) {
+    if (siteName.includes(key)) return price;
+  }
+  return null;
+}
+
+export type PriceBasis = "ppa" | "retail";
+
+/**
+ * The price to value a lost kilowatt-hour at.
+ *
+ * `ppa` is right for a plant that sells its output. `retail` is right for a
+ * site that consumes what it generates, because the kilowatt-hour it fails to
+ * generate is one it has to buy instead.
+ */
+export function tariffUsdPerKwh(
+  basis: PriceBasis,
+  siteName?: string,
+): { value: number; label: string; source: string; exact: boolean } {
+  if (basis === "retail") {
+    return {
+      value: dewaTariffUsdPerKwh(),
+      label: "DEWA industrial retail, delivered",
+      source: "DEWA slab tariff sheet, August 2026, high industrial slab plus fuel surcharge and VAT",
+      exact: true,
+    };
+  }
+  const ppa = siteName ? ppaForSite(siteName) : null;
+  if (ppa) {
+    return { value: ppa.usdPerKwh, label: "contracted PPA", source: ppa.source, exact: true };
+  }
+  const mid = (UAE_PPA_RANGE_USD_PER_KWH.low + UAE_PPA_RANGE_USD_PER_KWH.high) / 2;
+  return {
+    value: mid,
+    label: "UAE utility PPA range, midpoint",
+    source:
+      `No published PPA for this site. UAE awards have run from ` +
+      `${UAE_PPA_RANGE_USD_PER_KWH.low} to ${UAE_PPA_RANGE_USD_PER_KWH.high} USD/kWh; ` +
+      `this is the midpoint and should be read as a range, not as this plant's price.`,
+    exact: false,
+  };
+}
