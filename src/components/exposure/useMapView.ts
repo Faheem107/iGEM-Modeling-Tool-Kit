@@ -4,18 +4,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { H, W } from "./mapExtent";
 
 /**
- * Pan and zoom for the exposure map.
+ * Pan and zoom for the exposure map, as a viewBox window rather than a tile
+ * library. Units match project(), so existing coordinate maths is untouched.
  *
- * The map is hand-rolled SVG, so this is a viewBox window rather than a tile
- * library. `view` is expressed in the same units `project()` returns, which
- * means every existing coordinate calculation keeps working untouched and only
- * the viewBox string changes.
- *
- * Two things do not come for free with a viewBox. Strokes and glyphs scale with
- * it, so anything meant to stay a hairline or a legible label has to be divided
- * by `k`. And the wind field is a canvas, not SVG, so it has to be handed the
- * same window and apply it itself, or the streaks slide off the coastline on
- * the first zoom.
+ * Callers must divide strokes and font sizes by `k`, and hand `view` to
+ * WindFieldCanvas, which is canvas and will otherwise drift off the coastline.
  */
 
 export interface MapView {
@@ -45,8 +38,7 @@ export function useMapView() {
   const [view, setView] = useState<MapView>(FULL_VIEW);
   const hostRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ id: number; x: number; y: number; view: MapView } | null>(null);
-  /** Where the last gesture began. `drag` is cleared on pointerup, which fires
-   *  before click, so `moved` needs its own copy to compare against. */
+  /** `drag` is cleared on pointerup, which fires before click, so keep a copy. */
   const lastDrag = useRef<{ x: number; y: number } | null>(null);
 
   const scale = W / view.w;
@@ -71,13 +63,8 @@ export function useMapView() {
     [zoomAt],
   );
 
-  /**
-   * Wheel zoom is registered non-passively on the element rather than through
-   * React's onWheel, because React attaches wheel listeners passively at the
-   * root and preventDefault is then ignored. Without preventDefault the page
-   * scrolls behind the map. `data-lenis-prevent` on the host keeps Lenis off it
-   * as well, the same way CompactModal keeps Lenis off its scroller.
-   */
+  // Bound non-passively: React attaches wheel listeners passively at the root,
+  // so preventDefault would be ignored and the page would scroll behind the map.
   useEffect(() => {
     const host = hostRef.current;
     if (!host) return;
@@ -94,8 +81,7 @@ export function useMapView() {
 
   const onPointerDown = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
-      // Left button or touch only, and never on a site marker, which handles
-      // its own click.
+      // Left button or touch only.
       if (e.button !== 0) return;
       const host = hostRef.current;
       if (!host) return;
@@ -126,12 +112,8 @@ export function useMapView() {
     }
   }, []);
 
-  /**
-   * A pan that begins on top of a marker would otherwise also select it, so a
-   * marker asks whether the pointer actually travelled. React fires click with
-   * a MouseEvent rather than a PointerEvent, hence the narrow parameter type:
-   * only the two coordinates are needed.
-   */
+  /** Did the pointer travel far enough that this gesture was a pan, not a click?
+   *  Narrow parameter type because React fires click with a MouseEvent. */
   const moved = useCallback(
     (e: { clientX: number; clientY: number }) =>
       lastDrag.current != null &&
@@ -146,8 +128,7 @@ export function useMapView() {
     hostRef,
     reset,
     zoomBy,
-    /** True when the pointer has been dragged far enough that the gesture was a
-     *  pan, so a marker underneath should not treat the release as a click. */
+    /** True after a pan, so a marker underneath ignores the release. */
     moved,
     handlers: {
       onPointerDown,

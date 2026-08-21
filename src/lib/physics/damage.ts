@@ -201,16 +201,10 @@ export function dewaTariffUsdPerKwh(
 // ---------------------------------------------------------------------------
 // The price a site actually earns.
 //
-// This is the single easiest place in the whole chain to overstate the value of
-// the product by an order of magnitude, so it carries two prices rather than
-// one and makes the reader choose.
-//
-// A utility-scale plant SELLS its output at the price it contracted for, which
-// in the UAE has been between 1.35 and 2.42 US cents. A factory or a farm that
-// puts panels on its own roof AVOIDS buying retail electricity, which DEWA
-// bills at about 12.6 US cents delivered. The two differ by roughly a factor of
-// ten, and using the retail figure for a generator inflates every result on the
-// cost panel by that factor.
+// A plant SELLS at its contracted price, 1.35 to 2.42 US cents in the UAE. A
+// site that consumes what it generates AVOIDS retail, about 12.6 cents. Using
+// retail for a generator inflates the cost panel roughly tenfold, so both are
+// carried and the reader picks.
 // ---------------------------------------------------------------------------
 
 export interface PpaPrice {
@@ -219,13 +213,9 @@ export interface PpaPrice {
 }
 
 /**
- * Contracted PPA prices for the UAE utility-scale plants that have published
- * one. Keyed on a substring of the site name as it appears in
- * public/data/uae_target_sites.json.
- *
- * These are the auction-winning bid prices as announced. A real settlement can
- * include indexation and availability terms that are not public, so treat them
- * as the contracted headline rather than as revenue per kWh delivered.
+ * Published UAE PPA prices, keyed on a substring of the site name in
+ * uae_target_sites.json. Auction-winning bids as announced: settlement may
+ * include indexation and availability terms that are not public.
  */
 export const UAE_PPA_USD_PER_KWH: Record<string, PpaPrice> = {
   "Al-Dhafra": {
@@ -242,11 +232,8 @@ export const UAE_PPA_USD_PER_KWH: Record<string, PpaPrice> = {
   },
 };
 
-/**
- * The range the UAE has actually contracted at, used for a plant with no
- * published price of its own. Shown as a range on purpose: a single midpoint
- * would look like a figure for that specific plant, which it is not.
- */
+/** For a plant with no published price. Shown as a range, since a midpoint
+ *  would read as that plant's own figure. */
 export const UAE_PPA_RANGE_USD_PER_KWH = { low: 0.0135, high: 0.0242 } as const;
 
 /** The published PPA for a named site, or null if that site has none. */
@@ -259,13 +246,8 @@ export function ppaForSite(siteName: string): PpaPrice | null {
 
 export type PriceBasis = "ppa" | "retail";
 
-/**
- * The price to value a lost kilowatt-hour at.
- *
- * `ppa` is right for a plant that sells its output. `retail` is right for a
- * site that consumes what it generates, because the kilowatt-hour it fails to
- * generate is one it has to buy instead.
- */
+/** What a lost kilowatt-hour is worth: `ppa` if the site sells it, `retail` if
+ *  it would otherwise have bought it. */
 export function tariffUsdPerKwh(
   basis: PriceBasis,
   siteName?: string,

@@ -132,16 +132,11 @@ export function Slider({
 }
 
 /**
- * One folded section.
+ * One folded section, shared with the prong list on the landing page.
  *
- * Lifted out of `landing/ModelIndex.tsx`, where it was a local `Group`, so the
- * exposure module can use the same fold the prong list uses rather than a
- * second one that looks nearly the same. Both import this.
- *
- * The whole header is the control, so the target is the size of the heading
- * rather than a chevron, and the sign in the corner says which way it will go.
- * `Panel` is the boxed alternative and still exists; use `Fold` where a page
- * would otherwise be a grid of boxes.
+ * The whole header is the control, so the target is the heading rather than a
+ * chevron. `Panel` is the boxed alternative; use `Fold` where a page would
+ * otherwise be a grid of boxes.
  */
 export function Fold({
   eyebrow,
@@ -161,8 +156,7 @@ export function Fold({
   lede?: string;
   children: React.ReactNode;
   aside?: React.ReactNode;
-  /** Trailing slot on the header row, for an evidence grade badge. Sits outside
-   *  the button so it is not part of the click target. */
+  /** Header trailing slot, outside the button so it is not a click target. */
   right?: React.ReactNode;
   muted?: boolean;
   wide?: boolean;
@@ -216,10 +210,8 @@ export function Fold({
             transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden"
           >
-            {/* The padding sits on an inner wrapper, not on the animated
-                element. On the animated one it would still be painted at
-                height 0, so the fold would open from a gap rather than from
-                nothing. */}
+            {/* Padding on an inner wrapper: on the animated element it would
+                still paint at height 0 and the fold would open from a gap. */}
             <div className="pt-4">{children}</div>
           </motion.div>
         )}
@@ -249,12 +241,8 @@ export function StatCard({
   accent: string;
   sub?: string;
   emphasize?: boolean;
-  /**
-   * The top rule reads as a figure sitting on a line, which is right inside a
-   * `Panel`. Inside a `Fold` the box is gone, and a rule above every label
-   * reads instead as a stray line drawn across the page for no reason. Pass
-   * false there. Default stays true so no existing module changes.
-   */
+  /** The top rule reads as a stray line once the Panel around it is gone, so
+   *  pass false inside a Fold. Defaults true so no existing module changes. */
   rule?: boolean;
 }) {
   if (value === null) {

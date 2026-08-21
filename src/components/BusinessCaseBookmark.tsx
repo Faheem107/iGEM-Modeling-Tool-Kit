@@ -6,20 +6,10 @@ import { BUSINESS_SECTIONS, BUSINESS_SUMMARY } from "@/src/lib/businessModel";
 import { useHighlight } from "@/src/lib/motion/pointer";
 
 /**
- * The business case, as a tag on the edge of the page.
+ * The business case as a tag on the right edge, opening a dialog.
  *
- * It used to be a panel sitting under the model outputs, which put a page of
- * commercial prose in the middle of a page of numbers. Neither reads well next
- * to the other: the prose interrupts the model, and the model makes the prose
- * look like a footnote.
- *
- * So it becomes a bookmark. Fixed to the right edge near the top, vertical, and
- * it opens a dialog. z-[80] is the layer the Sandyx mascot already uses for
- * page-edge furniture, below PortalIntro at 110 and dialogs at 200.
- *
- * The dialog itself is CompactModal, which already portals to document.body,
- * locks scroll, handles Escape, keeps Lenis off its scroller and renders tabs
- * as an underline rather than as pills, which the design language bans.
+ * z-[80] is the page-edge furniture layer the Sandyx mascot uses, below
+ * PortalIntro at 110 and dialogs at 200.
  */
 export default function BusinessCaseBookmark() {
   const [open, setOpen] = useState(false);

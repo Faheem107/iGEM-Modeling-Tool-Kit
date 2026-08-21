@@ -1,42 +1,20 @@
 """
 Build the list of UAE assets the exposure module prices against.
 
-Why this was rewritten
-----------------------
-The previous public/data/uae_target_sites.json was an unreviewed Overpass dump.
-It carried 51 entries thinned to 8 km separation, four names in Arabic or
-Persian script, several bare OSM tags that are not assets at all ("football
-ground", "abandoned quarry", "GSM", "Green house", "Zariba"), and four sites
-outside the UAE entirely (Ras Abu Fontas in Qatar, Shaybah 4 GOSP in Saudi
-Arabia, Abu Musa Airport, Buraimi Airport in Oman) despite the file's own
-provenance block claiming a UAE bounding box filter. Everything the module
-computes is computed per site, so the list has to be right first.
+The previous public/data/uae_target_sites.json was an unreviewed Overpass dump:
+51 entries thinned to 8 km, four names in Arabic or Persian script, several bare
+OSM tags that are not assets, and four sites outside the UAE despite its own
+provenance claiming a bbox filter.
 
-What changed
-------------
-1. Query by UAE admin area rather than a bounding box.
-2. Filter again by point-in-polygon against the ARE outline already in
-   public/data/gulf_boundaries.geojson. A bounding box over the lower Gulf
-   necessarily includes Qatari and Iranian territory; the polygon does not.
-3. Resolve an English name: name:en, then int_name, then official_name:en, then
-   a deterministic transliteration of the Arabic name. The original is kept in
-   nameLocal so nothing is silently discarded.
-4. Drop entries whose name is a bare generic noun, and drop disused, abandoned
-   and under-construction lifecycle prefixes.
-5. No thinning. Every site that passes is kept, because the calculation runs per
-   site and a thinned list answers a different question.
+This queries by UAE admin area, filters again by point-in-polygon against the
+ARE outline, resolves English names, drops generic and lifecycle names, collapses
+the MBR phase children into the parent relation, and does no distance thinning.
+It refuses to write if its checks fail.
 
-The script refuses to write if the result fails its own checks, the same
-contract fit_era5_weibull.py holds itself to.
+Licence: OpenStreetMap via Overpass, ODbL 1.0. Attribution required, share-alike
+applies to a derived database. Both recorded in the output provenance.
 
-Licence
--------
-OpenStreetMap via Overpass, ODbL 1.0. Attribution is required and share-alike
-applies to a derived database. Both are recorded in the output provenance and
-rendered in the module footer.
-
-Run
----
+Run:
     python3 scripts/fetch_target_sites.py
 """
 

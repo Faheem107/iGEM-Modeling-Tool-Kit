@@ -1,50 +1,19 @@
 """
-Build the PV capacity factor grid the exposure module's money chain needs.
+Build the PV capacity factor grid the money chain needs.
 
-The gap this closes
--------------------
-scripts/transport_model.py carries "solar_capacity_factor" in a NEEDS_SOURCE
-dict and raises rather than guessing it, so the cost panel printed "no source
-yet" where the money belonged. Without it, nameplate MW never becomes MWh and
-the whole chain from arriving sand to lost revenue is cut.
+transport_model.py carries solar_capacity_factor in NEEDS_SOURCE and raises
+rather than guessing, so the cost panel had no way to turn MW into MWh. A single
+national figure cannot vary by site or season while everything else here does,
+so it is computed from ERA5 irradiance through Open-Meteo, the same keyless route
+fit_era5_weibull.py uses for the wind, over the same three years.
 
-Why compute it rather than cite it
-----------------------------------
-A single published national figure cannot vary between Abu Dhabi and Ras Al
-Khaimah, and it cannot vary through the year. Everything else in this module
-does vary through the year: the sand arrives seasonally, so the loss is
-seasonal, so a constant capacity factor would be combining two quantities at
-different time resolutions and quietly averaging away the part that matters.
+Refuses to write unless it clears two anchors: Global Solar Atlas PVOUT at Dubai
+(1791.5 kWh/kWp) and Noor Abu Dhabi's published output (1177 MW, ~2000 GWh to
+September 2020, so ~19.5%). Neither should match exactly. Both describe panels
+that get dirty and this model describes clean glass, so it should sit ABOVE both
+by about a soiling allowance. The direction is part of the test.
 
-Source
-------
-Open-Meteo's historical archive, which serves ERA5 with no account and no key.
-This is the same route scripts/fit_era5_weibull.py already uses for the wind,
-so the two climatologies rest on the same reanalysis rather than on two
-datasets that might disagree.
-
-The checks
-----------
-This script refuses to write a file that fails either of two independent
-checks, the same contract fit_era5_weibull.py holds itself to:
-
-1. Global Solar Atlas PVOUT at Dubai, 1791.5 kWh/kWp per year.
-2. Noor Abu Dhabi's published output. 1,177 MW, about 2,000 GWh reported by
-   September 2020, so an observed capacity factor near 19 to 20 percent.
-
-Neither should match exactly, and that is deliberate. Both describe a panel
-that gets dirty; this model describes one that does not, because soiling is
-computed elsewhere in this module and counting it twice would be wrong. So the
-modelled figure should sit above both, by about the size of a soiling
-allowance. The direction of the gap is as much of the test as its size: a
-clean-panel model landing below a real-world figure would mean energy is being
-lost somewhere it should not be.
-
-These are anchors, not calibration. Nothing here is tuned to make them pass. If
-they fail, the model is wrong and the fix is the model.
-
-Run
----
+Run:
     python3 scripts/fetch_pv_climatology.py
 """
 

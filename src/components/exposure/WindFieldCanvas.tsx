@@ -79,15 +79,9 @@ export default function WindFieldCanvas({
 }: {
   /** Null while loading, or when there is no field to draw. */
   field: WindField | null;
-  /**
-   * The map's pan and zoom window, in the same units `project()` returns.
-   *
-   * This canvas draws with `project()` straight into the SVG's coordinate
-   * space, so without the window the streaks stay pinned to the full extent
-   * and slide off the coastline the moment the reader zooms. It is read
-   * through a ref for the same reason `field` is: panning should move the
-   * wind, not restart the particles.
-   */
+  /** The map's pan/zoom window. Without it the streaks stay pinned to the full
+   *  extent and slide off the coastline on the first zoom. Read through a ref
+   *  so panning moves the wind rather than restarting the particles. */
   view?: MapView;
   isLightMode: boolean;
   className?: string;
@@ -110,9 +104,7 @@ export default function WindFieldCanvas({
     const coarse = window.matchMedia("(pointer: coarse)").matches;
     let dpr = 1;
 
-    // Seed inside the visible window rather than the whole extent. At the full
-    // extent the two are the same; zoomed in, seeding over the extent would put
-    // almost every tracer off screen and leave the visible area empty.
+    // Seed inside the visible window, or a zoomed view is empty.
     const spawn = (t: Tracer) => {
       const win = viewRef.current;
       const a = unproject(win.x, win.y + win.h);
@@ -160,18 +152,15 @@ export default function WindFieldCanvas({
       // Fade the previous frame by erasing alpha rather than painting over it.
       // The canvas has to stay transparent: the map, its coastline and its
       // source polygons are the SVG underneath.
-      // Match the SVG viewBox. The canvas is a fixed W by H pixel buffer, so
-      // the window becomes a scale and a translate rather than a resize.
+      // Match the SVG viewBox: a fixed buffer, so scale and translate.
       const win = viewRef.current;
       const k = W / win.w;
       ctx!.setTransform(dpr * k, 0, 0, dpr * k, -win.x * dpr * k, -win.y * dpr * k);
 
       ctx!.globalCompositeOperation = "destination-out";
-      // The tracer step is in lon/lat, so magnifying the window magnifies the
-      // on-screen step too and a trail that read as wind at full extent reads as
-      // rain at 8x. Fade faster in proportion, which keeps the drawn streak the
-      // same length without touching the advection, so the speed the field
-      // represents is unchanged.
+      // Magnifying the window magnifies the drawn step, so a trail that reads
+      // as wind at full extent reads as rain at 8x. Fade faster in proportion,
+      // which leaves the advection, and so the speed shown, unchanged.
       ctx!.fillStyle = `rgba(0,0,0,${Math.min(0.4, TRAIL_FADE * k)})`;
       ctx!.fillRect(win.x, win.y, win.w, win.h);
       ctx!.globalCompositeOperation = "source-over";

@@ -1,41 +1,20 @@
 """
 Build a seasonal dust climatology for the Gulf.
 
-The gap this closes
--------------------
-The source polygons on the exposure map come from Ginoux et al. 2012, and for
-the Middle East that file covers March to May only. Ginoux published one season
-per region, chosen as that region's dust season, and no other season exists for
-this part of the world. So the four season buttons changed the wind, the drift
-direction and every number derived from them, while the coloured source areas
-stayed exactly where they were in all four. A reader could reasonably conclude
-the sources genuinely do not move, which is not what the literature says.
+The Ginoux source polygons cover March to May only for the Middle East, so the
+season buttons changed the wind and left the source areas identical in all four.
+CAMS monthly means give a real seasonal signal: at Dubai, ~72 ug/m3 in December
+against ~436 in July.
 
-What this adds, and what it is not
-----------------------------------
-CAMS global surface dust concentration, averaged by calendar month. That is a
-real seasonal signal: at Dubai it runs from about 72 ug/m3 in December to about
-436 in July, a factor of six.
+NOT an emission map. It says where dust IS, not where it left the ground; those
+differ by a day's transport. It is also a model field, observation-constrained by
+assimilated satellite AOD rather than measured at a point.
 
-It is emphatically NOT an emission map. It says where dust IS in the air, not
-where it left the ground, and those differ: dust raised over the Tigris and
-Euphrates plain can be measured over the Gulf a day later. The Ginoux mask and
-the MERRA-2 emission layer answer the emission question; this one answers the
-exposure question. The UI has to keep them apart, because reading an airborne
-concentration as a source is precisely the error DUST_EXPOSURE_MODULE_SPEC.md
-section 7 warns against.
+Refuses to write unless the field matches three published observations: a summer
+peak (Khalaf & Al-Ajmi 1993), a real seasonal range, and a flood plain dustier
+than the lower Gulf (Hennen 2017).
 
-It is also a model field. CAMS assimilates satellite aerosol optical depth, so
-it is observation-constrained, but the dust it reports at the surface is the
-model's, not a measurement at that point.
-
-Source
-------
-CAMS global via Open-Meteo's air quality archive. No key, no account. Verified
-to return all twelve months back to 2020 for this region.
-
-Run
----
+Run:
     python3 scripts/fetch_cams_dust_climatology.py
 """
 

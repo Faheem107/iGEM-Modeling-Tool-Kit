@@ -70,32 +70,15 @@ export interface TargetSite {
   nearestSourceLon?: number;
 }
 
-/**
- * Nested contours: a flat opacity turns four overlapping bands into one wash,
- * so the alpha steps.
- *
- * The alphas are close to what they were. The reason the source areas were hard
- * to see was never the opacity, it was the hue: dune-orange over the sand-wash
- * land fill is the same warm family as the ground it sits on, so band 10, which
- * covers most of the map, disappeared into it. Changing the light-mode hue fixes
- * that at the same alpha. Raising the alpha instead was tried first and buried
- * the coastline under a wash, which trades one unreadable map for another.
- *
- * The outline on the weakest band does the rest of the work: it gives a source
- * area a boundary you can follow even where the fill is faint.
- */
+/** Nested contours, so the alpha steps: a flat one smears them into a wash. */
 const FOO_ALPHA: Record<number, number> = { 10: 0.13, 20: 0.24, 40: 0.42, 60: 0.62 };
 
 /**
- * Source colours, per theme.
+ * Source colours per theme. Orange over the light-mode sand wash is the same
+ * warm family as the land under it, which is why band 10 was invisible; maroon
+ * separates from both sand and sea. Dark mode keeps orange against near-black.
  *
- * In light mode the land is a warm sand wash, so orange sits in the same family
- * as the ground it is drawn on. Maroon is the token that separates cleanly from
- * both the sand land and the teal sea. In dark mode the land is near-black and
- * orange reads well, so it stays.
- *
- * These are the dune tokens either way. `MapLegend` imports this table rather
- * than repeating the values, because the two drifted apart last time.
+ * MapLegend imports this rather than repeating the values, which drifted before.
  */
 export const SOURCE_COLOR_LIGHT: Record<string, string> = {
   natural: DUNE.maroon,
@@ -210,14 +193,11 @@ export default function ExposureMap({
   const selected = sites.find((s) => s.id === selectedId) ?? null;
   const grid = isLightMode ? "rgb(0 0 0 / 0.07)" : "rgb(255 255 255 / 0.07)";
 
-  // Pan and zoom. `k` is how many times the extent has been magnified, and
-  // every stroke width and font size below is divided by it so a hairline stays
-  // a hairline and a label stays the size it was drawn at.
+  // `k` is the magnification; strokes and font sizes below divide by it.
   const { view, scale: k, atFullExtent, hostRef, reset, zoomBy, moved, handlers } = useMapView();
   const box = `${view.x} ${view.y} ${view.w} ${view.h}`;
 
-  // 353 markers at full extent would be a wall of text, so names appear only
-  // once the reader has zoomed in far enough to be asking about a place.
+  // Names only past this zoom, or the markers become a wall of text.
   const showSiteLabels = k >= 3.5;
 
   return (
@@ -260,8 +240,7 @@ export default function ExposureMap({
       </g>
 
       {/* degree labels, so the extent is readable without a basemap */}
-      {/* Degree labels are pinned to the edge of the visible window rather than
-          to the edge of the extent, so they stay on screen when zoomed. */}
+      {/* Pinned to the visible window so they stay on screen when zoomed. */}
       <g fontSize={10 / k} fill={isLightMode ? "rgb(0 0 0 / 0.38)" : "rgb(255 255 255 / 0.34)"}>
         {Array.from({ length: 17 }, (_, i) => EXTENT.lonMin + i).map((lon) => (
           <text key={`lx${lon}`} x={project(lon, 0).x + 3 / k} y={view.y + view.h - 5 / k}>
@@ -290,10 +269,7 @@ export default function ExposureMap({
                     d={p.d}
                     fill={sourceColor(p.source_type, isLightMode)}
                     fillOpacity={FOO_ALPHA[band]}
-                    /* A hairline on the weakest band so the boundary of a
-                       source area is visible even where the fill is faint.
-                       The inner bands are read by their fill, so outlining
-                       them as well would just crosshatch the map. */
+                    /* Outline the weakest band only: the rest read by fill. */
                     stroke={band === 10 ? sourceColor(p.source_type, isLightMode) : "none"}
                     strokeWidth={band === 10 ? 1 / k : 0}
                     strokeOpacity={band === 10 ? 0.75 : 0}
@@ -399,9 +375,7 @@ export default function ExposureMap({
             <g
               key={s.id}
               transform={`translate(${p.x},${p.y}) scale(${1 / k})`}
-              /* A pan that happens to start on a marker must not also select
-                 it, so a release counts as a click only if the pointer barely
-                 moved. */
+              /* A pan starting on a marker must not also select it. */
               onClick={(e) => { if (!moved(e)) onSelect(s.id); }}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
@@ -481,14 +455,9 @@ export default function ExposureMap({
       )}
     </svg>
 
-      {/* Zoom controls. Wheel and drag do the same job, but a visible control
-          says the map is zoomable at all, and a reset is the only way back from
-          a deep zoom without a lot of scrolling.
-
-          These sit on the map, so they carry `plate-solid` for their own
-          ground. The glyphs are set larger than the caption register on
-          purpose: a plus sign at caption size in muted-foreground is not
-          legible over a coastline, which is what the first version did. */}
+      {/* plate-solid because these sit on the map, and the glyphs are larger
+          than the caption register: a muted + at caption size is not legible
+          over a coastline. */}
       <div className="absolute right-2 top-2 flex flex-col items-end gap-1">
         <button
           type="button"

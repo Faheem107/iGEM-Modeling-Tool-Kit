@@ -1,48 +1,13 @@
 /**
- * Where a given site's dust comes from, as a share per source region.
+ * Which source regions feed a given site, as percentages.
  *
- * The question this answers
- * -------------------------
- * The map shows hundreds of Ginoux source polygons across the Gulf and a marker
- * for the chosen site, and nothing connected the two. A reader could see that
- * sources exist and that the site exists, but not which of those sources
- * actually matter for that site, or in what proportion. The nearest source was
- * quoted in kilometres, which is the wrong quantity: a strong source dead
- * upwind matters far more than a weak one slightly closer but crosswind.
+ * Weight per region = Ginoux activity band x substrate dust emissivity x share
+ * of the season's wind arriving from that bearing x distance decay.
  *
- * How the share is computed
- * -------------------------
- * Per source region, a weight is formed from three factors that are each
- * individually defensible, and the weights are normalised to percentages:
- *
- *   strength  the Ginoux frequency-of-occurrence band, how often dust is
- *             actually seen leaving that ground
- *   upwind    how much of the season's wind blows FROM that region TOWARD the
- *             site, read off the 16-sector ERA5 rose rather than assumed
- *   reach     a distance decay, because suspended dust dilutes and deposits on
- *             the way
- *
- * What this is and is not
- * -----------------------
- * This is a screening attribution, not a transport simulation. A real answer
- * needs a dispersion model run over the actual meteorology, and the toolkit
- * deliberately does not have one: DUST_EXPOSURE_TRANSPORT_AND_VALUE.md sets out
- * why, for the saltating fraction, dispersion would be answering a question the
- * physics does not pose.
- *
- * So these percentages should be read as a ranking with rough magnitudes, not
- * as measured contributions. Two things in particular they cannot do:
- *
- *   They describe SUSPENDED dust, the fine material that travels. They do not
- *   describe the saltating sand that abrades and buries, which comes from the
- *   ground within tens of metres of the asset and from nowhere else. Those are
- *   different mechanisms and the UI has to keep saying so. It is why the Rub al
- *   Khali ranks low in this list while remaining, by a wide margin, the most
- *   important source of the SAND that actually piles against a UAE asset.
- *
- *   The distance decay is a smooth exponential, not a settling calculation. It
- *   is calibrated to the scale over which Gulf dust plumes are observed to
- *   thin, and it carries no information about grain size.
+ * A screening ranking, not a transport simulation, and it covers SUSPENDED dust
+ * only. The saltating sand that abrades and buries comes from within tens of
+ * metres of the asset, which is why the Rub al Khali ranks low here while
+ * remaining the dominant source of the sand that actually piles up.
  */
 
 import { bearingDeg, haversineKm, sandblastEfficiency } from "./dustTransport";
@@ -67,16 +32,7 @@ export interface SourceShare {
   upwindFraction: number;
 }
 
-/**
- * Named regions, so a share can be reported as a place rather than as a grid
- * cell. Boxes are deliberately coarse: the point is to say "the Tigris and
- * Euphrates flood plain", which is what the literature talks about, not to
- * imply we have resolved a source to a town.
- *
- * The flood plain is listed first because Hennen 2017 attributes 37 percent of
- * all Middle East emission events to it, which is the single most important
- * fact about where Gulf dust comes from.
- */
+/** Coarse named regions, so a share reads as a place rather than a grid cell. */
 const REGIONS: { name: string; latMin: number; latMax: number; lonMin: number; lonMax: number }[] = [
   { name: "Tigris and Euphrates flood plain", latMin: 29.5, latMax: 34.0, lonMin: 44.0, lonMax: 48.5 },
   { name: "Lower Mesopotamia and Kuwait", latMin: 28.0, latMax: 30.5, lonMin: 45.5, lonMax: 49.0 },
@@ -98,59 +54,32 @@ const REGIONS: { name: string; latMin: number; latMax: number; lonMin: number; l
 const bandStrength = (foo: number) => foo;
 
 /**
- * How readily a substrate turns saltating sand into suspended dust.
+ * Representative clay per Ginoux source tag, driving dust emissivity.
  *
- * This term is what makes the attribution physical rather than geometric, and
- * leaving it out gets the answer badly wrong. Weighting by Ginoux band and
- * distance alone put the Rub al Khali at 82 percent of Al Dhafra's dust and the
- * Tigris and Euphrates flood plain at 2 percent. That inverts Hennen 2017, who
- * recorded 37 percent of all Middle East emission EVENTS over the flood plain
- * and very few over the southern Arabian Peninsula.
+ * Without this the Rub al Khali came out at 82% of Al Dhafra's dust and the
+ * Tigris and Euphrates plain at 2%, inverting Hennen 2017. Sandblasting
+ * efficiency goes as 10^(0.134*clay), a factor of ~258 between quartz dune sand
+ * and clay-rich ground: a sand sea moves sand, not dust.
  *
- * The reason is that a sand sea and a flood plain are not the same kind of
- * source. Suspended dust is produced by sandblasting, and the efficiency of
- * that process goes as 10^(0.134 * clay), so it spans a factor of about 258
- * between quartz dune sand and a clay-rich plain. A dune sea moves enormous
- * amounts of SAND and very little DUST. That is the same asymmetry
- * DUST_EXPOSURE_TRANSPORT_AND_VALUE.md sets out, and Ginoux's own source tag is
- * the proxy for it: `hydro` marks ephemeral water bodies, which are clay-rich.
- *
- * So each tag carries a representative clay content and the existing
- * sandblastEfficiency() converts it. The clay values are representative of the
- * substrate class, not measurements at each polygon, and the equation is only
- * valid to 20 percent clay, which is where the flood plain is clamped.
+ * Dune sand is 2% from Benaafi's petrography, not the ~20% SoilGrids returns
+ * over UAE dunes. See DUST_EXPOSURE_MODULE_SPEC.md section 6.
  */
 const SUBSTRATE_CLAY_PERCENT: Record<string, number> = {
-  // Ephemeral water bodies and flood plains. SoilGrids reads 33.7 percent over
-  // the Tigris and Euphrates plain; Eq 3 is only valid to 20, so it clamps.
-  hydro: 20,
-  // Disturbed and agricultural ground, between the two.
-  anthro: 10,
-  // Sand seas. Benaafi's petrography classes these sands as quartz arenite,
-  // near 2 percent clay, against the roughly 20 percent SoilGrids returns over
-  // UAE dunes. DUST_EXPOSURE_MODULE_SPEC.md section 6 records why the SoilGrids
-  // value is not believed here: taken at face value it compresses the source
-  // contrast by a factor of about 85 and paints dune fields as strong dust
-  // emitters, which is the opposite of what Hennen and Khalaf both observed.
-  natural: 2,
+  hydro: 20,     // ephemeral water bodies, clamped at Eq 3's validity limit
+  anthro: 10,    // disturbed and agricultural ground
+  natural: 2,    // sand seas, quartz arenite
 };
 
 const substrateEmissivity = (type: string) =>
   sandblastEfficiency(SUBSTRATE_CLAY_PERCENT[type] ?? 5).alpha;
 
 /**
- * How far suspended dust carries.
+ * Distance decay for suspended dust, e-folding at 600 km.
  *
- * An exponential with a 600 km scale. That figure comes from the geometry the
- * rest of this module already rests on: Khalaf and Al-Ajmi 1993 record that
- * suspension dust over Kuwait is "usually initiated in southern Iraq", roughly
- * 300 to 500 km away, and Hennen 2017 has flood-plain dust reaching the whole
- * Gulf, roughly 1000 km. A scale that leaves both of those appreciable puts
- * the e-folding distance in the high hundreds of kilometres.
- *
- * It is a smooth stand-in for deposition and dilution, not a settling
- * calculation, and it carries no grain size. Treat the resulting shares as a
- * ranking.
+ * Set so both observed ranges stay appreciable: Khalaf & Al-Ajmi 1993 have
+ * Kuwait's dust starting in southern Iraq, 300 to 500 km, and Hennen 2017 has
+ * flood-plain dust across the whole Gulf, about 1000 km. A stand-in for
+ * dilution and deposition, with no grain size in it.
  */
 const REACH_KM = 600;
 const reachFactor = (km: number) => Math.exp(-km / REACH_KM);
@@ -181,37 +110,21 @@ function centroid(poly: SourcePolygon): { lat: number; lon: number } {
 }
 
 /**
- * Wind run per sector: how much air arrives from each direction.
+ * Wind run per sector: frequency x mean speed.
  *
- * Frequency times mean speed, from the stored ERA5 rose. Not the sector's
- * Fryberger drift potential Q, even though the rose carries that too and the
- * rest of this module uses it everywhere else, and the reason is worth stating
- * because it looks like an inconsistency.
- *
- * Q is a saltation quantity. It goes as V squared times (V minus threshold), so
- * it is zero whenever no hour in that sector exceeds the threshold at which
- * grains start to lift. That is exactly right for sand moving along the ground.
- * It is wrong here: this function is about dust that is ALREADY airborne and
- * riding the wind in from hundreds of kilometres away, which needs no threshold
- * at the receiving end. Weighting by Q returned no answer at all for Ras Al
- * Khaimah in July, because its own local wind never lifts sand, while dust
- * plainly still reaches it.
- *
- * The nonlinearity of emission has not been dropped, it just belongs at the
- * source rather than at the receptor, and Ginoux's frequency-of-occurrence band
- * is the observed stand-in for it.
+ * Not the sector's Fryberger drift potential, which the rest of the module
+ * uses. Q is a saltation quantity and is zero when no local hour lifts a grain,
+ * which returned nothing at all for Ras Al Khaimah in July while dust plainly
+ * still reaches it. This is dust already airborne, needing no threshold at the
+ * receiving end.
  */
 export function windRunPerSector(freq: number[], speed: number[]): number[] {
   return freq.map((f, i) => f * (speed[i] ?? 0));
 }
 
 /**
- * Share of the arriving air that comes FROM a given bearing.
- *
- * A source at bearing B from the site is upwind when the wind comes from B, so
- * the sector is read at B directly. Neighbouring sectors are included at half
- * weight, because a plume is wider than 22.5 degrees and a hard sector edge
- * would make the answer jump as a site moves a few kilometres.
+ * Share of arriving air from a bearing. Neighbouring sectors count half, so the
+ * answer does not jump as a site moves a few kilometres.
  */
 function upwindShare(windRun: number[] | null, bearingFromSite: number): number {
   if (!windRun || windRun.length !== ROSE_SECTORS) return 1 / ROSE_SECTORS;
@@ -226,16 +139,11 @@ function upwindShare(windRun: number[] | null, bearingFromSite: number): number 
 /**
  * Rank the source regions feeding one site.
  *
- * Checked against the one Gulf attribution the literature actually states.
- * Khalaf and Al-Ajmi (1993) record that suspension dust over Kuwait is "usually
- * initiated in southern Iraq". Run for Kuwait City in July, this returns 87
- * percent from the Tigris and Euphrates flood plain and 6 percent from lower
- * Mesopotamia, so 93 percent from the north. That is an independent check: no
- * part of this function was fitted to it.
+ * Checked against Khalaf & Al-Ajmi 1993, who record Kuwait's suspension dust as
+ * "usually initiated in southern Iraq". Run for Kuwait City in July this gives
+ * 93% from the north. Nothing was fitted to that.
  *
- * @param windRun 16-sector wind run for the season, from windRunPerSector.
- *                Pass null to weight every direction equally, which is only
- *                worth doing to show how much of the answer the wind carries.
+ * @param windRun 16-sector wind run, or null to weight all directions equally.
  */
 export function attributeSources(
   sources: SourcePolygon[],
