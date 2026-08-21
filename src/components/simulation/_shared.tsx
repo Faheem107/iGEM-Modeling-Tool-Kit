@@ -141,12 +141,34 @@ export function StatCard({
   emphasize,
 }: Themed & {
   label: React.ReactNode;
-  value: string;
+  /**
+   * Pass null when there is no value to show. A missing number renders as a
+   * stated absence, never as 0 and never as a sentence sitting in the slot
+   * where a figure belongs. See DUST_EXPOSURE_MODULE_SPEC.md section 7.2.
+   */
+  value: string | null;
   unit?: string;
   accent: string;
   sub?: string;
   emphasize?: boolean;
 }) {
+  if (value === null) {
+    return (
+      <div className="border-t border-border pt-2">
+        <span className="caption mb-2 block" style={{ textWrap: "balance" }}>
+          <CaptionText>{label}</CaptionText>
+        </span>
+        <span className="block text-[length:var(--text-micro)] italic text-muted-foreground">
+          no source yet
+        </span>
+        {sub && (
+          <span className="mt-1 block text-[length:var(--text-caption)] leading-snug text-muted-foreground">
+            {sub}
+          </span>
+        )}
+      </div>
+    );
+  }
   return (
     // A figure on a rule, not a tile. The emphasised one is marked by a heavier
     // top rule and a larger number, never by a ring or a fill.

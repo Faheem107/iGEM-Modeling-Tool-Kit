@@ -452,7 +452,7 @@ export default function Caco3PrecipitationModule({
               Red marker = current operating point. The power law UCS = kUcs x
               (calcite wt%)^nUcs is fixed by the wet-lab unconfined compression
               versus calcite regression, so both the exponent and the intercept
-              are calibration targets, not guesses.
+              are the numbers our own lab work has to return.
             </GlossaryText>
           </p>
         </Panel>

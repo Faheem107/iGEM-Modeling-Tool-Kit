@@ -479,11 +479,11 @@ export default function ExposureWorkspace() {
                 two. Read the value with that in mind.
               </p>
             )}
-            <Slider label="Crust cohesion from the wet lab" value={cohesion} onChange={setCohesion} min={0} max={0.01} step={0.0002} unit="N m⁻¹" isLightMode={isLightMode} />
+            <Slider label="Cohesion the crust adds" value={cohesion} onChange={setCohesion} min={0} max={0.01} step={0.0002} unit="N m⁻¹" isLightMode={isLightMode} />
             <p className="-mt-2 mb-4 text-[length:var(--text-micro)] text-muted-foreground">
-              About {(cohesion / 1.5e-5).toFixed(0)} kPa unconfined compressive strength at
-              the repo's current UCS scaling, which is itself a placeholder awaiting the
-              wet lab.
+              Roughly {(cohesion / 1.5e-5).toFixed(0)} kPa of crust strength. This is the
+              one number our own lab work has to supply, so it stays an input until it is
+              measured, and the strength it converts to is provisional too.
             </p>
             <Slider label="Treated patch to asset" value={patchDist} onChange={setPatchDist} min={1} max={200} step={1} unit="m" isLightMode={isLightMode} hint="How far the treated ground sits upwind. The capture fraction falls away fast with distance." />
           </Panel>
@@ -578,7 +578,7 @@ export default function ExposureWorkspace() {
               <StatCard label="Transmittance loss" value={dep.value?.toFixed(1) ?? "n/a"} unit="%" accent="text-dune-orange" isLightMode={isLightMode} sub="at 2 g/m², 24° tilt" />
               <StatCard label="Site capacity" value={site?.capacityMw?.toFixed(0) ?? "n/a"} unit="MW" accent="text-muted-foreground" isLightMode={isLightMode} />
               <StatCard label="DEWA industrial" value="0.126" unit="USD/kWh" accent="text-muted-foreground" isLightMode={isLightMode} sub="retail, not PPA" />
-              <StatCard label="Capacity factor" value="needs source" accent="text-dune-rose" isLightMode={isLightMode} />
+              <StatCard label="Capacity factor" value={null} accent="text-dune-rose" isLightMode={isLightMode} sub="how much of its rated power the site actually averages" />
             </div>
             <p className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
               Annual revenue loss needs a capacity factor and the price the site actually
@@ -590,11 +590,11 @@ export default function ExposureWorkspace() {
         ) : (
           <div className="flex items-start gap-4">
             <p className="text-[length:var(--text-micro)] leading-relaxed">
-              No cost coefficient exists for this market yet. The mass reaching the site is
-              modelled above and is sound. What is missing is the conversion from that mass
-              to money. For roads the drift rate is measured, about 20 cubic metres per metre
-              width per year in Kuwait, and only the clearing cost per cubic metre is absent.
-              A number is not shown here because inventing one would not survive scrutiny.
+              We can say how much sand reaches this kind of site, and that part is modelled
+              above. What nobody has published is what that sand costs its owner. For roads
+              the drift rate is measured, about 20 cubic metres per metre of width per year
+              in Kuwait, and only the price of clearing a cubic metre is missing. So this
+              panel stays empty rather than showing a number we made up.
             </p>
           </div>
         )}

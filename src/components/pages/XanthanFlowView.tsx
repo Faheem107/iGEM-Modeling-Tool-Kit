@@ -637,9 +637,8 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           <p
             className={`text-[length:var(--text-caption)] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
-            The write-up notes a static document "cannot include interactive
-            sliders", pick a concentration and applied pressure below to
-            restore them.
+            Pick a concentration and an applied pressure, and the model works
+            out how fast the mix moves and how long it takes to get there.
           </p>
           <Slider
             label="Concentration φ"
@@ -794,10 +793,10 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           <p
             className={`text-[length:var(--text-caption)] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
-            Dashed lines are the five reference concentrations, mirroring
-            Figure 1 of the write-up. The bold amber line is your slider's live
-            curve. Moving to a lower concentration shifts the curve down and
-            right, the same pressure drives a far higher speed.
+            Dashed lines are the five reference concentrations. The bold amber
+            line is your slider's live curve. Moving to a lower concentration
+            shifts the curve down and right: the same pressure drives a far
+            higher speed.
           </p>
         </div>
       </div>

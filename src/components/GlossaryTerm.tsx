@@ -777,12 +777,11 @@ export const GlossaryProvider: React.FC<{
                       }`}
                     >
                       <p className="text-[length:var(--text-micro)] font-semibold">
-                        Animation rendering soon
+                        No video for this one yet
                       </p>
                       <p className="text-[length:var(--text-micro)] mt-1 opacity-80">
-                        The narrated {video.length} explainer for this module is
-                        being produced. The plain-language walkthrough below is
-                        the same story it tells.
+                        The plain-language walkthrough below tells the same
+                        story, and Show the math and Sources carry the rest.
                       </p>
                     </div>
                   )}
