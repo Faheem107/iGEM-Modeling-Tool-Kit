@@ -13,17 +13,26 @@ import { meanSaltationFlux, driftPotential, GULF_IMPACT_THRESHOLD_MS } from "@/s
 import { thresholdUntreated, thresholdTreated } from "@/src/lib/physics/aeolian";
 import { transmittanceLossPercent } from "@/src/lib/physics/damage";
 import { useHighlight, useStick } from "@/src/lib/motion/pointer";
+import {
+  climatologyField, toWindField, toUV,
+  type Climatology, type WindField, type WindFieldResponse,
+} from "@/src/lib/windField";
 
 type Mode = "seasonal" | "live";
 
 /** Grain diameter for the Rub al Khali, Benaafi et al. Table 1, 1.460 phi. */
 const GRAIN_D_M = 2 ** -1.46 / 1000;
 
+/**
+ * The four windows, each with the calendar months it covers. `mid` is the month
+ * whose mean vector field the map animates; the Weibull fit and the rose are
+ * averaged over all three, since a season is what the reader picked.
+ */
 const SEASONS = [
-  { id: "DJF", label: "Dec to Feb" },
-  { id: "MAM", label: "Mar to May" },
-  { id: "JJA", label: "Jun to Aug" },
-  { id: "SON", label: "Sep to Nov" },
+  { id: "DJF", label: "Dec to Feb", months: [12, 1, 2], mid: 1 },
+  { id: "MAM", label: "Mar to May", months: [3, 4, 5], mid: 4 },
+  { id: "JJA", label: "Jun to Aug", months: [6, 7, 8], mid: 7 },
+  { id: "SON", label: "Sep to Nov", months: [9, 10, 11], mid: 10 },
 ] as const;
 
 function Grade({ grade }: { grade: "measured" | "literature" | "unsourced" }) {
@@ -61,6 +70,9 @@ export default function ExposureWorkspace() {
   const [cohesion, setCohesion] = useState(0.002);
   const [patchDist, setPatchDist] = useState(20);
 
+  const [clim, setClim] = useState<Climatology | null>(null);
+  const [liveField, setLiveField] = useState<WindField | null>(null);
+
   const [live, setLive] = useState<{ dust: number | null; wind: number | null; dir: number | null; at: string } | null>(null);
   const [liveErr, setLiveErr] = useState<string | null>(null);
   const [liveLoading, setLiveLoading] = useState(false);
@@ -69,6 +81,11 @@ export default function ExposureWorkspace() {
   const stick = useStick();
 
   useEffect(() => {
+    fetch("/data/era5_wind_climatology.json")
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then(setClim)
+      .catch(() => undefined);   // the seasonal panel says so if it is missing
+
     Promise.all([
       fetch("/data/ginoux_middle_east_mam.geojson").then((r) => r.json()),
       fetch("/data/uae_target_sites.json").then((r) => r.json()),
@@ -90,6 +107,18 @@ export default function ExposureWorkspace() {
   }, [visible, selectedId]);
 
   const site = visible.find((s) => s.id === selectedId) ?? null;
+
+  // The live wind grid is site-independent, so it is fetched per mode rather
+  // than per site. Our route caches it for an hour; see app/api/wind-field.
+  useEffect(() => {
+    if (mode !== "live") return;
+    const ac = new AbortController();
+    fetch("/api/wind-field", { signal: ac.signal })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then((d: WindFieldResponse) => setLiveField(toWindField(d)))
+      .catch(() => undefined);
+    return () => ac.abort();
+  }, [mode]);
 
   // Live feed for the selected site.
   useEffect(() => {
@@ -119,6 +148,16 @@ export default function ExposureWorkspace() {
     () => driftPotential([{ directionFrom: dirFrom, speed, timeFraction: 1 }], GULF_IMPACT_THRESHOLD_MS),
     [dirFrom, speed],
   );
+
+  // What the map animates. Seasonal is a monthly MEAN VECTOR wind, which is a
+  // different quantity from the live instantaneous field: where direction
+  // varies the mean vector is weaker than any real day's wind. The caption
+  // under the map says which is on screen.
+  const seasonDef = SEASONS.find((x) => x.id === season) ?? SEASONS[1];
+  const windField = useMemo(() => {
+    if (mode === "live") return liveField;
+    return clim ? climatologyField(clim, seasonDef.mid) : null;
+  }, [mode, liveField, clim, seasonDef.mid]);
 
   const uStarT0 = thresholdUntreated(GRAIN_D_M);
   const uStarT = thresholdTreated(GRAIN_D_M, cohesion);
@@ -197,6 +236,7 @@ export default function ExposureWorkspace() {
             onSelect={setSelectedId}
             driftDeg={drift.RDD}
             showSources={showSources}
+            windField={windField}
             isLightMode={isLightMode}
           />
           <div className="flex flex-wrap items-center gap-4">
