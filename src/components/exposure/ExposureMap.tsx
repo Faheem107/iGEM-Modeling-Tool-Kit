@@ -2,6 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { DUNE, HAIRLINE, INK, TINT } from "@/src/lib/palette";
+import { EXTENT, H, W, project } from "./mapExtent";
+import WindFieldCanvas from "./WindFieldCanvas";
+import type { WindField } from "@/src/lib/windField";
+
+export { EXTENT, H, W, project };
 
 /**
  * The shared map for both exposure modules.
@@ -22,23 +27,6 @@ import { DUNE, HAIRLINE, INK, TINT } from "@/src/lib/palette";
  * suspension and drift pathways, never saltating sand, which travels tens of
  * metres. See DUST_EXPOSURE_MODULE_SPEC.md section 2.
  */
-
-export const EXTENT = { lonMin: 44, lonMax: 60, latMin: 16, latMax: 33 };
-export const W = 800;
-
-/** Standard parallel: the middle of the extent, about 24.5 N. */
-const LAT_MID = (EXTENT.latMin + EXTENT.latMax) / 2;
-const COS_MID = Math.cos((LAT_MID * Math.PI) / 180);
-
-export const H = Math.round(
-  (W * (EXTENT.latMax - EXTENT.latMin)) /
-    ((EXTENT.lonMax - EXTENT.lonMin) * COS_MID),
-);
-
-export const project = (lon: number, lat: number) => ({
-  x: ((lon - EXTENT.lonMin) / (EXTENT.lonMax - EXTENT.lonMin)) * W,
-  y: ((EXTENT.latMax - lat) / (EXTENT.latMax - EXTENT.latMin)) * H,
-});
 
 interface BoundaryFeature {
   properties: { name: string; iso: string };
@@ -98,6 +86,7 @@ export default function ExposureMap({
   onSelect,
   driftDeg,
   showSources = true,
+  windField = null,
   isLightMode,
 }: {
   sources: SourceFeature[];
@@ -107,6 +96,8 @@ export default function ExposureMap({
   /** Resultant drift direction, degrees the sand moves toward. */
   driftDeg?: number | null;
   showSources?: boolean;
+  /** 10 m wind vectors to animate over the map, or null while loading. */
+  windField?: WindField | null;
   isLightMode: boolean;
 }) {
   // Country outlines are a map concern, so the map fetches them rather than
@@ -176,9 +167,13 @@ export default function ExposureMap({
   const grid = isLightMode ? "rgb(0 0 0 / 0.07)" : "rgb(255 255 255 / 0.07)";
 
   return (
+    <div
+      className="relative w-full overflow-hidden rounded-[6px] border border-border"
+      style={{ aspectRatio: `${W} / ${H}` }}
+    >
     <svg
       viewBox={`0 0 ${W} ${H}`}
-      className="w-full h-auto rounded-[6px] border border-border"
+      className="absolute inset-0 h-full w-full"
       style={{ background: isLightMode ? TINT.tealWash : DUNE.ink }}
       role="img"
       aria-label="Gulf dust source and target site map"
@@ -272,6 +267,18 @@ export default function ExposureMap({
           ))}
       </g>
 
+    </svg>
+
+      {/* The moving wind field sits between the basemap and the marks. Streaks
+          over a coastline read as wind; streaks over a site marker just hide
+          it, which is why this is two SVG layers and not one. */}
+      <WindFieldCanvas field={windField} isLightMode={isLightMode} />
+
+    <svg
+      viewBox={`0 0 ${W} ${H}`}
+      className="pointer-events-none absolute inset-0 h-full w-full"
+      aria-hidden
+    >
       {/* drift pathway from the selected site, pointing upwind to the origin */}
       {selected && driftDeg != null && Number.isFinite(driftDeg) && (
         (() => {
@@ -308,7 +315,7 @@ export default function ExposureMap({
               key={s.id}
               transform={`translate(${p.x},${p.y})`}
               onClick={() => onSelect(s.id)}
-              style={{ cursor: "pointer" }}
+              style={{ cursor: "pointer", pointerEvents: "auto" }}
             >
               {on && <circle r={13} fill="var(--dune-orange)" fillOpacity={0.18} />}
               <path
@@ -359,5 +366,6 @@ export default function ExposureMap({
         })()
       )}
     </svg>
+    </div>
   );
 }
