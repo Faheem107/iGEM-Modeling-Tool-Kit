@@ -1,14 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import {
   INDEX_COLUMNS,
   ARCHIVED_MODULES,
   moduleHref,
 } from "@/src/lib/modelIndex";
 import type { ModuleMeta } from "@/src/lib/prongs";
+import { Fold } from "@/src/components/simulation/_shared";
 import { PRONG_TITLES, ALGINATE_RATIONALE } from "@/content/copy";
 
 /**
@@ -56,7 +57,7 @@ export default function ModelIndex({
           const prongId =
             col.key === "prong-1" ? 1 : col.key === "prong-2" ? 2 : null;
           return (
-            <Group
+            <Fold
               key={col.key}
               eyebrow={col.eyebrow}
               title={col.title}
@@ -74,7 +75,7 @@ export default function ModelIndex({
               }
             >
               <ModuleList prongs={col.prongs} modules={col.modules} />
-            </Group>
+            </Fold>
           );
         })}
       </div>
@@ -103,7 +104,7 @@ export default function ModelIndex({
         <div className="mt-12 border-t border-border pt-6">
           <div className="rail-row">
             <p className="caption pt-1">Archived</p>
-            <Group
+            <Fold
               title={PRONG_TITLES[3]}
               lede={ALGINATE_RATIONALE}
               muted
@@ -121,83 +122,12 @@ export default function ModelIndex({
               }
             >
               <ModuleList prongs="3" modules={ARCHIVED_MODULES} />
-            </Group>
+            </Fold>
           </div>
         </div>
       )}
 
     </motion.div>
-  );
-}
-
-/**
- * One folded group. The whole header is the control, so the target is the size
- * of the heading rather than a chevron, and the sign in the corner says which
- * way it will go.
- */
-function Group({
-  eyebrow,
-  title,
-  lede,
-  children,
-  aside,
-  muted,
-  wide,
-}: {
-  eyebrow?: string;
-  title: string;
-  lede: string;
-  children: React.ReactNode;
-  aside?: React.ReactNode;
-  muted?: boolean;
-  wide?: boolean;
-}) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div>
-      {eyebrow && <p className="caption mb-2">{eyebrow}</p>}
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        className="group block w-full text-left"
-      >
-        <span className="flex items-start justify-between gap-4">
-          <span
-            className={`wght-head rule-link text-[length:var(--text-h3)] ${
-              muted ? "text-muted-foreground" : "text-foreground"
-            }`}
-          >
-            {title}
-          </span>
-          <span aria-hidden className="caption shrink-0 pt-2 text-dune-orange">
-            {open ? "−" : "+"}
-          </span>
-        </span>
-        <span
-          className={`mt-2 block text-[length:var(--text-micro)] leading-snug text-muted-foreground ${
-            wide ? "max-w-[62ch]" : "max-w-[32ch]"
-          }`}
-        >
-          {lede}
-        </span>
-      </button>
-      {aside}
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            key="body"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden"
-          >
-            {children}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
   );
 }
 

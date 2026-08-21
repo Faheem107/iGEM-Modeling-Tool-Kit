@@ -7,7 +7,7 @@
  */
 
 import React, { useState } from "react";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { useGlossary, GlossaryText } from "../GlossaryTerm";
 import { CaptionText } from "../CaptionText";
 import { MODULE_CODE } from "../../lib/moduleCode";
@@ -131,6 +131,103 @@ export function Slider({
   );
 }
 
+/**
+ * One folded section.
+ *
+ * Lifted out of `landing/ModelIndex.tsx`, where it was a local `Group`, so the
+ * exposure module can use the same fold the prong list uses rather than a
+ * second one that looks nearly the same. Both import this.
+ *
+ * The whole header is the control, so the target is the size of the heading
+ * rather than a chevron, and the sign in the corner says which way it will go.
+ * `Panel` is the boxed alternative and still exists; use `Fold` where a page
+ * would otherwise be a grid of boxes.
+ */
+export function Fold({
+  eyebrow,
+  title,
+  lede,
+  children,
+  aside,
+  right,
+  muted,
+  wide,
+  defaultOpen = false,
+  headingClass = "text-[length:var(--text-h3)]",
+  className = "",
+}: {
+  eyebrow?: string;
+  title: React.ReactNode;
+  lede?: string;
+  children: React.ReactNode;
+  aside?: React.ReactNode;
+  /** Trailing slot on the header row, for an evidence grade badge. Sits outside
+   *  the button so it is not part of the click target. */
+  right?: React.ReactNode;
+  muted?: boolean;
+  wide?: boolean;
+  defaultOpen?: boolean;
+  headingClass?: string;
+  className?: string;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className={className}>
+      {eyebrow && <p className="caption mb-2">{eyebrow}</p>}
+      <div className="flex items-start justify-between gap-4">
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          className="group block flex-1 text-left"
+        >
+          <span className="flex items-start justify-between gap-4">
+            <span
+              className={`wght-head rule-link ${headingClass} ${
+                muted ? "text-muted-foreground" : "text-foreground"
+              }`}
+            >
+              {title}
+            </span>
+            <span aria-hidden className="caption shrink-0 pt-2 text-dune-orange">
+              {open ? "\u2212" : "+"}
+            </span>
+          </span>
+          {lede && (
+            <span
+              className={`mt-2 block text-[length:var(--text-micro)] leading-snug text-muted-foreground ${
+                wide ? "max-w-[62ch]" : "max-w-[32ch]"
+              }`}
+            >
+              {lede}
+            </span>
+          )}
+        </button>
+        {right && <span className="shrink-0 pt-1">{right}</span>}
+      </div>
+      {aside}
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            key="body"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden"
+          >
+            {/* The padding sits on an inner wrapper, not on the animated
+                element. On the animated one it would still be painted at
+                height 0, so the fold would open from a gap rather than from
+                nothing. */}
+            <div className="pt-4">{children}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export function StatCard({
   label,
   value,
@@ -139,6 +236,7 @@ export function StatCard({
   isLightMode,
   sub,
   emphasize,
+  rule = true,
 }: Themed & {
   label: React.ReactNode;
   /**
@@ -151,10 +249,17 @@ export function StatCard({
   accent: string;
   sub?: string;
   emphasize?: boolean;
+  /**
+   * The top rule reads as a figure sitting on a line, which is right inside a
+   * `Panel`. Inside a `Fold` the box is gone, and a rule above every label
+   * reads instead as a stray line drawn across the page for no reason. Pass
+   * false there. Default stays true so no existing module changes.
+   */
+  rule?: boolean;
 }) {
   if (value === null) {
     return (
-      <div className="border-t border-border pt-2">
+      <div className={rule ? "border-t border-border pt-2" : ""}>
         <span className="caption mb-2 block" style={{ textWrap: "balance" }}>
           <CaptionText>{label}</CaptionText>
         </span>
@@ -173,9 +278,13 @@ export function StatCard({
     // A figure on a rule, not a tile. The emphasised one is marked by a heavier
     // top rule and a larger number, never by a ring or a fill.
     <div
-      className={`border-t pt-2 ${
-        emphasize ? "border-dune-orange" : "border-border"
-      }`}
+      className={
+        rule
+          ? `border-t pt-2 ${emphasize ? "border-dune-orange" : "border-border"}`
+          : emphasize
+            ? "border-l-2 border-dune-orange pl-3"
+            : ""
+      }
     >
       <span className="caption mb-2 block" style={{ textWrap: "balance" }}>
         <CaptionText>{label}</CaptionText>
