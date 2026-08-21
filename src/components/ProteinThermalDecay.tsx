@@ -126,8 +126,8 @@ export default function ProteinThermalDecay({
             Protein Conformational &amp; Thermal Decay
           </h3>
           <p className="text-[length:var(--text-caption)] text-muted-foreground mt-1">
-            Thermodynamic folding state f_folded mapping of sandy soil
-            biopolymers.
+            How much of the enzyme stays folded and working as the sand heats
+            up.
           </p>
         </div>
       </div>
@@ -228,7 +228,7 @@ export default function ProteinThermalDecay({
           >
             <div className="flex justify-between items-center text-[length:var(--text-caption)]">
               <span className="text-muted-foreground uppercase font-mono text-[length:var(--text-caption)]">
-                Operative Melting Point $T_m$:
+                Melting point:
               </span>
               <span className="font-mono font-bold text-foreground">
                 {operativeT_melting.toFixed(2)} °C
@@ -265,7 +265,7 @@ export default function ProteinThermalDecay({
                 </GlossaryTerm>
               </span>
               <span>
-                T_melting midpoint = {operativeT_melting.toFixed(1)}°C
+                half folded at {operativeT_melting.toFixed(1)}°C
               </span>
             </div>
 
@@ -405,7 +405,7 @@ export default function ProteinThermalDecay({
                   className="font-mono font-bold"
                   textAnchor="middle"
                 >
-                  Tm ({operativeT_melting.toFixed(0)}°C)
+                  melting point, {operativeT_melting.toFixed(0)}°C
                 </text>
 
                 {/* Definitions */}

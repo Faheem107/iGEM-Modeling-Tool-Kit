@@ -221,7 +221,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
             <Slider
               isLightMode={isLightMode}
               accent="accent-dune-rose"
-              label="Antitoxin lability (δ_A)"
+              label="How fast the antitoxin breaks down"
               value={p.deltaA}
               min={0.3}
               max={3}

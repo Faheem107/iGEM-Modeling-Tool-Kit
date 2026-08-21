@@ -700,14 +700,14 @@ export default function AeolianWindTunnel({
             </div>
 
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Untreated lift (u_t0)</span>
+              <span className="text-muted-foreground">Wind that lifts untreated sand</span>
               <span className="tabular-nums text-foreground">
                 {physicsResult.uInf_t0.toFixed(1)} m/s
               </span>
             </div>
 
             <div className="flex justify-between">
-<span className="text-muted-foreground">Treated threshold (u_t)</span>
+<span className="text-muted-foreground">Wind that lifts treated sand</span>
               <span className="tabular-nums text-dune-teal">
                 {physicsResult.uInf_t.toFixed(1)} m/s
               </span>
