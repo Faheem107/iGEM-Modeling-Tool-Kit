@@ -102,7 +102,7 @@ export default function KillSwitchModule({ isLightMode }: Themed) {
               className={`flex items-center gap-2 rounded-[4px] border px-4 py-2 text-[length:var(--text-caption)] font-bold uppercase tracking-wider transition-colors ${
                 active
                   ? isLightMode
-                    ? "border-dune-orange bg-dune-orange text-dune-orange"
+                    ? "border-dune-orange bg-dune-orange/10 text-dune-orange"
                     : "border-dune-orange/50 bg-dune-orange/10 text-dune-orange"
                   : isLightMode
                     ? "border-border bg-white text-muted-foreground hover:bg-background"

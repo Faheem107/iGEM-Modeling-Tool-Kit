@@ -801,7 +801,7 @@ export default function AdvancedFbaPortal({
       >
         <div className="flex items-center gap-4">
           <div
-            className={`p-2 rounded-[4px] ${isLightMode ? "bg-dune-orange text-dune-orange" : "bg-dune-orange/50 text-dune-teal border border-dune-orange/50"}`}
+            className={`p-2 rounded-[4px] ${isLightMode ? "bg-dune-orange/10 text-dune-orange" : "bg-dune-orange/50 text-dune-teal border border-dune-orange/50"}`}
           >
             <Cpu
               className="h-4 w-4 animate-spin"
@@ -832,10 +832,10 @@ export default function AdvancedFbaPortal({
               fbaResults.status === "Optimal" ||
               fbaResults.status === "Feasible"
                 ? isLightMode
-                  ? "bg-dune-teal border-dune-teal text-dune-teal"
+                  ? "bg-dune-teal/10 border-dune-teal text-dune-teal"
                   : "bg-dune-teal/20 border-dune-teal/40 text-dune-teal"
                 : isLightMode
-                  ? "bg-dune-rose border-dune-rose text-dune-rose"
+                  ? "bg-dune-rose/10 border-dune-rose text-dune-rose"
                   : "bg-dune-rose/20 border-dune-rose/40 text-dune-rose"
             }`}
           >
@@ -917,7 +917,7 @@ export default function AdvancedFbaPortal({
                     currentObjective === "R_PGAsyn"
                       ? isLightMode
                         ? "bg-dune-orange text-foreground font-bold"
-                        : "bg-dune-orange text-dune-orange border border-dune-orange/60 font-black"
+                        : "bg-dune-orange/10 text-dune-orange border border-dune-orange/60 font-black"
                       : isLightMode
                         ? "text-muted-foreground hover:text-foreground"
                         : "text-muted-foreground hover:text-foreground"
@@ -931,7 +931,7 @@ export default function AdvancedFbaPortal({
                     currentObjective === "R_Biomass"
                       ? isLightMode
                         ? "bg-dune-orange text-foreground font-bold"
-                        : "bg-dune-orange text-dune-orange border border-dune-orange/60 font-black"
+                        : "bg-dune-orange/10 text-dune-orange border border-dune-orange/60 font-black"
                       : isLightMode
                         ? "text-muted-foreground hover:text-foreground"
                         : "text-muted-foreground hover:text-foreground"
@@ -1057,7 +1057,7 @@ export default function AdvancedFbaPortal({
                   className={`p-2 rounded-[4px] border text-left cursor-pointer transition-all flex items-center justify-between ${
                     knockoutList[item.gene]
                       ? isLightMode
-                        ? "bg-dune-rose border-dune-rose text-dune-rose font-bold"
+                        ? "bg-dune-rose/10 border-dune-rose text-dune-rose font-bold"
                         : "bg-dune-rose/20 border-dune-rose/80 text-dune-rose"
                       : isLightMode
                         ? "bg-background border-border text-muted-foreground hover:bg-muted"

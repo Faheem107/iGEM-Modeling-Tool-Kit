@@ -60,7 +60,7 @@ export default class ModuleErrorBoundary extends React.Component<Props, State> {
           onClick={this.reset}
           className={`flex items-center gap-2 px-4 py-2 rounded-[6px] text-[length:var(--text-micro)] font-bold transition ${
             isLightMode
-              ? "bg-dune-orange hover:bg-dune-orange text-dune-orange"
+              ? "bg-dune-orange/10 hover:bg-dune-orange/20 text-dune-orange"
               : "bg-dune-orange/40 hover:bg-dune-orange/60 text-dune-orange"
           }`}
         >

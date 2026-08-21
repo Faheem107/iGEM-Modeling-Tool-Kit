@@ -190,14 +190,14 @@ export default function CompositeSynthesisPanel({
               const tone =
                 e.kind === "synergy"
                   ? isLightMode
-                    ? "text-dune-teal bg-dune-teal border-dune-teal"
+                    ? "text-dune-teal bg-dune-teal/10 border-dune-teal"
                     : "text-dune-teal bg-dune-teal/20 border-dune-teal/40"
                   : e.kind === "burden"
                     ? isLightMode
-                      ? "text-dune-orange bg-dune-orange border-dune-orange"
+                      ? "text-dune-orange bg-dune-orange/10 border-dune-orange"
                       : "text-dune-orange bg-dune-orange/20 border-dune-orange/40"
                     : isLightMode
-                      ? "text-dune-rose bg-dune-rose border-dune-rose"
+                      ? "text-dune-rose bg-dune-rose/10 border-dune-rose"
                       : "text-dune-rose bg-dune-rose/20 border-dune-rose/40";
               return (
                 <div key={i} className={`p-4 rounded-[6px] border ${tone}`}>
@@ -280,7 +280,7 @@ export default function CompositeSynthesisPanel({
             </RadarChart>
           </ResponsiveContainer>
           <div
-            className={`mt-2 p-2 rounded-[4px] text-[length:var(--text-caption)] flex items-center gap-2 ${isLightMode ? "bg-dune-orange text-dune-orange" : "bg-dune-orange/20 text-dune-orange"}`}
+            className={`mt-2 p-2 rounded-[4px] text-[length:var(--text-caption)] flex items-center gap-2 ${isLightMode ? "bg-dune-orange/10 text-dune-orange" : "bg-dune-orange/20 text-dune-orange"}`}
           >
             <ShieldAlert className="h-4 w-4 shrink-0" />
             <span>

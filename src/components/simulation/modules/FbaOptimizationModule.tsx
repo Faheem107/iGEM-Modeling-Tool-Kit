@@ -659,7 +659,7 @@ export default function FbaOptimizationModule({
               className={`flex items-center gap-2 p-2 rounded-[4px] border text-[length:var(--text-caption)] cursor-pointer transition ${
                 knockouts.has(k.id)
                   ? isLightMode
-                    ? "border-dune-rose bg-dune-rose text-dune-rose"
+                    ? "border-dune-rose bg-dune-rose/10 text-dune-rose"
                     : "border-dune-rose/50 bg-dune-rose/20 text-dune-rose"
                   : isLightMode
                     ? "border-border bg-background text-muted-foreground"

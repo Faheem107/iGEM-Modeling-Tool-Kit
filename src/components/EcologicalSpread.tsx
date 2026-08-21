@@ -563,7 +563,7 @@ export default function EcologicalSpread({
                   onClick={() =>
                     setConfig((prev) => ({ ...prev, initialInoculation: pat }))
                   }
-                  className={`px-2 py-1 text-[length:var(--text-caption)] font-bold rounded-[4px] capitalize cursor-pointer transition ${config.initialInoculation === pat ? (isLightMode ? "bg-dune-orange text-dune-orange border border-dune-orange " : "bg-dune-orange text-dune-orange border border-dune-orange/60") : isLightMode ? "text-muted-foreground hover:text-foreground bg-card border border-border hover:border-dune-orange" : "text-muted-foreground hover:text-foreground"}`}
+                  className={`px-2 py-1 text-[length:var(--text-caption)] font-bold rounded-[4px] capitalize cursor-pointer transition ${config.initialInoculation === pat ? (isLightMode ? "bg-dune-orange/10 text-dune-orange border border-dune-orange " : "bg-dune-orange/10 text-dune-orange border border-dune-orange/60") : isLightMode ? "text-muted-foreground hover:text-foreground bg-card border border-border hover:border-dune-orange" : "text-muted-foreground hover:text-foreground"}`}
                 >
                   {pat}
                 </button>
@@ -590,7 +590,7 @@ export default function EcologicalSpread({
                 </div>
               </div>
               <span
-                className={`font-mono px-1 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange border-dune-orange text-dune-orange font-bold" : "bg-dune-orange/40 text-dune-orange border border-dune-orange/30"}`}
+                className={`font-mono px-1 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange/10 border-dune-orange text-dune-orange font-bold" : "bg-dune-orange/40 text-dune-orange border border-dune-orange/30"}`}
               >
                 {(effectiveSpreadProb * 100).toFixed(0)}%
               </span>
@@ -690,7 +690,7 @@ export default function EcologicalSpread({
                 </div>
               </div>
               <span
-                className={`font-mono px-1 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-teal border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/40 text-dune-teal border border-dune-teal/30"}`}
+                className={`font-mono px-1 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-teal/10 border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/40 text-dune-teal border border-dune-teal/30"}`}
               >
                 {caConc.toFixed(1)} mM
               </span>
@@ -725,7 +725,7 @@ export default function EcologicalSpread({
                 </div>
               </div>
               <span
-                className={`font-mono px-1 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-maroon border-dune-maroon text-dune-maroon font-bold" : "bg-dune-maroon/40 text-dune-maroon border border-dune-maroon/30"}`}
+                className={`font-mono px-1 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-maroon/10 border-dune-maroon text-dune-maroon font-bold" : "bg-dune-maroon/40 text-dune-maroon border border-dune-maroon/30"}`}
               >
                 {(config.resourceConsume * 100).toFixed(0)}% step⁻¹
               </span>
@@ -809,7 +809,7 @@ export default function EcologicalSpread({
                 Kill-switch escape frequency
               </span>
               <span
-                className={`px-1 py-1 rounded-[4px] text-[length:var(--text-caption)] border font-mono ${escape.meetsNIH ? (isLightMode ? "bg-dune-teal border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/40 text-dune-teal border-dune-teal/40") : isLightMode ? "bg-dune-rose border-dune-rose text-dune-rose font-bold" : "bg-dune-rose/40 text-dune-rose border-dune-rose/40"}`}
+                className={`px-1 py-1 rounded-[4px] text-[length:var(--text-caption)] border font-mono ${escape.meetsNIH ? (isLightMode ? "bg-dune-teal/10 border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/40 text-dune-teal border-dune-teal/40") : isLightMode ? "bg-dune-rose/10 border-dune-rose text-dune-rose font-bold" : "bg-dune-rose/40 text-dune-rose border-dune-rose/40"}`}
               >
                 {sci(pEscape)} cell⁻¹
               </span>
@@ -895,7 +895,7 @@ export default function EcologicalSpread({
                 </span>
               </div>
               <div
-                className={`mt-2 flex items-center gap-2 p-2 rounded-[4px] text-[length:var(--text-caption)] font-sans font-bold border ${escape.containedAtScale ? (isLightMode ? "bg-dune-teal text-dune-teal border-dune-teal" : "bg-dune-teal/30 text-dune-teal border-dune-teal/40") : isLightMode ? "bg-dune-rose text-dune-rose border-dune-rose" : "bg-dune-rose/30 text-dune-rose border-dune-rose/40"}`}
+                className={`mt-2 flex items-center gap-2 p-2 rounded-[4px] text-[length:var(--text-caption)] font-sans font-bold border ${escape.containedAtScale ? (isLightMode ? "bg-dune-teal/10 text-dune-teal border-dune-teal" : "bg-dune-teal/30 text-dune-teal border-dune-teal/40") : isLightMode ? "bg-dune-rose/10 text-dune-rose border-dune-rose" : "bg-dune-rose/30 text-dune-rose border-dune-rose/40"}`}
               >
                 {escape.containedAtScale ? (
                   <>
@@ -951,7 +951,7 @@ export default function EcologicalSpread({
               <div
                 className={`border-2 border-dashed p-2 rounded-[4px] text-[length:var(--text-caption)] font-bold leading-normal ${
                   isLightMode
-                    ? "bg-dune-teal text-dune-teal border-dune-teal"
+                    ? "bg-dune-teal/10 text-dune-teal border-dune-teal"
                     : "bg-dune-ink text-dune-teal border-dune-teal"
                 }`}
               >
@@ -1012,11 +1012,11 @@ export default function EcologicalSpread({
                 className={`px-4 py-1 rounded-[4px] text-[length:var(--text-caption)] font-bold flex items-center gap-1 cursor-pointer transition border ${
                   isRunning
                     ? isLightMode
-                      ? "bg-dune-rose text-dune-rose border-dune-rose "
-                      : "bg-dune-rose text-dune-rose border border-dune-rose/60"
+                      ? "bg-dune-rose/10 text-dune-rose border-dune-rose "
+                      : "bg-dune-rose/10 text-dune-rose border border-dune-rose/60"
                     : isLightMode
-                      ? "bg-dune-orange text-dune-orange border-dune-orange "
-                      : "bg-dune-orange text-dune-orange border border-dune-orange/60"
+                      ? "bg-dune-orange/10 text-dune-orange border-dune-orange "
+                      : "bg-dune-orange/10 text-dune-orange border border-dune-orange/60"
                 }`}
               >
                 {isRunning ? "Pause Ticks" : "Start Growth"}
