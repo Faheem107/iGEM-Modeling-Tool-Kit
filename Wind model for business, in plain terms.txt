@@ -61,8 +61,22 @@ numerical version. They agree to about twelve decimal places.
 
 Where the two Weibull numbers come from:
   - ERA5 (the European weather reanalysis) has hourly wind for every point on
-    Earth going back decades. Fitting A and k to it, month by month, is what
-    gives the seasonal picture.
+    Earth going back decades. We fitted A and k to it, month by month, on a
+    1 degree grid over the Gulf using 2022 to 2024. That file is
+    public/data/era5_wind_climatology.json and the script that builds it is
+    scripts/fit_era5_weibull.py.
+
+    We got the ERA5 data through Open-Meteo's historical archive rather than
+    the official Copernicus service. It is the same reanalysis, but with no
+    account, no API key and no request queue.
+
+    The script refuses to write the file if the fit fails validation. It
+    passes on all three checks against Khalaf and Al-Ajmi's Kuwait
+    measurements from 1993: sand drift peaks in June, inside their measured
+    May-to-August window; the summer drift heads to 146 degrees against their
+    measured southeast; and summer winds are 95 percent one-directional
+    against 15 percent in winter, which is the Shamal showing up on its own
+    out of the data.
   - The Global Wind Atlas already publishes fitted A and k at about 250 m
     resolution, which is far finer than ERA5. But we checked, and it is
     ANNUAL ONLY, with no monthly layers and no direction layers. So it can give
@@ -222,7 +236,7 @@ Three things follow immediately:
 -------------------------------------------------------------------------
 
 PAPER: Elminir et al. (2006), Energy Conversion and Management 47, 3192
-       (doi 10.1016/j.enconman.2006.02.014)
+       (doi 10.1016/j.enconman.2006.02.014)  [obtained and implemented]
 
 They measured how much light a solar panel loses as dust builds up on the glass,
 and published a curve of transmittance loss against grams of dust per square
@@ -331,6 +345,9 @@ constants falls apart the moment somebody asks where a number came from.
 -------------------------------------------------------------------------
 
   src/lib/physics/windStats.ts     Weibull integral and Fryberger drift, in the app
+  scripts/fit_era5_weibull.py      builds the monthly wind climatology
+  scripts/fetch_boundaries.py      builds the coastline the map draws
+  python_models/exposure.py        the whole chain, runnable, with its own plots
   python_models/wind_stats.py      the same maths in Python, kept in step
   scripts/verify_weibull_flux.py   proves the closed-form integral is exact
   scripts/transport_model.py       how far saltating grains travel
@@ -345,3 +362,30 @@ Background documents, in reading order:
   DUST_EXPOSURE_DATA_SOURCES.md          what data exists and what was verified
   DUST_EXPOSURE_KNOWLEDGE_GRAPH.md       which paper feeds which number
   DUST_EXPOSURE_TRANSPORT_AND_VALUE.md   the transport decision and the value chain
+
+
+-------------------------------------------------------------------------
+10. ONE MORE THING THE BUILD TAUGHT US
+-------------------------------------------------------------------------
+
+Section 1 says you must not put an average wind into the sand equation. While
+building the seasonal data we hit exactly the same trap one level down, and it
+is worth writing out because it is easy to miss.
+
+The wind rose splits the year into 16 compass sectors. The obvious way to work
+out the drift potential for a sector is to take that sector's average wind speed
+and put it into Fryberger's equation. We did that first. It gave Kuwait a drift
+potential of exactly zero for December, January, March and April.
+
+That is plainly wrong. Sand moves in Kuwait in December. The reason is the same
+cube law: December has plenty of individual hours above the 5.4 m/s threshold,
+but the sector's average sits below it, so the equation returned nothing.
+
+The fix is the same fix: add the drift up hour by hour, then store the total per
+sector. Once we did that, December came out at 117 vector units instead of 0,
+and the seasonal pattern became the one the literature describes: strongly
+one-directional in summer, scattered and variable in winter.
+
+The lesson is that "never average before a non-linear step" has to be applied
+everywhere in the chain, not just at the headline. It is the single most common
+way a sand transport model goes quietly wrong.
