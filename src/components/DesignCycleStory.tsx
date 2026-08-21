@@ -421,7 +421,7 @@ export default function DesignCycleStory({
               letterSpacing={2}
               fill={C.shield}
             >
-              KILL SWITCH, ADDED
+              KILL SWITCH ADDED
             </text>
             <path
               d="M955 288 L993 303 L993 335 Q993 369 955 386 Q917 369 917 335 L917 303 Z"

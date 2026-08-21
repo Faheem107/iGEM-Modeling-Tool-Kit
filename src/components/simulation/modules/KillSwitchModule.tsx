@@ -194,7 +194,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
               step={1}
               unit="h"
               onChange={(v) => set({ induceAt: v })}
-              hint="When aTc is applied, the population grows freely until then."
+              hint="The hour aTc is applied. Until then the population grows freely."
             />
           </div>
         </Panel>
@@ -211,7 +211,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
               step={0.005}
               format={(v) => `${(v * 100).toFixed(1)}%`}
               onChange={(v) => set({ plasmidLossPerGen: v })}
-              hint="Segregational instability, the plasmid-borne antitoxin dilutes out over ~20 generations."
+              hint="Segregational instability. The plasmid-borne antitoxin dilutes out over about 20 generations."
             />
             <Slider
               isLightMode={isLightMode}
@@ -235,7 +235,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
               step={0.1}
               unit="1/h"
               onChange={(v) => set({ deltaA: v })}
-              hint="MazE is degraded by Lon/Clp proteases, the faster it decays, the sooner MazF wins."
+              hint="MazE is degraded by Lon and Clp proteases. The faster it decays, the sooner MazF wins."
             />
           </div>
         </Panel>
@@ -309,7 +309,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
           <StatCard
             isLightMode={isLightMode}
             label="Time to 3-log kill"
-            value={tKill === null ? ", " : tKill.toFixed(1)}
+            value={tKill === null ? "n/a" : tKill.toFixed(1)}
             unit={tKill === null ? "" : "h"}
             accent={isLightMode ? "text-dune-rose" : "text-dune-rose"}
             emphasize
@@ -421,7 +421,7 @@ export function HgtTab({ isLightMode }: Themed) {
               step={0.005}
               format={(v) => `${(v * 100).toFixed(1)}%`}
               onChange={(v) => set({ cognateRecipients: v })}
-              hint="Fraction of the community (e.g. E. coli) that already carries a cognate MazE, the acknowledged failure mode."
+              hint="Fraction of the community, E. coli for instance, that already carries a cognate MazE. This is the acknowledged failure mode."
             />
           </div>
         </Panel>
@@ -558,7 +558,7 @@ export function SporeTab({ isLightMode }: Themed) {
               step={0.0005}
               format={(v) => `${(v * 100).toFixed(2)}%`}
               onChange={(v) => set({ superdormantFloor: v })}
-              hint="Spores with near-zero germinant receptors that no germinant wakes, the clearance floor (Ghosh et al. 2012)."
+              hint="Spores with near-zero germinant receptors, which no germinant wakes. This sets the clearance floor (Ghosh et al. 2012)."
             />
             <Slider
               isLightMode={isLightMode}

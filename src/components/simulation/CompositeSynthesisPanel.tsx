@@ -165,7 +165,7 @@ export default function CompositeSynthesisPanel({
           <>
             <GlossaryTerm term="prong-interaction">
               Inter-Prong Interactions
-            </GlossaryTerm>{" "}, what happens when they share a chassis & soil
+            </GlossaryTerm>: what happens when they share a chassis & soil
           </>
         }
         icon={GitCompareArrows}

@@ -339,11 +339,10 @@ export default function EconomicScalabilityEngine({
               {cost.capex > 0
                 ? ` and a one-time $${cost.capex.toLocaleString()} bioprocess capex`
                 : ""}
-              . Break-even vs chemical spray at ~
+              .{" "}
               {Number.isFinite(cost.breakEvenHaVsChemical)
-                ? Math.ceil(cost.breakEvenHaVsChemical)
-                : ", "}{" "}
-              ha.
+                ? `Break-even vs chemical spray at about ${Math.ceil(cost.breakEvenHaVsChemical)} ha.`
+                : "At these settings the treatment never breaks even against chemical spray, however large the area."}
             </p>
           </div>
         </Panel>

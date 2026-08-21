@@ -1,0 +1,347 @@
+WIND PATTERN MODEL FOR THE BUSINESS CASE
+How the analysis was actually done, in plain terms
+
+Written for anyone on the team who wants to understand or defend the wind
+side of the business model without reading the code or the papers.
+
+
+-------------------------------------------------------------------------
+0. THE ONE PARAGRAPH VERSION
+-------------------------------------------------------------------------
+
+The business idea is: treat the loose ground the sand comes from, instead of
+cleaning the asset the sand lands on. To charge money for that, we have to be
+able to say how much sand arrives at a customer's site now, and how much less
+would arrive after we treat the ground upwind. The wind model is the thing that
+turns "it is windy in the Gulf" into that number.
+
+It works in five steps: describe the wind properly, work out when the ground
+starts moving, work out how much sand the wind carries, work out how far that
+sand actually travels, and then convert the sand that arrives into money.
+
+Every step is taken from a published paper. Nothing in the chain is a guess.
+Where we could not find a source for a number, the code refuses to run rather
+than filling in something plausible. That is deliberate, and it is the part a
+judge or a customer will check.
+
+
+-------------------------------------------------------------------------
+1. THE PROBLEM WITH JUST USING "AVERAGE WIND SPEED"
+-------------------------------------------------------------------------
+
+This is the single most important idea in the whole model, so it goes first.
+
+Sand does not move at all until the wind passes a threshold. Below that speed,
+nothing happens. Above it, the amount of sand carried goes up roughly with the
+CUBE of the wind speed. Double the wind, and you get about eight times the sand.
+
+That has an awkward consequence. If you take a month of wind data, average it,
+and put the average into the sand equation, you get the wrong answer, and not
+by a little. A month that is calm for 28 days and screaming for 2 days has a
+gentle average, but nearly all of its sand moves on those 2 days. The average
+wind hides exactly the thing that matters.
+
+So we never feed an average wind speed into the model. Instead we describe the
+wind as a distribution: not "the wind is 6 m/s", but "here is the full spread of
+how often the wind is 2, 4, 8, 14 m/s". The standard way to write that spread
+down is called a Weibull distribution, and it has just two numbers in it:
+
+  A  the scale, roughly how windy the place is
+  k  the shape, roughly how gusty versus steady it is
+
+Then we do the sand calculation across the whole spread and add it up, weighting
+each wind speed by how often it actually blows. The result is a genuine monthly
+average of the sand moved, not the sand moved by an average wind.
+
+The nice part: this integral can be solved exactly on paper. We did not have to
+approximate it or invent a "gustiness fudge factor", which is what a lot of
+published work does. The exact answer is in windStats.ts and wind_stats.py, and
+scripts/verify_weibull_flux.py checks the formula against a brute-force
+numerical version. They agree to about twelve decimal places.
+
+Where the two Weibull numbers come from:
+  - ERA5 (the European weather reanalysis) has hourly wind for every point on
+    Earth going back decades. Fitting A and k to it, month by month, is what
+    gives the seasonal picture.
+  - The Global Wind Atlas already publishes fitted A and k at about 250 m
+    resolution, which is far finer than ERA5. But we checked, and it is
+    ANNUAL ONLY, with no monthly layers and no direction layers. So it can give
+    us the map detail but not the season. ERA5 is not optional.
+
+That check saved us from building the seasonal module on a dataset that
+physically cannot carry a season.
+
+
+-------------------------------------------------------------------------
+2. WHEN DOES THE GROUND START MOVING
+-------------------------------------------------------------------------
+
+The threshold from step 1 is not a universal number. It depends on how big the
+sand grains are. Fine sand and coarse sand start moving at different wind
+speeds. So we needed real grain sizes for our region.
+
+PAPER: Benaafi et al., Arabian Journal of Geosciences, Table 1
+       (doi 10.1007/s12517-015-1970-9)
+
+They measured dune sand at ten locations across Saudi Arabia and reported the
+grain size statistics for each. We took the three that are the closest match to
+UAE dunes, including Rub' al Khali, which crosses into the UAE, and Sakaka. The
+paper itself states that eastern UAE dune sands resemble these, so the transfer
+is the authors' claim, not ours. That is written into the provenance block of
+public/data/uae_parameters.json so nobody later mistakes it for our own
+measurement.
+
+From those grain sizes, a standard equation gives the threshold wind speed.
+
+PAPER: Tian et al., Land Degradation and Development 2018
+       (doi 10.1002/ldr.3176)
+
+This is the independent check. They ran untreated aeolian sand in a wind tunnel
+and measured the speed at which it started moving: 5.73 m/s, at a height of
+0.6 m. We ran our equation on our grain sizes and predicted 6.5 to 8.3 m/s at
+the same height. Same ballpark, from a completely different direction. That is
+what makes the threshold defensible rather than assumed.
+
+
+-------------------------------------------------------------------------
+3. WHICH WAY DOES THE SAND GO
+-------------------------------------------------------------------------
+
+Knowing how much sand moves is only half of it. For a business case you need to
+know whether it moves TOWARD the customer's site or away from it. A treatable
+patch that is downwind of the solar farm is worth nothing.
+
+PAPER: Fryberger (1979), "Dune forms and wind regime", chapter 5 of
+       A Study of Global Sand Seas, USGS Professional Paper 1052
+
+This is the standard method in the field for turning a wind rose into a
+direction and a strength of sand movement. It gives four numbers:
+
+  DP   drift potential, total sand-moving power of the wind regime
+  RDP  the same thing after cancelling out opposing winds
+  RDD  the resultant direction, which is the way sand actually ends up going
+  UDI  RDP divided by DP, from 0 to 1, how one-directional the wind is
+
+UDI matters commercially. A site with UDI near 1 has a clear dominant wind, so
+there is one obvious patch of ground to treat. A site with UDI near 0 has winds
+that cancel each other out, and the sand mostly sloshes back and forth instead
+of arriving anywhere. Those are much worse customers, and the model says so.
+
+PAPER: Khalaf and Al-Ajmi (1993), Geomorphology 6, 111-134
+       (references/kuwait_sandenroachment.pdf)
+
+Used for three separate things:
+
+  1. The Fryberger working equation, Q = V squared times (V minus Vt) times t,
+     is quoted in their text. Fryberger's own chapter presents it as tables, so
+     this is where the usable formula came from.
+  2. The Gulf threshold. They report that saltation in Kuwait starts "whenever
+     wind speed reaches 5.4 m/s" at 10 m. That is a measured local number for
+     our region, not a textbook global one.
+  3. A validation target. They measured about 20 cubic metres of sand drift per
+     metre of width per year in Kuwait, mostly May to August, heading southeast.
+     Our model has to land near that, and the season and direction they report
+     are the Shamal, which is the same wind system that drives the UAE.
+
+In the app, the RDD arrow on the map is compared against the compass bearing
+from the nearest mapped sand source to the selected site. If the sand is not
+heading toward the site, the tool says so instead of quietly showing a number.
+
+
+-------------------------------------------------------------------------
+4. THE FINDING THAT CHANGED THE BUSINESS CASE
+-------------------------------------------------------------------------
+
+This is the part that is most worth understanding, because it changed what we
+are allowed to claim.
+
+Blown material splits into three behaviours by grain size:
+
+  bigger than 2 mm            creep, rolls along the ground, goes nowhere
+  60 micrometres to 2 mm      SALTATION, hops along in a layer about 1 m high
+  smaller than 60 micrometres SUSPENSION, floats away, can cross countries
+
+PAPER: Marticorena and Bergametti (1995), doi 10.1029/95JD00690
+
+That is where those size bands and the 1 m layer height come from. It also makes
+a further point that turned out to be decisive: the fine suspended dust is
+PRODUCED by the saltating grains hammering the surface, and how much gets
+produced depends on how much clay is in the soil. Clean quartz sand is a strong
+sand mover and a weak dust producer. Clay-rich flood plain is the opposite.
+
+Now apply that to our measured grain sizes from Benaafi. For Rub' al Khali dune
+sand, 99.65 percent of the mass is in the saltation band, and only 0.13 percent
+is fine enough to suspend. Almost none of it is the floaty kind.
+
+PAPER: Ferguson and Church (2004), J. Sediment. Res. 74, 933-937
+
+Their settling velocity formula tells you how fast a grain of a given size falls
+through air. Release our real grain sizes from the 1 m saltation layer, let the
+wind push them sideways while gravity pulls them down, and see how far they get.
+The answer, computed in scripts/transport_model.py:
+
+  wind        1 m     5 m     10 m    25 m    50 m    100 m   1 km
+  5 m/s       96%     7.6%    1.1%    0%      0%      0%      0%
+  10 m/s      100%    35%     7.6%    0.5%    0%      0%      0%
+  15 m/s      100%    66%     20%     1.9%    0.1%    0%      0%
+
+Read that as "percent of the sand still in the air after travelling this far".
+Essentially all the mass we are dealing with lands within tens of metres.
+
+Three things follow immediately:
+
+  a) We do not need an atmospheric dispersion model. No HYSPLIT, no FLEXPART.
+     Those tools answer a long-range question that our material does not pose.
+     That saved a large amount of work, and it is defensible rather than lazy.
+
+  b) A contradiction in the literature resolved itself. Hennen (2017) tracked
+     27,000 individual dust emission events by satellite and found 37 percent of
+     Middle East dust starting on the Tigris and Euphrates flood plain, with
+     very little from the southern Arabian Peninsula. That looked like bad news
+     for a project based in a sand sea. It is not a contradiction. Hennen is
+     measuring SUSPENSION dust, which comes from clay. We move SALTATING sand,
+     which comes from dunes. Both are true at once, and the grain size physics
+     and the satellite observations agree from two independent directions.
+
+  c) The scale mismatch. Every UAE solar asset has a mapped regional dust source
+     nearby, 7 to 15 km away for the big ones. We measured those distances from
+     Ginoux et al. (2012), Reviews of Geophysics, against real asset locations
+     pulled from OpenStreetMap. But Ginoux's grid squares are about 11 km across
+     and saltating sand lands within tens of metres. Those two scales differ by
+     a factor of roughly a thousand. So a regional hotspot 7 km upwind sends a
+     solar farm no saltating sand at all. The sand that abrades and buries a
+     solar farm comes from the ground AT the farm and immediately upwind of it.
+
+     This is written into the UI as a hard rule: a user must never be allowed to
+     read a regional hotspot as the source of the sand hitting their panels.
+     That is the one way this tool could mislead a customer or a judge.
+
+
+-------------------------------------------------------------------------
+5. TURNING SAND INTO MONEY
+-------------------------------------------------------------------------
+
+PAPER: Elminir et al. (2006), Energy Conversion and Management 47, 3192
+       (doi 10.1016/j.enconman.2006.02.014)
+
+They measured how much light a solar panel loses as dust builds up on the glass,
+and published a curve of transmittance loss against grams of dust per square
+metre, plus a table of how the loss changes with panel tilt angle. We read both
+off the actual PDF rather than trusting a text extraction, because the equation
+matters. That is what converts deposited sand into lost electricity, and lost
+electricity into lost revenue.
+
+The full money chain is:
+
+  sand arriving at the site (kg per square metre per year)
+    -> dust settled on the glass (grams per square metre)
+    -> transmittance loss (percent)          Elminir
+    -> energy loss (MWh per year)            capacity factor and nameplate MW
+    -> revenue loss (dollars per year)       electricity tariff
+    -> product benefit                       revenue loss times our reduction
+    -> net value                             benefit minus treatment cost
+
+The treatment cost side was already built in economic.ts, so only the loss side
+was new.
+
+
+-------------------------------------------------------------------------
+6. WHERE OUR PRODUCT ENTERS, AND WHY IT IS ONE NUMBER
+-------------------------------------------------------------------------
+
+This is the cleanest part of the whole model and it is worth saying out loud in
+any pitch.
+
+The wet lab measures ONE thing: the extra cohesion the bacterial crust adds to
+the sand, called gamma. That single number raises the threshold wind speed. The
+raised threshold moves the lower limit of the integral in step 1. The integral
+gets smaller. Less sand moves.
+
+So the entire product story is one measured parameter moving through one
+equation. We run the same calculation twice, once with the untreated threshold
+and once with the treated threshold, and the difference between the two answers
+is what the customer is paying for.
+
+Three MICP papers (Tian 2018, Zomorodian 2019, and a 2022 study in JRMGE that
+tested calcareous desert sand in a wind tunnel at 10, 20 and 30 m/s) bracket the
+range that gamma could plausibly fall into. They tell a judge our number is
+believable. They cannot supply it. The headline efficiency number stays ours,
+measured in our own lab, and labelled as such.
+
+
+-------------------------------------------------------------------------
+7. WHAT THIS MEANS FOR WHICH MARKET WE LEAD WITH
+-------------------------------------------------------------------------
+
+The analysis pushed back on the business plan, and this is the most useful thing
+it produced.
+
+The original plan led with solar panel soiling. The physics says local sand
+stabilisation does not do much for soiling. Soiling is caused by fine dust that
+settles and sticks, and our dune sand is 0.13 percent fine material. Treating a
+dune patch removes almost no soiling-capable material, because there was almost
+none there to start with. The dust that soils UAE panels comes from far away,
+over clay-rich ground we are not treating.
+
+So the three value mechanisms, ranked by how well the evidence supports them:
+
+  1. SAND ENCROACHMENT AND BURIAL. Saltating mass piling against panel rows,
+     access roads and perimeter fences. Directly proportional to the mass the
+     model computes, at exactly the right length scale. Strongest claim.
+
+  2. ABRASION of glass and equipment. Real, documented, right length scale. But
+     we could not find any paper linking saltation flux to glass haze. This is
+     the weakest link in the value chain and we say so.
+
+  3. SOILING. Only defensible for treated patches that are themselves clay-rich
+     enough to emit fine dust, which dune sand is not. Do not lead with it.
+
+And a genuine strategic conclusion: ROADS may be the better lead market on
+physics alone. Sand on a highway is exactly near-field saltation deposition, the
+receptor is a line lying directly downwind of treatable shoulders, and the
+mechanism needs no extra conversion step at all. The blocker on roads is cost
+data, not physics.
+
+The honest claim we can defend is: we reduce local sand arrival and the abrasion
+and burial it causes, plus the dust generated on the patches we treat. Anyone
+promising to end panel soiling is describing a different product.
+
+
+-------------------------------------------------------------------------
+8. WHAT IS STILL MISSING, ON PURPOSE
+-------------------------------------------------------------------------
+
+The code keeps a list of parameters it does not have a source for, and it raises
+an error rather than inventing them. Currently:
+
+  - UAE electricity tariff (needed to turn lost energy into dollars)
+  - UAE utility PV capacity factor (needed to turn MW into MWh per year)
+  - Saltation flux to glass abrasion (no source found; may not exist; a
+    candidate for our own bench work)
+  - Cost per cubic metre of sand clearing in the Gulf (business team primary
+    research; municipalities do it constantly but do not publish the cost)
+  - Retention fraction on tilted glass (how much of what lands actually sticks)
+
+Leaving these visibly blank is a feature. A pricing model built on five invented
+constants falls apart the moment somebody asks where a number came from.
+
+
+-------------------------------------------------------------------------
+9. WHERE THE CODE IS
+-------------------------------------------------------------------------
+
+  src/lib/physics/windStats.ts     Weibull integral and Fryberger drift, in the app
+  python_models/wind_stats.py      the same maths in Python, kept in step
+  scripts/verify_weibull_flux.py   proves the closed-form integral is exact
+  scripts/transport_model.py       how far saltating grains travel
+  src/lib/physics/dustTransport.ts settling, capture fraction, bearings
+  src/lib/physics/damage.ts        Elminir transmittance loss and tilt
+  src/lib/physics/economic.ts      treatment cost side
+  src/components/exposure/         the map and the seasonal / live interface
+  public/data/uae_parameters.json  grain sizes and thresholds, with provenance
+  public/data/uae_target_sites.json  real UAE assets from OpenStreetMap
+
+Background documents, in reading order:
+  DUST_EXPOSURE_DATA_SOURCES.md          what data exists and what was verified
+  DUST_EXPOSURE_KNOWLEDGE_GRAPH.md       which paper feeds which number
+  DUST_EXPOSURE_TRANSPORT_AND_VALUE.md   the transport decision and the value chain

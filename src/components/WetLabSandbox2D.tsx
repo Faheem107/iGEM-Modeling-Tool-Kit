@@ -429,7 +429,7 @@ export default function WetLabSandbox2D({
           <p
             className={`text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
-            Feed real bench values, OD₆₀₀, glutamate, calcium salt, temperature, into the same erosion physics: a γ-PGA dune-crust assay.
+            Feed real bench values (OD₆₀₀, glutamate, calcium salt, temperature) into the same erosion physics: a γ-PGA dune-crust assay.
           </p>
         </div>
       </div>

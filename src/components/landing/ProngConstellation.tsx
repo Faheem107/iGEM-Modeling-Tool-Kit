@@ -215,7 +215,7 @@ export default function ProngConstellation({
           <div>
             <p className="caption mb-4">The design, and every model in it</p>
             <h2 className="text-[length:var(--text-h1)] text-foreground">
-              {settled ? "Two prongs, and a kill switch" : "Three prongs"}
+              {settled ? "Two prongs and a kill switch" : "Three prongs"}
             </h2>
           </div>
           <div className="flex flex-wrap items-center gap-6">

@@ -217,8 +217,8 @@ export default function Caco3PrecipitationModule({
         <StatCard
           isLightMode={isLightMode}
           label="Saturation index"
-          value={finalSI <= -99 ? ", " : finalSI.toFixed(2)}
-          unit="SI"
+          value={finalSI <= -99 ? "n/a" : finalSI.toFixed(2)}
+          unit={finalSI <= -99 ? "" : "SI"}
           accent={
             finalSI > 0
               ? isLightMode
@@ -228,7 +228,13 @@ export default function Caco3PrecipitationModule({
                 ? "text-dune-rose"
                 : "text-dune-rose"
           }
-          sub={finalSI > 0 ? "supersaturated → precipitates" : "undersaturated"}
+          sub={
+            finalSI <= -99
+              ? "no carbonate in solution yet"
+              : finalSI > 0
+                ? "supersaturated → precipitates"
+                : "undersaturated"
+          }
         />
         <StatCard
           isLightMode={isLightMode}
@@ -331,7 +337,7 @@ export default function Caco3PrecipitationModule({
         <Panel
           title={
             <>
-              Precipitation Kinetics (48 h), {" "}
+              Precipitation Kinetics (48 h): {" "}
               <GlossaryTerm term="ostwald-ripening">
                 Ostwald ripening
               </GlossaryTerm>
