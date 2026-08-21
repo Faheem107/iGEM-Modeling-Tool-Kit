@@ -68,6 +68,7 @@ export default function ExposureWorkspace() {
   const [markets, setMarkets] = useState<{ id: string; label: string; note: string }[]>([]);
   const [market, setMarket] = useState("solar");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [siteQuery, setSiteQuery] = useState("");
   const [showSources, setShowSources] = useState(true);
 
   // Seasonal wind comes from the fitted ERA5 climatology for the cell nearest
@@ -121,7 +122,34 @@ export default function ExposureWorkspace() {
       .catch(() => undefined);
   }, []);
 
-  const visible = useMemo(() => sites.filter((s) => s.market === market), [sites, market]);
+  const visible = useMemo(() => {
+    const inMarket = sites.filter((s) => s.market === market);
+    const q = siteQuery.trim().toLowerCase();
+    if (!q) return inMarket;
+    return inMarket.filter(
+      (s) => s.name.toLowerCase().includes(q) || s.emirate.toLowerCase().includes(q),
+    );
+  }, [sites, market, siteQuery]);
+
+  /**
+   * The picker holds every site in the market, so it is grouped by emirate.
+   * Sorting is by name inside a group; the emirates themselves keep a fixed
+   * order rather than an alphabetical one, so the list does not reshuffle
+   * between markets.
+   */
+  const grouped = useMemo(() => {
+    const order = ["Abu Dhabi", "Dubai", "Sharjah", "Ajman", "Umm Al Quwain",
+                   "Ras Al Khaimah", "Fujairah"];
+    const byEmirate = new Map<string, TargetSite[]>();
+    for (const s of visible) {
+      const list = byEmirate.get(s.emirate) ?? [];
+      list.push(s);
+      byEmirate.set(s.emirate, list);
+    }
+    return order
+      .filter((e) => byEmirate.has(e))
+      .map((e) => [e, byEmirate.get(e)!.slice().sort((a, b) => a.name.localeCompare(b.name))] as const);
+  }, [visible]);
 
   useEffect(() => {
     if (visible.length && !visible.some((s) => s.id === selectedId)) {
@@ -358,18 +386,42 @@ export default function ExposureWorkspace() {
               <p className="text-[length:var(--text-micro)] text-muted-foreground">
                 {markets.find((m) => m.id === market)?.note}
               </p>
+              <input
+                type="search"
+                value={siteQuery}
+                onChange={(e) => setSiteQuery(e.target.value)}
+                placeholder={`Filter ${sites.filter((s) => s.market === market).length} sites`}
+                className="w-full rounded-[4px] border border-border bg-transparent px-4 py-2 text-[length:var(--text-micro)]"
+              />
               <select
                 value={selectedId ?? ""}
                 onChange={(e) => setSelectedId(e.target.value)}
+                size={8}
                 className="w-full rounded-[4px] border border-border bg-transparent px-4 py-2 text-[length:var(--text-micro)]"
               >
-                {visible.map((s) => (
-                  <option key={s.id} value={s.id}>{s.name}</option>
+                {grouped.map(([emirate, list]) => (
+                  <optgroup key={emirate} label={emirate}>
+                    {list.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name}
+                        {s.capacityMw ? ` (${s.capacityMw} MW)` : ""}
+                      </option>
+                    ))}
+                  </optgroup>
                 ))}
               </select>
+              {visible.length === 0 && (
+                <p className="caption text-dune-rose">No site matches that filter.</p>
+              )}
               {site && (
                 <p className="caption">
-                  nearest mapped source {site.nearestSourceKm} km, {site.nearestSourceType}
+                  {site.emirate}. nearest mapped source {site.nearestSourceKm} km,{" "}
+                  {site.nearestSourceType}
+                </p>
+              )}
+              {site?.nameLocal && (
+                <p className="caption">
+                  mapped in OpenStreetMap as {site.nameLocal}
                 </p>
               )}
             </div>
