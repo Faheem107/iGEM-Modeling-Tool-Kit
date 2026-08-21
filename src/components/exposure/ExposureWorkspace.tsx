@@ -3,6 +3,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "@/components/theme-context";
+import { attributeSources, windRunPerSector } from "@/src/lib/physics/attribution";
+import {
+  annualGenerationMwh, capacityFactor, DEFAULT_DEPOSITION_VELOCITY_MS,
+  depositionFromConcentration, energyLossMwh, pvCellFor, revenueLossUsd,
+  seasonCapacityFactor, type Mounting, type PvClimatology,
+} from "@/src/lib/physics/pv";
+import { camsFor, type CamsClimatology } from "@/src/lib/camsDust";
+import { sourceColor } from "./ExposureMap";
 import { Fold, ModuleActions, Slider, StatCard } from "@/src/components/simulation/_shared";
 import BusinessCaseBookmark from "@/src/components/BusinessCaseBookmark";
 import ExposureMap, { type SourceFeature, type TargetSite } from "./ExposureMap";
@@ -16,7 +24,9 @@ import {
   GULF_IMPACT_THRESHOLD_MS,
 } from "@/src/lib/physics/windStats";
 import { thresholdUntreated, thresholdTreated } from "@/src/lib/physics/aeolian";
-import { transmittanceLossPercent } from "@/src/lib/physics/damage";
+import {
+  AED_PER_USD, tariffUsdPerKwh, transmittanceLossPercent, type PriceBasis,
+} from "@/src/lib/physics/damage";
 import { useHighlight } from "@/src/lib/motion/pointer";
 import { GlossaryText } from "@/src/components/GlossaryTerm";
 import {
@@ -31,6 +41,27 @@ type Mode = "seasonal" | "live";
  * Used until public/data/uae_parameters.json loads, which carries the measured
  * value and its provenance rather than a number typed into a component.
  */
+/**
+ * Money, written the way a reader reads it rather than the way it is computed.
+ *
+ * Rounded to whole currency units and given a thousands separator, because
+ * "418291.7" is a number and "$418,292" is an amount of money. The dirham
+ * figure is the same value at the peg, shown alongside rather than instead: a
+ * UAE reader thinks in dirhams and the tariffs are quoted in dollars.
+ */
+const usd0 = (v: number) =>
+  "$" + Math.round(v).toLocaleString("en-US");
+
+const aed0 = (v: number) =>
+  "AED " + Math.round(v * AED_PER_USD).toLocaleString("en-US");
+
+/** "1 day", "4 days". A computed figure dropped into a sentence still has to
+ *  read as English. */
+const plural = (v: number, noun: string) => {
+  const n = v < 10 ? Math.round(v * 10) / 10 : Math.round(v);
+  return `${n} ${n === 1 ? noun : noun + "s"}`;
+};
+
 const GRAIN_D_FALLBACK_M = 2 ** -1.46 / 1000;
 
 /**
@@ -86,6 +117,19 @@ export default function ExposureWorkspace() {
 
   const [grainD, setGrainD] = useState(GRAIN_D_FALLBACK_M);
   const [clim, setClim] = useState<Climatology | null>(null);
+  const [pvClim, setPvClim] = useState<PvClimatology | null>(null);
+  /** Which price a lost kilowatt-hour is worth. See damage.ts: a plant that
+   *  sells its output and a factory that offsets its own bill are an order of
+   *  magnitude apart, so the reader chooses rather than inheriting one. */
+  const [priceBasis, setPriceBasis] = useState<PriceBasis>("ppa");
+  /** Fraction of arriving mass that stays on tilted glass. Unsourced, and it
+   *  multiplies the whole money chain, so it is a visible input. */
+  const [retention, setRetention] = useState(0.3);
+  /** Days between panel washes. Gulf utility plants clean on a cycle rather
+   *  than letting dust accumulate for a year, and the deposit that matters is
+   *  what builds up between washes. */
+  const [cleanDays, setCleanDays] = useState(21);
+  const [camsClim, setCamsClim] = useState<CamsClimatology | null>(null);
   const [liveField, setLiveField] = useState<WindField | null>(null);
 
   const [live, setLive] = useState<{ dust: number | null; wind: number | null; dir: number | null; at: string } | null>(null);
@@ -104,6 +148,16 @@ export default function ExposureWorkspace() {
       })
       .catch(() => undefined);   // the fallback above is the same paper's value
 
+    fetch("/data/cams_dust_climatology.json")
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then((d) => setCamsClim(d))
+      .catch(() => undefined);   // the money panel says so if it is missing
+    fetch("/data/uae_pv_climatology.json")
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then((d) => setPvClim(d))
+      // The money panel says so itself if this is missing; it must not take the
+      // rest of the module down with it.
+      .catch(() => undefined);
     fetch("/data/era5_wind_climatology.json")
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
       .then(setClim)
@@ -250,6 +304,20 @@ export default function ExposureWorkspace() {
    * the seasonal Q from a sector mean speed would zero out months that plainly
    * move sand, because Q goes as the cube of the wind.
    */
+  /**
+   * Which source regions feed THIS site, this season, as percentages.
+   *
+   * Weighted by wind run rather than the sector drift potential: this is dust
+   * already in the air, which does not need to exceed a lifting threshold at
+   * the receiving end. See attribution.ts for why that distinction matters and
+   * for the Kuwait check the model is tested against.
+   */
+  const shares = useMemo(() => {
+    if (!site || !sources.length) return [];
+    const run = seasonal ? windRunPerSector(seasonal.freq, seasonal.spd) : null;
+    return attributeSources(sources, site.lat, site.lon, run);
+  }, [sources, site, seasonal]);
+
   const drift = useMemo(() => {
     if (mode === "seasonal" && !override && seasonal?.hasRose) {
       return driftFromSectors(seasonal.q);
@@ -312,7 +380,115 @@ export default function ExposureWorkspace() {
       ? alignment(drift.RDD, sourceBearing)
       : null;
 
-  const dep = transmittanceLossPercent(2.0, 24); // 24 deg, near UAE latitude tilt
+  /**
+   * The money, end to end.
+   *
+   * Three things were wrong with the first version of this and they are worth
+   * writing down, because two of them made the product look better than the
+   * physics says it is.
+   *
+   * It priced only the dust generated on the treated patch and presented that
+   * as the site's whole soiling loss. Treatment then appeared to remove about
+   * 98 percent of soiling, which contradicts this project's own conclusion:
+   * most of the fine dust settling on a UAE panel comes from clay-rich ground
+   * hundreds of kilometres upwind that we are not treating. So the deposit is
+   * now split into a regional part, taken from the CAMS climatology and NOT
+   * reduced by treatment, and a local part from the model above, which is.
+   *
+   * It also accumulated dust for a whole year. Panels are washed, so the
+   * deposit that matters is what builds up between washes. An annual deposit
+   * came out near 63 g/m2, far outside the 1 to 9 g/m2 range Elminir measured,
+   * where the published curve stops meaning anything. Accumulating over a
+   * cleaning interval puts it back inside.
+   *
+   * And soiling loss is not the end-of-cycle loss, it is the average across the
+   * cycle. Deposit builds roughly linearly between washes and the loss curve is
+   * mildly convex, so the mean loss is a bit above half the peak. That is what
+   * the plant actually gives up over a year.
+   *
+   *   regional dust [ug/m3]  CAMS, untreated
+   *     + local dust from the patch, treated or not
+   *     -> deposit over one cleaning interval [g/m2]
+   *     -> transmittance loss           Elminir 2006
+   *     -> averaged over the cycle
+   *     -> energy, then money           capacity factor, then PPA or retail
+   */
+  const money = useMemo(() => {
+    if (!site || market !== "solar") return null;
+    const pvCell = pvCellFor(pvClim, site.lat, site.lon);
+    if (!pvCell) return null;
+
+    const mounting: Mounting = "fixed";
+    const cfYear = capacityFactor(pvCell, mounting);
+    const cfSeason = seasonCapacityFactor(pvCell, seasonDef.months, mounting);
+
+    const intervalSeconds = cleanDays * 86400;
+
+    // Regional background. In live mode the current reading is the honest
+    // input; in seasonal mode it comes from the CAMS monthly climatology for
+    // this site. Either way treatment does not touch it.
+    const regionalUgM3 =
+      mode === "live" && live?.dust != null
+        ? live.dust
+        : camsFor(camsClim, site.lat, site.lon, seasonDef.months);
+
+    const regionalDeposit =
+      regionalUgM3 == null
+        ? null
+        : depositionFromConcentration(regionalUgM3, DEFAULT_DEPOSITION_VELOCITY_MS, intervalSeconds);
+
+    // Local dust raised on the treated patch itself, which IS reduced.
+    const localDeposit = (flux: number) => flux * intervalSeconds * 1000 * retention;
+
+    const price = tariffUsdPerKwh(priceBasis, site.name);
+    const mw = site.capacityMw ?? null;
+
+    if (regionalDeposit == null || mw == null) {
+      return { pvCell, cfYear, cfSeason, price, mw, regionalUgM3, usd: null };
+    }
+
+    const peakUntreated = transmittanceLossPercent(regionalDeposit + localDeposit(F0), 24);
+    const peakTreated = transmittanceLossPercent(regionalDeposit + localDeposit(Ft), 24);
+    // The clean-panel intercept, subtracted so the cycle average is the loss
+    // caused by accumulation rather than Elminir's offset at zero dust.
+    const floor = transmittanceLossPercent(0, 24).value ?? 0;
+    const cycleMean = (peak: number) => floor + 0.55 * (peak - floor);
+
+    if (peakUntreated.value == null || peakTreated.value == null) {
+      return { pvCell, cfYear, cfSeason, price, mw, regionalUgM3, usd: null };
+    }
+
+    const lossUntreated = cycleMean(peakUntreated.value);
+    const lossTreated = cycleMean(peakTreated.value);
+
+    const lostUntreated = energyLossMwh(mw, cfYear, lossUntreated);
+    const lostTreated = energyLossMwh(mw, cfYear, lossTreated);
+    const generation = annualGenerationMwh(mw, cfYear);
+
+    const costUntreated = revenueLossUsd(lostUntreated, price.value);
+    const costTreated = revenueLossUsd(lostTreated, price.value);
+
+    return {
+      pvCell, cfYear, cfSeason, price, mw, regionalUgM3,
+      peakUntreated, lossUntreated, lossTreated,
+      regionalDeposit,
+      localDepositUntreated: localDeposit(F0),
+      usd: {
+        costUntreated,
+        costTreated,
+        saved: costUntreated - costTreated,
+        lostUntreated,
+        generation,
+        shareOfRevenue: generation > 0 ? lostUntreated / generation : 0,
+        daysLost: generation > 0 ? (lostUntreated / generation) * 365 : 0,
+        // What share of the loss is even addressable, which is the number the
+        // business case has to be honest about.
+        addressableShare:
+          costUntreated > 0 ? (costUntreated - costTreated) / costUntreated : 0,
+        outOfRange: peakUntreated.outOfRange || peakTreated.outOfRange,
+      },
+    };
+  }, [site, market, pvClim, camsClim, seasonDef, retention, cleanDays, F0, Ft, priceBasis, mode, live]);
 
   return (
     <div className="space-y-6">
@@ -564,6 +740,60 @@ export default function ExposureWorkspace() {
       <div className="space-y-5">
         <Fold
           className="border-t border-border pt-5"
+          title={`Where ${site ? site.name + "'s" : "this site's"} dust comes from`}
+          lede="Ranked by how much each region contributes to this site, in this season."
+          defaultOpen
+          wide
+          right={<Grade grade="literature" />}
+        >
+          {shares.length === 0 ? (
+            <p className="text-[length:var(--text-micro)] text-muted-foreground">
+              Pick a site to see its breakdown.
+            </p>
+          ) : (
+            <div className="space-y-4">
+              <ul className="space-y-3">
+                {shares.slice(0, 6).map((sh) => (
+                  <li key={sh.region} className="grid grid-cols-[1fr_auto] items-baseline gap-3">
+                    <div className="min-w-0">
+                      <p className="text-[length:var(--text-micro)] text-foreground">
+                        {sh.region}
+                      </p>
+                      <p className="caption">
+                        {sh.distanceKm.toFixed(0)} km away, {cardinal(sh.bearingDeg)} of here
+                      </p>
+                      {/* The bar is the number drawn, not decoration, so it is
+                          a plain rule at the source's own colour rather than a
+                          filled pill. */}
+                      <span
+                        aria-hidden
+                        className="mt-1 block h-[3px]"
+                        style={{
+                          width: `${Math.max(1, sh.percent)}%`,
+                          background: sourceColor(sh.sourceType, isLightMode),
+                        }}
+                      />
+                    </div>
+                    <span
+                      className="tabular-nums text-[length:var(--text-body)] text-dune-orange"
+                      style={{ fontVariationSettings: '"wght" 620' }}
+                    >
+                      {sh.percent.toFixed(0)}%
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <p className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
+                <GlossaryText max={2}>
+                  {"An estimate for suspended dust, the fine material that travels. The sand that piles up and abrades comes from the ground within tens of metres, which is the next section."}
+                </GlossaryText>
+              </p>
+            </div>
+          )}
+        </Fold>
+
+        <Fold
+          className="border-t border-border pt-5"
           title="Fraction of sand reaching the site"
           lede="How much of the sand leaving the treated patch actually arrives, before and after treatment."
           defaultOpen
@@ -642,36 +872,150 @@ export default function ExposureWorkspace() {
 
       <Fold
         className="border-t border-border pt-5"
-        title="Cost impact"
-        lede="What the arriving sand costs, and how much of that treating the ground would avoid."
+        title="What it costs, and what treating the ground saves"
+        lede="The same site, one year, with the upwind ground left bare and with it treated."
+        defaultOpen
         wide
         right={<Grade grade={market === "solar" ? "literature" : "unsourced"} />}
       >
-        {market === "solar" ? (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-              <StatCard label="Transmittance loss" value={dep.value?.toFixed(1) ?? "n/a"} unit="%" accent="text-dune-orange" isLightMode={isLightMode} sub="at 2 g/m², 24° tilt" rule={false} />
-              <StatCard label="Site capacity" value={site?.capacityMw?.toFixed(0) ?? "n/a"} unit="MW" accent="text-muted-foreground" isLightMode={isLightMode} rule={false} />
-              <StatCard label="DEWA industrial" value="0.126" unit="USD/kWh" accent="text-muted-foreground" isLightMode={isLightMode} sub="retail, not PPA" rule={false} />
-              <StatCard label="Capacity factor" value={null} accent="text-dune-rose" isLightMode={isLightMode} sub="how much of its rated power the site actually averages" rule={false} />
-            </div>
-            <p className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
-              Annual revenue loss needs a capacity factor and the price the site actually
-              earns. The DEWA figure is the retail consumption tariff. A generator earns its
-              PPA price, which in the UAE has been far lower, so the two must not be swapped.
-              Both are left as inputs rather than assumed.
-            </p>
-          </div>
+        {market !== "solar" ? (
+          <p className="text-[length:var(--text-micro)] leading-relaxed">
+            The sand reaching this kind of site is modelled above. What it costs its owner
+            is not published anywhere we could find, so this stays empty rather than
+            carrying a number we estimated. Roads are closest: the drift rate is measured,
+            about 20 cubic metres per metre of width per year in Kuwait, and only the price
+            of clearing a cubic metre is missing.
+          </p>
+        ) : !money ? (
+          <p className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
+            This site has no published generating capacity in OpenStreetMap, so there is
+            no nameplate to turn a light loss into a quantity of electricity. Pick one of
+            the plants that does carry a capacity.
+          </p>
         ) : (
-          <div className="flex items-start gap-4">
-            <p className="text-[length:var(--text-micro)] leading-relaxed">
-              How much sand reaches this kind of site is modelled above. Converting that
-              mass into a cost is where we stop, because we could not find a published
-              figure for what the sand costs its owner. Roads are the closest: the drift
-              rate is measured, about 20 cubic metres per metre of width per year in
-              Kuwait, and only the price of clearing a cubic metre is missing. So this
-              panel stays empty rather than carrying a number we estimated.
-            </p>
+          <div className="space-y-5">
+            {/* The comparison, in money, first. Everything else on this page
+                exists to support these two numbers, so they come before the
+                explanation rather than after it. */}
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+              <div className="border-t border-border pt-2">
+                <p className="caption mb-2">Lost now, with bare ground upwind</p>
+                <p
+                  className="tabular-nums text-[length:var(--text-h3)] text-dune-orange"
+                  style={{ fontVariationSettings: '"wght" 620' }}
+                >
+                  {money.usd ? usd0(money.usd.costUntreated) : "n/a"}
+                </p>
+                <p className="caption mt-1">
+                  {money.usd ? `${aed0(money.usd.costUntreated)} a year` : ""}
+                </p>
+              </div>
+              <div className="border-t border-border pt-2">
+                <p className="caption mb-2">Lost after treating that ground</p>
+                <p
+                  className="tabular-nums text-[length:var(--text-h3)] text-muted-foreground"
+                  style={{ fontVariationSettings: '"wght" 620' }}
+                >
+                  {money.usd ? usd0(money.usd.costTreated) : "n/a"}
+                </p>
+                <p className="caption mt-1">
+                  {money.usd ? `${aed0(money.usd.costTreated)} a year` : ""}
+                </p>
+              </div>
+              <div className="border-l-2 border-dune-teal pl-3">
+                <p className="caption mb-2">Kept, rather than lost</p>
+                <p
+                  className="tabular-nums text-[length:var(--text-h3)] text-dune-teal"
+                  style={{ fontVariationSettings: '"wght" 620' }}
+                >
+                  {money.usd ? usd0(money.usd.saved) : "n/a"}
+                </p>
+                <p className="caption mt-1">
+                  {money.usd ? `${aed0(money.usd.saved)} a year` : ""}
+                </p>
+              </div>
+            </div>
+
+            {/* The same thing said in words, for a reader who does not want to
+                assemble it from four figures. */}
+            {/* The same thing said in words, for a reader who does not want to
+                assemble it from four figures. It has to name the part the
+                treatment cannot touch, or the comparison above reads as a
+                claim we do not make. */}
+            {money.usd && (
+              <p className="text-[length:var(--text-body)] leading-relaxed">
+                Dust settling on {site?.name} costs it about{" "}
+                <span className="text-dune-orange">{usd0(money.usd.costUntreated)}</span> of
+                electricity a year, which is{" "}
+                {(money.usd.shareOfRevenue * 100).toFixed(1)}% of what the plant earns, or
+                roughly {plural(money.usd.daysLost, "day")} of output. Most of that dust
+                blows in from hundreds of kilometres away and treating the ground here
+                does nothing about it. What treatment does reach is the dust raised on the
+                patch itself, worth about{" "}
+                <span className="text-dune-teal">{usd0(money.usd.saved)}</span> a year,{" "}
+                {(money.usd.addressableShare * 100).toFixed(1)}% of the total.
+              </p>
+            )}
+
+            {money.usd && (
+              <p className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
+                Dune sand is about 0.13 percent fine material, so treating it removes
+                little of what soils glass. The bigger effect here is the sand that piles
+                against rows and wears the panels, which has no published cost yet.
+              </p>
+            )}
+
+            {/* The two inputs that move the answer most, put where the reader
+                can see what the answer rests on rather than in a settings
+                panel somewhere else. */}
+            <div className="space-y-4 border-t border-border pt-4">
+              <div>
+                <p className="caption mb-2">What a lost kilowatt-hour is worth</p>
+                <div className="flex flex-wrap gap-2">
+                  {(["ppa", "retail"] as PriceBasis[]).map((b) => (
+                    <button
+                      key={b}
+                      {...hl}
+                      onClick={() => setPriceBasis(b)}
+                      className={`rounded-[4px] border px-2 py-1 text-[length:var(--text-micro)] plate-interactive ${
+                        priceBasis === b
+                          ? "border-dune-orange/60 text-dune-orange"
+                          : "border-border text-muted-foreground"
+                      }`}
+                    >
+                      {b === "ppa" ? "The plant sells it" : "The site would have bought it"}
+                    </button>
+                  ))}
+                </div>
+                <p className="caption mt-2">
+                  {money.price.label}, {money.price.value.toFixed(4)} USD/kWh.{" "}
+                  {money.price.source}
+                </p>
+                {!money.price.exact && (
+                  <p className="mt-1 text-[length:var(--text-micro)] text-dune-rose">
+                    Read as a range. This plant has no published price.
+                  </p>
+                )}
+              </div>
+              <Slider
+                label="Dust that sticks to tilted glass"
+                value={retention}
+                onChange={setRetention}
+                min={0.05}
+                max={1}
+                step={0.05}
+                unit=""
+                isLightMode={isLightMode}
+                hint="The weakest input here. Everything above scales with it and we have no published value, so it is a dial rather than a number we made up."
+              />
+            </div>
+
+            {money.usd?.outOfRange && (
+              <p className="text-[length:var(--text-micro)] text-dune-rose">
+                The deposit is outside the range the light-loss curve was measured over, so
+                this figure is extrapolated. Read it as a size, not a number.
+              </p>
+            )}
           </div>
         )}
       </Fold>
