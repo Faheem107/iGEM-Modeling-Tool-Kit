@@ -126,7 +126,7 @@ export default function CuringTimelinePanel({
           label="Time to mature"
           value={timeline.hoursToMature.toFixed(0)}
           unit="h"
-          accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
+          accent="text-dune-teal"
           sub="to 95% of full strength"
         />
         <StatCard
@@ -134,7 +134,7 @@ export default function CuringTimelinePanel({
           label="Early strength @8 h"
           value={(timeline.earlyAgeFraction * 100).toFixed(0)}
           unit="%"
-          accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
+          accent="text-dune-orange"
           sub="of mature, at 1st re-spray"
         />
         <StatCard
@@ -145,12 +145,8 @@ export default function CuringTimelinePanel({
           emphasize
           accent={
             meetsDesign
-              ? isLightMode
-                ? "text-dune-teal"
-                : "text-dune-teal"
-              : isLightMode
-                ? "text-dune-rose"
-                : "text-dune-rose"
+              ? "text-dune-teal"
+              : "text-dune-rose"
           }
           sub={`design ${designWind} m/s`}
         />
@@ -160,12 +156,8 @@ export default function CuringTimelinePanel({
           value={reapplyLabel}
           accent={
             timeline.survivesToScheduledReapply
-              ? isLightMode
-                ? "text-dune-teal"
-                : "text-dune-teal"
-              : isLightMode
-                ? "text-dune-rose"
-                : "text-dune-rose"
+              ? "text-dune-teal"
+              : "text-dune-rose"
           }
           sub={`protocol: ${timeline.scheduledReapplyMonths.toFixed(0)} mo cadence`}
         />
@@ -182,7 +174,7 @@ export default function CuringTimelinePanel({
           isLightMode={isLightMode}
           right={
             <span
-              className={`text-[length:var(--text-caption)] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+              className={`text-[length:var(--text-caption)] font-mono text-muted-foreground`}
             >
               0–48 h
             </span>
@@ -247,7 +239,7 @@ export default function CuringTimelinePanel({
             </AreaChart>
           </ResponsiveContainer>
           <p
-            className={`mt-2 text-[length:var(--text-caption)] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`mt-2 text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}
           >
             Dashed lines are the protocol spray times (0/8/16/24/32 h). Alginate
             gels on contact, γ-PGA sets within hours, and MICP calcite ripens
@@ -261,7 +253,7 @@ export default function CuringTimelinePanel({
           isLightMode={isLightMode}
           right={
             <span
-              className={`text-[length:var(--text-caption)] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+              className={`text-[length:var(--text-caption)] font-mono text-muted-foreground`}
             >
               months
             </span>

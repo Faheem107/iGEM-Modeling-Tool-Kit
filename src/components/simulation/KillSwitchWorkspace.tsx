@@ -249,7 +249,7 @@ function HeadlineStat({
           {value}
         </span>
         <span
-          className={`text-[length:var(--text-caption)] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+          className={`text-[length:var(--text-caption)] font-mono text-muted-foreground`}
         >
           {unit}
         </span>

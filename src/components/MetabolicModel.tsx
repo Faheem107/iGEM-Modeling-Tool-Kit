@@ -166,7 +166,7 @@ export default function MetabolicModel({
             <div className="flex justify-between text-[length:var(--text-caption)] mb-1">
               <div className="group relative flex items-center gap-1 cursor-help">
                 <span
-                  className={`underline decoration-dotted underline-offset-2 ${isLightMode ? "text-muted-foreground decoration-border" : "text-muted-foreground decoration-border"}`}
+                  className={`underline decoration-dotted underline-offset-2 text-muted-foreground decoration-border`}
                 >
                   Transcription Rate (
                   <code
@@ -213,7 +213,7 @@ export default function MetabolicModel({
             <div className="flex justify-between text-[length:var(--text-caption)] mb-1">
               <div className="group relative flex items-center gap-1 cursor-help">
                 <span
-                  className={`underline decoration-dotted underline-offset-2 ${isLightMode ? "text-muted-foreground decoration-border" : "text-muted-foreground decoration-border"}`}
+                  className={`underline decoration-dotted underline-offset-2 text-muted-foreground decoration-border`}
                 >
                   mRNA Half-life Degradation (
                   <code
@@ -257,7 +257,7 @@ export default function MetabolicModel({
             <div className="flex justify-between text-[length:var(--text-caption)] mb-1">
               <div className="group relative flex items-center gap-1 cursor-help">
                 <span
-                  className={`underline decoration-dotted underline-offset-2 ${isLightMode ? "text-muted-foreground decoration-border" : "text-muted-foreground decoration-border"}`}
+                  className={`underline decoration-dotted underline-offset-2 text-muted-foreground decoration-border`}
                 >
                   Enzyme Translation Rate (
                   <code
@@ -304,7 +304,7 @@ export default function MetabolicModel({
             <div className="flex justify-between text-[length:var(--text-caption)] mb-1">
               <div className="group relative flex items-center gap-1 cursor-help">
                 <span
-                  className={`underline decoration-dotted underline-offset-2 ${isLightMode ? "text-muted-foreground decoration-border" : "text-muted-foreground decoration-border"}`}
+                  className={`underline decoration-dotted underline-offset-2 text-muted-foreground decoration-border`}
                 >
                   Enzyme Degradation (
                   <code
@@ -348,7 +348,7 @@ export default function MetabolicModel({
             <div className="flex justify-between text-[length:var(--text-caption)] mb-1">
               <div className="group relative flex items-center gap-1 cursor-help">
                 <span
-                  className={`underline decoration-dotted underline-offset-2 ${isLightMode ? "text-muted-foreground decoration-border" : "text-muted-foreground decoration-border"}`}
+                  className={`underline decoration-dotted underline-offset-2 text-muted-foreground decoration-border`}
                 >
                   <GlossaryTerm term="k-cat">Catalytic Efficiency</GlossaryTerm>{" "}
                   <span className="whitespace-nowrap text-dune-teal">
@@ -385,7 +385,7 @@ export default function MetabolicModel({
             <div className="flex justify-between text-[length:var(--text-caption)] mb-1">
               <div className="group relative flex items-center gap-1 cursor-help">
                 <span
-                  className={`underline decoration-dotted underline-offset-2 ${isLightMode ? "text-muted-foreground decoration-border" : "text-muted-foreground decoration-border"}`}
+                  className={`underline decoration-dotted underline-offset-2 text-muted-foreground decoration-border`}
                 >
                   L-Glutamate Precursor (
                   <code
@@ -434,7 +434,7 @@ export default function MetabolicModel({
           className="mt-6 pt-4 border-t border-border"
         >
           <span
-            className={`text-[length:var(--text-caption)] font-bold block mb-4 uppercase tracking-wider font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`text-[length:var(--text-caption)] font-bold block mb-4 uppercase tracking-wider font-mono text-muted-foreground`}
           >
             Gene Knockout Status
           </span>
@@ -453,7 +453,7 @@ export default function MetabolicModel({
               <div className="flex flex-col">
                 <span className="font-mono font-bold">Δggt</span>
                 <span
-                  className={`text-[length:var(--text-caption)] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`text-[length:var(--text-caption)] font-mono text-muted-foreground`}
                 >
                   Glutamyl-Tferase
                 </span>
@@ -482,7 +482,7 @@ export default function MetabolicModel({
               <div className="flex flex-col">
                 <span className="font-mono font-bold">ΔpgcA</span>
                 <span
-                  className={`text-[length:var(--text-caption)] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`text-[length:var(--text-caption)] font-mono text-muted-foreground`}
                 >
                   Glutamic Hydrolase
                 </span>
@@ -516,7 +516,7 @@ export default function MetabolicModel({
                 className={`flex items-center gap-2 ${isLightMode ? "text-dune-teal font-bold" : "text-dune-teal"}`}
               >
                 <span
-                  className={`w-2 h-2 rounded-full ${isLightMode ? "bg-dune-teal" : "bg-dune-teal"}`}
+                  className={`w-2 h-2 rounded-full bg-dune-teal`}
                 ></span>{" "}
                 mRNA
               </span>
@@ -524,7 +524,7 @@ export default function MetabolicModel({
                 className={`flex items-center gap-2 ${isLightMode ? "text-dune-maroon font-bold" : "text-dune-maroon"}`}
               >
                 <span
-                  className={`w-2 h-2 rounded-full ${isLightMode ? "bg-dune-maroon" : "bg-dune-maroon"}`}
+                  className={`w-2 h-2 rounded-full bg-dune-maroon`}
                 ></span>{" "}
                 Enzyme Complex
               </span>
@@ -532,7 +532,7 @@ export default function MetabolicModel({
                 className={`flex items-center gap-2 ${isLightMode ? "text-dune-teal font-bold" : "text-dune-teal"}`}
               >
                 <span
-                  className={`w-2 h-2 rounded-full ${isLightMode ? "bg-dune-teal" : "bg-dune-teal"}`}
+                  className={`w-2 h-2 rounded-full bg-dune-teal`}
                 ></span>{" "}
                 γ-PGA Output
               </span>
@@ -782,7 +782,7 @@ export default function MetabolicModel({
                 }`}
               >
                 <p
-                  className={`font-bold text-[length:var(--text-micro)] ${isLightMode ? "text-foreground" : "text-foreground"}`}
+                  className={`font-bold text-[length:var(--text-micro)] text-foreground`}
                 >
                   T-Epoch: {activeHoverPoint.time.toFixed(2)} hrs
                 </p>
@@ -806,9 +806,7 @@ export default function MetabolicModel({
                 </p>
                 <p
                   className={
-                    isLightMode
-                      ? "text-dune-teal font-bold"
-                      : "text-dune-teal font-bold"
+                    "text-dune-teal font-bold"
                   }
                 >
                   γ-PGA output: {activeHoverPoint.pga.toFixed(3)} mol/m³
@@ -829,7 +827,7 @@ export default function MetabolicModel({
           <div className="absolute right-3 top-3 opacity-5">
             </div>
           <h4
-            className={`text-[length:var(--text-micro)] font-bold font-mono uppercase tracking-widest flex items-center gap-2 mb-2 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
+            className={`text-[length:var(--text-micro)] font-bold font-mono uppercase tracking-widest flex items-center gap-2 mb-2 text-dune-teal`}
           >
             iGEM Wet Lab Calibration Interface
           </h4>
@@ -845,7 +843,7 @@ export default function MetabolicModel({
               className={`flex items-center gap-2 px-4 py-2 rounded-[4px] border ${isLightMode ? "bg-white border-dune-orange/15" : "bg-dune-ink border-border"}`}
             >
               <span
-                className={`text-[length:var(--text-caption)] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                className={`text-[length:var(--text-caption)] font-mono text-muted-foreground`}
               >
                 EXPERIMENTAL YIELD:
               </span>
@@ -855,7 +853,7 @@ export default function MetabolicModel({
                 onChange={(e) =>
                   setTargetYield(Math.max(1, parseFloat(e.target.value) || 0))
                 }
-                className={`w-16 bg-transparent font-mono text-[length:var(--text-micro)] font-bold outline-none border-b border-transparent focus:border-dune-teal ${isLightMode ? "text-foreground" : "text-foreground"}`}
+                className={`w-16 bg-transparent font-mono text-[length:var(--text-micro)] font-bold outline-none border-b border-transparent focus:border-dune-teal text-foreground`}
               />
               <span
                 className={`text-[length:var(--text-caption)] font-mono ${isLightMode ? "text-dune-teal font-bold" : "text-dune-teal"}`}

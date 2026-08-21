@@ -1707,7 +1707,7 @@ function LabGame({
         style={{ borderColor: C.red, background: "rgba(9,13,32,0.85)" }}
       >
         <div className="font-retro text-[8px] leading-[1.8]" style={{ color: C.red }}>
-          CAUGHT BY THE SAND ={" "}
+          CAUGHT BY THE SAND =" "
           <span style={{ color: C.sand }}>RESTART FROM SCRATCH</span>
         </div>
       </div>

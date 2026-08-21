@@ -209,7 +209,7 @@ export default function Caco3PrecipitationModule({
           label="Carbonate content"
           value={result.carbonateWtPercent.toFixed(2)}
           unit="wt%"
-          accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
+          accent="text-dune-teal"
           sub={
             Number.isFinite(result.vateriteFraction)
               ? `${(result.vateriteFraction * 100).toFixed(0)}% still vaterite, turning to calcite`
@@ -223,12 +223,8 @@ export default function Caco3PrecipitationModule({
           unit={finalSI <= -99 ? "" : "SI"}
           accent={
             finalSI > 0
-              ? isLightMode
-                ? "text-dune-teal"
-                : "text-dune-teal"
-              : isLightMode
-                ? "text-dune-rose"
-                : "text-dune-rose"
+              ? "text-dune-teal"
+              : "text-dune-rose"
           }
           sub={
             finalSI <= -99
@@ -248,7 +244,7 @@ export default function Caco3PrecipitationModule({
           value={(result.ucsKpa / 1000).toFixed(2)}
           unit="MPa"
           emphasize
-          accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
+          accent="text-dune-orange"
           sub={`${result.ucsKpa.toFixed(0)} kPa biocement`}
         />
         <StatCard
@@ -260,7 +256,7 @@ export default function Caco3PrecipitationModule({
           }
           value={result.co2SequesteredGPerL.toFixed(2)}
           unit="g/L"
-          accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
+          accent="text-dune-teal"
           sub="net-negative, no ammonia"
         />
       </div>
@@ -283,7 +279,7 @@ export default function Caco3PrecipitationModule({
         isLightMode={isLightMode}
         right={
           <span
-            className={`text-[length:var(--text-caption)] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`text-[length:var(--text-caption)] font-mono text-muted-foreground`}
           >
             operating pH {p.pH.toFixed(1)}
           </span>
@@ -396,7 +392,7 @@ export default function Caco3PrecipitationModule({
             </LineChart>
           </ResponsiveContainer>
           <p
-            className={`mt-2 text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`mt-2 text-[length:var(--text-caption)] text-muted-foreground`}
           >
             <GlossaryText>
               Once the solution is supersaturated the pathway is not direct:
@@ -450,7 +446,7 @@ export default function Caco3PrecipitationModule({
             </LineChart>
           </ResponsiveContainer>
           <p
-            className={`mt-2 text-[length:var(--text-caption)] flex items-start gap-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`mt-2 text-[length:var(--text-caption)] flex items-start gap-1 text-muted-foreground`}
           >
             <GlossaryText>
               Red marker = current operating point. The power law UCS = kUcs x

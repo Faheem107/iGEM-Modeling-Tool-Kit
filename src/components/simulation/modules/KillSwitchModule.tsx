@@ -76,7 +76,7 @@ const TABS: { id: Tab; label: string }[] = [
 
 export default function KillSwitchModule({ isLightMode }: Themed) {
   const [tab, setTab] = useState<Tab>("dynamics");
-  const shell = isLightMode ? "bg-card" : "bg-card";
+  const shell = "bg-card";
 
   return (
     <div
@@ -151,12 +151,12 @@ export function DynamicsTab({ isLightMode }: Themed) {
         <Panel title="Kill trigger" isLightMode={isLightMode}>
           <div className="space-y-4">
             <label className="flex items-center justify-between gap-2 text-[length:var(--text-caption)] font-semibold">
-              <span className={isLightMode ? "text-foreground" : "text-foreground"}>
+              <span className="text-foreground">
                 Add aTc trigger
               </span>
               <button
                 onClick={() => set({ induce: !p.induce })}
-                className={`relative h-6 w-11 rounded-full transition-colors ${p.induce ? "bg-dune-orange" : isLightMode ? "bg-muted" : "bg-muted"}`}
+                className={`relative h-6 w-11 rounded-full transition-colors ${p.induce ? "bg-dune-orange" : "bg-muted"}`}
                 aria-pressed={p.induce}
                 aria-label="Add aTc trigger"
               >
@@ -303,7 +303,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
             label="Time to 3-log kill"
             value={tKill === null ? "n/a" : tKill.toFixed(1)}
             unit={tKill === null ? "" : "h"}
-            accent={isLightMode ? "text-dune-rose" : "text-dune-rose"}
+            accent="text-dune-rose"
             emphasize
             sub={tKill === null ? "not reached in 48 h" : "99.9% cleared"}
           />
@@ -312,19 +312,19 @@ export function DynamicsTab({ isLightMode }: Themed) {
             label="Viability @ 48 h"
             value={finalLog.toFixed(1)}
             unit="log"
-            accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
+            accent="text-dune-orange"
           />
           <StatCard
             isLightMode={isLightMode}
             label="Plasmid @ 24 h"
             value={`${(plasmid24 * 100).toFixed(0)}`}
             unit="%"
-            accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
+            accent="text-dune-teal"
             sub="antitoxin source"
           />
         </div>
 
-        <p className={`text-[length:var(--text-caption)] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
+        <p className={`text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}>
           <GlossaryText>
             Two independent kill modes: the aTc trigger over-produces MazF on demand, while plasmid
             dilution slowly removes the antitoxin so the strain self-limits even with no inducer.
@@ -426,7 +426,7 @@ export function HgtTab({ isLightMode }: Themed) {
             label="Containment efficiency"
             value={`${(r.containmentEfficiency * 100).toFixed(1)}`}
             unit="%"
-            accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
+            accent="text-dune-teal"
             emphasize
             sub="recipients that self-eliminate"
           />
@@ -434,7 +434,7 @@ export function HgtTab({ isLightMode }: Themed) {
             isLightMode={isLightMode}
             label="Escape / exposure"
             value={r.escapePerExposure.toExponential(1)}
-            accent={isLightMode ? "text-dune-rose" : "text-dune-rose"}
+            accent="text-dune-rose"
             sub="HGT freq × escape prob."
           />
         </div>
@@ -467,7 +467,7 @@ export function HgtTab({ isLightMode }: Themed) {
                   className="inline-block h-3.5 w-3.5 rounded-[4px]"
                   style={{ background: [STATUS.bad, STATUS.warn, DUNE.ash][i] }}
                 />
-                <span className={isLightMode ? "text-muted-foreground" : "text-muted-foreground"}>
+                <span className="text-muted-foreground">
                   {x.name}, {x.pct}%
                 </span>
               </div>
@@ -475,7 +475,7 @@ export function HgtTab({ isLightMode }: Themed) {
           </div>
         </Panel>
 
-        <p className={`text-[length:var(--text-caption)] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
+        <p className={`text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}>
           <GlossaryText>
             The plasmid carries an E. coli MazF linked to the biofilm payload, so a wild recipient
             gets the toxin but not the cognate E. coli MazE, so it self-eliminates. Splitting and
@@ -600,7 +600,7 @@ export function SporeTab({ isLightMode }: Themed) {
             label="Total log-reduction"
             value={totalLog.toFixed(1)}
             unit="log"
-            accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
+            accent="text-dune-teal"
             emphasize
           />
           <StatCard
@@ -608,12 +608,12 @@ export function SporeTab({ isLightMode }: Themed) {
             label="Residual viable spores"
             value={`${(residual * 100).toExponential(1)}`}
             unit="%"
-            accent={isLightMode ? "text-dune-rose" : "text-dune-rose"}
+            accent="text-dune-rose"
             sub="of the original load"
           />
         </div>
 
-        <p className={`text-[length:var(--text-caption)] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
+        <p className={`text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}>
           <GlossaryText>
             MazF needs active translation, so it cannot touch a dormant spore, the spore must be
             germinated first. gerB* and multiple germinants wake more spores each round, but a
@@ -676,16 +676,16 @@ export function StructuresTab({ isLightMode }: Themed) {
                     : "border-border bg-dune-ink hover:bg-dune-basalt/50"
               }`}
             >
-              <span className={`block text-[length:var(--text-micro)] font-bold ${isLightMode ? "text-foreground" : "text-foreground"}`}>
+              <span className={`block text-[length:var(--text-micro)] font-bold text-foreground`}>
                 {st.label}
               </span>
-              <span className={`block font-mono text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
+              <span className={`block font-mono text-[length:var(--text-caption)] text-muted-foreground`}>
                 {st.sub}
               </span>
             </button>
           );
         })}
-        <p className={`text-[length:var(--text-caption)] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
+        <p className={`text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}>
           {s.desc}
         </p>
       </div>
@@ -693,7 +693,7 @@ export function StructuresTab({ isLightMode }: Themed) {
         <div className="relative h-[360px] w-full overflow-hidden rounded-[6px] border border-border bg-black/5 dark:bg-black/30">
           <MolstarViewer key={s.file} url={s.file} className="absolute inset-0 h-full w-full" />
         </div>
-        <p className={`mt-2 text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
+        <p className={`mt-2 text-[length:var(--text-caption)] text-muted-foreground`}>
           Real experimental coordinates served from <code>/public/pdb</code>. Drag to rotate; scroll to zoom.
         </p>
       </div>
@@ -714,11 +714,11 @@ function Toggle({
   return (
     <div>
       <label className="flex items-center justify-between gap-2 text-[length:var(--text-caption)] font-semibold">
-        <span className={isLightMode ? "text-foreground" : "text-foreground"}>{label}</span>
+        <span className="text-foreground">{label}</span>
         <button
           onClick={onToggle}
           aria-pressed={on}
-          className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${on ? "bg-dune-teal" : isLightMode ? "bg-muted" : "bg-muted"}`}
+          className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${on ? "bg-dune-teal" : "bg-muted"}`}
         >
           <span
             className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition-all ${on ? "left-[22px]" : "left-0.5"}`}
@@ -726,7 +726,7 @@ function Toggle({
         </button>
       </label>
       {hint && (
-        <span className={`mt-1 block text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}>
+        <span className={`mt-1 block text-[length:var(--text-caption)] text-muted-foreground`}>
           <GlossaryText max={3}>{hint}</GlossaryText>
         </span>
       )}

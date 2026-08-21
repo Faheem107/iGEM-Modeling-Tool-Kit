@@ -552,11 +552,11 @@ export default function EcologicalSpread({
 
           <div>
             <div
-              className={`flex justify-between text-[length:var(--text-caption)] mb-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+              className={`flex justify-between text-[length:var(--text-caption)] mb-1 text-muted-foreground`}
             >
               <div className="group relative flex items-center gap-1 cursor-help">
                 <span
-                  className={`underline decoration-dotted underline-offset-2 ${isLightMode ? "decoration-border" : "decoration-border"}`}
+                  className={`underline decoration-dotted underline-offset-2 decoration-border`}
                 >
                   Moisture Spread Probability
                 </span>
@@ -643,11 +643,11 @@ export default function EcologicalSpread({
           {/* Ca²⁺ dosing, suppresses sliding motility (a spread-limiting lever we already control). */}
           <div>
             <div
-              className={`flex justify-between text-[length:var(--text-caption)] mb-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+              className={`flex justify-between text-[length:var(--text-caption)] mb-1 text-muted-foreground`}
             >
               <div className="group relative flex items-center gap-1 cursor-help">
                 <span
-                  className={`underline decoration-dotted underline-offset-2 ${isLightMode ? "decoration-border" : "decoration-border"}`}
+                  className={`underline decoration-dotted underline-offset-2 decoration-border`}
                 >
                   Ca²⁺ Dose (sliding suppression)
                 </span>
@@ -679,11 +679,11 @@ export default function EcologicalSpread({
 
           <div>
             <div
-              className={`flex justify-between text-[length:var(--text-caption)] mb-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+              className={`flex justify-between text-[length:var(--text-caption)] mb-1 text-muted-foreground`}
             >
               <div className="group relative flex items-center gap-1 cursor-help">
                 <span
-                  className={`underline decoration-dotted underline-offset-2 ${isLightMode ? "decoration-border" : "decoration-border"}`}
+                  className={`underline decoration-dotted underline-offset-2 decoration-border`}
                 >
                   Water Consumption Efficiency
                 </span>
@@ -770,7 +770,7 @@ export default function EcologicalSpread({
             className={`mb-4 p-4 rounded-[4px] border font-mono ${isLightMode ? "bg-white border-dune-orange/12" : "bg-dune-ink border-border"}`}
           >
             <div
-              className={`flex justify-between text-[length:var(--text-caption)] mb-2 font-sans ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+              className={`flex justify-between text-[length:var(--text-caption)] mb-2 font-sans text-muted-foreground`}
             >
               <span className="font-bold uppercase tracking-wider">
                 Kill-switch escape frequency
@@ -791,7 +791,7 @@ export default function EcologicalSpread({
               className={`w-full accent-dune-teal cursor-ew-resize ${isLightMode ? "bg-secondary h-1.5 rounded-[4px]" : ""}`}
             />
             <div
-              className={`flex justify-between text-[length:var(--text-caption)] mt-1 font-sans ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+              className={`flex justify-between text-[length:var(--text-caption)] mt-1 font-sans text-muted-foreground`}
             >
               <span>leaky 10⁻⁶</span>
               <span>
@@ -801,7 +801,7 @@ export default function EcologicalSpread({
             </div>
 
             <label
-              className={`flex items-center justify-between mt-2 cursor-pointer text-[length:var(--text-caption)] font-sans ${isLightMode ? "text-foreground" : "text-foreground"}`}
+              className={`flex items-center justify-between mt-2 cursor-pointer text-[length:var(--text-caption)] font-sans text-foreground`}
             >
               <span className="flex items-center gap-2 font-bold">
                 Redundant <span className="whitespace-nowrap">orthogonal switch (×)</span>
@@ -814,7 +814,7 @@ export default function EcologicalSpread({
               />
             </label>
             <p
-              className={`text-[length:var(--text-caption)] mt-1 leading-normal font-sans ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+              className={`text-[length:var(--text-caption)] mt-1 leading-normal font-sans text-muted-foreground`}
             >
               Two independent switches multiply their escape frequencies, the
               design route to beating the NIH 10⁻⁸ line.
@@ -825,13 +825,13 @@ export default function EcologicalSpread({
               className={`mt-4 pt-2 border-t space-y-1 ${isLightMode ? "border-dune-orange/10" : "border-border"}`}
             >
               <div
-                className={`flex justify-between text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                className={`flex justify-between text-[length:var(--text-caption)] text-muted-foreground`}
               >
                 <span>Deployed cells (per ha)</span>
                 <span>{sci(escape.population)}</span>
               </div>
               <div
-                className={`flex justify-between text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                className={`flex justify-between text-[length:var(--text-caption)] text-muted-foreground`}
               >
                 <span>Expected escapees (N·p)</span>
                 <span
@@ -849,7 +849,7 @@ export default function EcologicalSpread({
                 </span>
               </div>
               <div
-                className={`flex justify-between text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                className={`flex justify-between text-[length:var(--text-caption)] text-muted-foreground`}
               >
                 <span>P(≥1 escapee / ha)</span>
                 <span>
@@ -890,7 +890,7 @@ export default function EcologicalSpread({
                 Active Population:
               </span>
               <span
-                className={`font-bold ${density > 0 ? (isLightMode ? "text-dune-teal" : "text-dune-teal") : "text-muted-foreground"}`}
+                className={`font-bold ${density > 0 ? ("text-dune-teal") : "text-muted-foreground"}`}
               >
                 {density > 0 ? `${density}%` : "Extinct"}
               </span>
@@ -906,7 +906,7 @@ export default function EcologicalSpread({
                 Crust Coverage ({binderLabel}):
               </span>
               <span
-                className={`font-bold ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
+                className={`font-bold text-dune-teal`}
               >
                 {gelCoverage}%
               </span>
@@ -1027,7 +1027,7 @@ export default function EcologicalSpread({
                 className={`font-mono text-[length:var(--text-micro)] space-y-4 p-4 border rounded-[4px] ${isLightMode ? "bg-card/55 border-dune-orange/10 text-muted-foreground" : "bg-dune-ink border border-border text-muted-foreground"}`}
               >
                 <span
-                  className={`text-[length:var(--text-caption)] font-bold block tracking-widest uppercase ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`text-[length:var(--text-caption)] font-bold block tracking-widest uppercase text-muted-foreground`}
                 >
                   Legends
                 </span>
@@ -1040,7 +1040,7 @@ export default function EcologicalSpread({
                 </div>
                 <div className="flex items-center gap-2">
                   <span
-                    className={`w-3 h-3 rounded-[4px] inline-block ${isLightMode ? "bg-dune-rose" : "bg-dune-rose"}`}
+                    className={`w-3 h-3 rounded-[4px] inline-block bg-dune-rose`}
                   ></span>
                   <span>
                     Active <i>B. subtilis</i>
@@ -1057,7 +1057,7 @@ export default function EcologicalSpread({
                 </div>
                 <div className="flex items-center gap-2">
                   <span
-                    className={`w-3 h-3 rounded-[4px] inline-block ${isLightMode ? "bg-muted" : "bg-muted"}`}
+                    className={`w-3 h-3 rounded-[4px] inline-block bg-muted`}
                   ></span>
                   <span>Just died (kill-switch)</span>
                 </div>
@@ -1065,14 +1065,14 @@ export default function EcologicalSpread({
 
               {/* Statistical Progress Columns */}
               <div
-                className={`space-y-4 font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                className={`space-y-4 font-mono text-muted-foreground`}
               >
                 <div>
                   <div className="flex justify-between text-[length:var(--text-caption)] mb-1 font-bold">
                     <span>MOISTURE LEVEL:</span>
                     <span
                       className={
-                        isLightMode ? "text-dune-teal" : "text-dune-teal"
+                        "text-dune-teal"
                       }
                     >
                       {resourceLevel}%
@@ -1093,7 +1093,7 @@ export default function EcologicalSpread({
                     <span>CRUST FORMATION:</span>
                     <span
                       className={
-                        isLightMode ? "text-dune-teal" : "text-dune-teal"
+                        "text-dune-teal"
                       }
                     >
                       {gelCoverage}%

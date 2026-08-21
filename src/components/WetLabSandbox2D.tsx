@@ -407,12 +407,12 @@ export default function WetLabSandbox2D({
           </div>
         <div>
           <h3
-            className={`text-[length:var(--text-micro)] font-black uppercase tracking-wider ${isLightMode ? "text-foreground" : "text-foreground"}`}
+            className={`text-[length:var(--text-micro)] font-black uppercase tracking-wider text-foreground`}
           >
             {PORTAL_NAMES.wetlab}
           </h3>
           <p
-            className={`text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`text-[length:var(--text-caption)] text-muted-foreground`}
           >
             Feed real bench values (OD₆₀₀, glutamate, calcium salt, temperature) into the same erosion physics: a γ-PGA dune-crust assay.
           </p>
@@ -439,10 +439,10 @@ export default function WetLabSandbox2D({
             <div className="space-y-6 px-1">
               <div>
                 <div
-                  className={`flex justify-between text-[length:var(--text-caption)] mb-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`flex justify-between text-[length:var(--text-caption)] mb-2 text-muted-foreground`}
                 >
                   <span
-                    className={`font-semibold ${isLightMode ? "text-foreground" : "text-foreground"}`}
+                    className={`font-semibold text-foreground`}
                   >
                     Inoculum Cell Density (<GlossaryTerm term="OD600" />)
                   </span>
@@ -467,10 +467,10 @@ export default function WetLabSandbox2D({
 
               <div>
                 <div
-                  className={`flex justify-between text-[length:var(--text-caption)] mb-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`flex justify-between text-[length:var(--text-caption)] mb-2 text-muted-foreground`}
                 >
                   <span
-                    className={`font-semibold ${isLightMode ? "text-foreground" : "text-foreground"}`}
+                    className={`font-semibold text-foreground`}
                   >
                     Inoculation Vol (Per dm³ soil)
                   </span>
@@ -495,10 +495,10 @@ export default function WetLabSandbox2D({
 
               <div>
                 <div
-                  className={`flex justify-between text-[length:var(--text-caption)] mb-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`flex justify-between text-[length:var(--text-caption)] mb-2 text-muted-foreground`}
                 >
                   <span
-                    className={`font-semibold ${isLightMode ? "text-foreground" : "text-foreground"}`}
+                    className={`font-semibold text-foreground`}
                   >
                     <GlossaryTerm term="L-Glutamate" /> Substrate Feed
                   </span>
@@ -523,10 +523,10 @@ export default function WetLabSandbox2D({
 
               <div>
                 <div
-                  className={`flex justify-between text-[length:var(--text-caption)] mb-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`flex justify-between text-[length:var(--text-caption)] mb-2 text-muted-foreground`}
                 >
                   <span
-                    className={`font-semibold ${isLightMode ? "text-foreground" : "text-foreground"}`}
+                    className={`font-semibold text-foreground`}
                   >
                     Ca2+ Salinity Additive
                   </span>
@@ -548,7 +548,7 @@ export default function WetLabSandbox2D({
                   />
                 </div>
                 <span
-                  className={`text-[length:var(--text-caption)] block mt-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`text-[length:var(--text-caption)] block mt-1 text-muted-foreground`}
                 >
                   Divalent calcium sources to crosslink polymeric carboxylate
                   chains.
@@ -557,10 +557,10 @@ export default function WetLabSandbox2D({
 
               <div>
                 <div
-                  className={`flex justify-between text-[length:var(--text-caption)] mb-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`flex justify-between text-[length:var(--text-caption)] mb-2 text-muted-foreground`}
                 >
                   <span
-                    className={`font-semibold ${isLightMode ? "text-foreground" : "text-foreground"}`}
+                    className={`font-semibold text-foreground`}
                   >
                     Incubation Temperature (
                     <code
@@ -607,7 +607,7 @@ export default function WetLabSandbox2D({
             <div className="space-y-4 px-1">
               <div>
                 <div
-                  className={`flex justify-between text-[length:var(--text-caption)] mb-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`flex justify-between text-[length:var(--text-caption)] mb-1 text-muted-foreground`}
                 >
                   <span>
                     Custom Wind Friction speed (
@@ -647,7 +647,7 @@ export default function WetLabSandbox2D({
                   className="rounded-[4px] border-border text-dune-maroon focus:ring-dune-maroon bg-dune-basalt h-4 w-4"
                 />
                 <span
-                  className={`text-[length:var(--text-caption)] font-bold uppercase transition-colors ${stormActive ? "text-dune-maroon" : isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`text-[length:var(--text-caption)] font-bold uppercase transition-colors ${stormActive ? "text-dune-maroon" : "text-muted-foreground"}`}
                 >
                   {stormActive
                     ? "GALE FORCE EVENT ACTIVE"
@@ -818,7 +818,7 @@ export default function WetLabSandbox2D({
                     real-world aerodynamic thresholds:
                   </p>
                   <ul
-                    className={`list-disc list-inside space-y-1 ml-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                    className={`list-disc list-inside space-y-1 ml-1 text-muted-foreground`}
                   >
                     <li>
                       <b>Higher OD600</b> seeds a denser starting population,
