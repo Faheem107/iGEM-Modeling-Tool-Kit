@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "@/components/theme-context";
-import { Fold, ModuleActions, Panel, Slider, StatCard } from "@/src/components/simulation/_shared";
+import { Fold, ModuleActions, Slider, StatCard } from "@/src/components/simulation/_shared";
+import BusinessCaseBookmark from "@/src/components/BusinessCaseBookmark";
 import ExposureMap, { type SourceFeature, type TargetSite } from "./ExposureMap";
 import MapLegend from "./MapLegend";
 import WindRose from "./WindRose";
@@ -17,7 +18,6 @@ import {
 import { thresholdUntreated, thresholdTreated } from "@/src/lib/physics/aeolian";
 import { transmittanceLossPercent } from "@/src/lib/physics/damage";
 import { useHighlight } from "@/src/lib/motion/pointer";
-import { BUSINESS_SECTIONS, BUSINESS_SUMMARY } from "@/src/lib/businessModel";
 import { GlossaryText } from "@/src/components/GlossaryTerm";
 import {
   climatologyField, toWindField, nearestCell,
@@ -93,7 +93,6 @@ export default function ExposureWorkspace() {
   const [liveLoading, setLiveLoading] = useState(false);
 
   const hl = useHighlight();
-  const [bizTab, setBizTab] = useState(BUSINESS_SECTIONS[0].id);
 
   useEffect(() => {
     // Measured grain size, rather than the constant hard-coded above it.
@@ -677,44 +676,12 @@ export default function ExposureWorkspace() {
         )}
       </Fold>
 
-      {/* The commercial case, next to the numbers it prices against. It used to
-          be a modal on the landing index whose only button led here. */}
-      <Panel title="The business case" isLightMode={isLightMode}>
-        <div className="mb-4 flex flex-wrap gap-2 border-b border-border pb-4">
-          {BUSINESS_SECTIONS.map((sec) => (
-            <button
-              key={sec.id}
-              {...hl}
-              onClick={() => setBizTab(sec.id)}
-              className={`caption rounded-[4px] border px-3 py-1.5 plate-interactive ${
-                bizTab === sec.id
-                  ? "border-dune-orange/60 bg-dune-orange/10 text-dune-orange"
-                  : "border-border text-muted-foreground"
-              }`}
-            >
-              {sec.label}
-            </button>
-          ))}
-        </div>
-        {BUSINESS_SECTIONS.filter((sec) => sec.id === bizTab).map((sec) => (
-          <div key={sec.id} className="space-y-4">
-            <h4 className="text-[length:var(--text-body)] leading-snug text-foreground">
-              {sec.heading}
-            </h4>
-            {sec.body.map((para, i) => (
-              <p
-                key={i}
-                className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground"
-              >
-                {para}
-              </p>
-            ))}
-          </div>
-        ))}
-        <p className="mt-6 border-t border-border pt-4 text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
-          {BUSINESS_SUMMARY}
-        </p>
-      </Panel>
+      {/* The commercial case is no longer inline. A page of prose in the
+          middle of a page of numbers served neither: the prose interrupted the
+          model and the model made the prose look like a footnote. It is now a
+          bookmark on the edge of the page opening a dialog, mounted here so it
+          only appears on this module. */}
+      <BusinessCaseBookmark />
 
       {/* Sources and the runnable code, the same toolbar every other model
           carries. There is no narrated explainer for this one yet, so no video
