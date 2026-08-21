@@ -17,18 +17,6 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  ArrowLeft,
-  Waves,
-  Ruler,
-  Beaker,
-  Gauge,
-  Timer,
-  Droplets,
-  ShieldCheck,
-  ListChecks,
-  TriangleAlert,
-} from "lucide-react";
-import {
   ResponsiveContainer,
   LineChart,
   Line,
@@ -104,7 +92,7 @@ export default function XanthanFlowView() {
         onClick={backToPortals}
         className="mb-6 flex items-center gap-2 px-4 py-2 text-[length:var(--text-micro)] font-semibold rounded-[4px] border border-border bg-secondary hover:brightness-95 transition"
       >
-        <ArrowLeft className="h-4 w-4" /> {NAV.backToPortals}
+        {NAV.backToPortals}
       </button>
       <ModuleErrorBoundary isLightMode={isLightMode} label={PORTAL_NAMES.xanthan}>
         <XanthanFlowContent isLightMode={isLightMode} />
@@ -207,8 +195,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           <div
             className={`p-2 rounded-[4px] ${isLightMode ? "bg-dune-teal/10 text-dune-teal" : "bg-dune-teal/50 text-dune-teal border border-dune-teal/50"}`}
           >
-            <Waves className="h-4 w-4" />
-          </div>
+            </div>
           <div>
             <h1 className="text-[length:var(--text-micro)] font-black uppercase tracking-wider font-mono">
               {PORTAL_NAMES.xanthan}
@@ -249,7 +236,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
       </div>
 
       {/* 1. Problem setup */}
-      <Panel title="1 · Problem Setup" icon={Ruler} isLightMode={isLightMode}>
+      <Panel title="1 · Problem Setup" isLightMode={isLightMode}>
         <p
           className={`text-[length:var(--text-micro)] leading-relaxed mb-4 ${isLightMode ? "text-foreground" : "text-foreground"}`}
         >
@@ -291,7 +278,6 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
       {/* 2. Rheological model */}
       <Panel
         title="2 · Rheological Model"
-        icon={Beaker}
         isLightMode={isLightMode}
       >
         <div className="flex justify-center py-2">
@@ -347,7 +333,6 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
       {/* 3. Derivation */}
       <Panel
         title="3 · Derivation: Velocity & Flow Rate"
-        icon={Gauge}
         isLightMode={isLightMode}
       >
         <p
@@ -412,7 +397,6 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
       {/* 4. Model evaluated for this tube: constants + tables */}
       <Panel
         title="4 · Model Evaluated for This Tube"
-        icon={Timer}
         isLightMode={isLightMode}
       >
         <div className="grid grid-cols-2 gap-4 mb-4">
@@ -481,7 +465,6 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
       {/* Chart A: ΔP vs V at the undiluted default. */}
       <Panel
         title="5 · Visualising ΔP vs. V (undiluted)"
-        icon={Waves}
         isLightMode={isLightMode}
       >
         <ResponsiveContainer width="100%" height={260}>
@@ -541,7 +524,6 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
       {/* 6. Effect of dilution */}
       <Panel
         title="6 · Effect of Dilution with Water"
-        icon={Droplets}
         isLightMode={isLightMode}
       >
         <p
@@ -650,7 +632,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           <h3
             className={`text-[length:var(--text-micro)] font-extrabold uppercase tracking-wider flex items-center gap-2 ${isLightMode ? "text-dune-maroon" : "text-dune-paper"}`}
           >
-            <Gauge className="h-4 w-4 text-dune-teal" /> Interactive Calculator
+            Interactive Calculator
           </h3>
           <p
             className={`text-[length:var(--text-caption)] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
@@ -737,7 +719,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           <h3
             className={`text-[length:var(--text-micro)] font-extrabold uppercase tracking-wider flex items-center gap-2 ${isLightMode ? "text-dune-maroon" : "text-dune-paper"}`}
           >
-            <Droplets className="h-4 w-4 text-dune-teal" /> ΔP vs. V by
+            ΔP vs. V by
             Concentration
           </h3>
           <ResponsiveContainer width="100%" height={300}>
@@ -823,7 +805,6 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
       {/* 8. Validity check */}
       <Panel
         title="7 · Validity Check: Is the Flow Laminar?"
-        icon={ShieldCheck}
         isLightMode={isLightMode}
       >
         <p
@@ -854,7 +835,6 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
       {/* 9. Summary */}
       <Panel
         title="8 · Summary & How to Use This Model"
-        icon={ListChecks}
         isLightMode={isLightMode}
       >
         <ol
@@ -883,7 +863,6 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
               : "bg-dune-orange/20 text-dune-orange border-dune-orange/40"
           }`}
         >
-          <TriangleAlert className="h-4 w-4 shrink-0 mt-1" />
           <span>
             This model can be extended to a Herschel–Bulkley form (τ = τ₀ +
             Kγ̇ⁿ) if the solution shows a measurable yield stress τ₀, common

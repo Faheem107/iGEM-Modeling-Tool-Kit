@@ -1,16 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { MetabolicParams, SimulationStep } from "../types";
 import { simulateMetabolicODE, calibrateKcat } from "../lib/physics";
-import {
-  Play,
-  RotateCcw,
-  Award,
-  Dna,
-  Database,
-  ShieldAlert,
-  Sparkles,
-  Info,
-} from "lucide-react";
 import GlossaryTerm from "./GlossaryTerm";
 import { ModuleActions } from "./simulation/_shared";
 import { DUNE, HAIRLINE, STATUS, TINT } from "@/src/lib/palette";
@@ -167,9 +157,6 @@ export default function MetabolicModel({
         <h3
           className={`text-[length:var(--text-micro)] font-extrabold uppercase tracking-wider flex items-center gap-2 mb-4 font-sans ${isLightMode ? "text-dune-orange" : "text-foreground"}`}
         >
-          <Dna
-            className={`w-5 h-5 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
-          />
           Intracellular Kinetic Control Unit
         </h3>
 
@@ -193,9 +180,6 @@ export default function MetabolicModel({
                   </code>
                   )
                 </span>
-                <Info
-                  className={`w-3.5 h-3.5 ${isLightMode ? "text-muted-foreground hover:text-dune-teal" : "text-muted-foreground hover:text-dune-teal"} transition`}
-                />
                 <div
                   className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
                 >
@@ -243,9 +227,6 @@ export default function MetabolicModel({
                   </code>
                   )
                 </span>
-                <Info
-                  className={`w-3.5 h-3.5 ${isLightMode ? "text-muted-foreground hover:text-dune-teal" : "text-muted-foreground hover:text-dune-teal"} transition`}
-                />
                 <div
                   className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
                 >
@@ -290,9 +271,6 @@ export default function MetabolicModel({
                   </code>
                   )
                 </span>
-                <Info
-                  className={`w-3.5 h-3.5 ${isLightMode ? "text-muted-foreground hover:text-dune-teal" : "text-muted-foreground hover:text-dune-teal"} transition`}
-                />
                 <div
                   className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
                 >
@@ -340,9 +318,6 @@ export default function MetabolicModel({
                   </code>
                   )
                 </span>
-                <Info
-                  className={`w-3.5 h-3.5 ${isLightMode ? "text-muted-foreground hover:text-dune-teal" : "text-muted-foreground hover:text-dune-teal"} transition`}
-                />
                 <div
                   className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
                 >
@@ -388,9 +363,6 @@ export default function MetabolicModel({
                   </code>
                   )
                 </span>
-                <Info
-                  className={`w-3.5 h-3.5 ${isLightMode ? "text-muted-foreground hover:text-dune-teal" : "text-muted-foreground hover:text-dune-teal"} transition`}
-                />
                 <div
                   className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
                 >
@@ -435,9 +407,6 @@ export default function MetabolicModel({
                   </code>
                   )
                 </span>
-                <Info
-                  className={`w-3.5 h-3.5 ${isLightMode ? "text-muted-foreground hover:text-dune-teal" : "text-muted-foreground hover:text-dune-teal"} transition`}
-                />
                 <div
                   className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
                 >
@@ -548,9 +517,6 @@ export default function MetabolicModel({
             <h3
               className={`text-[length:var(--text-micro)] font-bold uppercase tracking-wider flex items-center gap-2 ${isLightMode ? "text-dune-orange" : "text-foreground"}`}
             >
-              <Database
-                className={`w-4 h-4 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
-              />
               Real-time Concentration Dynamics
             </h3>
             <div className="flex gap-4 text-[length:var(--text-caption)] font-mono">
@@ -869,16 +835,10 @@ export default function MetabolicModel({
           }`}
         >
           <div className="absolute right-3 top-3 opacity-5">
-            <Award
-              className={`w-16 h-16 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
-            />
-          </div>
+            </div>
           <h4
             className={`text-[length:var(--text-micro)] font-bold font-mono uppercase tracking-widest flex items-center gap-2 mb-2 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
           >
-            <Sparkles
-              className={`w-4 h-4 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
-            />
             iGEM Wet Lab Calibration Interface
           </h4>
           <p
@@ -919,7 +879,6 @@ export default function MetabolicModel({
                   : "text-black bg-dune-teal hover:bg-dune-teal"
               }`}
             >
-              <RotateCcw className="h-3.5 w-3.5" />
               Calibrate k_cat
             </button>
             {calibratedKcat !== null && (

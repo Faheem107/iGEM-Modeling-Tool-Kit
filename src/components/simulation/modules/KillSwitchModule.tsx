@@ -29,14 +29,6 @@ import {
   ReferenceLine,
   Cell,
 } from "recharts";
-import {
-  Activity,
-  Share2,
-  Sprout,
-  Syringe,
-  Timer,
-  Boxes,
-} from "lucide-react";
 import { GlossaryText } from "../../GlossaryTerm";
 import { DUNE, STATUS } from "@/src/lib/palette";
 import {
@@ -75,11 +67,11 @@ const MolstarViewer = dynamic(() => import("@/components/molstar-viewer"), {
 
 type Tab = "dynamics" | "hgt" | "spore" | "structures";
 
-const TABS: { id: Tab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { id: "dynamics", label: "TA dynamics & kill", icon: Activity },
-  { id: "hgt", label: "HGT containment", icon: Share2 },
-  { id: "spore", label: "Spore clearance", icon: Sprout },
-  { id: "structures", label: "3D structures", icon: Boxes },
+const TABS: { id: Tab; label: string }[] = [
+  { id: "dynamics", label: "TA dynamics & kill" },
+  { id: "hgt", label: "HGT containment" },
+  { id: "spore", label: "Spore clearance" },
+  { id: "structures", label: "3D structures" },
 ];
 
 export default function KillSwitchModule({ isLightMode }: Themed) {
@@ -94,7 +86,7 @@ export default function KillSwitchModule({ isLightMode }: Themed) {
       <div className="mb-6 flex flex-wrap gap-2">
         {TABS.map((t) => {
           const active = tab === t.id;
-          const Icon = t.icon;
+          const Icon = null;
           return (
             <button
               key={t.id}
@@ -109,7 +101,7 @@ export default function KillSwitchModule({ isLightMode }: Themed) {
                     : "border-border bg-dune-ink text-muted-foreground hover:bg-dune-basalt/50"
               }`}
             >
-              <Icon className="h-3.5 w-3.5" /> {t.label}
+              {t.label}
             </button>
           );
         })}
@@ -156,7 +148,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
       <div className="space-y-4 lg:col-span-5">
-        <Panel title="Kill trigger" icon={Syringe} isLightMode={isLightMode}>
+        <Panel title="Kill trigger" isLightMode={isLightMode}>
           <div className="space-y-4">
             <label className="flex items-center justify-between gap-2 text-[length:var(--text-caption)] font-semibold">
               <span className={isLightMode ? "text-foreground" : "text-foreground"}>
@@ -166,6 +158,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
                 onClick={() => set({ induce: !p.induce })}
                 className={`relative h-6 w-11 rounded-full transition-colors ${p.induce ? "bg-dune-orange" : isLightMode ? "bg-muted" : "bg-muted"}`}
                 aria-pressed={p.induce}
+                aria-label="Add aTc trigger"
               >
                 <span
                   className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition-all ${p.induce ? "left-[22px]" : "left-0.5"}`}
@@ -199,7 +192,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
           </div>
         </Panel>
 
-        <Panel title="Self-limiting (no aTc)" icon={Timer} isLightMode={isLightMode}>
+        <Panel title="Self-limiting (no aTc)" isLightMode={isLightMode}>
           <div className="space-y-4">
             <Slider
               isLightMode={isLightMode}
@@ -244,7 +237,6 @@ export function DynamicsTab({ isLightMode }: Themed) {
       <div className="space-y-4 lg:col-span-7">
         <Panel
           title="Toxin / antitoxin balance & viable population"
-          icon={Activity}
           isLightMode={isLightMode}
         >
           <ResponsiveContainer width="100%" height={280}>
@@ -371,7 +363,7 @@ export function HgtTab({ isLightMode }: Themed) {
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
       <div className="space-y-4 lg:col-span-5">
-        <Panel title="Containment design" icon={Share2} isLightMode={isLightMode}>
+        <Panel title="Containment design" isLightMode={isLightMode}>
           <div className="space-y-4">
             <Toggle
               isLightMode={isLightMode}
@@ -447,7 +439,7 @@ export function HgtTab({ isLightMode }: Themed) {
           />
         </div>
 
-        <Panel title="Escape routes (of recipients that got the plasmid)" icon={Share2} isLightMode={isLightMode}>
+        <Panel title="Escape routes (of recipients that got the plasmid)" isLightMode={isLightMode}>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart
               data={routeData}
@@ -517,7 +509,7 @@ export function SporeTab({ isLightMode }: Themed) {
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
       <div className="space-y-4 lg:col-span-5">
-        <Panel title="Germinate-then-kill design" icon={Sprout} isLightMode={isLightMode}>
+        <Panel title="Germinate-then-kill design" isLightMode={isLightMode}>
           <div className="space-y-4">
             <Toggle
               isLightMode={isLightMode}
@@ -587,7 +579,7 @@ export function SporeTab({ isLightMode }: Themed) {
       </div>
 
       <div className="space-y-4 lg:col-span-7">
-        <Panel title="Viable-spore log-reduction per round" icon={Sprout} isLightMode={isLightMode}>
+        <Panel title="Viable-spore log-reduction per round" isLightMode={isLightMode}>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={data} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
               <CartesianGrid stroke={c.grid} strokeDasharray="3 3" vertical={false} />

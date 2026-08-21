@@ -1,20 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { CAConfig } from "../types";
-import {
-  Bug,
-  Sparkles,
-  RefreshCw,
-  Layers,
-  ShieldHalf,
-  TrendingUp,
-  HelpCircle,
-  Info,
-  Link2,
-  Droplet,
-  ShieldCheck,
-  ShieldAlert,
-  Gauge,
-} from "lucide-react";
 import GlossaryTerm from "./GlossaryTerm";
 import { ModuleActions } from "./simulation/_shared";
 import {
@@ -499,9 +484,6 @@ export default function EcologicalSpread({
         <h3
           className={`text-[length:var(--text-micro)] font-extrabold uppercase tracking-wider flex items-center gap-2 mb-4 font-mono ${isLightMode ? "text-dune-orange" : "text-foreground"}`}
         >
-          <Bug
-            className={`w-5 h-5 ${isLightMode ? "text-dune-orange" : "text-dune-orange"}`}
-          />
           Biosafety & Spread Controls
         </h3>
 
@@ -518,9 +500,6 @@ export default function EcologicalSpread({
               <span
                 className={`flex items-center gap-2 font-bold ${isLightMode ? "text-dune-orange text-[length:var(--text-micro)]" : "text-dune-orange"}`}
               >
-                <Link2
-                  className={`w-4 h-4 ${isLightMode ? "text-dune-orange font-bold" : "text-dune-orange"}`}
-                />
                 Link Growth Speed to Secretion
               </span>
               <input
@@ -581,7 +560,6 @@ export default function EcologicalSpread({
                 >
                   Moisture Spread Probability
                 </span>
-                <Info className="h-3.5 w-3.5 text-muted-foreground hover:text-dune-teal transition" />
                 <div
                   className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border border-border"}`}
                 >
@@ -628,9 +606,6 @@ export default function EcologicalSpread({
               className={`mt-2 p-2 rounded-[4px] text-[length:var(--text-caption)] font-mono border leading-relaxed ${isLightMode ? "bg-dune-teal/50 border-dune-teal text-foreground" : "bg-dune-teal/15 border-dune-teal/30 text-foreground"}`}
             >
               <div className="flex items-center gap-1 mb-1 font-bold not-italic">
-                <Gauge
-                  className={`w-3.5 h-3.5 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
-                />
                 <GlossaryTerm term="fisher-kpp">Fisher–KPP</GlossaryTerm> colony
                 front
               </div>
@@ -671,15 +646,11 @@ export default function EcologicalSpread({
               className={`flex justify-between text-[length:var(--text-caption)] mb-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
             >
               <div className="group relative flex items-center gap-1 cursor-help">
-                <Droplet
-                  className={`w-3.5 h-3.5 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
-                />
                 <span
                   className={`underline decoration-dotted underline-offset-2 ${isLightMode ? "decoration-border" : "decoration-border"}`}
                 >
                   Ca²⁺ Dose (sliding suppression)
                 </span>
-                <Info className="h-3.5 w-3.5 text-muted-foreground hover:text-dune-teal transition" />
                 <div
                   className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border border-border"}`}
                 >
@@ -716,7 +687,6 @@ export default function EcologicalSpread({
                 >
                   Water Consumption Efficiency
                 </span>
-                <Info className="h-3.5 w-3.5 text-muted-foreground hover:text-dune-teal transition" />
                 <div
                   className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border border-border"}`}
                 >
@@ -780,9 +750,6 @@ export default function EcologicalSpread({
           <h4
             className={`text-[length:var(--text-caption)] font-bold uppercase tracking-wider mb-2 flex items-center gap-1 font-mono ${isLightMode ? "text-dune-orange" : "text-muted-foreground"}`}
           >
-            <ShieldHalf
-              className={`w-3.5 h-3.5 ${isLightMode ? "text-dune-orange" : "text-dune-orange"}`}
-            />
             <GlossaryTerm term="kill-switch">Genetic Containment</GlossaryTerm>{" "}
             Validation
           </h4>
@@ -837,9 +804,6 @@ export default function EcologicalSpread({
               className={`flex items-center justify-between mt-2 cursor-pointer text-[length:var(--text-caption)] font-sans ${isLightMode ? "text-foreground" : "text-foreground"}`}
             >
               <span className="flex items-center gap-2 font-bold">
-                <ShieldCheck
-                  className={`w-3.5 h-3.5 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
-                />
                 Redundant orthogonal switch (×)
               </span>
               <input
@@ -899,13 +863,13 @@ export default function EcologicalSpread({
               >
                 {escape.containedAtScale ? (
                   <>
-                    <ShieldCheck className="h-3.5 w-3.5" /> Contained at hectare
+                    Contained at hectare
                     scale, fewer than one escapee expected (vs NIH 10⁻⁸
                     single-cell target: {escape.meetsNIH ? "met" : "not met"}).
                   </>
                 ) : (
                   <>
-                    <ShieldAlert className="h-3.5 w-3.5" />{" "}
+                    {" "}
                     {escape.expectedEscapees.toExponential(1)} escapees expected
                     per ha, enable the redundant switch or tighten the design.
                   </>
@@ -955,7 +919,7 @@ export default function EcologicalSpread({
                     : "bg-dune-ink text-dune-teal border-dune-teal"
                 }`}
               >
-                ✓ BIOSAFETY VERIFIED: MazE/MazF kill-switch operational, live
+                BIOSAFETY VERIFIED: MazE/MazF kill-switch operational, live
                 microbes cleared while the {binderLabel} sand crust remains
                 intact.
               </div>
@@ -977,9 +941,6 @@ export default function EcologicalSpread({
             <h3
               className={`text-[length:var(--text-micro)] font-bold uppercase tracking-wider flex items-center gap-2 font-mono ${isLightMode ? "text-dune-orange" : "text-foreground"}`}
             >
-              <Sparkles
-                className={`w-5 h-5 ${isLightMode ? "text-dune-orange" : "text-dune-orange"}`}
-              />
               Deployment-Site Colony Map
             </h3>
 
@@ -993,7 +954,7 @@ export default function EcologicalSpread({
                     : "bg-dune-ink border-border hover:text-foreground text-muted-foreground"
                 }`}
               >
-                <RefreshCw className="h-3.5 w-3.5" /> Re-seed
+                Re-seed
               </button>
               <button
                 onClick={() =>

@@ -22,7 +22,6 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, SkipForward } from "lucide-react";
 import { Cursor } from "@/components/motion-primitives/cursor";
 import { lockPageScroll, unlockPageScroll } from "@/src/lib/scrollLock";
 
@@ -2490,7 +2489,7 @@ export default function SandyxAdventure({
                       background: "rgba(0,0,0,0.45)",
                     }}
                   >
-                    <SkipForward className="w-3.5 h-3.5" /> {skipLabel}
+                    {skipLabel}
                   </button>
                 )}
                 <button
@@ -2503,7 +2502,7 @@ export default function SandyxAdventure({
                     background: "rgba(0,0,0,0.45)",
                   }}
                 >
-                  <X className="w-3.5 h-3.5" />
+                  Close
                 </button>
               </div>
             </div>

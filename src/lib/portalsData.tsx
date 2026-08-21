@@ -1,25 +1,10 @@
 import {
-  Sparkles,
-  Layers,
-  Droplets,
-  ShieldAlert,
-  Bug,
-  Beaker,
-  Workflow,
-  Dna,
-  Wind,
-  Flame,
-  Coins,
-  Waves,
-} from "lucide-react";
-import {
   PRONG_TITLES,
   PRONG_SHORTS,
   KILL_SWITCH_TITLE,
   KILL_SWITCH_SHORT,
   PORTAL_NAMES,
 } from "@/content/copy";
-import type { ReactNode } from "react";
 
 // Prong-tailored simulation lives at /model?prongs=1,2, one shared source of truth
 // for the two engineered prongs, the biocontainment kill switch, the (archived) alginate
@@ -28,7 +13,6 @@ import type { ReactNode } from "react";
 export interface Prong {
   id: number;
   title: string;
-  icon: ReactNode;
   short: string;
   whatItIs: string;
   modelDoes: string;
@@ -43,7 +27,6 @@ export const PRONGS: Prong[] = [
   {
     id: 1,
     title: PRONG_TITLES[1],
-    icon: <Sparkles className="h-4 w-4 text-dune-orange" />,
     short: PRONG_SHORTS[1],
     whatItIs:
       "Bacillus subtilis already makes poly-γ-glutamic acid, a long sticky chain it secretes to hold water. We raise how much of it the cells make, so the sand around them is held in a mesh of the stuff rather than lying loose.",
@@ -57,7 +40,6 @@ export const PRONGS: Prong[] = [
   {
     id: 2,
     title: PRONG_TITLES[2],
-    icon: <Layers className="h-4 w-4 text-dune-teal" />,
     short: PRONG_SHORTS[2],
     whatItIs:
       "Carbonic anhydrase is an enzyme that speeds up one reaction: CO₂ plus water becomes bicarbonate. We engineer B. subtilis to make it and to pin it to the outside of the cell, using sortase, an enzyme that stitches proteins onto the cell wall. More bicarbonate next to available calcium means calcium carbonate comes out of solution as solid cement. The usual way to do this uses urease and releases ammonia. This route does not.",
@@ -71,7 +53,6 @@ export const PRONGS: Prong[] = [
   {
     id: 3,
     title: PRONG_TITLES[3],
-    icon: <Droplets className="h-4 w-4 text-dune-rose" />,
     short: PRONG_SHORTS[3],
     whatItIs:
       "Sodium alginate comes from seaweed and is sold by the tonne for food. Add calcium and the chains clamp around it in a shape called an egg-box, and the liquid sets to a gel. It was scoped as a third prong, an applied binder rather than anything the bacteria make, and later dropped.",
@@ -100,7 +81,6 @@ export const PRONGS: Prong[] = [
 export const KILL_SWITCH = {
   id: "killswitch" as const,
   title: KILL_SWITCH_TITLE,
-  icon: <ShieldAlert className="h-4 w-4 text-dune-orange" />,
   short: KILL_SWITCH_SHORT,
   whatItIs:
     "A genetically-encoded control layer that limits the engineered B. subtilis population and, when needed, eliminates it. It runs over both engineered prongs rather than standing in for one. It binds nothing and adds no strength to the crust. What it adds is the ability to end the deployment.",
@@ -115,7 +95,6 @@ export const KILL_SWITCH = {
 export interface PortalCard {
   id: string;
   href: string;
-  icon: ReactNode;
   title: string;
   desc: string;
   ring: string;
@@ -125,7 +104,6 @@ export const PORTAL_CARDS: PortalCard[] = [
   {
     id: "wetlab-sandbox",
     href: "/portal/wet-lab",
-    icon: <Beaker className="h-4 w-4 text-dune-orange" />,
     title: PORTAL_NAMES.wetlab,
     desc: "Set the bench conditions, then watch how far the polymer spreads and how much dune survives the wind.",
     ring: "text-dune-orange",
@@ -133,7 +111,6 @@ export const PORTAL_CARDS: PortalCard[] = [
   {
     id: "pipeline",
     href: "/portal/pipeline",
-    icon: <Workflow className="h-4 w-4 text-dune-teal" />,
     title: PORTAL_NAMES.pipeline,
     desc: "One grain traced end to end: metabolism, cross-linking, then the wind it has to hold against.",
     ring: "text-dune-teal",
@@ -141,7 +118,6 @@ export const PORTAL_CARDS: PortalCard[] = [
   {
     id: "protein-suite",
     href: "/portal/protein",
-    icon: <Dna className="h-4 w-4 text-dune-rose" />,
     title: PORTAL_NAMES.protein,
     desc: "The real structures in 3D, and what heat does to them.",
     ring: "text-dune-rose",
@@ -149,7 +125,6 @@ export const PORTAL_CARDS: PortalCard[] = [
   {
     id: "xanthan-flow",
     href: "/portal/xanthan-flow",
-    icon: <Waves className="h-4 w-4 text-dune-teal" />,
     title: PORTAL_NAMES.xanthan,
     desc: "Xanthan gum thins as you push it harder. This is what that does to pressure in the delivery tubing.",
     ring: "text-dune-teal",
@@ -168,17 +143,16 @@ export type TabSlug =
 export interface NavItem {
   slug: TabSlug;
   label: string;
-  icon: ReactNode;
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { slug: "fba", label: "Advanced FBA", icon: <Workflow className="h-4 w-4" /> },
-  { slug: "metabolic", label: "Metabolic Matrix", icon: <Dna className="h-4 w-4" /> },
-  { slug: "crosslink", label: "Cross-Link Biophysics", icon: <Layers className="h-4 w-4" /> },
-  { slug: "thermal", label: "Thermal Kinetics", icon: <Flame className="h-4 w-4" /> },
-  { slug: "aeolian", label: "Aeolian Tunnel", icon: <Wind className="h-4 w-4" /> },
-  { slug: "ecological", label: "Ecological Spread", icon: <Bug className="h-4 w-4" /> },
-  { slug: "economic", label: "Economic Scalability", icon: <Coins className="h-4 w-4" /> },
+  { slug: "fba", label: "Advanced FBA"},
+  { slug: "metabolic", label: "Metabolic Matrix"},
+  { slug: "crosslink", label: "Cross-Link Biophysics"},
+  { slug: "thermal", label: "Thermal Kinetics"},
+  { slug: "aeolian", label: "Aeolian Tunnel"},
+  { slug: "ecological", label: "Ecological Spread"},
+  { slug: "economic", label: "Economic Scalability"},
 ];
 
 /** Encode a set of prong ids for the /model?prongs= query (e.g. [1,2] → "1,2"). */

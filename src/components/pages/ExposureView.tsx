@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import ExposureWorkspace from "@/src/components/exposure/ExposureWorkspace";
 import { GlossaryText } from "@/src/components/GlossaryTerm";
 import { useHighlight } from "@/src/lib/motion/pointer";
@@ -16,7 +15,6 @@ export default function ExposureView() {
         {...hl}
         className="caption mb-6 inline-flex items-center gap-2 transition-colors hover:text-dune-orange"
       >
-        <ArrowLeft className="h-3.5 w-3.5" />
         {NAV.backToOverview}
       </Link>
 

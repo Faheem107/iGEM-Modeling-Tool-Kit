@@ -21,13 +21,6 @@ import {
   ReferenceLine,
 } from "recharts";
 import {
-  Timer,
-  Sprout,
-  CalendarClock,
-  Wind,
-  TriangleAlert,
-} from "lucide-react";
-import {
   Panel,
   StatCard,
   Slider,
@@ -186,7 +179,6 @@ export default function CuringTimelinePanel({
               spray protocol
             </>
           }
-          icon={Timer}
           isLightMode={isLightMode}
           right={
             <span
@@ -266,7 +258,6 @@ export default function CuringTimelinePanel({
 
         <Panel
           title="Field weathering &amp; re-application"
-          icon={CalendarClock}
           isLightMode={isLightMode}
           right={
             <span
@@ -377,11 +368,6 @@ export default function CuringTimelinePanel({
                 : "bg-dune-orange/20 text-dune-orange border-dune-orange/40"
         }`}
       >
-        {meetsDesign && timeline.survivesToScheduledReapply ? (
-          <Sprout className="h-4 w-4 shrink-0 mt-1" />
-        ) : (
-          <TriangleAlert className="h-4 w-4 shrink-0 mt-1" />
-        )}
         <span>
           {!meetsDesign ? (
             <>

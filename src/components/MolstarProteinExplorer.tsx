@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
-import { Dna, Atom } from "lucide-react";
 import { Reveal } from "@/components/reveal";
 import { PORTAL_NAMES } from "@/content/copy";
 
@@ -91,7 +90,6 @@ export default function MolstarProteinExplorer({
       {showHeader && (
         <div className="mb-6">
           <h2 className="text-[length:var(--text-h1)] font-extrabold tracking-tight flex items-center gap-4">
-            <Dna className="h-4 w-4 text-dune-rose" />
             {PORTAL_NAMES.protein}
           </h2>
           <p className="opacity-70 text-[length:var(--text-micro)] mt-1 max-w-2xl">
@@ -117,9 +115,6 @@ export default function MolstarProteinExplorer({
                 }`}
               >
                 <div className="flex items-center gap-2 mb-1">
-                  <Atom
-                    className={`w-4 h-4 ${s.prong === 1 ? "text-dune-orange" : "text-dune-teal"}`}
-                  />
                   <span className="font-bold text-[length:var(--text-micro)]">{s.label}</span>
                   <span className="ml-auto text-[length:var(--text-caption)] font-bold uppercase tracking-[0.12em] opacity-50">
                     Prong {s.prong}

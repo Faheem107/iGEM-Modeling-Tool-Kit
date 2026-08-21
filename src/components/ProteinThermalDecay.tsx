@@ -1,17 +1,4 @@
 import React, { useMemo, useEffect } from "react";
-import {
-  Thermometer,
-  Droplet,
-  Percent,
-  TrendingDown,
-  Lock,
-  Unlock,
-  AlertTriangle,
-  Compass,
-  Activity,
-  Sparkles,
-  Info,
-} from "lucide-react";
 import GlossaryTerm from "./GlossaryTerm";
 import { ModuleActions } from "./simulation/_shared";
 import { DUNE, STATUS, SURFACE } from "@/src/lib/palette";
@@ -133,8 +120,7 @@ export default function ProteinThermalDecay({
         <div
           className={`p-2 rounded-[4px] ${isLightMode ? "bg-dune-orange/10 text-dune-orange" : "bg-dune-orange/45 text-dune-orange"}`}
         >
-          <Thermometer className="h-4 w-4" />
-        </div>
+          </div>
         <div>
           <h3 className="text-[length:var(--text-micro)] font-black uppercase tracking-wider font-mono">
             Protein Conformational &amp; Thermal Decay
@@ -161,14 +147,14 @@ export default function ProteinThermalDecay({
             }`}
           >
             <h4 className="text-[length:var(--text-caption)] font-extrabold uppercase tracking-widest text-dune-teal font-mono flex items-center gap-2 pb-1 border-b border-dashed border-border">
-              <Compass className="h-3.5 w-3.5" /> Soil Micro-Climate Inputs
+              Soil Micro-Climate Inputs
             </h4>
 
             {/* Temperature Slider */}
             <div className="space-y-1">
               <div className="flex justify-between text-[length:var(--text-caption)]">
                 <span className="font-semibold flex items-center gap-1">
-                  <Thermometer className="h-3.5 w-3.5 text-dune-maroon" /> Target
+                  Target
                   Temperature:
                 </span>
                 <span
@@ -192,7 +178,7 @@ export default function ProteinThermalDecay({
             <div className="space-y-1">
               <div className="flex justify-between text-[length:var(--text-caption)]">
                 <span className="font-semibold flex items-center gap-1">
-                  <Droplet className="h-3.5 w-3.5 text-dune-teal" /> Soil pH Level:
+                  Soil pH Level:
                 </span>
                 <span className="font-mono font-bold text-dune-teal">
                   {pH.toFixed(2)}
@@ -213,7 +199,7 @@ export default function ProteinThermalDecay({
             <div className="space-y-1">
               <div className="flex justify-between text-[length:var(--text-caption)]">
                 <span className="font-semibold flex items-center gap-1">
-                  <Percent className="h-3.5 w-3.5 text-dune-teal" /> Ground
+                  Ground
                   Salinity/Ions:
                 </span>
                 <span className="font-mono font-bold text-dune-teal">
@@ -273,7 +259,7 @@ export default function ProteinThermalDecay({
           >
             <div className="flex justify-between items-center mb-2 text-[length:var(--text-caption)] font-mono uppercase text-muted-foreground">
               <span className="flex items-center gap-1">
-                <Activity className="h-3.5 w-3.5 text-dune-rose" />{" "}
+                {" "}
                 <GlossaryTerm term="folding-curve">
                   Operative Folding Curve
                 </GlossaryTerm>
@@ -453,7 +439,6 @@ export default function ProteinThermalDecay({
           <div className="mt-4">
             {foldedPercentage < 50 ? (
               <div className="p-4 bg-dune-maroon/20 border border-dune-maroon/60 rounded-[4px] flex items-start gap-2 text-[length:var(--text-caption)] text-dune-maroon">
-                <AlertTriangle className="h-4 w-4 text-dune-maroon shrink-0 mt-1" />
                 <div>
                   <strong className="font-black uppercase tracking-wider block mb-1">
                     Critical Thermophilic Integrity Loss!
@@ -468,10 +453,6 @@ export default function ProteinThermalDecay({
               </div>
             ) : (
               <div className="p-4 bg-dune-teal/15 border border-dune-teal/40 rounded-[4px] flex items-start gap-2 text-[length:var(--text-caption)] text-dune-teal">
-                <Sparkles
-                  className="h-4 w-4 text-dune-teal shrink-0 mt-1 animate-spin"
-                  style={{ animationDuration: "10s" }}
-                />
                 <div>
                   <strong className="font-bold uppercase tracking-wider block mb-1">
                     Structural Fold State Optimized

@@ -19,7 +19,6 @@ import {
   Cell,
   ReferenceLine,
 } from "recharts";
-import { Coins, TrendingDown, Sprout, Award } from "lucide-react";
 import GlossaryTerm from "./GlossaryTerm";
 import {
   combinationCost,
@@ -125,7 +124,6 @@ export default function EconomicScalabilityEngine({
     <>
       <Panel
         title="Scale Specifications"
-        icon={Coins}
         isLightMode={isLightMode}
       >
         <div className="space-y-4">
@@ -228,7 +226,6 @@ export default function EconomicScalabilityEngine({
       <div className="lg:col-span-7 space-y-6">
         <Panel
           title="Cost per Hectare, Combination Comparison"
-          icon={TrendingDown}
           isLightMode={isLightMode}
           right={
             <span
@@ -285,7 +282,7 @@ export default function EconomicScalabilityEngine({
           <p
             className={`mt-1 text-[length:var(--text-caption)] flex items-center gap-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
           >
-            <Award className="h-3.5 w-3.5 text-dune-orange" /> Indigo = your selected
+            Indigo = your selected
             combination. Every biological combination sits far below the
             conventional chemical (blue) and concrete (red) baselines.
           </p>
@@ -293,7 +290,6 @@ export default function EconomicScalabilityEngine({
 
         <Panel
           title="Per-Prong Cost Basis"
-          icon={Sprout}
           isLightMode={isLightMode}
         >
           <div className="space-y-2">

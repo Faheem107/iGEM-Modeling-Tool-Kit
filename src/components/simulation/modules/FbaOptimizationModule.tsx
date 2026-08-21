@@ -24,7 +24,6 @@ import {
   ReferenceDot,
   Cell,
 } from "recharts";
-import { Workflow, GitBranch, Sigma, Beaker, Dna, Network } from "lucide-react";
 import GlossaryTerm from "../../GlossaryTerm";
 import {
   buildCoreNetwork,
@@ -591,7 +590,6 @@ export default function FbaOptimizationModule({
             <GlossaryTerm term="objective-function">Objective</GlossaryTerm>
           </>
         }
-        icon={Workflow}
         isLightMode={isLightMode}
       >
         <div className="space-y-4">
@@ -649,7 +647,6 @@ export default function FbaOptimizationModule({
             <GlossaryTerm term="gene-knockout">Gene Knockouts</GlossaryTerm>
           </>
         }
-        icon={GitBranch}
         isLightMode={isLightMode}
       >
         <div className="grid grid-cols-2 gap-2">
@@ -782,7 +779,6 @@ export default function FbaOptimizationModule({
             <GlossaryTerm term="flux">Live Pathway Flow Map</GlossaryTerm>, carbon routing at the optimum
           </>
         }
-        icon={Network}
         isLightMode={isLightMode}
         right={
           analysis.status !== "optimal" ? (
@@ -833,7 +829,6 @@ export default function FbaOptimizationModule({
             <GlossaryTerm term="production-envelope">Pareto Front</GlossaryTerm>
           </>
         }
-        icon={Sigma}
         isLightMode={isLightMode}
       >
         <ResponsiveContainer width="100%" height={200}>
@@ -889,7 +884,7 @@ export default function FbaOptimizationModule({
         <p
           className={`mt-1 text-[length:var(--text-caption)] flex items-center gap-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
         >
-          <Beaker className="h-3.5 w-3.5" /> Marker = current objective&apos;s
+          Marker = current objective&apos;s
           operating point. The downward slope is the growth that must be traded
           away per unit of product.
         </p>
@@ -897,7 +892,6 @@ export default function FbaOptimizationModule({
 
       <Panel
         title={<>Carbon Fate, where the fixed feed lands</>}
-        icon={Sigma}
         isLightMode={isLightMode}
       >
         <div className="space-y-2">
@@ -960,7 +954,6 @@ export default function FbaOptimizationModule({
               (<GlossaryTerm term="pfba">pFBA</GlossaryTerm>)
             </>
           }
-          icon={Dna}
           isLightMode={isLightMode}
         >
           <ResponsiveContainer width="100%" height={210}>
@@ -1017,7 +1010,6 @@ export default function FbaOptimizationModule({
               optimum)
             </>
           }
-          icon={GitBranch}
           isLightMode={isLightMode}
         >
           <div className="space-y-2 mt-1">

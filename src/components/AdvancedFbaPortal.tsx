@@ -1,25 +1,4 @@
 import React, { useState, useMemo } from "react";
-import {
-  Play,
-  Settings,
-  RotateCcw,
-  Cpu,
-  Gauge,
-  Layers,
-  TrendingUp,
-  Database,
-  Activity,
-  HelpCircle,
-  Dna,
-  Zap,
-  Sparkles,
-  AlertTriangle,
-  Lightbulb,
-  CheckCircle,
-  XCircle,
-  Sun,
-  Moon,
-} from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import GlossaryTerm from "./GlossaryTerm";
 import { PORTAL_NAMES } from "@/content/copy";
@@ -803,11 +782,7 @@ export default function AdvancedFbaPortal({
           <div
             className={`p-2 rounded-[4px] ${isLightMode ? "bg-dune-orange/10 text-dune-orange" : "bg-dune-orange/50 text-dune-teal border border-dune-orange/50"}`}
           >
-            <Cpu
-              className="h-4 w-4 animate-spin"
-              style={{ animationDuration: "6s" }}
-            />
-          </div>
+            </div>
           <div>
             <h2 className="text-[length:var(--text-micro)] font-black uppercase tracking-wider font-mono">
               {PORTAL_NAMES.pipeline}
@@ -881,7 +856,7 @@ export default function AdvancedFbaPortal({
               }`}
             >
               <span className="flex items-center gap-2">
-                <Settings className={`w-4 h-4 text-dune-teal`} /> Input
+                Input
                 Boundaries
               </span>
               <button
@@ -893,7 +868,7 @@ export default function AdvancedFbaPortal({
                 }`}
                 title="Reset boundaries and knockouts"
               >
-                <RotateCcw className="w-2.5 h-2.5 inline mr-1" /> Reset
+                Reset
               </button>
             </h3>
 
@@ -1031,7 +1006,7 @@ export default function AdvancedFbaPortal({
                     : "text-foreground border-border"
                 }`}
               >
-                <Dna className="h-4 w-4 text-dune-rose" /> iGEM Knockout Sandbox
+                iGEM Knockout Sandbox
               </h3>
               <p className="text-[length:var(--text-caption)] text-muted-foreground mt-1">
                 Induce single gene deletions. Simplex reroutes carbon fluxes
@@ -1088,7 +1063,7 @@ export default function AdvancedFbaPortal({
                   : "text-foreground border-border"
               }`}
             >
-              <Gauge className="h-4 w-4 text-dune-orange" /> Co-Factor
+              Co-Factor
               Biosynthetic Yields
             </h3>
 
@@ -1166,7 +1141,7 @@ export default function AdvancedFbaPortal({
                   isLightMode ? "text-foreground" : "text-foreground"
                 }`}
               >
-                <Activity className="h-4 w-4 text-dune-teal font-extrabold" />{" "}
+                {" "}
                 Active Analytical Metabolic Flux Map
               </h3>
               <span
@@ -1984,7 +1959,7 @@ export default function AdvancedFbaPortal({
                   isLightMode ? "text-foreground" : "text-foreground"
                 }`}
               >
-                <Database className="h-4 w-4 text-dune-teal" /> Micro
+                Micro
                 Stoichiometric Coefficient Matrix (S)
               </h3>
               <span className="font-mono text-[length:var(--text-caption)] text-muted-foreground">
@@ -2080,7 +2055,7 @@ export default function AdvancedFbaPortal({
                   isLightMode ? "text-foreground" : "text-foreground"
                 }`}
               >
-                <Zap className="h-4 w-4 text-dune-teal" />{" "}
+                {" "}
                 Metabolic Flux Leaderboard
               </h3>
               <span
@@ -2172,7 +2147,7 @@ export default function AdvancedFbaPortal({
                   isLightMode ? "text-dune-orange" : "text-foreground"
                 }`}
               >
-                <TrendingUp className="h-4 w-4 text-dune-teal" /> Matrix
+                Matrix
                 Constraint Shadow Prices
               </h4>
               <p className="text-[length:var(--text-caption)] text-muted-foreground leading-normal">
@@ -2218,7 +2193,7 @@ export default function AdvancedFbaPortal({
                   isLightMode ? "text-dune-orange" : "text-foreground"
                 }`}
               >
-                <HelpCircle className="h-4 w-4 text-dune-teal" /> iGEM FBA
+                iGEM FBA
                 Science Deck
               </h4>
               <p className="text-[length:var(--text-caption)] text-muted-foreground leading-relaxed font-sans">

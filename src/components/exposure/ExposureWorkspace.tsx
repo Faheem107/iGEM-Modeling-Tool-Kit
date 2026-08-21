@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Wind, Radio, Layers, AlertTriangle } from "lucide-react";
 import { useTheme } from "@/components/theme-context";
 import { ModuleActions, Panel, Slider, StatCard } from "@/src/components/simulation/_shared";
 import ExposureMap, { type SourceFeature, type TargetSite } from "./ExposureMap";
@@ -292,8 +291,8 @@ export default function ExposureWorkspace() {
     <div className="space-y-6">
       {/* mode switch */}
       <div className="flex flex-wrap items-center gap-2">
-        {([["seasonal", "Seasonal forecast", Wind], ["live", "Live feed", Radio]] as const).map(
-          ([id, label, Icon]) => (
+        {([["seasonal", "Seasonal forecast"], ["live", "Live feed"]] as const).map(
+          ([id, label]) => (
             <button
               key={id}
               {...hl}
@@ -304,7 +303,6 @@ export default function ExposureWorkspace() {
                   : "border-border text-muted-foreground"
               }`}
             >
-              <Icon className="h-4 w-4" />
               {label}
             </button>
           ),
@@ -346,7 +344,7 @@ export default function ExposureWorkspace() {
 
         {/* controls */}
         <div className="lg:col-span-5 space-y-6">
-          <Panel title="Target market" icon={Layers} isLightMode={isLightMode}>
+          <Panel title="Target market" isLightMode={isLightMode}>
             <div className="space-y-4">
               <select
                 value={market}
@@ -380,7 +378,6 @@ export default function ExposureWorkspace() {
           {mode === "seasonal" ? (
             <Panel
               title="Seasonal wind"
-              icon={Wind}
               isLightMode={isLightMode}
               right={<Grade grade={seasonal && !override ? "literature" : "unsourced"} />}
             >
@@ -454,7 +451,7 @@ export default function ExposureWorkspace() {
               )}
             </Panel>
           ) : (
-            <Panel title="Live conditions" icon={Radio} isLightMode={isLightMode}>
+            <Panel title="Live conditions" isLightMode={isLightMode}>
               {liveLoading && <p className="text-[length:var(--text-micro)] text-muted-foreground">Loading the feed.</p>}
               {liveErr && (
                 <p className="text-[length:var(--text-micro)] text-dune-rose">
@@ -473,7 +470,7 @@ export default function ExposureWorkspace() {
             </Panel>
           )}
 
-          <Panel title="Surface and treatment" icon={Layers} isLightMode={isLightMode}>
+          <Panel title="Surface and treatment" isLightMode={isLightMode}>
             <Slider label="Soil clay content" value={clay} onChange={setClay} min={0} max={25} step={0.5} unit="%" isLightMode={isLightMode} hint="Clay sets the sandblasting efficiency: how much fine dust the hopping grains knock loose. Dune sand has almost none." />
             {blast.capped && (
               <p className="mb-4 text-[length:var(--text-micro)] text-dune-rose">
@@ -592,7 +589,6 @@ export default function ExposureWorkspace() {
           </div>
         ) : (
           <div className="flex items-start gap-4">
-            <AlertTriangle className="mt-1 h-4 w-4 shrink-0 text-dune-rose" />
             <p className="text-[length:var(--text-micro)] leading-relaxed">
               No cost coefficient exists for this market yet. The mass reaching the site is
               modelled above and is sound. What is missing is the conversion from that mass

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { RotateCw, RefreshCw, Loader2 } from "lucide-react";
 
 /**
  * Headless Mol* 3D structure viewer. We drive Mol*'s PluginContext directly (no
@@ -286,7 +285,7 @@ export default function MolstarViewer({
             </span>
           ) : (
             <span className="flex items-center gap-2 text-[length:var(--text-micro)] text-dune-ash">
-              <Loader2 className="h-4 w-4 animate-spin" /> Loading structure…
+              Loading structure…
             </span>
           )}
         </div>
@@ -297,20 +296,20 @@ export default function MolstarViewer({
           <button
             onClick={toggleSpin}
             aria-label="Toggle auto-rotation"
-            className={`p-2 rounded-[4px] border border-border transition-colors ${
+            className={`caption rounded-[4px] border border-border px-3 py-1.5 transition-colors ${
               spinning
                 ? "bg-dune-orange text-dune-basalt"
                 : "bg-card hover:brightness-95"
             }`}
           >
-            <RotateCw className="h-4 w-4" />
+            {spinning ? "Stop" : "Spin"}
           </button>
           <button
             onClick={resetCamera}
             aria-label="Reset camera"
-            className="p-2 rounded-[4px] border border-border bg-card hover:brightness-95 transition-colors"
+            className="caption rounded-[4px] border border-border bg-card px-3 py-1.5 transition-colors hover:brightness-95"
           >
-            <RefreshCw className="h-4 w-4" />
+            Reset
           </button>
         </div>
       )}
