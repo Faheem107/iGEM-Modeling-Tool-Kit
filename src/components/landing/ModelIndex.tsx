@@ -2,27 +2,23 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import {
   INDEX_COLUMNS,
   ARCHIVED_MODULES,
-  FIELD_LINKS,
   moduleHref,
-  type IndexLink,
 } from "@/src/lib/modelIndex";
 import type { ModuleMeta } from "@/src/lib/prongs";
-import CompactModal from "@/src/components/CompactModal";
-import { BUSINESS_SECTIONS, BUSINESS_SUMMARY } from "@/src/lib/businessModel";
 import { PRONG_TITLES, ALGINATE_RATIONALE } from "@/content/copy";
 
 /**
  * Every model on the site, grouped, with nothing open until it is asked for.
  * ==========================================================================
- * Six groups: the two engineered prongs, the two layers they share, the field
- * and cost view, and the archived option. Each one shows its name and what it
- * covers. The list itself stays folded, so the reader picks a layer before
- * reading forty link titles.
+ * Four folded groups: the two engineered prongs and the two layers they share.
+ * The list stays folded, so the reader picks a layer before reading forty link
+ * titles. Below them the exposure model and the archived option each get a row
+ * of their own. Exposure does not fold: it is one destination, so the heading
+ * is the link.
  *
  * The four model columns come from MODULE_REGISTRY via src/lib/modelIndex.ts,
  * so adding a module to the registry lists it here automatically.
@@ -39,9 +35,6 @@ export default function ModelIndex({
   onView?: (t: ViewTarget) => void;
   heading?: string;
 }) {
-  const router = useRouter();
-  const [showBusiness, setShowBusiness] = useState(false);
-
   return (
     <motion.div
       initial={false}
@@ -87,20 +80,21 @@ export default function ModelIndex({
       </div>
 
       {/* Where the crust ends up: the sand that arrives at a site, and what
-          stopping it is worth. Same fold, same rail, one section. */}
+          stopping it is worth. One destination, so the heading is the link and
+          there is nothing to unfold. */}
       <div className="mt-12 border-t border-border pt-6">
         <div className="rail-row">
           <p className="caption pt-1">Wind and cost</p>
-          <Group
-            title="Exposure and the commercial case"
-            lede="The prongs set how well a treated surface holds. These take that outward: how much sand reaches a given site, and what stopping it is worth to whoever owns it."
-            wide
-          >
-            <LinkList
-              links={FIELD_LINKS}
-              onAction={() => setShowBusiness(true)}
-            />
-          </Group>
+          <Link href="/exposure" className="group block">
+            <span className="wght-head rule-link block text-[length:var(--text-h3)] text-foreground">
+              Exposure and the commercial case
+            </span>
+            <span className="mt-2 block max-w-[62ch] text-[length:var(--text-micro)] leading-snug text-muted-foreground">
+              The prongs set how well a treated surface holds. This takes that outward:
+              how much sand reaches a given site, when in the year it arrives, and what
+              stopping it is worth to whoever owns it.
+            </span>
+          </Link>
         </div>
       </div>
 
@@ -132,43 +126,6 @@ export default function ModelIndex({
         </div>
       )}
 
-      <CompactModal
-        open={showBusiness}
-        onClose={() => setShowBusiness(false)}
-        title="Business model"
-        tabs={BUSINESS_SECTIONS.map((s) => ({
-          id: s.id,
-          label: s.label,
-          body: (
-            <div className="space-y-4">
-              <h3 className="text-[length:var(--text-body)] leading-snug text-foreground">
-                {s.heading}
-              </h3>
-              {s.body.map((para, i) => (
-                <p key={i} className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
-                  {para}
-                </p>
-              ))}
-            </div>
-          ),
-        }))}
-        footer={
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <p className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
-              {BUSINESS_SUMMARY}
-            </p>
-            <button
-              onClick={() => {
-                setShowBusiness(false);
-                router.push("/exposure");
-              }}
-              className="caption shrink-0 border border-border px-4 py-2 text-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
-            >
-              Open the model
-            </button>
-          </div>
-        }
-      />
     </motion.div>
   );
 }
@@ -276,50 +233,3 @@ function ModuleList({
   );
 }
 
-function LinkList({
-  links,
-  onAction,
-}: {
-  links: IndexLink[];
-  onAction: () => void;
-}) {
-  return (
-    <ol className="mt-6 max-w-[42rem]">
-      {links.map((l, i) => {
-        const inner = (
-          <>
-            <span className="caption pt-1">
-              {String(i + 1).padStart(2, "0")}
-            </span>
-            <span>
-              <span className="wght-link rule-link block text-[length:var(--text-body)] leading-snug">
-                {l.title}
-              </span>
-              <span className="caption mt-1 block opacity-60">{l.meta}</span>
-            </span>
-          </>
-        );
-        return (
-          <li key={l.id}>
-            {l.href ? (
-              <Link
-                href={l.href}
-                className="rail-row-tight border-t border-border py-2"
-              >
-                {inner}
-              </Link>
-            ) : (
-              <button
-                type="button"
-                onClick={onAction}
-                className="rail-row-tight w-full border-t border-border py-2 text-left"
-              >
-                {inner}
-              </button>
-            )}
-          </li>
-        );
-      })}
-    </ol>
-  );
-}
