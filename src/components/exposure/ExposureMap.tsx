@@ -279,26 +279,31 @@ export default function ExposureMap({
       className="pointer-events-none absolute inset-0 h-full w-full"
       aria-hidden
     >
-      {/* drift pathway from the selected site, pointing upwind to the origin */}
+      {/* The drift and suspension pathway: drawn FROM upwind INTO the site, so
+          the arrowhead lands on the receptor. It used to be drawn the other
+          way, pointing back at the origin, which reads as sand leaving. */}
       {selected && driftDeg != null && Number.isFinite(driftDeg) && (
         (() => {
           const p = project(selected.lon, selected.lat);
           const up = ((driftDeg + 180) % 360) * (Math.PI / 180);
           const len = 130;
-          const x2 = p.x + Math.sin(up) * len;
-          const y2 = p.y - Math.cos(up) * len;
+          const x1 = p.x + Math.sin(up) * len;
+          const y1 = p.y - Math.cos(up) * len;
           return (
             <g>
               <defs>
-                <marker id="arrow" markerWidth="7" markerHeight="7" refX="5" refY="3.5"
-                        orient="auto">
+                {/* Namespaced: a bare id="arrow" collides the moment two maps
+                    are on one page, and SVG marker ids are document-global. */}
+                <marker id="exposure-drift-arrow" markerWidth="7" markerHeight="7"
+                        refX="5" refY="3.5" orient="auto">
                   <path d="M0,0 L7,3.5 L0,7 Z" fill="var(--dune-orange)" />
                 </marker>
               </defs>
               <line
-                x1={p.x} y1={p.y} x2={x2} y2={y2}
+                x1={x1} y1={y1} x2={p.x} y2={p.y}
                 stroke="var(--dune-orange)" strokeWidth={2}
-                strokeDasharray="6 4" markerEnd="url(#arrow)" opacity={0.85}
+                strokeDasharray="6 4" markerEnd="url(#exposure-drift-arrow)"
+                opacity={0.9}
               />
             </g>
           );
@@ -315,8 +320,21 @@ export default function ExposureMap({
               key={s.id}
               transform={`translate(${p.x},${p.y})`}
               onClick={() => onSelect(s.id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onSelect(s.id);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label={`${s.name}, ${s.market}`}
+              aria-pressed={on}
               style={{ cursor: "pointer", pointerEvents: "auto" }}
             >
+              {/* An invisible disc gives the 10 unit glyph a target big enough
+                  to hit on a touch screen. */}
+              <circle r={12} fill="transparent" />
               {on && <circle r={13} fill="var(--dune-orange)" fillOpacity={0.18} />}
               <path
                 d={MARKET_GLYPH[s.market] ?? MARKET_GLYPH.industrial}

@@ -120,6 +120,31 @@ def drift_potential(wind_rose, threshold_ms=GULF_IMPACT_THRESHOLD_MS):
     return {"DP": dp, "RDP": rdp, "RDD": rdd, "UDI": (rdp / dp) if dp > 0 else 0.0}
 
 
+def drift_from_sectors(q):
+    """Fryberger drift from per-sector drift potential already summed hourly.
+
+    q[i] is the drift potential for sector i in vector units. Mirror of
+    driftFromSectors() in src/lib/physics/windStats.ts, and of the same function
+    in scripts/fit_era5_weibull.py, which is where the hourly sum is done.
+
+    Why not reuse drift_potential() above: Q goes as V^3, so a sector whose MEAN
+    speed is below the impact threshold still contains hours well above it.
+    Evaluating at the mean returns zero drift for months that plainly move sand.
+    """
+    n = len(q)
+    dp = vec_x = vec_y = 0.0
+    for i, qi in enumerate(q):
+        if qi <= 0:
+            continue
+        dp += qi
+        toward = math.radians((i * 360.0 / n + 180.0) % 360.0)
+        vec_x += qi * math.sin(toward)
+        vec_y += qi * math.cos(toward)
+    rdp = math.hypot(vec_x, vec_y)
+    rdd = (math.degrees(math.atan2(vec_x, vec_y)) % 360.0) if rdp > 0 else float("nan")
+    return {"DP": dp, "RDP": rdp, "RDD": rdd, "UDI": (rdp / dp) if dp > 0 else 0.0}
+
+
 def _self_test():
     from math import isclose
     # incomplete gamma against known values
@@ -145,6 +170,14 @@ def _self_test():
     r2 = drift_potential([(0.0, 10.0, 0.5), (180.0, 10.0, 0.5)])
     assert r2["UDI"] < 1e-12, r2
     print(f"opposed roses cancel, UDI {r2['UDI']:.2e}: OK")
+
+    # per-sector form must agree with the binned form on the same rose
+    q = [0.0] * 16
+    q[14] = 100.0          # sector 14 is NW, 315 deg
+    r4 = drift_from_sectors(q)
+    assert isclose(r4["RDD"], 135.0, abs_tol=1e-9), r4["RDD"]
+    assert isclose(r4["UDI"], 1.0, rel_tol=1e-12)
+    print(f"per-sector NW -> RDD {r4['RDD']:.1f} deg (SE), UDI {r4['UDI']:.3f}: OK")
 
     # below threshold contributes nothing
     r3 = drift_potential([(315.0, 4.0, 1.0)])

@@ -139,3 +139,46 @@ export function driftPotential(
   const RDD = RDP > 0 ? ((Math.atan2(vx, vy) * 180) / Math.PI + 360) % 360 : NaN;
   return { DP, RDP, RDD, UDI: DP > 0 ? RDP / DP : 0 };
 }
+
+/** Sectors in a stored climatology rose. 22.5° each, sector 0 centred on north. */
+export const ROSE_SECTORS = 16;
+
+/**
+ * Fryberger drift from per-sector drift potential.
+ *
+ * `q[i]` is the drift potential already accumulated for sector i, in vector
+ * units, over the whole period. `driftPotential` above computes Q from a single
+ * representative speed per bin, which is right for one instantaneous
+ * observation and WRONG for a climatology: Q goes as V³, so a sector whose mean
+ * speed sits below the impact threshold still contains hours well above it, and
+ * evaluating at the mean returns zero drift for a month that plainly moves
+ * sand. Kuwait in December is exactly that case.
+ *
+ * So the per-hour sum is done in scripts/fit_era5_weibull.py, where the hourly
+ * data is, and only the vector sum happens here. Mirror of drift_from_sectors()
+ * in that script; keep the two in step.
+ */
+export function driftFromSectors(q: number[]): DriftPotential {
+  let DP = 0;
+  let vx = 0;
+  let vy = 0;
+  for (let i = 0; i < q.length; i++) {
+    if (!(q[i] > 0)) continue;
+    DP += q[i];
+    // Sand moves toward the bearing 180° from the sector the wind blows from.
+    const toward = ((((i * 360) / q.length + 180) % 360) * Math.PI) / 180;
+    vx += q[i] * Math.sin(toward);
+    vy += q[i] * Math.cos(toward);
+  }
+  const RDP = Math.hypot(vx, vy);
+  const RDD = RDP > 0 ? ((Math.atan2(vx, vy) * 180) / Math.PI + 360) % 360 : NaN;
+  return { DP, RDP, RDD, UDI: DP > 0 ? RDP / DP : 0 };
+}
+
+/** Compass point for a bearing, for saying a direction in words. */
+export function cardinal(deg: number): string {
+  if (!Number.isFinite(deg)) return "n/a";
+  const names = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
+                 "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+  return names[Math.round(((deg % 360) + 360) % 360 / 22.5) % 16];
+}
