@@ -144,4 +144,11 @@ export const MODULE_VIDEOS: Record<ModuleId, ModuleVideo> = {
     length: "~60 s",
     ready: false,
   },
+  exposure: {
+    title: "Where the sand comes from, and what reaches a site",
+    plain:
+      "Wind does not move sand at an average speed. It moves almost all of it on the few days it blows hardest, because transport climbs as the cube of the wind. This walks through how a season's wind distribution becomes a mass of sand arriving at a solar farm, and what treating the ground upwind takes off that number.",
+    length: "~75 s",
+    ready: false,
+  },
 };

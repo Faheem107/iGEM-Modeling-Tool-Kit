@@ -360,4 +360,36 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
       },
     ],
   },
+  exposure: {
+    title: "Exposure and the commercial case",
+    intro:
+      "How much sand a season's wind moves, how much of it reaches an asset, and what changes when the ground upwind is treated. The chain runs from a wind distribution to money, and every step is a published relation.",
+    blocks: [
+      {
+        tex: "f(u) = \\frac{k}{A}\\left(\\frac{u}{A}\\right)^{k-1} e^{-(u/A)^k}",
+        caption:
+          "The Weibull wind speed distribution fitted to hourly ERA5, month by month. A is the typical wind, k says how gusty.",
+      },
+      {
+        tex: "\\langle q\\rangle = C\\frac{\\rho_a}{g} r^{3}\\left[A^{3}\\Gamma\\!\\left(1+\\tfrac{3}{k}, x\\right) - u_t^{2} A\\,\\Gamma\\!\\left(1+\\tfrac{1}{k}, x\\right)\\right],\\; x = \\left(\\tfrac{u_t}{A}\\right)^{k}",
+        caption:
+          "The Bagnold flux integrated over that distribution, in closed form. This is the heart of it: flux goes as roughly the cube of the wind above a threshold, so the flux of the average wind is not the average flux. A month that is calm for 28 days and fierce for 2 moves nearly all its sand on those 2.",
+      },
+      {
+        tex: "Q_i = V_i^{2}\\,(V_i - V_t)\\,t_i, \\quad DP = \\sum_i Q_i, \\quad UDI = \\frac{\\left|\\sum_i Q_i \\hat{n}_i\\right|}{DP}",
+        caption:
+          "Fryberger drift potential per direction sector, summed hourly. DP is how much sand the wind regime can move, and UDI is how much of that pulls one way. A high UDI means one patch of ground to treat.",
+      },
+      {
+        tex: "F = M\\,\\alpha\\,Q, \\quad \\alpha = 10^{\\,0.134\\,c - 6.0}",
+        caption:
+          "Fine dust is produced by saltating grains hammering the surface, at a rate set by the soil's clay fraction c. Clean dune sand is a strong sand mover and a weak dust maker; clay-rich flood plain is the opposite.",
+      },
+      {
+        tex: "\\Delta\\tau[\\%] = 0.0381q^{4} - 0.8626q^{3} + 6.4143q^{2} - 15.051q + 16.769",
+        caption:
+          "Light lost through dusty solar glass against deposited mass q in g/m², from Elminir's measurements. This is the step that turns arriving sand into lost electricity, and lost electricity into money.",
+      },
+    ],
+  },
 };

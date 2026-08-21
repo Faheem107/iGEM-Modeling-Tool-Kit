@@ -185,4 +185,21 @@ export const MODULE_CODE: Partial<Record<ModuleId, ModuleCode>> = {
       p("economic", 2, "Deployment cost breakdown per combination at 100 ha."),
     ],
   ),
+  exposure: entry(
+    "exposure",
+    "Exposure and the commercial case",
+    "From a season's wind distribution to the sand arriving at one asset, and to what treating the ground upwind takes off that number.",
+    [
+      {
+        src: "/code/plots/exposure-1.png",
+        caption:
+          "Why the average wind is the wrong input. The teal curve is how often the wind blows at each speed; the orange is where the sand actually moves. They barely overlap, because transport climbs as the cube of the wind above a threshold. For this month the average wind sits below the threshold entirely, so it predicts no sand movement at all while the real answer is not zero.",
+      },
+      {
+        src: "/code/plots/exposure-2.png",
+        caption:
+          "Left: saltating sand lands within tens of metres, whatever the wind, which is why a dust source 7 km away is a different problem from the ground next to the fence. Right: the whole product effect as one measured number, the cohesion the crust adds, moving through one integral.",
+      },
+    ],
+  ),
 };

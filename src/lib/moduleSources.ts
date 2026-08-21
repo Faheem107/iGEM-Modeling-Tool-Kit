@@ -424,4 +424,111 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       },
     ],
   },
+  exposure: {
+    intro:
+      "The chain from a season's wind to money at one asset. Every step is a published relation or a public dataset, and the gaps that have neither are named as gaps rather than filled in.",
+    sources: [
+      {
+        label: "Fryberger (1979), Dune forms and wind regime",
+        detail:
+          "Drift potential, the resultant direction, and the unidirectionality index. Chapter 5 of A Study of Global Sand Seas, USGS Professional Paper 1052.",
+        kind: "literature",
+      },
+      {
+        label: "Khalaf & Al-Ajmi (1993), Geomorphology 6, 111-134",
+        detail:
+          "Kuwait: saltation begins near 5.4 m/s at 10 m, and about 20 m³ of sand drifts per metre of width per year, mostly May to August, toward the southeast. The two numbers the climatology is validated against.",
+        kind: "literature",
+        url: "https://doi.org/10.1016/0169-555X(93)90042-Z",
+      },
+      {
+        label: "Marticorena & Bergametti (1995), J. Geophys. Res. 100, 16415",
+        detail:
+          "The size bands that separate creep, saltation and suspension, and the 1 m saltation layer height. This is why regional dust and local sand are different problems.",
+        kind: "literature",
+        url: "https://doi.org/10.1029/95JD00690",
+      },
+      {
+        label: "Ferguson & Church (2004), J. Sediment. Res. 74, 933",
+        detail:
+          "Settling velocity across the Stokes and turbulent regimes, which sets how far a grain released from the saltation layer travels before it lands.",
+        kind: "literature",
+        url: "https://doi.org/10.1306/051204740933",
+      },
+      {
+        label: "Benaafi et al. (2016), Arab. J. Geosci. 9, 1970, Table 1",
+        detail:
+          "Measured grain size for Saudi dune fields, including the Rub' al-Khali, which the paper itself states resembles eastern UAE dune sand. 99.7 percent of that mass is in the saltation band.",
+        kind: "literature",
+        url: "https://doi.org/10.1007/s12517-015-1970-9",
+      },
+      {
+        label: "Chappell et al. (2024), Geophys. Res. Lett. 51, e2023GL106540, Eq 3",
+        detail:
+          "Sandblasting efficiency against soil clay content: how much fine dust saltating grains knock loose.",
+        kind: "literature",
+        url: "https://doi.org/10.1029/2023GL106540",
+      },
+      {
+        label: "Elminir et al. (2006), Energy Convers. Manag. 47, 3192",
+        detail:
+          "Light lost through solar glass against deposited dust in g/m², and how that changes with panel tilt. Read off the figure and table in the PDF, not from a text extraction.",
+        kind: "literature",
+        url: "https://doi.org/10.1016/j.enconman.2006.02.014",
+      },
+      {
+        label: "Tian et al. (2018), Land Degrad. Dev. 29, 4271",
+        detail:
+          "Wind tunnel threshold for untreated aeolian sand, 5.73 m/s at 0.6 m. An independent check on the threshold this model computes from grain size.",
+        kind: "literature",
+        url: "https://doi.org/10.1002/ldr.3176",
+      },
+      {
+        label: "Ginoux et al. (2012), Rev. Geophys. 50, RG3005",
+        detail:
+          "The mapped dust source areas, by how often dust is seen over them. 0.1 degree grid, March to May only for this region.",
+        kind: "literature",
+        url: "https://doi.org/10.1029/2012RG000388",
+      },
+      {
+        label: "Hennen (2017), PhD thesis, Middle East dust sources",
+        detail:
+          "27,000 dust emission events tracked by satellite. Finds the Tigris and Euphrates flood plain dominant and the southern Arabian Peninsula quiet, which agrees with the grain size physics from an independent direction.",
+        kind: "literature",
+      },
+      {
+        label: "ERA5 hourly 10 m wind, via the Open-Meteo historical archive",
+        detail:
+          "The monthly Weibull fit and wind rose, 2022 to 2024 on a 1 degree grid. Built by scripts/fit_era5_weibull.py, which refuses to write a file that fails the Kuwait validation. Copernicus licence, attribution required.",
+        kind: "model",
+        url: "https://open-meteo.com/en/docs/historical-weather-api",
+      },
+      {
+        label: "CAMS global dust, via Open-Meteo",
+        detail:
+          "The live surface dust and wind feed. 0.4 degree, 3-hourly, updated twice a day. CC BY 4.0.",
+        kind: "model",
+        url: "https://open-meteo.com/en/docs/air-quality-api",
+      },
+      {
+        label: "OpenStreetMap, via Overpass",
+        detail:
+          "Every target site on the map: solar, industrial, aviation and farmland assets in the UAE. ODbL, which requires attribution and applies share-alike to a derived database.",
+        kind: "model",
+        url: "https://www.openstreetmap.org/copyright",
+      },
+      {
+        label: "Natural Earth 1:50m Admin 0",
+        detail: "The coastline and country outlines. Public domain.",
+        kind: "model",
+        url: "https://www.naturalearthdata.com/",
+      },
+      {
+        label: "Crust cohesion, and the gaps",
+        detail:
+          "The cohesion the crust adds is ours to measure and is shown as an input until the wet lab returns it. Four numbers have no source and are left blank rather than guessed: the UAE tariff a generator actually earns, the utility PV capacity factor, the cost of clearing a cubic metre of sand in the Gulf, and any relation between blowing sand and glass wear.",
+        kind: "internal",
+      },
+    ],
+  },
 };

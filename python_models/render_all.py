@@ -19,6 +19,7 @@ OUT.mkdir(parents=True, exist_ok=True)
 MODULES = [
     "fba", "metabolic", "crosslink", "caco3", "ca-anchoring", "alginate", "thermal",
     "ecological", "killswitch", "aeolian", "grainsize", "composite", "curing", "economic",
+    "exposure",
 ]
 
 
