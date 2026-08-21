@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Wind, Radio, Layers, AlertTriangle } from "lucide-react";
 import { useTheme } from "@/components/theme-context";
-import { Panel, Slider, StatCard } from "@/src/components/simulation/_shared";
+import { ModuleActions, Panel, Slider, StatCard } from "@/src/components/simulation/_shared";
 import ExposureMap, { type SourceFeature, type TargetSite } from "./ExposureMap";
 import MapLegend from "./MapLegend";
 import WindRose from "./WindRose";
@@ -17,7 +17,8 @@ import {
 } from "@/src/lib/physics/windStats";
 import { thresholdUntreated, thresholdTreated } from "@/src/lib/physics/aeolian";
 import { transmittanceLossPercent } from "@/src/lib/physics/damage";
-import { useHighlight, useStick } from "@/src/lib/motion/pointer";
+import { useHighlight } from "@/src/lib/motion/pointer";
+import { BUSINESS_SECTIONS, BUSINESS_SUMMARY } from "@/src/lib/businessModel";
 import {
   climatologyField, toWindField, nearestCell,
   type Climatology, type WindField, type WindFieldResponse,
@@ -91,7 +92,7 @@ export default function ExposureWorkspace() {
   const [liveLoading, setLiveLoading] = useState(false);
 
   const hl = useHighlight();
-  const stick = useStick();
+  const [bizTab, setBizTab] = useState(BUSINESS_SECTIONS[0].id);
 
   useEffect(() => {
     // Measured grain size, rather than the constant hard-coded above it.
@@ -600,10 +601,53 @@ export default function ExposureWorkspace() {
         )}
       </Panel>
 
-      <p className="caption" {...stick}>
-        Dust from CAMS via Open-Meteo. Sources from Ginoux et al. 2012. Sites from
-        OpenStreetMap, ODbL. Wind statistics from ERA5 and the Global Wind Atlas.
-      </p>
+      {/* The commercial case, next to the numbers it prices against. It used to
+          be a modal on the landing index whose only button led here. */}
+      <Panel title="The business case" isLightMode={isLightMode}>
+        <div className="mb-4 flex flex-wrap gap-2 border-b border-border pb-4">
+          {BUSINESS_SECTIONS.map((sec) => (
+            <button
+              key={sec.id}
+              {...hl}
+              onClick={() => setBizTab(sec.id)}
+              className={`caption rounded-[4px] border px-3 py-1.5 plate-interactive ${
+                bizTab === sec.id
+                  ? "border-dune-orange/60 bg-dune-orange/10 text-dune-orange"
+                  : "border-border text-muted-foreground"
+              }`}
+            >
+              {sec.label}
+            </button>
+          ))}
+        </div>
+        {BUSINESS_SECTIONS.filter((sec) => sec.id === bizTab).map((sec) => (
+          <div key={sec.id} className="space-y-4">
+            <h4 className="text-[length:var(--text-body)] leading-snug text-foreground">
+              {sec.heading}
+            </h4>
+            {sec.body.map((para, i) => (
+              <p
+                key={i}
+                className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground"
+              >
+                {para}
+              </p>
+            ))}
+          </div>
+        ))}
+        <p className="mt-6 border-t border-border pt-4 text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
+          {BUSINESS_SUMMARY}
+        </p>
+      </Panel>
+
+      {/* Sources and the runnable code, the same toolbar every other model
+          carries. There is no narrated explainer for this one yet, so no video
+          toggle is offered rather than opening an empty window. */}
+      <ModuleActions
+        moduleId="exposure"
+        isLightMode={isLightMode}
+        include={["math", "sources", "code"]}
+      />
     </div>
   );
 }

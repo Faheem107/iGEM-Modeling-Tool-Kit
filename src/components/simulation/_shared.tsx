@@ -363,33 +363,45 @@ export function CodePlotsToggle({
  * responsive row. Replaces the bare <ShowMathToggle> at the foot of every module. Each is a Sandyx
  * drop target. The Code & Plots toggle only appears for modules that ship a reproducible script.
  */
+export type ModuleAction = "math" | "video" | "sources" | "code";
+
+const ALL_ACTIONS: ModuleAction[] = ["math", "video", "sources", "code"];
+
 export function ModuleActions({
   moduleId,
   isLightMode,
   className = "",
-}: Themed & { moduleId: ModuleId; className?: string }) {
-  const hasCode = moduleId in MODULE_CODE;
+  include,
+}: Themed & {
+  moduleId: ModuleId;
+  className?: string;
+  /**
+   * Which toggles to show. Defaults to all four, minus Code for modules that
+   * ship no script. Pass a subset for a module that has no video to offer,
+   * rather than rendering a toggle onto an empty window.
+   */
+  include?: ModuleAction[];
+}) {
+  const wanted = include ?? ALL_ACTIONS;
+  const shown = wanted.filter((a) => a !== "code" || moduleId in MODULE_CODE);
+  const cols =
+    shown.length >= 4 ? "grid-cols-2 sm:grid-cols-4"
+    : shown.length === 3 ? "grid-cols-3"
+    : shown.length === 2 ? "grid-cols-2"
+    : "grid-cols-1";
   return (
     <div className={className}>
-      <p
-        className="caption mb-2 flex items-center gap-2"
-      >
-        <img
-          src="/sandyx.png"
-          alt=""
-          aria-hidden
-          className="h-4 w-4 object-contain shrink-0"
-          draggable={false}
-        />
-        Drop Sandyx or click any of the {hasCode ? 4 : 3} below!
-      </p>
-      <div
-        className={`grid items-stretch gap-2 ${hasCode ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3"}`}
-      >
-        <ShowMathToggle moduleId={moduleId} isLightMode={isLightMode} />
-        <VideoExplanationToggle moduleId={moduleId} isLightMode={isLightMode} />
-        <SourcesToggle moduleId={moduleId} isLightMode={isLightMode} />
-        {hasCode && (
+      <div className={`grid items-stretch gap-2 ${cols}`}>
+        {shown.includes("math") && (
+          <ShowMathToggle moduleId={moduleId} isLightMode={isLightMode} />
+        )}
+        {shown.includes("video") && (
+          <VideoExplanationToggle moduleId={moduleId} isLightMode={isLightMode} />
+        )}
+        {shown.includes("sources") && (
+          <SourcesToggle moduleId={moduleId} isLightMode={isLightMode} />
+        )}
+        {shown.includes("code") && (
           <CodePlotsToggle moduleId={moduleId} isLightMode={isLightMode} />
         )}
       </div>

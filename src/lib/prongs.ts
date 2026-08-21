@@ -119,7 +119,8 @@ export type ModuleId =
   | "grainsize"
   | "composite"
   | "curing"
-  | "economic";
+  | "economic"
+  | "exposure";
 
 export interface ModuleMeta {
   id: ModuleId;
