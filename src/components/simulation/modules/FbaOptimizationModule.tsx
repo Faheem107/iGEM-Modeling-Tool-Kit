@@ -829,7 +829,7 @@ export default function FbaOptimizationModule({
           <>
             <GlossaryTerm term="production-envelope">
               Production Envelope
-            </GlossaryTerm>{" "}, Growth ↔ {productLabel}{" "}
+            </GlossaryTerm>: Growth ↔ {productLabel}{" "}
             <GlossaryTerm term="production-envelope">Pareto Front</GlossaryTerm>
           </>
         }

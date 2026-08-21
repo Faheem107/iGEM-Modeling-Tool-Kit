@@ -123,7 +123,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
             step={0.02}
             format={(v) => `${(v * 100).toFixed(0)}%`}
             onChange={setDimerEff}
-            hint="pNPA esterase assay, active CA requires dimers."
+            hint="Measured by the pNPA esterase assay. Active CA requires dimers."
           />
           <div
             className={`pt-2 border-t ${isLightMode ? "border-dune-orange/10" : "border-border"}`}
@@ -198,7 +198,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
       <Panel
         title={
           <>
-            Route Comparison, {" "}
+            Route Comparison: {" "}
             <GlossaryTerm term="sortase">Sortase</GlossaryTerm> vs{" "}
             <GlossaryTerm term="cwbd-binding">Binding Motif</GlossaryTerm>
           </>
