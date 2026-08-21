@@ -9,24 +9,28 @@ import ExposureMap, { type SourceFeature, type TargetSite } from "./ExposureMap"
 import MapLegend from "./MapLegend";
 import WindRose from "./WindRose";
 import {
-  nearFieldCaptureFraction, sandblastEfficiency, haversineKm, bearingDeg, alignment,
+  nearFieldCaptureFraction, sandblastEfficiency, bearingDeg, alignment,
 } from "@/src/lib/physics/dustTransport";
 import {
-  meanSaltationFlux, driftPotential, driftFromSectors, cardinal,
+  meanSaltationFlux, driftPotential, driftFromSectors, cardinal, ROSE_SECTORS,
   GULF_IMPACT_THRESHOLD_MS,
 } from "@/src/lib/physics/windStats";
 import { thresholdUntreated, thresholdTreated } from "@/src/lib/physics/aeolian";
 import { transmittanceLossPercent } from "@/src/lib/physics/damage";
 import { useHighlight, useStick } from "@/src/lib/motion/pointer";
 import {
-  climatologyField, toWindField, toUV,
+  climatologyField, toWindField, nearestCell,
   type Climatology, type WindField, type WindFieldResponse,
 } from "@/src/lib/windField";
 
 type Mode = "seasonal" | "live";
 
-/** Grain diameter for the Rub al Khali, Benaafi et al. Table 1, 1.460 phi. */
-const GRAIN_D_M = 2 ** -1.46 / 1000;
+/**
+ * Grain diameter for the Rub al Khali, Benaafi et al. Table 1, 1.460 phi.
+ * Used until public/data/uae_parameters.json loads, which carries the measured
+ * value and its provenance rather than a number typed into a component.
+ */
+const GRAIN_D_FALLBACK_M = 2 ** -1.46 / 1000;
 
 /**
  * The four windows, each with the calendar months it covers. `mid` is the month
@@ -65,9 +69,12 @@ export default function ExposureWorkspace() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showSources, setShowSources] = useState(true);
 
-  // Seasonal wind. NOT a climatology yet: the ERA5 fit is not built, so these are
-  // explicit user inputs and the UI says so. Do not present them as data.
+  // Seasonal wind comes from the fitted ERA5 climatology for the cell nearest
+  // the selected site. The sliders are an OVERRIDE, off by default: a slider
+  // must never be mistaken for a measurement, so turning it on downgrades the
+  // panel's evidence grade. See DUST_EXPOSURE_MODULE_SPEC.md section 7.3.
   const [season, setSeason] = useState<(typeof SEASONS)[number]["id"]>("MAM");
+  const [override, setOverride] = useState(false);
   const [windA, setWindA] = useState(7.5);
   const [windK, setWindK] = useState(2.0);
   const [windDir, setWindDir] = useState(315);
@@ -75,6 +82,7 @@ export default function ExposureWorkspace() {
   const [cohesion, setCohesion] = useState(0.002);
   const [patchDist, setPatchDist] = useState(20);
 
+  const [grainD, setGrainD] = useState(GRAIN_D_FALLBACK_M);
   const [clim, setClim] = useState<Climatology | null>(null);
   const [liveField, setLiveField] = useState<WindField | null>(null);
 
@@ -86,6 +94,15 @@ export default function ExposureWorkspace() {
   const stick = useStick();
 
   useEffect(() => {
+    // Measured grain size, rather than the constant hard-coded above it.
+    fetch("/data/uae_parameters.json")
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then((d) => {
+        const g = d?.grain_size?.["Rub' Al-Khali"]?.d_m;
+        if (typeof g === "number" && g > 0) setGrainD(g);
+      })
+      .catch(() => undefined);   // the fallback above is the same paper's value
+
     fetch("/data/era5_wind_climatology.json")
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
       .then(setClim)
@@ -146,34 +163,98 @@ export default function ExposureWorkspace() {
   }, [mode, site]);
 
   // --- the model -----------------------------------------------------------
-  const speed = mode === "live" ? (live?.wind ?? 0) : windA;
+  const seasonDef = SEASONS.find((x) => x.id === season) ?? SEASONS[1];
+
+  /**
+   * The fitted climatology for the cell nearest this site, averaged over the
+   * three months of the chosen window. A and k are averaged directly; the rose
+   * sums, because drift potential is an amount of work done over a period and
+   * three months of it add.
+   */
+  const seasonal = useMemo(() => {
+    if (!clim || !site) return null;
+    const near = nearestCell(clim, site.lon, site.lat);
+    if (!near) return null;
+    const cell = clim.cells[near.key];
+
+    let A = 0;
+    let k = 0;
+    let n = 0;
+    const freq = new Array(ROSE_SECTORS).fill(0);
+    const spd = new Array(ROSE_SECTORS).fill(0);
+    const q = new Array(ROSE_SECTORS).fill(0);
+
+    for (const m of seasonDef.months) {
+      const mm = cell?.months?.[String(m)];
+      if (!mm) continue;
+      A += mm.A;
+      k += mm.k;
+      n++;
+      const r = cell.rose?.[String(m)];
+      if (r) {
+        for (let i = 0; i < ROSE_SECTORS; i++) {
+          freq[i] += r[0][i] / seasonDef.months.length;
+          spd[i] += r[1][i] / seasonDef.months.length;
+          q[i] += r[2][i];
+        }
+      }
+    }
+    if (!n) return null;
+    return {
+      A: A / n,
+      k: k / n,
+      freq,
+      spd,
+      q,
+      hasRose: q.some((x) => x > 0),
+      at: near,
+    };
+  }, [clim, site, seasonDef]);
+
+  const speed = mode === "live" ? (live?.wind ?? 0) : override || !seasonal ? windA : seasonal.A;
   const dirFrom = mode === "live" ? (live?.dir ?? windDir) : windDir;
 
-  const drift = useMemo(
-    () => driftPotential([{ directionFrom: dirFrom, speed, timeFraction: 1 }], GULF_IMPACT_THRESHOLD_MS),
-    [dirFrom, speed],
-  );
+  /**
+   * Drift comes from two different routines because the two modes carry
+   * genuinely different information. Live has ONE observation, so Fryberger's
+   * Q is evaluated at that speed. Seasonal has three months of hourly data
+   * already summed per sector, so only the vector sum is left to do. Deriving
+   * the seasonal Q from a sector mean speed would zero out months that plainly
+   * move sand, because Q goes as the cube of the wind.
+   */
+  const drift = useMemo(() => {
+    if (mode === "seasonal" && !override && seasonal?.hasRose) {
+      return driftFromSectors(seasonal.q);
+    }
+    return driftPotential(
+      [{ directionFrom: dirFrom, speed, timeFraction: 1 }],
+      GULF_IMPACT_THRESHOLD_MS,
+    );
+  }, [mode, override, seasonal, dirFrom, speed]);
 
   // What the map animates. Seasonal is a monthly MEAN VECTOR wind, which is a
   // different quantity from the live instantaneous field: where direction
   // varies the mean vector is weaker than any real day's wind. The caption
   // under the map says which is on screen.
-  const seasonDef = SEASONS.find((x) => x.id === season) ?? SEASONS[1];
   const windField = useMemo(() => {
     if (mode === "live") return liveField;
     return clim ? climatologyField(clim, seasonDef.mid) : null;
   }, [mode, liveField, clim, seasonDef.mid]);
 
-  const uStarT0 = thresholdUntreated(GRAIN_D_M);
-  const uStarT = thresholdTreated(GRAIN_D_M, cohesion);
+  const uStarT0 = thresholdUntreated(grainD);
+  const uStarT = thresholdTreated(grainD, cohesion);
   const R = 0.03; // AEOLIAN_CALIB.uStarRatio at 10 m
   const utFree0 = uStarT0 / R;
   const utFreeT = uStarT / R;
 
-  // Module 1 integrates over the fitted Weibull. Module 2 has one instantaneous
-  // wind, so it is evaluated as a narrow distribution (large k) at that speed.
-  const kEff = mode === "live" ? 12 : windK;
-  const aEff = mode === "live" ? Math.max(speed, 0.01) : windA;
+  // The seasonal view integrates the flux over the fitted Weibull, which is the
+  // whole point: flux goes as roughly the cube of the wind above a threshold, so
+  // the flux of the mean wind is not the mean of the flux. The live view has one
+  // instantaneous wind, so it is evaluated as a narrow distribution at that
+  // speed instead.
+  const fitted = mode === "seasonal" && !override && seasonal;
+  const kEff = mode === "live" ? 12 : fitted ? seasonal!.k : windK;
+  const aEff = mode === "live" ? Math.max(speed, 0.01) : fitted ? seasonal!.A : windA;
   const Q0 = meanSaltationFlux({ A: aEff, k: kEff, uThreshold: utFree0 });
   const Qt = meanSaltationFlux({ A: aEff, k: kEff, uThreshold: utFreeT });
   const reduction = Q0 > 0 ? 1 - Qt / Q0 : 0;
@@ -295,7 +376,12 @@ export default function ExposureWorkspace() {
           </Panel>
 
           {mode === "seasonal" ? (
-            <Panel title="Seasonal wind" icon={Wind} isLightMode={isLightMode}>
+            <Panel
+              title="Seasonal wind"
+              icon={Wind}
+              isLightMode={isLightMode}
+              right={<Grade grade={seasonal && !override ? "literature" : "unsourced"} />}
+            >
               <div className="mb-4 flex flex-wrap gap-2">
                 {SEASONS.map((s) => (
                   <button
@@ -312,17 +398,58 @@ export default function ExposureWorkspace() {
                   </button>
                 ))}
               </div>
-              <div className="mb-4 flex items-start gap-2 rounded-[4px] border border-dune-rose/40 bg-dune-rose/5 p-4">
-                <AlertTriangle className="mt-1 h-4 w-4 shrink-0 text-dune-rose" />
-                <p className="text-[length:var(--text-micro)] leading-relaxed">
-                  These wind values are your inputs, not a climatology. The ERA5 monthly
-                  Weibull fit is not built yet, so the season buttons label the window but do
-                  not yet load different data. Nothing here should be read as measured.
-                </p>
-              </div>
-              <Slider label="Weibull scale A" value={windA} onChange={setWindA} min={2} max={16} step={0.1} unit="m/s" isLightMode={isLightMode} />
-              <Slider label="Weibull shape k" value={windK} onChange={setWindK} min={1.2} max={4} step={0.05} unit="" isLightMode={isLightMode} />
-              <Slider label="Wind direction from" value={windDir} onChange={setWindDir} min={0} max={359} step={1} unit="deg" isLightMode={isLightMode} />
+              {seasonal && !override ? (
+                <div className="space-y-4">
+                  <WindRose
+                    frequency={seasonal.freq}
+                    speed={seasonal.spd}
+                    drift={drift}
+                    isLightMode={isLightMode}
+                  />
+                  <div className="grid grid-cols-2 gap-4">
+                    <StatCard
+                      label="Typical wind"
+                      value={seasonal.A.toFixed(1)}
+                      unit="m/s"
+                      accent="text-dune-teal"
+                      isLightMode={isLightMode}
+                      sub="the scale of the fitted spread at 10 m"
+                    />
+                    <StatCard
+                      label="How gusty"
+                      value={seasonal.k.toFixed(2)}
+                      accent="text-dune-teal"
+                      isLightMode={isLightMode}
+                      sub="lower is gustier, and gusts move the sand"
+                    />
+                  </div>
+                  <p className="caption">
+                    ERA5 2022 to 2024, grid cell {seasonal.at.lat}°N {seasonal.at.lon}°E
+                  </p>
+                </div>
+              ) : (
+                <>
+                  {!clim && (
+                    <p className="mb-4 text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
+                      The wind climatology did not load, so these are your own inputs.
+                    </p>
+                  )}
+                  <Slider label="Typical wind, Weibull scale A" value={windA} onChange={setWindA} min={2} max={16} step={0.1} unit="m/s" isLightMode={isLightMode} />
+                  <Slider label="How gusty, Weibull shape k" value={windK} onChange={setWindK} min={1.2} max={4} step={0.05} unit="" isLightMode={isLightMode} />
+                  <Slider label="Wind direction from" value={windDir} onChange={setWindDir} min={0} max={359} step={1} unit="°" isLightMode={isLightMode} />
+                </>
+              )}
+
+              {clim && (
+                <label className="caption mt-4 flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={override}
+                    onChange={(e) => setOverride(e.target.checked)}
+                  />
+                  Set the wind myself instead
+                </label>
+              )}
             </Panel>
           ) : (
             <Panel title="Live conditions" icon={Radio} isLightMode={isLightMode}>
