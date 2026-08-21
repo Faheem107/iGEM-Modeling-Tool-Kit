@@ -590,11 +590,12 @@ export default function ExposureWorkspace() {
         ) : (
           <div className="flex items-start gap-4">
             <p className="text-[length:var(--text-micro)] leading-relaxed">
-              We can say how much sand reaches this kind of site, and that part is modelled
-              above. What nobody has published is what that sand costs its owner. For roads
-              the drift rate is measured, about 20 cubic metres per metre of width per year
-              in Kuwait, and only the price of clearing a cubic metre is missing. So this
-              panel stays empty rather than showing a number we made up.
+              How much sand reaches this kind of site is modelled above. Converting that
+              mass into a cost is where we stop, because we could not find a published
+              figure for what the sand costs its owner. Roads are the closest: the drift
+              rate is measured, about 20 cubic metres per metre of width per year in
+              Kuwait, and only the price of clearing a cubic metre is missing. So this
+              panel stays empty rather than carrying a number we estimated.
             </p>
           </div>
         )}
