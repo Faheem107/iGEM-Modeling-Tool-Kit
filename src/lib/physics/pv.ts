@@ -81,7 +81,7 @@ export function monthlyCapacityFactor(
 /** Mean capacity factor over a set of months, for a season. */
 export function seasonCapacityFactor(
   cell: PvCell,
-  months: number[],
+  months: readonly number[],
   mounting: Mounting,
 ): number {
   if (!months.length) return capacityFactor(cell, mounting);
@@ -116,4 +116,33 @@ export function revenueLossUsd(energyMwh: number, tariffUsdPerKwh: number): numb
 /** Annual generation at full output, MWh, for expressing a loss as a share. */
 export function annualGenerationMwh(capacityMw: number, cf: number, hours = 8760): number {
   return capacityMw * cf * hours;
+}
+
+/**
+ * Dust deposited on a horizontal surface from an airborne concentration.
+ *
+ * deposit [g/m2/yr] = concentration [ug/m3] * deposition velocity [m/s] * seconds
+ *
+ * The deposition velocity is the one number here that is not measured locally.
+ * For the coarse mode of mineral dust over a flat surface the literature range
+ * is roughly 0.5 to 3 cm/s, and 1 cm/s is the conventional working value. It is
+ * exposed as an argument rather than buried, because the answer scales linearly
+ * with it.
+ *
+ * This exists to separate two things the module was previously conflating. Dust
+ * that settles on a panel arrives from two places: from the ground immediately
+ * upwind, which treatment acts on, and from regional sources hundreds of
+ * kilometres away, which it does not. Pricing only the first and presenting it
+ * as the total makes the treatment look like it removes almost all soiling,
+ * which contradicts what this project's own physics says.
+ */
+export const DEFAULT_DEPOSITION_VELOCITY_MS = 0.01;
+
+export function depositionFromConcentration(
+  concentrationUgM3: number,
+  depositionVelocityMs = DEFAULT_DEPOSITION_VELOCITY_MS,
+  seconds = 31_556_952,
+): number {
+  // ug/m3 -> g/m3 is 1e-6.
+  return concentrationUgM3 * 1e-6 * depositionVelocityMs * seconds;
 }
