@@ -31,6 +31,8 @@ export default function CompactModal({
   title,
   tabs,
   footer,
+  widthClass = "max-w-md",
+  bodyHeightClass = "max-h-[46vh]",
 }: {
   open: boolean;
   onClose: () => void;
@@ -38,6 +40,13 @@ export default function CompactModal({
   title: string;
   tabs: ModalTab[];
   footer?: React.ReactNode;
+  /**
+   * max-w-md suits the prong dialog, which is a few lines per tab. A dialog
+   * carrying several paragraphs needs a longer measure or the text turns into
+   * a narrow column of short lines.
+   */
+  widthClass?: string;
+  bodyHeightClass?: string;
 }) {
   const [active, setActive] = useState(0);
   const [mounted, setMounted] = useState(false);
@@ -86,7 +95,7 @@ export default function CompactModal({
             exit={{ opacity: 0, y: 12, scale: 0.98 }}
             transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
             onClick={(e) => e.stopPropagation()}
-            className="plate-solid relative w-full max-w-md overflow-hidden"
+            className={`plate-solid relative w-full ${widthClass} overflow-hidden`}
             role="dialog"
             aria-modal="true"
             aria-label={title}
@@ -127,7 +136,7 @@ export default function CompactModal({
 
             <div
               data-lenis-prevent
-              className="max-h-[46vh] overflow-y-auto overscroll-contain px-6 py-6"
+              className={`${bodyHeightClass} overflow-y-auto overscroll-contain px-6 py-6`}
             >
               <motion.div
                 key={tabs[active]?.id}
