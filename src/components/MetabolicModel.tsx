@@ -204,7 +204,7 @@ export default function MetabolicModel({
                 </div>
               </div>
               <span
-                className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/50 border border-dune-teal/50 text-dune-teal"}`}
+                className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-teal/10 border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/50 border border-dune-teal/50 text-dune-teal"}`}
               >
                 {params.alpha_m.toFixed(1)} h⁻¹
               </span>
@@ -254,7 +254,7 @@ export default function MetabolicModel({
                 </div>
               </div>
               <span
-                className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-maroon border border-dune-maroon text-dune-maroon font-bold" : "bg-dune-maroon/30 border border-dune-maroon/40 text-dune-maroon"}`}
+                className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-maroon/10 border border-dune-maroon text-dune-maroon font-bold" : "bg-dune-maroon/30 border border-dune-maroon/40 text-dune-maroon"}`}
               >
                 {params.beta_m.toFixed(2)} h⁻¹
               </span>
@@ -301,7 +301,7 @@ export default function MetabolicModel({
                 </div>
               </div>
               <span
-                className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/50 border border-dune-teal/50 text-dune-teal"}`}
+                className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-teal/10 border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/50 border border-dune-teal/50 text-dune-teal"}`}
               >
                 {params.alpha_e.toFixed(1)} h⁻¹
               </span>
@@ -351,7 +351,7 @@ export default function MetabolicModel({
                 </div>
               </div>
               <span
-                className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-orange border border-dune-orange text-dune-orange font-bold" : "bg-dune-orange/30 border border-dune-orange/40 text-dune-orange"}`}
+                className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-orange/10 border border-dune-orange text-dune-orange font-bold" : "bg-dune-orange/30 border border-dune-orange/40 text-dune-orange"}`}
               >
                 {params.beta_e.toFixed(3)} h⁻¹
               </span>
@@ -399,7 +399,7 @@ export default function MetabolicModel({
                 </div>
               </div>
               <span
-                className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/30 border border-dune-teal/40 text-dune-teal"}`}
+                className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-teal/10 border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/30 border border-dune-teal/40 text-dune-teal"}`}
               >
                 {params.k_cat.toFixed(2)} h⁻¹
               </span>
@@ -446,7 +446,7 @@ export default function MetabolicModel({
                 </div>
               </div>
               <span
-                className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-orange border border-dune-orange text-dune-orange font-bold" : "bg-dune-orange/30 border border-dune-orange/40 text-dune-orange"}`}
+                className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-orange/10 border border-dune-orange text-dune-orange font-bold" : "bg-dune-orange/30 border border-dune-orange/40 text-dune-orange"}`}
               >
                 {params.s_precursor.toFixed(1)} mM
               </span>
@@ -482,7 +482,7 @@ export default function MetabolicModel({
               className={`flex items-center justify-between p-2 rounded-[4px] border text-[length:var(--text-micro)] cursor-pointer transition ${
                 params.ggtKnockout
                   ? isLightMode
-                    ? "border-dune-teal bg-dune-teal text-dune-teal"
+                    ? "border-dune-teal bg-dune-teal/10 text-dune-teal"
                     : "border-dune-teal bg-dune-teal/20 text-dune-teal"
                   : isLightMode
                     ? "border-dune-orange/10 bg-background text-muted-foreground hover:text-foreground"
@@ -511,7 +511,7 @@ export default function MetabolicModel({
               className={`flex items-center justify-between p-2 rounded-[4px] border text-[length:var(--text-micro)] cursor-pointer transition ${
                 params.pgcAKnockout
                   ? isLightMode
-                    ? "border-dune-teal bg-dune-teal text-dune-teal"
+                    ? "border-dune-teal bg-dune-teal/10 text-dune-teal"
                     : "border-dune-teal bg-dune-teal/20 text-dune-teal"
                   : isLightMode
                     ? "border-dune-orange/10 bg-background text-muted-foreground hover:text-foreground"
@@ -926,7 +926,7 @@ export default function MetabolicModel({
               <span
                 className={`text-[length:var(--text-caption)] font-mono px-2 py-1 rounded-[4px] border ${
                   isLightMode
-                    ? "bg-dune-teal border-dune-teal text-dune-teal font-bold"
+                    ? "bg-dune-teal/10 border-dune-teal text-dune-teal font-bold"
                     : "bg-dune-teal/50 border border-dune-teal"
                 }`}
               >

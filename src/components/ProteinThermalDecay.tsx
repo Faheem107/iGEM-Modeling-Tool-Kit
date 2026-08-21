@@ -131,7 +131,7 @@ export default function ProteinThermalDecay({
       {/* Title block */}
       <div className="flex items-center gap-4 mb-6">
         <div
-          className={`p-2 rounded-[4px] ${isLightMode ? "bg-dune-orange text-dune-orange" : "bg-dune-orange/45 text-dune-orange"}`}
+          className={`p-2 rounded-[4px] ${isLightMode ? "bg-dune-orange/10 text-dune-orange" : "bg-dune-orange/45 text-dune-orange"}`}
         >
           <Thermometer className="h-4 w-4" />
         </div>

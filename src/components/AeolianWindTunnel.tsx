@@ -1055,10 +1055,10 @@ export default function AeolianWindTunnel({
                 <span
                   className={`text-[length:var(--text-micro)] font-black px-2 py-1 rounded-[4px] ${
                     physicsResult.isShattered
-                      ? "text-dune-maroon bg-dune-maroon"
+                      ? "text-dune-maroon bg-dune-maroon/10"
                       : stopwatchMetrics.treatedFailSec > 15
-                        ? "text-dune-teal bg-dune-teal"
-                        : "text-dune-orange bg-dune-orange"
+                        ? "text-dune-teal bg-dune-teal/10"
+                        : "text-dune-orange bg-dune-orange/10"
                   }`}
                 >
                   {physicsResult.isShattered

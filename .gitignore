@@ -75,3 +75,7 @@ __pycache__/
 # Committing them to a public repo would redistribute copyrighted material.
 # Everything the build needs is regenerated into public/data/ by scripts/.
 references/
+
+# Local scratch
+.playwright-mcp/
+.era5_cache/

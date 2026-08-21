@@ -545,7 +545,7 @@ export const GlossaryProvider: React.FC<{
                       <span
                         className={`text-[length:var(--text-caption)] font-black uppercase tracking-[0.15em] px-2 py-1 rounded-full ${
                           isLightMode
-                            ? "bg-dune-teal text-dune-teal"
+                            ? "bg-dune-teal/10 text-dune-teal"
                             : "bg-dune-teal/15 text-dune-teal"
                         }`}
                       >
@@ -674,7 +674,7 @@ export const GlossaryProvider: React.FC<{
                       <span
                         className={`text-[length:var(--text-caption)] font-black uppercase tracking-[0.15em] px-2 py-1 rounded-full ${
                           isLightMode
-                            ? "bg-dune-orange text-dune-orange"
+                            ? "bg-dune-orange/10 text-dune-orange"
                             : "bg-dune-orange/15 text-dune-orange"
                         }`}
                       >
@@ -762,7 +762,7 @@ export const GlossaryProvider: React.FC<{
                       <span
                         className={`flex items-center gap-2 text-[length:var(--text-caption)] font-black uppercase tracking-[0.15em] px-2 py-1 rounded-full ${
                           isLightMode
-                            ? "bg-dune-rose text-dune-rose"
+                            ? "bg-dune-rose/10 text-dune-rose"
                             : "bg-dune-rose/15 text-dune-rose"
                         }`}
                       >
@@ -858,7 +858,7 @@ export const GlossaryProvider: React.FC<{
                       <span
                         className={`flex items-center gap-2 text-[length:var(--text-caption)] font-black uppercase tracking-[0.15em] px-2 py-1 rounded-full ${
                           isLightMode
-                            ? "bg-dune-orange text-dune-orange"
+                            ? "bg-dune-orange/10 text-dune-orange"
                             : "bg-dune-orange/15 text-dune-orange"
                         }`}
                       >
@@ -932,14 +932,14 @@ export const GlossaryProvider: React.FC<{
                               className={`text-[length:var(--text-caption)] font-black uppercase tracking-wider px-2 py-1 rounded-full ${
                                 s.kind === "internal"
                                   ? isLightMode
-                                    ? "bg-dune-teal text-dune-teal"
+                                    ? "bg-dune-teal/10 text-dune-teal"
                                     : "bg-dune-teal/15 text-dune-teal"
                                   : s.kind === "model"
                                     ? isLightMode
-                                      ? "bg-dune-orange text-dune-orange"
+                                      ? "bg-dune-orange/10 text-dune-orange"
                                       : "bg-dune-orange/15 text-dune-orange"
                                     : isLightMode
-                                      ? "bg-dune-orange text-dune-orange"
+                                      ? "bg-dune-orange/10 text-dune-orange"
                                       : "bg-dune-orange/15 text-dune-orange"
                               }`}
                             >
@@ -1002,7 +1002,7 @@ export const GlossaryProvider: React.FC<{
                       <span
                         className={`flex items-center gap-2 text-[length:var(--text-caption)] font-black uppercase tracking-[0.15em] px-2 py-1 rounded-full ${
                           isLightMode
-                            ? "bg-dune-teal text-dune-teal"
+                            ? "bg-dune-teal/10 text-dune-teal"
                             : "bg-dune-teal/15 text-dune-teal"
                         }`}
                       >

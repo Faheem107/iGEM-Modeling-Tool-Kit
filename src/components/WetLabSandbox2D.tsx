@@ -416,7 +416,7 @@ export default function WetLabSandbox2D({
       {/* Compact module header, matches the other workspace modules' card style. */}
       <div className="flex items-center gap-4 border-b pb-4 border-border">
         <div
-          className={`p-2 rounded-[6px] ${isLightMode ? "bg-dune-teal text-dune-teal" : "bg-dune-teal/40 text-dune-teal"}`}
+          className={`p-2 rounded-[6px] ${isLightMode ? "bg-dune-teal/10 text-dune-teal" : "bg-dune-teal/40 text-dune-teal"}`}
         >
           <Beaker className="h-4 w-4" />
         </div>
@@ -465,7 +465,7 @@ export default function WetLabSandbox2D({
                     Inoculum Cell Density (<GlossaryTerm term="OD600" />)
                   </span>
                   <span
-                    className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange border-dune-orange text-dune-orange font-bold" : "text-dune-orange bg-dune-orange/40 border border-dune-orange/30"}`}
+                    className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange/10 border-dune-orange text-dune-orange font-bold" : "text-dune-orange bg-dune-orange/40 border border-dune-orange/30"}`}
                   >
                     {labOD600.toFixed(2)} Abs
                   </span>
@@ -493,7 +493,7 @@ export default function WetLabSandbox2D({
                     Inoculation Vol (Per dm³ soil)
                   </span>
                   <span
-                    className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange border-dune-orange text-dune-orange font-bold" : "text-dune-orange bg-dune-orange/40 border border-dune-orange/30"}`}
+                    className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange/10 border-dune-orange text-dune-orange font-bold" : "text-dune-orange bg-dune-orange/40 border border-dune-orange/30"}`}
                   >
                     {labInocVolume.toFixed(0)} mL
                   </span>
@@ -521,7 +521,7 @@ export default function WetLabSandbox2D({
                     <GlossaryTerm term="L-Glutamate" /> Substrate Feed
                   </span>
                   <span
-                    className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-teal border-dune-teal text-dune-teal font-bold" : "text-dune-teal bg-dune-teal/40 border border-dune-teal/30"}`}
+                    className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-teal/10 border-dune-teal text-dune-teal font-bold" : "text-dune-teal bg-dune-teal/40 border border-dune-teal/30"}`}
                   >
                     {labGlutamate.toFixed(0)} mM
                   </span>
@@ -549,7 +549,7 @@ export default function WetLabSandbox2D({
                     Ca2+ Salinity Additive
                   </span>
                   <span
-                    className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange border-dune-orange text-dune-orange font-bold" : "text-dune-orange bg-dune-orange/40 border border-dune-orange/30"}`}
+                    className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-orange/10 border-dune-orange text-dune-orange font-bold" : "text-dune-orange bg-dune-orange/40 border border-dune-orange/30"}`}
                   >
                     {labSalinity.toFixed(1)} g/L
                   </span>
@@ -593,7 +593,7 @@ export default function WetLabSandbox2D({
                     )
                   </span>
                   <span
-                    className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-rose border-dune-rose text-dune-rose font-bold" : "text-dune-rose bg-dune-rose/40 border border-dune-rose/30"}`}
+                    className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-rose/10 border-dune-rose text-dune-rose font-bold" : "text-dune-rose bg-dune-rose/40 border border-dune-rose/30"}`}
                   >
                     {labTemp.toFixed(1)} °C
                   </span>
@@ -644,7 +644,7 @@ export default function WetLabSandbox2D({
                     )
                   </span>
                   <span
-                    className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-teal border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/30 text-dune-teal border border-dune-teal/30"}`}
+                    className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] border ${isLightMode ? "bg-dune-teal/10 border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/30 text-dune-teal border border-dune-teal/30"}`}
                   >
                     {windFriction.toFixed(2)} m/s
                   </span>
@@ -699,7 +699,7 @@ export default function WetLabSandbox2D({
               onClick={handleRefreshGrid}
               className={`py-2 px-4 rounded-[4px] font-bold font-mono text-[length:var(--text-caption)] uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer border transition-colors ${
                 isLightMode
-                  ? "bg-dune-teal hover:bg-dune-teal text-dune-teal border-dune-teal"
+                  ? "bg-dune-teal/10 hover:bg-dune-teal/20 text-dune-teal border-dune-teal"
                   : "bg-dune-teal/40 hover:bg-dune-teal/60 text-dune-teal border-dune-teal/30"
               }`}
               title="Reset grid simulation"
@@ -800,13 +800,13 @@ export default function WetLabSandbox2D({
             <div className="flex border-b border-inherit">
               <button
                 onClick={() => setExplainTab("context")}
-                className={`flex-1 py-2 text-[length:var(--text-caption)] font-mono font-bold uppercase tracking-wider ${explainTab === "context" ? (isLightMode ? "bg-dune-orange text-dune-orange" : "bg-card text-foreground") : isLightMode ? "text-muted-foreground hover:bg-muted" : "text-muted-foreground hover:bg-dune-basalt/50"}`}
+                className={`flex-1 py-2 text-[length:var(--text-caption)] font-mono font-bold uppercase tracking-wider ${explainTab === "context" ? (isLightMode ? "bg-dune-orange/10 text-dune-orange" : "bg-card text-foreground") : isLightMode ? "text-muted-foreground hover:bg-muted" : "text-muted-foreground hover:bg-dune-basalt/50"}`}
               >
                 Wet-Lab Context
               </button>
               <button
                 onClick={() => setExplainTab("math")}
-                className={`flex-1 py-2 text-[length:var(--text-caption)] font-mono font-bold uppercase tracking-wider ${explainTab === "math" ? (isLightMode ? "bg-dune-orange text-dune-orange" : "bg-card text-foreground") : isLightMode ? "text-muted-foreground hover:bg-muted" : "text-muted-foreground hover:bg-dune-basalt/50"}`}
+                className={`flex-1 py-2 text-[length:var(--text-caption)] font-mono font-bold uppercase tracking-wider ${explainTab === "math" ? (isLightMode ? "bg-dune-orange/10 text-dune-orange" : "bg-card text-foreground") : isLightMode ? "text-muted-foreground hover:bg-muted" : "text-muted-foreground hover:bg-dune-basalt/50"}`}
               >
                 Bio-Physical Math Models
               </button>

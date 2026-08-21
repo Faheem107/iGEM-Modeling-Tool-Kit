@@ -205,7 +205,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
       >
         <div className="flex items-center gap-4">
           <div
-            className={`p-2 rounded-[4px] ${isLightMode ? "bg-dune-teal text-dune-teal" : "bg-dune-teal/50 text-dune-teal border border-dune-teal/50"}`}
+            className={`p-2 rounded-[4px] ${isLightMode ? "bg-dune-teal/10 text-dune-teal" : "bg-dune-teal/50 text-dune-teal border border-dune-teal/50"}`}
           >
             <Waves className="h-4 w-4" />
           </div>
@@ -879,7 +879,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
         <div
           className={`mt-4 p-4 rounded-[4px] border text-[length:var(--text-caption)] flex items-start gap-2 ${
             isLightMode
-              ? "bg-dune-orange text-dune-orange border-dune-orange"
+              ? "bg-dune-orange/10 text-dune-orange border-dune-orange"
               : "bg-dune-orange/20 text-dune-orange border-dune-orange/40"
           }`}
         >

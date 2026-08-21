@@ -366,14 +366,14 @@ export default function CuringTimelinePanel({
         className={`p-4 rounded-[6px] border text-[length:var(--text-caption)] flex items-start gap-2 ${
           !meetsDesign
             ? isLightMode
-              ? "bg-dune-rose text-dune-rose border-dune-rose"
+              ? "bg-dune-rose/10 text-dune-rose border-dune-rose"
               : "bg-dune-rose/20 text-dune-rose border-dune-rose/40"
             : timeline.survivesToScheduledReapply
               ? isLightMode
-                ? "bg-dune-teal text-dune-teal border-dune-teal"
+                ? "bg-dune-teal/10 text-dune-teal border-dune-teal"
                 : "bg-dune-teal/20 text-dune-teal border-dune-teal/40"
               : isLightMode
-                ? "bg-dune-orange text-dune-orange border-dune-orange"
+                ? "bg-dune-orange/10 text-dune-orange border-dune-orange"
                 : "bg-dune-orange/20 text-dune-orange border-dune-orange/40"
         }`}
       >

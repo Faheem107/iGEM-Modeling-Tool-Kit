@@ -592,7 +592,7 @@ export default function CrossLinkingBiophysics({
                   )
                 </span>
                 <span
-                  className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/40 border border-dune-teal/40 text-dune-teal"}`}
+                  className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-teal/10 border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/40 border border-dune-teal/40 text-dune-teal"}`}
                 >
                   {params.ion_conc.toFixed(1)} mol/m³
                 </span>
@@ -638,7 +638,7 @@ export default function CrossLinkingBiophysics({
                   )
                 </span>
                 <span
-                  className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-orange border border-dune-orange text-dune-orange font-bold" : "bg-dune-orange/30 border border-dune-orange/45 text-dune-orange"}`}
+                  className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-orange/10 border border-dune-orange text-dune-orange font-bold" : "bg-dune-orange/30 border border-dune-orange/45 text-dune-orange"}`}
                 >
                   {params.Kd.toFixed(1)} mol/m³
                 </span>
@@ -681,7 +681,7 @@ export default function CrossLinkingBiophysics({
                   )
                 </span>
                 <span
-                  className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-teal border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/30 border border-dune-teal/30 text-dune-rose"}`}
+                  className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-teal/10 border border-dune-teal text-dune-teal font-bold" : "bg-dune-teal/30 border border-dune-teal/30 text-dune-rose"}`}
                 >
                   {effectiveRhoPolymer.toFixed(2)} kg/m³
                 </span>
@@ -733,7 +733,7 @@ export default function CrossLinkingBiophysics({
                   )
                 </span>
                 <span
-                  className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-rose border border-dune-rose text-dune-rose font-bold" : "bg-dune-rose/30 border border-dune-rose/40 text-dune-rose"}`}
+                  className={`font-mono px-2 py-1 rounded-[4px] text-[length:var(--text-caption)] ${isLightMode ? "bg-dune-rose/10 border border-dune-rose text-dune-rose font-bold" : "bg-dune-rose/30 border border-dune-rose/40 text-dune-rose"}`}
                 >
                   {params.temperature.toFixed(1)} K (
                   {(params.temperature - 273.15).toFixed(1)}°C)
