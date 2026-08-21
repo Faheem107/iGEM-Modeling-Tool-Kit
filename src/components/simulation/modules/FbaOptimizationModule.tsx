@@ -24,6 +24,7 @@ import {
   ReferenceDot,
   Cell,
 } from "recharts";
+import { CaptionText } from "../../CaptionText";
 import GlossaryTerm from "../../GlossaryTerm";
 import {
   buildCoreNetwork,
@@ -669,7 +670,9 @@ export default function FbaOptimizationModule({
                 onChange={() => toggleKO(k.id)}
                 className="accent-dune-rose"
               />
-              <span className="font-mono font-bold">{k.label}</span>
+              <span className="font-mono font-bold">
+                <CaptionText>{k.label}</CaptionText>
+              </span>
             </label>
           ))}
         </div>
@@ -950,8 +953,10 @@ export default function FbaOptimizationModule({
         <Panel
           title={
             <>
-              Optimal <GlossaryTerm term="flux">Flux</GlossaryTerm> Distribution
-              (<GlossaryTerm term="pfba">pFBA</GlossaryTerm>)
+              Optimal <GlossaryTerm term="flux">Flux</GlossaryTerm>{" "}
+              <span className="whitespace-nowrap">
+                Distribution (<GlossaryTerm term="pfba">pFBA</GlossaryTerm>)
+              </span>
             </>
           }
           isLightMode={isLightMode}
