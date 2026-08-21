@@ -6,10 +6,15 @@ import { Wind, Radio, Layers, AlertTriangle } from "lucide-react";
 import { useTheme } from "@/components/theme-context";
 import { Panel, Slider, StatCard } from "@/src/components/simulation/_shared";
 import ExposureMap, { type SourceFeature, type TargetSite } from "./ExposureMap";
+import MapLegend from "./MapLegend";
+import WindRose from "./WindRose";
 import {
   nearFieldCaptureFraction, sandblastEfficiency, haversineKm, bearingDeg, alignment,
 } from "@/src/lib/physics/dustTransport";
-import { meanSaltationFlux, driftPotential, GULF_IMPACT_THRESHOLD_MS } from "@/src/lib/physics/windStats";
+import {
+  meanSaltationFlux, driftPotential, driftFromSectors, cardinal,
+  GULF_IMPACT_THRESHOLD_MS,
+} from "@/src/lib/physics/windStats";
 import { thresholdUntreated, thresholdTreated } from "@/src/lib/physics/aeolian";
 import { transmittanceLossPercent } from "@/src/lib/physics/damage";
 import { useHighlight, useStick } from "@/src/lib/motion/pointer";
@@ -239,25 +244,20 @@ export default function ExposureWorkspace() {
             windField={windField}
             isLightMode={isLightMode}
           />
-          <div className="flex flex-wrap items-center gap-4">
-            <label className="caption inline-flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={showSources}
-                onChange={(e) => setShowSources(e.target.checked)}
-              />
-              Ginoux source polygons
-            </label>
-            <span className="caption text-dune-orange">natural</span>
-            <span className="caption text-dune-rose">anthropogenic</span>
-            <span className="caption text-dune-teal">hydrologic</span>
-          </div>
+          <MapLegend
+            showSources={showSources}
+            onToggleSources={setShowSources}
+            isLightMode={isLightMode}
+            windLabel={
+              mode === "live"
+                ? "Wind blowing right now, from the current feed"
+                : `Average wind direction across ${seasonDef.label}`
+            }
+          />
           <p className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
-            Source polygons are frequency of occurrence on a 0.1 degree grid, about 11 km.
-            The dashed arrow is the drift and suspension pathway, pointing back toward where
-            the sand comes from. It is not the path of saltating grains, which land within
-            tens of metres. Ginoux published only MAM for the Middle East, so the source
-            layer does not change with the season selector.
+            Source areas are mapped on a 0.1 degree grid, about 11 km across, and only
+            for March to May, which is the only window published for this region. They do
+            not change when you change the season.
           </p>
         </div>
 
