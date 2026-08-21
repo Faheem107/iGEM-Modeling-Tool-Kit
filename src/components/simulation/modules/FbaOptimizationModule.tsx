@@ -620,7 +620,7 @@ export default function FbaOptimizationModule({
           />
           <div>
             <span
-              className={`text-[length:var(--text-caption)] font-semibold block mb-2 ${isLightMode ? "text-foreground" : "text-foreground"}`}
+              className={`text-[length:var(--text-caption)] font-semibold block mb-2 text-foreground`}
             >
               Objective cᵀv
             </span>
@@ -631,7 +631,7 @@ export default function FbaOptimizationModule({
                 <button
                   key={k}
                   onClick={() => setObjective(k)}
-                  className={`flex-1 py-2 rounded-[4px] text-[length:var(--text-caption)] font-bold transition ${objective === k ? (isLightMode ? "bg-dune-orange text-foreground" : "bg-dune-orange text-foreground") : isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`flex-1 py-2 rounded-[4px] text-[length:var(--text-caption)] font-bold transition ${objective === k ? ("bg-dune-orange text-foreground") : "text-muted-foreground"}`}
                 >
                   {lbl}
                 </button>
@@ -677,7 +677,7 @@ export default function FbaOptimizationModule({
           ))}
         </div>
         <p
-          className={`mt-2 text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+          className={`mt-2 text-[length:var(--text-caption)] text-muted-foreground`}
         >
           <GlossaryText>
             Setting lb=ub=0 forces the LP to reroute carbon. Watch the flow map,
@@ -693,7 +693,7 @@ export default function FbaOptimizationModule({
           label="Max growth µ"
           value={analysis.growthMax.toFixed(2)}
           unit="h⁻¹"
-          accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
+          accent="text-dune-teal"
         />
         {has1 && (
           <StatCard
@@ -702,7 +702,7 @@ export default function FbaOptimizationModule({
             value={analysis.pgaMax.toFixed(2)}
             unit="mmol/gDCW/h"
             emphasize
-            accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
+            accent="text-dune-orange"
           />
         )}
         {has2 && (
@@ -712,7 +712,7 @@ export default function FbaOptimizationModule({
             value={analysis.caMax.toFixed(2)}
             unit="mmol/gDCW/h"
             emphasize
-            accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
+            accent="text-dune-teal"
           />
         )}
         {has1 && (
@@ -721,7 +721,7 @@ export default function FbaOptimizationModule({
             label="Precursor → ODE [S]"
             value={fbaPrecursorToConc(analysis.precursorFlux).toFixed(2)}
             unit="mM"
-            accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
+            accent="text-dune-orange"
             sub="couples to kinetic model"
           />
         )}
@@ -735,7 +735,7 @@ export default function FbaOptimizationModule({
           }
           value={analysis.acetate.toFixed(2)}
           unit="mmol/gDCW/h"
-          accent={isLightMode ? "text-foreground" : "text-foreground"}
+          accent="text-foreground"
           sub="carbon wasted"
         />
         <StatCard
@@ -743,7 +743,7 @@ export default function FbaOptimizationModule({
           label="Glucose shadow price"
           value={analysis.glucoseShadow.toFixed(2)}
           unit="Δobj/Δcap"
-          accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
+          accent="text-dune-orange"
           sub={
             analysis.glucoseShadow > 0.01
               ? "feed is binding"
@@ -755,7 +755,7 @@ export default function FbaOptimizationModule({
           label="O₂ shadow price"
           value={analysis.o2Shadow.toFixed(2)}
           unit="Δobj/Δcap"
-          accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
+          accent="text-dune-teal"
           sub={analysis.o2Shadow > 0.01 ? "O₂ is binding" : "O₂ not limiting"}
         />
       </div>
@@ -800,7 +800,7 @@ export default function FbaOptimizationModule({
           isLightMode={isLightMode}
         />
         <div
-          className={`mt-1 flex flex-wrap gap-x-4 gap-y-1 text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+          className={`mt-1 flex flex-wrap gap-x-4 gap-y-1 text-[length:var(--text-caption)] text-muted-foreground`}
         >
           {legendDot(isLightMode ? DUNE.orange : TINT.orangeLight, "glycolysis")}
           {legendDot(isLightMode ? TINT.tealDeep : DUNE.teal, "TCA cycle")}
@@ -812,7 +812,7 @@ export default function FbaOptimizationModule({
           {legendDot(STATUS.bad, "overflow (acetate/lactate)")}
         </div>
         <p
-          className={`mt-2 text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+          className={`mt-2 text-[length:var(--text-caption)] text-muted-foreground`}
         >
           <GlossaryText>
             Arrow thickness and flow speed track each reaction&apos;s pFBA
@@ -885,7 +885,7 @@ export default function FbaOptimizationModule({
           </LineChart>
         </ResponsiveContainer>
         <p
-          className={`mt-1 text-[length:var(--text-caption)] flex items-center gap-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+          className={`mt-1 text-[length:var(--text-caption)] flex items-center gap-2 text-muted-foreground`}
         >
           Marker = current objective&apos;s
           operating point. The downward slope is the growth that must be traded
@@ -923,7 +923,7 @@ export default function FbaOptimizationModule({
                   {lbl}
                 </span>
                 <span
-                  className={isLightMode ? "text-muted-foreground" : "text-muted-foreground"}
+                  className="text-muted-foreground"
                 >
                   {pct.toFixed(0)}% of feed C
                 </span>
@@ -940,7 +940,7 @@ export default function FbaOptimizationModule({
           ))}
         </div>
         <p
-          className={`text-[length:var(--text-caption)] mt-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+          className={`text-[length:var(--text-caption)] mt-2 text-muted-foreground`}
         >
           <GlossaryText>
             Carbon-mole balance on the fixed glucose feed. Deleting acetate
@@ -1041,7 +1041,7 @@ export default function FbaOptimizationModule({
                     </span>
                     <span
                       className={
-                        isLightMode ? "text-muted-foreground" : "text-muted-foreground"
+                        "text-muted-foreground"
                       }
                     >
                       [{lo.toFixed(1)}, {hi.toFixed(1)}]
@@ -1062,7 +1062,7 @@ export default function FbaOptimizationModule({
               );
             })}
             <p
-              className={`text-[length:var(--text-caption)] mt-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+              className={`text-[length:var(--text-caption)] mt-2 text-muted-foreground`}
             >
               Wide bars = flexible reactions with alternate optima. Pinpoints =
               rigid, rate-limiting steps.

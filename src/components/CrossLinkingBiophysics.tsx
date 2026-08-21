@@ -528,7 +528,7 @@ export default function CrossLinkingBiophysics({
             >
               <label className="flex items-center justify-between cursor-pointer">
                 <span
-                  className={`flex items-center gap-2 font-bold font-sans ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
+                  className={`flex items-center gap-2 font-bold font-sans text-dune-teal`}
                 >
                   Interconnect With Secretion Yield
                 </span>
@@ -596,7 +596,7 @@ export default function CrossLinkingBiophysics({
                 className={`w-full h-1.5 rounded-[4px] accent-dune-teal cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
               />
               <span
-                className={`text-[length:var(--text-caption)] block mt-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                className={`text-[length:var(--text-caption)] block mt-1 text-muted-foreground`}
               >
                 Divalent calcium ions act as molecular anchors bridging separate
                 strands.
@@ -639,7 +639,7 @@ export default function CrossLinkingBiophysics({
                 className={`w-full h-1.5 rounded-[4px] accent-dune-orange cursor-ew-resize ${isLightMode ? "bg-secondary" : ""}`}
               />
               <span
-                className={`text-[length:var(--text-caption)] block mt-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                className={`text-[length:var(--text-caption)] block mt-1 text-muted-foreground`}
               >
                 Represents binding tightness. Lower values increase chelation
                 network rigidity.
@@ -867,7 +867,7 @@ export default function CrossLinkingBiophysics({
             >
               <div>
                 <span
-                  className={`text-[length:var(--text-caption)] font-black tracking-wider block uppercase mb-4 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                  className={`text-[length:var(--text-caption)] font-black tracking-wider block uppercase mb-4 text-muted-foreground`}
                 >
                   Live Gel Readout
                 </span>
@@ -880,7 +880,7 @@ export default function CrossLinkingBiophysics({
                       SATURATION DENSITY (θ)
                     </span>
                     <span
-                      className={`font-extrabold text-[length:var(--text-micro)] ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
+                      className={`font-extrabold text-[length:var(--text-micro)] text-dune-teal`}
                     >
                       {(results.theta * 100).toFixed(1)}%
                     </span>
@@ -893,7 +893,7 @@ export default function CrossLinkingBiophysics({
                       PEPTIDIC CROSSLINKS
                     </span>
                     <span
-                      className={`font-extrabold text-[length:var(--text-caption)] ${isLightMode ? "text-dune-rose" : "text-dune-rose"}`}
+                      className={`font-extrabold text-[length:var(--text-caption)] text-dune-rose`}
                     >
                       {results.nu.toFixed(5)} mol/cm³
                     </span>
@@ -906,7 +906,7 @@ export default function CrossLinkingBiophysics({
                       SHEAR STIFFNESS (Gs)
                     </span>
                     <span
-                      className={`font-black text-[length:var(--text-micro)] ${isLightMode ? "text-dune-orange" : "text-dune-orange"}`}
+                      className={`font-black text-[length:var(--text-micro)] text-dune-orange`}
                     >
                       {results.G.toFixed(1)} Pa
                     </span>

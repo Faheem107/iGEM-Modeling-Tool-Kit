@@ -111,7 +111,7 @@ export default function CompositeSynthesisPanel({
           label="Additive cohesion"
           value={toMilli(comp.additiveCohesion).toFixed(1)}
           unit="mN/m"
-          accent={isLightMode ? "text-foreground" : "text-foreground"}
+          accent="text-foreground"
           sub="Σ individual"
         />
         <StatCard
@@ -121,12 +121,8 @@ export default function CompositeSynthesisPanel({
           unit="mN/m"
           accent={
             comp.interactionCohesion >= 0
-              ? isLightMode
-                ? "text-dune-teal"
-                : "text-dune-teal"
-              : isLightMode
-                ? "text-dune-rose"
-                : "text-dune-rose"
+              ? "text-dune-teal"
+              : "text-dune-rose"
           }
           sub={comp.interactionCohesion >= 0 ? "synergistic" : "competitive"}
         />
@@ -136,7 +132,7 @@ export default function CompositeSynthesisPanel({
           value={toMilli(comp.totalCohesion).toFixed(1)}
           unit="mN/m"
           emphasize
-          accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
+          accent="text-dune-orange"
           sub="→ feeds wind threshold"
         />
         <StatCard
@@ -146,12 +142,8 @@ export default function CompositeSynthesisPanel({
           unit={hasSynergy ? "%" : undefined}
           accent={
             synergyPct >= 0
-              ? isLightMode
-                ? "text-dune-teal"
-                : "text-dune-teal"
-              : isLightMode
-                ? "text-dune-rose"
-                : "text-dune-rose"
+              ? "text-dune-teal"
+              : "text-dune-rose"
           }
           sub={hasSynergy ? "against the two prongs added up separately" : "no prong is contributing yet"}
         />
@@ -169,7 +161,7 @@ export default function CompositeSynthesisPanel({
       >
         {interactions.length === 0 ? (
           <p
-            className={`text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`text-[length:var(--text-caption)] text-muted-foreground`}
           >
             No cross-prong interactions for this combination.
           </p>
@@ -202,7 +194,7 @@ export default function CompositeSynthesisPanel({
                     </span>
                   </div>
                   <p
-                    className={`text-[length:var(--text-caption)] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                    className={`text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}
                   >
                     {e.description}
                   </p>
@@ -210,7 +202,7 @@ export default function CompositeSynthesisPanel({
               );
             })}
             <p
-              className={`text-[length:var(--text-caption)] leading-relaxed pt-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+              className={`text-[length:var(--text-caption)] leading-relaxed pt-1 text-muted-foreground`}
             >
               Competition (Ca²⁺) and metabolic burden are applied to each
               prong's cohesion <b>before</b> the synergy term above, so the
@@ -317,7 +309,7 @@ export default function CompositeSynthesisPanel({
             </BarChart>
           </ResponsiveContainer>
           <p
-            className={`mt-2 text-[length:var(--text-caption)] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`mt-2 text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}
           >
             Each binder reduces to an interparticle cohesion (γ-PGA &amp;
             alginate via shear modulus G; CaCO₃ via UCS). The combined radar

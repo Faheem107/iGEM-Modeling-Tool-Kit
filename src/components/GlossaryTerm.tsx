@@ -153,9 +153,7 @@ function VideoPanel({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className={`absolute inset-0 flex flex-col items-center justify-center gap-4 text-center ${
-              isLightMode ? "bg-dune-basalt" : "bg-dune-basalt"
-            }`}
+            className={`absolute inset-0 flex flex-col items-center justify-center gap-4 text-center bg-dune-basalt`}
           >
             <motion.img
               src="/sandyx.png"
@@ -235,7 +233,7 @@ function CodePanel({
     <div>
       <div className="flex items-center justify-between gap-2 mb-2">
         <span
-          className={`text-[length:var(--text-caption)] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+          className={`text-[length:var(--text-caption)] font-mono text-muted-foreground`}
         >
           {filename}
         </span>
@@ -561,9 +559,7 @@ export const GlossaryProvider: React.FC<{
                     preset="fade-in-blur"
                     speedReveal={2.2}
                     delay={0.12}
-                    className={`text-[length:var(--text-micro)] leading-relaxed ${
-                      isLightMode ? "text-foreground" : "text-foreground"
-                    }`}
+                    className={`text-[length:var(--text-micro)] leading-relaxed text-foreground`}
                   >
                     {entry.plain}
                   </TextEffect>
@@ -576,7 +572,7 @@ export const GlossaryProvider: React.FC<{
                         How we got it
                       </h4>
                       <p
-                        className={`text-[length:var(--text-micro)] leading-relaxed ${isLightMode ? "text-foreground" : "text-foreground"}`}
+                        className={`text-[length:var(--text-micro)] leading-relaxed text-foreground`}
                       >
                         {entry.derivation}
                       </p>
@@ -682,7 +678,7 @@ export const GlossaryProvider: React.FC<{
                     per="word"
                     preset="fade-in-blur"
                     speedReveal={2.2}
-                    className={`text-[length:var(--text-micro)] leading-relaxed mb-6 ${isLightMode ? "text-foreground" : "text-foreground"}`}
+                    className={`text-[length:var(--text-micro)] leading-relaxed mb-6 text-foreground`}
                   >
                     {math.intro}
                   </TextEffect>
@@ -701,7 +697,7 @@ export const GlossaryProvider: React.FC<{
                           <Katex tex={b.tex} />
                         </div>
                         <p
-                          className={`mt-2 text-[length:var(--text-micro)] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                          className={`mt-2 text-[length:var(--text-micro)] leading-relaxed text-muted-foreground`}
                         >
                           {b.caption}
                         </p>
@@ -791,7 +787,7 @@ export const GlossaryProvider: React.FC<{
                     per="word"
                     preset="fade-in-blur"
                     speedReveal={2.4}
-                    className={`mt-4 text-[length:var(--text-micro)] leading-relaxed ${isLightMode ? "text-foreground" : "text-foreground"}`}
+                    className={`mt-4 text-[length:var(--text-micro)] leading-relaxed text-foreground`}
                   >
                     {video.plain}
                   </TextEffect>
@@ -859,7 +855,7 @@ export const GlossaryProvider: React.FC<{
                     per="word"
                     preset="fade-in-blur"
                     speedReveal={2.2}
-                    className={`text-[length:var(--text-micro)] leading-relaxed mb-6 ${isLightMode ? "text-foreground" : "text-foreground"}`}
+                    className={`text-[length:var(--text-micro)] leading-relaxed mb-6 text-foreground`}
                   >
                     {sources.intro}
                   </TextEffect>
@@ -911,7 +907,7 @@ export const GlossaryProvider: React.FC<{
                             </span>
                           </div>
                           <p
-                            className={`mt-1 text-[length:var(--text-micro)] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                            className={`mt-1 text-[length:var(--text-micro)] leading-relaxed text-muted-foreground`}
                           >
                             {s.detail}
                           </p>
@@ -990,12 +986,12 @@ export const GlossaryProvider: React.FC<{
                     per="word"
                     preset="fade-in-blur"
                     speedReveal={2.2}
-                    className={`text-[length:var(--text-micro)] leading-relaxed mb-4 ${isLightMode ? "text-foreground" : "text-foreground"}`}
+                    className={`text-[length:var(--text-micro)] leading-relaxed mb-4 text-foreground`}
                   >
                     {code.intro}
                   </TextEffect>
                   <p
-                    className={`mb-4 text-[length:var(--text-caption)] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                    className={`mb-4 text-[length:var(--text-caption)] font-mono text-muted-foreground`}
                   >
                     {code.language}
                   </p>
@@ -1101,11 +1097,7 @@ export const Term: React.FC<TermProps> = ({ k, term, children, className }) => {
         }
       }}
       title={resolved.entry.title}
-      className={`sandyx-term cursor-help underline decoration-dotted decoration-2 underline-offset-2 font-semibold transition-colors duration-150 rounded-[4px] px-1 -mx-0.5 py-1 -my-1 ${
-        isLightMode
-          ? "decoration-dune-teal/70 text-foreground hover:text-dune-teal"
-          : "decoration-dune-teal/70 text-foreground hover:text-dune-teal"
-      } ${isHovered ? (isLightMode ? "bg-dune-teal/70 text-dune-teal" : "bg-dune-teal/25 text-dune-teal") : ""} ${
+      className={`sandyx-term cursor-help underline decoration-dotted decoration-2 underline-offset-2 font-semibold transition-colors duration-150 rounded-[4px] px-1 -mx-0.5 py-1 -my-1 decoration-dune-teal/70 text-foreground hover:text-dune-teal ${isHovered ? (isLightMode ? "bg-dune-teal/70 text-dune-teal" : "bg-dune-teal/25 text-dune-teal") : ""} ${
         className || ""
       }`}
     >

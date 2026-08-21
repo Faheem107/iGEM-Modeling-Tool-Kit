@@ -85,7 +85,7 @@ export default function GrainSizeCoveragePanel({
           value={(profile.boundMassFraction * 100).toFixed(0)}
           unit="%"
           emphasize
-          accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
+          accent="text-dune-teal"
           sub="of site PSD held"
         />
         <StatCard
@@ -93,7 +93,7 @@ export default function GrainSizeCoveragePanel({
           label="MICP sweet-spot"
           value={(profile.micpEfficiencyMean * 100).toFixed(0)}
           unit="%"
-          accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
+          accent="text-dune-teal"
           sub="mean CaCO₃ efficiency"
         />
         <StatCard
@@ -101,7 +101,7 @@ export default function GrainSizeCoveragePanel({
           label="Weakest band"
           value={`${profile.weakestDiameter.toFixed(0)}`}
           unit="µm"
-          accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
+          accent="text-dune-orange"
           sub={`${(profile.weakestCoverage * 100).toFixed(0)}% coverage`}
         />
         <StatCard
@@ -109,7 +109,7 @@ export default function GrainSizeCoveragePanel({
           label="Site D₅₀"
           value={profile.d50.toFixed(0)}
           unit="µm"
-          accent={isLightMode ? "text-foreground" : "text-foreground"}
+          accent="text-foreground"
           sub="median grain size"
         />
       </div>
@@ -204,7 +204,7 @@ export default function GrainSizeCoveragePanel({
           </ComposedChart>
         </ResponsiveContainer>
         <p
-          className={`mt-2 text-[length:var(--text-caption)] leading-relaxed ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+          className={`mt-2 text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}
         >
           Dashed lines are each binder's per-grain effectiveness. The solid band
           is the union (a grain is held if <b>any</b> mechanism binds it: 1 −

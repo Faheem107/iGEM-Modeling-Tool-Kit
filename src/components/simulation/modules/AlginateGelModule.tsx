@@ -194,7 +194,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
           value={effectiveG.toFixed(0)}
           unit="Pa"
           emphasize
-          accent={isLightMode ? "text-dune-rose" : "text-dune-rose"}
+          accent="text-dune-rose"
           sub={
             p.rainCycles > 0 ? `after ${p.rainCycles} wet cycles` : "fresh gel"
           }
@@ -204,14 +204,14 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
           label="Ca²⁺ saturation θ"
           value={(gel.theta * 100).toFixed(0)}
           unit="%"
-          accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
+          accent="text-dune-teal"
         />
         <StatCard
           isLightMode={isLightMode}
           label="Moisture retained"
           value={moisture.toFixed(0)}
           unit="g/L"
-          accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
+          accent="text-dune-teal"
           sub="keeps crust damp"
         />
         <StatCard
@@ -219,7 +219,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
           label="Washout half-life"
           value={halfLife.toFixed(1)}
           unit="cycles"
-          accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
+          accent="text-dune-orange"
           sub="durability limit"
         />
       </div>
@@ -273,7 +273,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
           </LineChart>
         </ResponsiveContainer>
         <p
-          className={`mt-2 text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+          className={`mt-2 text-[length:var(--text-caption)] text-muted-foreground`}
         >
           <GlossaryText>
             Calcium binds the buckled G-blocks into egg-box junctions, and the
@@ -324,7 +324,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
             </LineChart>
           </ResponsiveContainer>
           <p
-            className={`mt-2 text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`mt-2 text-[length:var(--text-caption)] text-muted-foreground`}
           >
             <GlossaryText>
               The honest limit: alginate is soluble, so each wet cycle removes a

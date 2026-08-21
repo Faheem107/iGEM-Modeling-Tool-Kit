@@ -95,7 +95,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
       >
         <div className="space-y-4">
           <span
-            className={`text-[length:var(--text-caption)] font-bold uppercase tracking-wider ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`text-[length:var(--text-caption)] font-bold uppercase tracking-wider text-muted-foreground`}
           >
             Shared (Sec pathway physiology)
           </span>
@@ -127,7 +127,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
             className={`pt-2 border-t ${isLightMode ? "border-dune-orange/10" : "border-border"}`}
           />
           <span
-            className={`text-[length:var(--text-caption)] font-bold uppercase tracking-wider ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`text-[length:var(--text-caption)] font-bold uppercase tracking-wider text-muted-foreground`}
           >
             Route-specific anchoring
           </span>
@@ -167,17 +167,17 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
       >
         <div>
           <span
-            className={`block text-[length:var(--text-caption)] font-bold uppercase tracking-wider ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`block text-[length:var(--text-caption)] font-bold uppercase tracking-wider text-muted-foreground`}
           >
             Recommended route
           </span>
           <span
-            className={`font-black text-[length:var(--text-micro)] ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
+            className={`font-black text-[length:var(--text-micro)] text-dune-teal`}
           >
             {recommend}
           </span>
           <span
-            className={`block text-[length:var(--text-caption)] font-mono mt-1 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`block text-[length:var(--text-caption)] font-mono mt-1 text-muted-foreground`}
           >
             {(best * 100).toFixed(1)}% functional CA displayed
           </span>
@@ -252,7 +252,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
           label="Sortase overall"
           value={(sortaseDisplay * 100).toFixed(1)}
           unit="%"
-          accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
+          accent="text-dune-teal"
           emphasize={sortaseDisplay >= motifDisplay}
         />
         <StatCard
@@ -260,12 +260,12 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
           label="Binding motif overall"
           value={(motifDisplay * 100).toFixed(1)}
           unit="%"
-          accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
+          accent="text-dune-orange"
           emphasize={motifDisplay > sortaseDisplay}
         />
       </div>
       <p
-        className={`text-[length:var(--text-caption)] flex items-start gap-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+        className={`text-[length:var(--text-caption)] flex items-start gap-2 text-muted-foreground`}
       >
         <GlossaryText>
           Display efficiency is the product of three independent steps, export

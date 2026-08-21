@@ -893,9 +893,7 @@ export default function AdvancedFbaPortal({
                       ? isLightMode
                         ? "bg-dune-orange text-foreground font-bold"
                         : "bg-dune-orange/10 text-dune-orange border border-dune-orange/60 font-black"
-                      : isLightMode
-                        ? "text-muted-foreground hover:text-foreground"
-                        : "text-muted-foreground hover:text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   Poly-γ-PGA Yield
@@ -907,9 +905,7 @@ export default function AdvancedFbaPortal({
                       ? isLightMode
                         ? "bg-dune-orange text-foreground font-bold"
                         : "bg-dune-orange/10 text-dune-orange border border-dune-orange/60 font-black"
-                      : isLightMode
-                        ? "text-muted-foreground hover:text-foreground"
-                        : "text-muted-foreground hover:text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   Biomass (Growth)
@@ -1080,7 +1076,7 @@ export default function AdvancedFbaPortal({
                   ATP Production Rate
                 </span>
                 <span
-                  className={`font-mono text-[length:var(--text-h3)] font-black block my-1 ${isLightMode ? "text-dune-orange" : "text-dune-orange"}`}
+                  className={`font-mono text-[length:var(--text-h3)] font-black block my-1 text-dune-orange`}
                 >
                   {atpProductionRate.toFixed(2)}
                 </span>
@@ -1099,7 +1095,7 @@ export default function AdvancedFbaPortal({
                   Anabolic NADPH Yield
                 </span>
                 <span
-                  className={`font-mono text-[length:var(--text-h3)] font-black block my-1 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
+                  className={`font-mono text-[length:var(--text-h3)] font-black block my-1 text-dune-teal`}
                 >
                   {nadphProductionRate.toFixed(2)}
                 </span>
@@ -1111,12 +1107,12 @@ export default function AdvancedFbaPortal({
             <div className="p-2 bg-dune-orange/20 rounded-[4px] border border-dune-orange/10 text-[length:var(--text-caption)] text-muted-foreground leading-tight">
               Glutamate synthesis pathways require 1 full mole of{" "}
               <strong
-                className={isLightMode ? "text-dune-teal" : "text-dune-teal"}
+                className="text-dune-teal"
               >
                 NADPH
               </strong>, while biopolymer polymerization drains{" "}
               <strong
-                className={isLightMode ? "text-dune-orange" : "text-dune-orange"}
+                className="text-dune-orange"
               >
                 ATP
               </strong>{" "}
@@ -1137,9 +1133,7 @@ export default function AdvancedFbaPortal({
           >
             <div className="flex justify-between items-center mb-4">
               <h3
-                className={`text-[length:var(--text-micro)] font-black uppercase tracking-wider font-mono flex items-center gap-2 ${
-                  isLightMode ? "text-foreground" : "text-foreground"
-                }`}
+                className={`text-[length:var(--text-micro)] font-black uppercase tracking-wider font-mono flex items-center gap-2 text-foreground`}
               >
                 {" "}
                 Active Analytical Metabolic Flux Map
@@ -1955,9 +1949,7 @@ export default function AdvancedFbaPortal({
           >
             <div className="flex justify-between items-center">
               <h3
-                className={`text-[length:var(--text-micro)] font-black uppercase tracking-wider font-mono flex items-center gap-2 ${
-                  isLightMode ? "text-foreground" : "text-foreground"
-                }`}
+                className={`text-[length:var(--text-micro)] font-black uppercase tracking-wider font-mono flex items-center gap-2 text-foreground`}
               >
                 Micro
                 Stoichiometric Coefficient Matrix (S)
@@ -2051,9 +2043,7 @@ export default function AdvancedFbaPortal({
           >
             <div className="flex justify-between items-center">
               <h3
-                className={`text-[length:var(--text-micro)] font-black uppercase tracking-wider font-mono flex items-center gap-2 ${
-                  isLightMode ? "text-foreground" : "text-foreground"
-                }`}
+                className={`text-[length:var(--text-micro)] font-black uppercase tracking-wider font-mono flex items-center gap-2 text-foreground`}
               >
                 {" "}
                 Metabolic Flux Leaderboard
@@ -2082,7 +2072,7 @@ export default function AdvancedFbaPortal({
                   <div>
                     <div className="flex justify-between items-start mb-2 gap-1">
                       <span
-                        className={`text-[length:var(--text-caption)] font-extrabold uppercase tracking-wide truncate max-w-[100px] ${isLightMode ? "text-foreground" : "text-foreground"}`}
+                        className={`text-[length:var(--text-caption)] font-extrabold uppercase tracking-wide truncate max-w-[100px] text-foreground`}
                         title={item.name}
                       >
                         {item.name}
@@ -2252,9 +2242,7 @@ export default function AdvancedFbaPortal({
             className={`text-[length:var(--text-h1)] font-black font-mono tracking-tight my-2 flex items-center justify-center gap-2 transition-all ${
               pulseMetric
                 ? "text-dune-teal scale-105"
-                : isLightMode
-                  ? "text-dune-teal"
-                  : "text-dune-teal"
+                : "text-dune-teal"
             }`}
           >
             <span className="font-mono">{pgaSynthesisFlux.toFixed(4)}</span>

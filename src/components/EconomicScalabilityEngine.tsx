@@ -162,7 +162,7 @@ export default function EconomicScalabilityEngine({
           label="All-in cost / ha"
           value={Math.round(cost.costPerHa).toLocaleString()}
           unit="USD"
-          accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
+          accent="text-dune-orange"
           emphasize
           sub={combinationLabel(selected)}
         />
@@ -171,7 +171,7 @@ export default function EconomicScalabilityEngine({
           label="Total project cost"
           value={Math.round(cost.totalCost).toLocaleString()}
           unit="USD"
-          accent={isLightMode ? "text-foreground" : "text-foreground"}
+          accent="text-foreground"
           sub={`${targetArea} ha + capex`}
         />
         <StatCard
@@ -186,12 +186,8 @@ export default function EconomicScalabilityEngine({
           unit="%"
           accent={
             savingsVsChemical > 0
-              ? isLightMode
-                ? "text-dune-teal"
-                : "text-dune-teal"
-              : isLightMode
-                ? "text-dune-rose"
-                : "text-dune-rose"
+              ? "text-dune-teal"
+              : "text-dune-rose"
           }
         />
         <StatCard
@@ -201,12 +197,8 @@ export default function EconomicScalabilityEngine({
           unit="t"
           accent={
             cost.co2Total <= 0
-              ? isLightMode
-                ? "text-dune-teal"
-                : "text-dune-teal"
-              : isLightMode
-                ? "text-muted-foreground"
-                : "text-muted-foreground"
+              ? "text-dune-teal"
+              : "text-muted-foreground"
           }
           sub={
             cost.co2Total < 0
@@ -238,7 +230,7 @@ export default function EconomicScalabilityEngine({
           isLightMode={isLightMode}
           right={
             <span
-              className={`text-[length:var(--text-caption)] font-mono ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+              className={`text-[length:var(--text-caption)] font-mono text-muted-foreground`}
             >
               USD · log scale
             </span>
@@ -289,7 +281,7 @@ export default function EconomicScalabilityEngine({
             </BarChart>
           </ResponsiveContainer>
           <p
-            className={`mt-1 text-[length:var(--text-caption)] flex items-center gap-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+            className={`mt-1 text-[length:var(--text-caption)] flex items-center gap-2 text-muted-foreground`}
           >
             Indigo = your selected
             combination. Every biological combination sits far below the
@@ -318,18 +310,18 @@ export default function EconomicScalabilityEngine({
                 >
                   <div className="min-w-0">
                     <span
-                      className={`text-[length:var(--text-micro)] font-bold ${isLightMode ? "text-foreground" : "text-foreground"}`}
+                      className={`text-[length:var(--text-micro)] font-bold text-foreground`}
                     >
                       {label}
                     </span>
                     <span
-                      className={`block text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+                      className={`block text-[length:var(--text-caption)] text-muted-foreground`}
                     >
                       {note}
                     </span>
                   </div>
                   <span
-                    className={`font-mono font-black text-[length:var(--text-micro)] shrink-0 ${isLightMode ? "text-dune-orange" : "text-dune-orange"}`}
+                    className={`font-mono font-black text-[length:var(--text-micro)] shrink-0 text-dune-orange`}
                   >
                     ${Math.round(single.opexPerHa).toLocaleString()}/ha
                   </span>
@@ -337,7 +329,7 @@ export default function EconomicScalabilityEngine({
               );
             })}
             <p
-              className={`text-[length:var(--text-caption)] ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
+              className={`text-[length:var(--text-caption)] text-muted-foreground`}
             >
               Plus a shared ${Math.round(cost.applicationPerHa)}/ha
               field-application pass
