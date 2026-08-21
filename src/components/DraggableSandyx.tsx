@@ -153,7 +153,7 @@ export default function DraggableSandyx({ size, className }: Props) {
   return (
     <motion.img
       src="/sandyx.png"
-      alt="Sandyx, drag me onto an underlined word, or a Show-the-Math toggle, for an explanation"
+      alt="Sandyx, the toolkit mascot"
       draggable={false}
       drag
       dragSnapToOrigin

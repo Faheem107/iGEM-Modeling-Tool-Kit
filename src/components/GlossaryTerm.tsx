@@ -1100,7 +1100,7 @@ export const Term: React.FC<TermProps> = ({ k, term, children, className }) => {
           open(id);
         }
       }}
-      title={`${resolved.entry.title}, tap or drop Sandyx for an explanation`}
+      title={resolved.entry.title}
       className={`sandyx-term cursor-help underline decoration-dotted decoration-2 underline-offset-2 font-semibold transition-colors duration-150 rounded-[4px] px-1 -mx-0.5 py-1 -my-1 ${
         isLightMode
           ? "decoration-dune-teal/70 text-foreground hover:text-dune-teal"

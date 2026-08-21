@@ -264,7 +264,7 @@ function ModuleToggle({
       type="button"
       {...attrs}
       onClick={onOpen}
-      title={`${label}, click, or drop Sandyx here`}
+      title={label}
       // Sandyx hover is marked by the edge taking the accent, not by a ring.
       className={`caption flex w-full min-w-0 flex-col items-center justify-center gap-2 rounded-[4px] border px-2 py-4 transition-colors hover:border-dune-orange hover:text-dune-orange ${
         hovered ? "border-dune-orange text-dune-orange" : "border-border"
