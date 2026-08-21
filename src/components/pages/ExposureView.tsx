@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import ExposureWorkspace from "@/src/components/exposure/ExposureWorkspace";
+import { GlossaryText } from "@/src/components/GlossaryTerm";
 import { useHighlight } from "@/src/lib/motion/pointer";
 import { NAV } from "@/content/copy";
 
@@ -24,10 +25,9 @@ export default function ExposureView() {
           Where the sand comes from, and what reaches a site
         </h1>
         <p className="text-[length:var(--text-body)] leading-relaxed text-muted-foreground">
-          Pick a market, pick a site, and the model estimates how much wind-blown sand
-          reaches it and how much less would reach it if the source were treated. The
-          seasonal view uses a wind climatology window. The live view runs the same model
-          on the current feed, which is what makes deployment timing and pricing possible.
+          <GlossaryText max={4}>
+            {"Pick a market, pick a site, and the model estimates how much wind-blown sand reaches it and how much less would reach it if the source were treated. The seasonal view runs on a fitted wind climatology, month by month. The live view runs the same model on the current feed, which is what makes deployment timing and pricing possible."}
+          </GlossaryText>
         </p>
       </header>
 

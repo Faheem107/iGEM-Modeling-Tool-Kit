@@ -19,6 +19,7 @@ import { thresholdUntreated, thresholdTreated } from "@/src/lib/physics/aeolian"
 import { transmittanceLossPercent } from "@/src/lib/physics/damage";
 import { useHighlight } from "@/src/lib/motion/pointer";
 import { BUSINESS_SECTIONS, BUSINESS_SUMMARY } from "@/src/lib/businessModel";
+import { GlossaryText } from "@/src/components/GlossaryTerm";
 import {
   climatologyField, toWindField, nearestCell,
   type Climatology, type WindField, type WindFieldResponse,
@@ -337,9 +338,9 @@ export default function ExposureWorkspace() {
             }
           />
           <p className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
-            Source areas are mapped on a 0.1 degree grid, about 11 km across, and only
-            for March to May, which is the only window published for this region. They do
-            not change when you change the season.
+            <GlossaryText max={3}>
+              {"Source areas are mapped on a 0.1 degree grid, about 11 km across, by how often dust is seen over them, and only for March to May, which is the only window published for this region. They do not change when you change the season."}
+            </GlossaryText>
           </p>
         </div>
 
@@ -437,7 +438,7 @@ export default function ExposureWorkspace() {
                   )}
                   <Slider label="Typical wind, Weibull scale A" value={windA} onChange={setWindA} min={2} max={16} step={0.1} unit="m/s" isLightMode={isLightMode} />
                   <Slider label="How gusty, Weibull shape k" value={windK} onChange={setWindK} min={1.2} max={4} step={0.05} unit="" isLightMode={isLightMode} />
-                  <Slider label="Wind direction from" value={windDir} onChange={setWindDir} min={0} max={359} step={1} unit="°" isLightMode={isLightMode} />
+                  <Slider label="Wind direction from" value={windDir} onChange={setWindDir} min={0} max={359} step={1} unit="°" isLightMode={isLightMode} hint="The bearing the wind blows from, the convention every wind rose uses." />
                 </>
               )}
 
@@ -473,7 +474,7 @@ export default function ExposureWorkspace() {
           )}
 
           <Panel title="Surface and treatment" icon={Layers} isLightMode={isLightMode}>
-            <Slider label="Soil clay content" value={clay} onChange={setClay} min={0} max={25} step={0.5} unit="%" isLightMode={isLightMode} />
+            <Slider label="Soil clay content" value={clay} onChange={setClay} min={0} max={25} step={0.5} unit="%" isLightMode={isLightMode} hint="Clay sets the sandblasting efficiency: how much fine dust the hopping grains knock loose. Dune sand has almost none." />
             {blast.capped && (
               <p className="mb-4 text-[length:var(--text-micro)] text-dune-rose">
                 Clamped at 20 percent. Chappell Eq 3 is not valid above that, and SoilGrids
@@ -487,7 +488,7 @@ export default function ExposureWorkspace() {
               the repo's current UCS scaling, which is itself a placeholder awaiting the
               wet lab.
             </p>
-            <Slider label="Treated patch to asset" value={patchDist} onChange={setPatchDist} min={1} max={200} step={1} unit="m" isLightMode={isLightMode} />
+            <Slider label="Treated patch to asset" value={patchDist} onChange={setPatchDist} min={1} max={200} step={1} unit="m" isLightMode={isLightMode} hint="How far the treated ground sits upwind. The capture fraction falls away fast with distance." />
           </Panel>
         </div>
       </div>
@@ -517,8 +518,9 @@ export default function ExposureWorkspace() {
             />
           </div>
           <p className="mt-4 text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
-            The near-field figure is an upper bound. It ignores repeated re-launch, which
-            extends transport, and it ignores turbulence.
+            <GlossaryText max={2}>
+              {"The near-field figure is an upper bound. It ignores repeated re-launch, which extends transport, and it ignores turbulence."}
+            </GlossaryText>
           </p>
         </Panel>
 
@@ -548,8 +550,9 @@ export default function ExposureWorkspace() {
             />
           </div>
           <p className="mt-4 text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
-            Cohesion is the only thing the product changes. It raises the threshold, which
-            raises the lower limit of the flux integral, which drops both fluxes at once.
+            <GlossaryText max={3}>
+              {"Cohesion is the only thing the product changes. It raises the threshold wind, which raises the lower limit of the flux integral, which drops both the sand and the suspension flux at once."}
+            </GlossaryText>
           </p>
           {noTransport && (
             <p className="mt-2 text-[length:var(--text-micro)] leading-relaxed text-dune-rose">

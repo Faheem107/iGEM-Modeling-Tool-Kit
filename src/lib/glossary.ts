@@ -610,6 +610,149 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
       "When a less-stable crystal (like vaterite) slowly re-dissolves and re-grows as the more stable form (calcite). It is why a vaterite-rich crust stiffens over time as the vaterite converts to stronger calcite.",
     category: "Material Science",
   },
+
+  // ---- Exposure · wind, transport and the commercial case -------------------
+  "weibull-distribution": {
+    title: "Weibull Distribution",
+    plain:
+      "A way of writing down not just how windy a place is, but how the wind is spread out across calm days and rough ones. Two numbers do it: the scale A, roughly the typical wind, and the shape k, roughly how gusty. We fit them to real hourly weather, month by month.",
+    category: "Wind and Exposure",
+    module: "Exposure and the commercial case",
+    derivation:
+      "Fitted by maximum likelihood to ERA5 hourly 10 m wind for 2022 to 2024, on a 1 degree grid, by scripts/fit_era5_weibull.py.",
+  },
+  "weibull-scale": {
+    title: "Weibull Scale (A)",
+    plain:
+      "Roughly how windy a place is. Higher A means stronger winds across the board. It is not quite the average: the average is A times a factor that depends on how gusty the place is.",
+    category: "Wind and Exposure",
+  },
+  "weibull-shape": {
+    title: "Weibull Shape (k)",
+    plain:
+      "How gusty the wind is. A low k means a place with many calm days and a few violent ones. A high k means the wind is much the same every day. Low k matters to us, because the violent days are when almost all the sand moves.",
+    category: "Wind and Exposure",
+  },
+  "flux-of-the-mean": {
+    title: "Why the Average Wind Is the Wrong Input",
+    plain:
+      "Sand does not move until the wind passes a threshold, and above it the amount carried climbs as roughly the cube of the wind. So a month that is calm for 28 days and fierce for 2 moves nearly all its sand on those 2 days. Feeding that month's average wind into the equation can predict no sand movement at all. We add up the sand across the whole spread of wind speeds instead.",
+    category: "Wind and Exposure",
+    module: "Exposure and the commercial case",
+    derivation:
+      "The Bagnold flux integrated over the fitted Weibull has an exact closed form, so no gustiness fudge factor is needed. Verified against brute-force integration by scripts/verify_weibull_flux.py.",
+  },
+  "wind-rose": {
+    title: "Wind Rose",
+    plain:
+      "A circular chart of which direction the wind comes from and how often. Each petal is one compass sector, and the longer the petal the more of the year the wind blows from there.",
+    category: "Wind and Exposure",
+  },
+  "drift-potential": {
+    title: "Drift Potential (DP)",
+    plain:
+      "How much sand a place's wind regime is capable of moving over a period. It is the standard measure in this field, from Fryberger's survey of the world's sand seas. Bigger DP means more sand on the move.",
+    category: "Wind and Exposure",
+    module: "Exposure and the commercial case",
+    derivation:
+      "Q = V²(V − Vt)·t per direction sector, with V in knots and Vt the 5.4 m/s Gulf threshold measured by Khalaf and Al-Ajmi in Kuwait. Summed hour by hour, not from a sector average.",
+  },
+  "resultant-drift-direction": {
+    title: "Resultant Drift Direction (RDD)",
+    plain:
+      "Where the sand actually ends up once you add together every direction the wind blows from, as arrows rather than as amounts. It is not the same as the windiest direction: a place can be windiest from the north and still move its sand southeast.",
+    category: "Wind and Exposure",
+  },
+  "unidirectionality-index": {
+    title: "Unidirectionality Index (UDI)",
+    plain:
+      "How one-way a place's wind is, from 0 to 1. Near 1 and the sand marches steadily in one direction, so there is one obvious patch of ground to treat. Near 0 and the winds cancel out, and the sand mostly sloshes back and forth without arriving anywhere.",
+    category: "Wind and Exposure",
+    module: "Exposure and the commercial case",
+  },
+  shamal: {
+    title: "Shamal",
+    plain:
+      "The strong, steady northwesterly wind that blows down the Gulf, hardest in summer. It is the wind that moves most of the region's sand, and it is why sand transport and the value of stopping it both peak between May and August.",
+    category: "Wind and Exposure",
+  },
+  suspension: {
+    title: "Suspension",
+    plain:
+      "The finest dust, under about 60 micrometres, which floats on the wind and can travel hundreds of kilometres. It is what settles on a solar panel. Dune sand is only about 0.1 percent this fine, which is why treating a dune does little for panel soiling.",
+    category: "Wind and Exposure",
+  },
+  creep: {
+    title: "Creep",
+    plain:
+      "Grains bigger than about 2 mm, too heavy to hop, that just roll along the ground and stay put. The least of our worries.",
+    category: "Wind and Exposure",
+  },
+  "sandblasting-efficiency": {
+    title: "Sandblasting Efficiency",
+    plain:
+      "How much fine floating dust gets knocked loose by hopping sand grains hammering the surface. It depends almost entirely on how much clay is in the soil: clean dune sand is a strong sand mover and a weak dust maker, while clay-rich flood plain is the opposite.",
+    category: "Wind and Exposure",
+    module: "Exposure and the commercial case",
+  },
+  "capture-fraction": {
+    title: "Capture Fraction",
+    plain:
+      "The share of sand leaving a patch of ground that is still in the air by the time it reaches a given distance downwind. It drops away fast: at 10 m/s about 8 percent of the sand is still airborne after 10 metres, and essentially none after 50.",
+    category: "Wind and Exposure",
+    module: "Exposure and the commercial case",
+  },
+  "transmittance-loss": {
+    title: "Transmittance Loss",
+    plain:
+      "How much less light gets through a solar panel's glass once dust has settled on it. This is the step that turns arriving dust into lost electricity, and lost electricity into money.",
+    category: "Wind and Exposure",
+    derivation:
+      "Elminir et al. 2006 measured it against deposited mass in grams per square metre, and against panel tilt. Implemented in src/lib/physics/damage.ts.",
+  },
+  soiling: {
+    title: "Soiling",
+    plain:
+      "Dust settling on a solar panel and cutting its output. Mostly caused by far-travelling fine dust rather than local sand, which is why we do not lead with it: treating a dune next door removes almost no soiling-capable material.",
+    category: "Wind and Exposure",
+  },
+  encroachment: {
+    title: "Sand Encroachment",
+    plain:
+      "Blown sand piling up against panel rows, roads, fences and machinery until somebody has to clear it. This is the effect our model supports most strongly, because it is caused by exactly the short-range hopping sand a crust stops.",
+    category: "Wind and Exposure",
+  },
+  reanalysis: {
+    title: "Reanalysis",
+    plain:
+      "A reconstruction of past weather made by feeding decades of real observations into a weather model, so you get a complete, gap-free record everywhere rather than only where there happened to be a weather station.",
+    category: "Wind and Exposure",
+  },
+  era5: {
+    title: "ERA5",
+    plain:
+      "The European weather reconstruction we take our wind from. It gives hourly wind for every point on Earth going back decades, which is what makes fitting a month-by-month wind distribution possible.",
+    category: "Wind and Exposure",
+    module: "Exposure and the commercial case",
+  },
+  cams: {
+    title: "CAMS",
+    plain:
+      "The European atmosphere monitoring service, which forecasts dust in the air worldwide. It drives the live view's surface dust reading.",
+    category: "Wind and Exposure",
+  },
+  climatology: {
+    title: "Climatology",
+    plain:
+      "What the weather usually does at a place and time of year, averaged over many years. Not a forecast for a particular day, and it should never be read as one.",
+    category: "Wind and Exposure",
+  },
+  "frequency-of-occurrence": {
+    title: "Frequency of Occurrence",
+    plain:
+      "How often satellites see dust over a given patch of ground, as a share of days. It is how the source areas on the map are mapped, and darker shading means dust is seen there more often.",
+    category: "Wind and Exposure",
+  },
 };
 
 /** Alternate spellings / keys used in code, routed to a canonical GLOSSARY key. */
@@ -652,6 +795,23 @@ export const ALIASES: Record<string, string> = {
   "constraint based": "constraint-based",
   "stoichiometric matrix": "stoichiometric-matrix",
   "primal simplex": "simplex",
+  // Exposure
+  weibull: "weibull-distribution",
+  "scale a": "weibull-scale",
+  "shape k": "weibull-shape",
+  dp: "drift-potential",
+  rdd: "resultant-drift-direction",
+  udi: "unidirectionality-index",
+  "sand drift": "drift-potential",
+  "drift direction": "resultant-drift-direction",
+  "suspended dust": "suspension",
+  "fine dust": "suspension",
+  "near field": "capture-fraction",
+  "near-field": "capture-fraction",
+  fryberger: "drift-potential",
+  "wind climatology": "climatology",
+  "dust source": "frequency-of-occurrence",
+  "source areas": "frequency-of-occurrence",
 };
 
 /** Normalize a lookup key: lowercase, collapse whitespace, trim symbols we route on. */
