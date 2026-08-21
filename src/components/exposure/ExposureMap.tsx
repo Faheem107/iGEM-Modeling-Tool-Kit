@@ -55,6 +55,12 @@ export interface TargetSite {
   lat: number;
   lon: number;
   market: string;
+  /** Groups the picker. Assigned by polygon, not by latitude band. */
+  emirate: string;
+  /** The original OSM name where an English one had to be resolved. */
+  nameLocal?: string;
+  /** Which route produced `name`: name:en, int_name, override, transliterated. */
+  nameSource?: string;
   capacityMw?: number;
   nearestSourceKm?: number;
   nearestSourceType?: string;
