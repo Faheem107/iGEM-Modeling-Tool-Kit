@@ -113,7 +113,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "bacillus-subtilis": {
     title: "Bacillus subtilis",
     plain:
-      "A soil bacterium that survives heat and drought and harms nobody. We engineer its pathways so a glucose and glutamate feed comes out as γ-PGA (Prong 1) or as carbonic anhydrase held on the cell wall (Prong 2).",
+      "A soil bacterium that survives heat and drought. It is a Risk Group 1 organism, non-pathogenic and long used in industrial fermentation. We engineer its pathways so a glucose and glutamate feed comes out as γ-PGA (Prong 1) or as carbonic anhydrase held on the cell wall (Prong 2).",
     category: "Microorganism",
   },
 

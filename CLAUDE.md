@@ -14,6 +14,44 @@ Keep every user-facing string simple and easy to follow.
   the deeper module bodies, which may stay technical. Even there, no em dashes.
 - Do not add AI signatures or credits anywhere (code, commits, or GitHub). Do not
   mention specific AI assistants by name in committed content.
+- Tone is covered separately below, and the two sections are one rule, not two.
+  This one is about the sentence. The next one is about the stance.
+
+## Writing tone (applies to all body copy)
+
+We are undergraduate researchers on an iGEM team. We are not a startup and we are
+not selling anything, so nothing on this site should read like a pitch deck. Write
+the way a student explains a problem they find genuinely interesting to another
+student.
+
+Take the register from Feynman's lectures. Pick the one thing that makes the
+mechanism obvious and start there. Simple and clear, still technical, never
+softened to sound friendly.
+
+- **No grandiose framing.** "Until now", "nobody is doing this", "everyone pays
+  for", "no one has", "the only", "world first". If a sentence positions us as
+  having solved what others could not, cut it.
+- **No pitch-deck rhythm.** A short punchy line placed to land as a mic drop is
+  the thing to avoid, even when the line is true. Write in a slower register,
+  sentences that show the reasoning rather than only the conclusion.
+- **Reflective, not declarative.** Prefer explaining why a modelling choice was
+  made, and what it assumes or leaves out, over asserting a result as fact. Saying
+  where a number is uncertain, where a source is missing, or where the model does
+  not yet reach is more credible than confidence we have not earned, and it is
+  what a judge is actually reading for.
+- **Describe existing approaches neutrally.** Panel washing, road sweeping and
+  filter replacement are what they are. Say what they cost and what they address.
+  Do not reduce them to a phrase like "treats the symptom" in order to leave ours
+  looking obviously better.
+- **Say what the model does not do.** Every section that reports a number should
+  be able to say what would make that number wrong.
+
+Exceptions, unchanged: Sandyx and game flavour text may be playful, and deep
+module bodies may stay technical. Neither is licence for the register above, and
+no em dashes anywhere, including there.
+
+`WRITING_STYLE.md` is the longer version of this with worked examples. It is
+local-only and not committed, so this section has to stand on its own.
 
 ## Component gotchas (see DESIGN.md §14–16)
 
