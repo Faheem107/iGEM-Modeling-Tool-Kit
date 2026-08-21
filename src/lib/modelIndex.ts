@@ -75,42 +75,6 @@ export const INDEX_COLUMNS: IndexColumn[] = [
 ];
 
 
-/**
- * The rows in the "Wind and cost" group. These are not simulation modules, so
- * they carry their own destinations rather than a prong query: two views on the
- * exposure model, and the commercial case that model prices against.
- */
-export interface IndexLink {
-  id: string;
-  title: string;
-  /** The caption under the title, in the same register as a module's scale. */
-  meta: string;
-  /** A route, or "business" for the modal the component owns. */
-  href?: string;
-  action?: "business";
-}
-
-export const FIELD_LINKS: IndexLink[] = [
-  {
-    id: "forecast",
-    title: "Seasonal forecast",
-    meta: "wind climatology",
-    href: "/exposure?mode=seasonal",
-  },
-  {
-    id: "live",
-    title: "Live feed",
-    meta: "current wind and dust",
-    href: "/exposure?mode=live",
-  },
-  {
-    id: "business",
-    title: "Business model",
-    meta: "who pays, and for what",
-    action: "business",
-  },
-];
-
 /** The archived option, kept modelled for comparison. */
 export const ARCHIVED_MODULES = MODULE_REGISTRY.filter((m) => m.appliesTo([3]) && !m.appliesTo([1, 2]));
 
