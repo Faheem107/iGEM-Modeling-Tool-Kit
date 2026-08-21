@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "@/components/theme-context";
-import { ModuleActions, Panel, Slider, StatCard } from "@/src/components/simulation/_shared";
+import { Fold, ModuleActions, Panel, Slider, StatCard } from "@/src/components/simulation/_shared";
 import ExposureMap, { type SourceFeature, type TargetSite } from "./ExposureMap";
 import MapLegend from "./MapLegend";
 import WindRose from "./WindRose";
@@ -371,8 +371,14 @@ export default function ExposureWorkspace() {
         </div>
 
         {/* controls */}
-        <div className="lg:col-span-5 space-y-6">
-          <Panel title="Target market" isLightMode={isLightMode}>
+        <div className="lg:col-span-5 space-y-5">
+          <Fold
+            className="border-t border-border pt-5"
+            title="Target market"
+            lede="Which asset the numbers below are computed for."
+            defaultOpen
+            wide
+          >
             <div className="space-y-4">
               <select
                 value={market}
@@ -425,12 +431,14 @@ export default function ExposureWorkspace() {
                 </p>
               )}
             </div>
-          </Panel>
+          </Fold>
 
           {mode === "seasonal" ? (
-            <Panel
+            <Fold
+              className="border-t border-border pt-5"
               title="Seasonal wind"
-              isLightMode={isLightMode}
+              lede="The fitted wind distribution that drives every number on this page."
+              wide
               right={<Grade grade={seasonal && !override ? "literature" : "unsourced"} />}
             >
               <div className="mb-4 flex flex-wrap gap-2">
@@ -464,15 +472,13 @@ export default function ExposureWorkspace() {
                       unit="m/s"
                       accent="text-dune-teal"
                       isLightMode={isLightMode}
-                      sub="the scale of the fitted spread at 10 m"
-                    />
+                      sub="the scale of the fitted spread at 10 m" rule={false} />
                     <StatCard
                       label="How gusty"
                       value={seasonal.k.toFixed(2)}
                       accent="text-dune-teal"
                       isLightMode={isLightMode}
-                      sub="lower is gustier, and gusts move the sand"
-                    />
+                      sub="lower is gustier, and gusts move the sand" rule={false} />
                   </div>
                   <p className="caption">
                     ERA5 2022 to 2024, grid cell {seasonal.at.lat}°N {seasonal.at.lon}°E
@@ -501,9 +507,15 @@ export default function ExposureWorkspace() {
                   Set the wind myself instead
                 </label>
               )}
-            </Panel>
+            </Fold>
           ) : (
-            <Panel title="Live conditions" isLightMode={isLightMode}>
+            <Fold
+              className="border-t border-border pt-5"
+              title="Live conditions"
+              lede="The current wind and dust reading for this site."
+              defaultOpen
+              wide
+            >
               {liveLoading && <p className="text-[length:var(--text-micro)] text-muted-foreground">Loading the feed.</p>}
               {liveErr && (
                 <p className="text-[length:var(--text-micro)] text-dune-rose">
@@ -512,17 +524,22 @@ export default function ExposureWorkspace() {
               )}
               {live && !liveLoading && (
                 <div className="grid grid-cols-2 gap-4">
-                  <StatCard label="Surface dust" value={live.dust?.toFixed(0) ?? "n/a"} unit="µg/m³" accent="text-dune-orange" isLightMode={isLightMode} />
-                  <StatCard label="Wind at 10 m" value={live.wind?.toFixed(1) ?? "n/a"} unit="m/s" accent="text-dune-teal" isLightMode={isLightMode} />
-                  <StatCard label="Direction from" value={live.dir?.toFixed(0) ?? "n/a"} unit="°" accent="text-dune-teal" isLightMode={isLightMode} />
-                  <StatCard label="Valid" value={live.at?.slice(5, 16).replace("T", " ") ?? "n/a"} accent="text-muted-foreground" isLightMode={isLightMode} />
+                  <StatCard label="Surface dust" value={live.dust?.toFixed(0) ?? "n/a"} unit="µg/m³" accent="text-dune-orange" isLightMode={isLightMode} rule={false} />
+                  <StatCard label="Wind at 10 m" value={live.wind?.toFixed(1) ?? "n/a"} unit="m/s" accent="text-dune-teal" isLightMode={isLightMode} rule={false} />
+                  <StatCard label="Direction from" value={live.dir?.toFixed(0) ?? "n/a"} unit="°" accent="text-dune-teal" isLightMode={isLightMode} rule={false} />
+                  <StatCard label="Valid" value={live.at?.slice(5, 16).replace("T", " ") ?? "n/a"} accent="text-muted-foreground" isLightMode={isLightMode} rule={false} />
                 </div>
               )}
               <p className="caption mt-4">CAMS global via Open-Meteo, 0.4°, 3-hourly</p>
-            </Panel>
+            </Fold>
           )}
 
-          <Panel title="Surface and treatment" isLightMode={isLightMode}>
+          <Fold
+            className="border-t border-border pt-5"
+            title="Surface and treatment"
+            lede="The three inputs you can change: what the ground is made of, what the crust adds, and how far upwind it sits."
+            wide
+          >
             <Slider label="Soil clay content" value={clay} onChange={setClay} min={0} max={25} step={0.5} unit="%" isLightMode={isLightMode} hint="Clay sets the sandblasting efficiency: how much fine dust the hopping grains knock loose. Dune sand has almost none." />
             {blast.capped && (
               <p className="mb-4 text-[length:var(--text-micro)] text-dune-rose">
@@ -538,21 +555,26 @@ export default function ExposureWorkspace() {
               measured, and the strength it converts to is provisional too.
             </p>
             <Slider label="Treated patch to asset" value={patchDist} onChange={setPatchDist} min={1} max={200} step={1} unit="m" isLightMode={isLightMode} hint="How far the treated ground sits upwind. The capture fraction falls away fast with distance." />
-          </Panel>
+          </Fold>
         </div>
       </div>
 
-      {/* outputs */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Panel
+      {/* Outputs. One column of folds rather than a grid of panels: collapsed,
+          they read as a list of questions the reader can open, which is the
+          point of folding them at all. */}
+      <div className="space-y-5">
+        <Fold
+          className="border-t border-border pt-5"
           title="Fraction of sand reaching the site"
-          isLightMode={isLightMode}
+          lede="How much of the sand leaving the treated patch actually arrives, before and after treatment."
+          defaultOpen
+          wide
           right={<Grade grade="literature" />}
         >
           <div className="grid grid-cols-2 gap-4">
-            <StatCard label="Near field, untreated" value={(capture * 100).toFixed(1)} unit="%" accent="text-dune-orange" isLightMode={isLightMode} sub={`saltation over ${patchDist} m`} />
-            <StatCard label="Near field, treated" value={(captureTreated * 100).toFixed(1)} unit="%" accent="text-dune-teal" isLightMode={isLightMode} emphasize />
-            <StatCard label="Suspension flux F" value={noTransport ? "0" : (F0 * 1e9).toFixed(2)} unit="µg m⁻² s⁻¹" accent="text-dune-orange" isLightMode={isLightMode} sub="regional, reaches the site" />
+            <StatCard label="Near field, untreated" value={(capture * 100).toFixed(1)} unit="%" accent="text-dune-orange" isLightMode={isLightMode} sub={`saltation over ${patchDist} m`} rule={false} />
+            <StatCard label="Near field, treated" value={(captureTreated * 100).toFixed(1)} unit="%" accent="text-dune-teal" isLightMode={isLightMode} emphasize rule={false} />
+            <StatCard label="Suspension flux F" value={noTransport ? "0" : (F0 * 1e9).toFixed(2)} unit="µg m⁻² s⁻¹" accent="text-dune-orange" isLightMode={isLightMode} sub="regional, reaches the site" rule={false} />
             <StatCard
               label="Drift alignment"
               value={align == null ? "n/a" : (align * 100).toFixed(0)}
@@ -563,24 +585,25 @@ export default function ExposureWorkspace() {
                 align == null
                   ? "no wind above threshold"
                   : `source bearing ${sourceBearing?.toFixed(0)}°, drift ${drift.RDD.toFixed(0)}°`
-              }
-            />
+              } rule={false} />
           </div>
           <p className="mt-4 text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
             <GlossaryText max={2}>
               {"The near-field figure is an upper bound. It ignores repeated re-launch, which extends transport, and it ignores turbulence."}
             </GlossaryText>
           </p>
-        </Panel>
+        </Fold>
 
-        <Panel
+        <Fold
+          className="border-t border-border pt-5"
           title="What the treatment changes"
-          isLightMode={isLightMode}
+          lede="The same calculation run twice, once with the untreated threshold and once with the treated one."
+          wide
           right={<Grade grade="measured" />}
         >
           <div className="grid grid-cols-2 gap-4">
-            <StatCard label="Threshold, untreated" value={uStarT0.toFixed(3)} unit="m/s" accent="text-dune-orange" isLightMode={isLightMode} />
-            <StatCard label="Threshold, treated" value={uStarT.toFixed(3)} unit="m/s" accent="text-dune-teal" isLightMode={isLightMode} />
+            <StatCard label="Threshold, untreated" value={uStarT0.toFixed(3)} unit="m/s" accent="text-dune-orange" isLightMode={isLightMode} rule={false} />
+            <StatCard label="Threshold, treated" value={uStarT.toFixed(3)} unit="m/s" accent="text-dune-teal" isLightMode={isLightMode} rule={false} />
             <StatCard
               label="Saltation flux cut"
               value={noTransport ? "n/a" : (reduction * 100).toFixed(1)}
@@ -588,8 +611,7 @@ export default function ExposureWorkspace() {
               accent="text-dune-teal"
               isLightMode={isLightMode}
               emphasize
-              sub={noTransport ? "untreated bed already still" : undefined}
-            />
+              sub={noTransport ? "untreated bed already still" : undefined} rule={false} />
             <StatCard
               label="Suspension flux cut"
               value={noTransport ? "n/a" : (F0 > 0 ? (1 - Ft / F0) * 100 : 0).toFixed(1)}
@@ -616,21 +638,23 @@ export default function ExposureWorkspace() {
               {(utFreeT).toFixed(1)} m/s. Above that the crust starts transporting again.
             </p>
           )}
-        </Panel>
+        </Fold>
       </div>
 
-      <Panel
+      <Fold
+        className="border-t border-border pt-5"
         title="Cost impact"
-        isLightMode={isLightMode}
+        lede="What the arriving sand costs, and how much of that treating the ground would avoid."
+        wide
         right={<Grade grade={market === "solar" ? "literature" : "unsourced"} />}
       >
         {market === "solar" ? (
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-              <StatCard label="Transmittance loss" value={dep.value?.toFixed(1) ?? "n/a"} unit="%" accent="text-dune-orange" isLightMode={isLightMode} sub="at 2 g/m², 24° tilt" />
-              <StatCard label="Site capacity" value={site?.capacityMw?.toFixed(0) ?? "n/a"} unit="MW" accent="text-muted-foreground" isLightMode={isLightMode} />
-              <StatCard label="DEWA industrial" value="0.126" unit="USD/kWh" accent="text-muted-foreground" isLightMode={isLightMode} sub="retail, not PPA" />
-              <StatCard label="Capacity factor" value={null} accent="text-dune-rose" isLightMode={isLightMode} sub="how much of its rated power the site actually averages" />
+              <StatCard label="Transmittance loss" value={dep.value?.toFixed(1) ?? "n/a"} unit="%" accent="text-dune-orange" isLightMode={isLightMode} sub="at 2 g/m², 24° tilt" rule={false} />
+              <StatCard label="Site capacity" value={site?.capacityMw?.toFixed(0) ?? "n/a"} unit="MW" accent="text-muted-foreground" isLightMode={isLightMode} rule={false} />
+              <StatCard label="DEWA industrial" value="0.126" unit="USD/kWh" accent="text-muted-foreground" isLightMode={isLightMode} sub="retail, not PPA" rule={false} />
+              <StatCard label="Capacity factor" value={null} accent="text-dune-rose" isLightMode={isLightMode} sub="how much of its rated power the site actually averages" rule={false} />
             </div>
             <p className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
               Annual revenue loss needs a capacity factor and the price the site actually
@@ -651,7 +675,7 @@ export default function ExposureWorkspace() {
             </p>
           </div>
         )}
-      </Panel>
+      </Fold>
 
       {/* The commercial case, next to the numbers it prices against. It used to
           be a modal on the landing index whose only button led here. */}
