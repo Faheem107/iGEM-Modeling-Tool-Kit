@@ -804,7 +804,7 @@ export default function EcologicalSpread({
               className={`flex items-center justify-between mt-2 cursor-pointer text-[length:var(--text-caption)] font-sans ${isLightMode ? "text-foreground" : "text-foreground"}`}
             >
               <span className="flex items-center gap-2 font-bold">
-                Redundant orthogonal switch (×)
+                Redundant <span className="whitespace-nowrap">orthogonal switch (×)</span>
               </span>
               <input
                 type="checkbox"

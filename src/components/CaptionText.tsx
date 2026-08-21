@@ -22,19 +22,30 @@ import React from "react";
 /** Micro sign, Greek and Coptic, and the symbol/arrow blocks. */
 const KEEP_CASE = /([µͰ-Ͽ -⯿]+[A-Za-z]*)/;
 
+/**
+ * A short trailing parenthetical or bracket: "(pFBA)", "(fresh)", "[Pa s]".
+ * Left to itself it orphans onto a line of its own the moment the column
+ * narrows, which is exactly what "Optimal Flux Distribution (pFBA)" did.
+ * Captured with the space before it so the whole tail stays with its label.
+ */
+const TRAILING_TAIL = /(\s+[([][^)\]]{1,16}[)\]]\s*)$/;
+
 export function CaptionText({ children }: { children: React.ReactNode }): React.ReactNode {
   if (typeof children === "number") return children;
   if (typeof children === "string") {
-    if (!KEEP_CASE.test(children)) return children;
-    return children.split(KEEP_CASE).map((part, i) =>
-      KEEP_CASE.test(part) ? (
-        <span key={i} className="caption-asis">
-          {part}
-        </span>
-      ) : (
-        <React.Fragment key={i}>{part}</React.Fragment>
-      ),
-    );
+    // Bind a trailing parenthetical to the word before it. Guarded on
+    // tail.index: a label that is ENTIRELY a parenthetical has nothing to bind
+    // it to, and recursing on the whole string again would never terminate.
+    const tail = children.match(TRAILING_TAIL);
+    if (tail && tail.index !== undefined && tail.index > 0) {
+      return (
+        <>
+          <CaptionText>{children.slice(0, tail.index)}</CaptionText>
+          <span className="whitespace-nowrap">{keepCase(tail[1])}</span>
+        </>
+      );
+    }
+    return keepCase(children);
   }
   if (Array.isArray(children)) {
     return children.map((c, i) => (
@@ -43,6 +54,24 @@ export function CaptionText({ children }: { children: React.ReactNode }): React.
       </React.Fragment>
     ));
   }
+  return element(children);
+}
+
+/** Wrap the runs that must escape the uppercase transform. Never recurses. */
+function keepCase(text: string): React.ReactNode {
+  if (!KEEP_CASE.test(text)) return text;
+  return text.split(KEEP_CASE).map((part, i) =>
+      KEEP_CASE.test(part) ? (
+        <span key={i} className="caption-asis">
+          {part}
+        </span>
+      ) : (
+        <React.Fragment key={i}>{part}</React.Fragment>
+      ),
+  );
+}
+
+function element(children: React.ReactNode): React.ReactNode {
   if (React.isValidElement(children)) {
     const el = children as React.ReactElement<{ children?: React.ReactNode }>;
     const inner = el.props?.children;
