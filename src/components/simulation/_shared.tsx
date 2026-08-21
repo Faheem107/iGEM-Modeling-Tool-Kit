@@ -8,8 +8,6 @@
 
 import React, { useState } from "react";
 import { motion } from "motion/react";
-import type { LucideIcon } from "lucide-react";
-import { ChevronDown, Sigma, PlayCircle, BookText, Code2 } from "lucide-react";
 import { useGlossary, GlossaryText } from "../GlossaryTerm";
 import { MODULE_CODE } from "../../lib/moduleCode";
 import type { ModuleId } from "../../lib/prongs";
@@ -50,14 +48,12 @@ export const tooltipStyle = (light: boolean) => ({
 
 export function Panel({
   title,
-  icon: Icon,
   isLightMode,
   children,
   className = "",
   right,
 }: Themed & {
   title: React.ReactNode;
-  icon?: LucideIcon;
   children: React.ReactNode;
   className?: string;
   right?: React.ReactNode;
@@ -71,7 +67,6 @@ export function Panel({
     >
       <div className="mb-4 flex items-center justify-between gap-4 border-b border-border pb-4">
         <h3 className="caption flex items-center gap-2 text-foreground">
-          {Icon && <Icon className="h-3.5 w-3.5 text-dune-teal" />}
           {title}
         </h3>
         {right}
@@ -197,12 +192,10 @@ export function MathDisclosure({
         onClick={() => setOpen((o) => !o)}
         className="caption flex w-full items-center justify-between px-4 py-2 transition-colors hover:text-foreground"
       >
-        <span className="flex items-center gap-2">
-          <Sigma className="h-3.5 w-3.5" /> {label}
+        <span>{label}</span>
+        <span aria-hidden className="caption shrink-0 text-dune-orange">
+          {open ? "−" : "+"}
         </span>
-        <ChevronDown
-          className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`}
-        />
       </button>
       {open && (
         <div
@@ -224,7 +217,6 @@ function ModuleToggle({
   isLightMode,
   moduleId,
   dropAttr,
-  icon: Icon,
   label,
   onOpen,
   hovered,
@@ -236,7 +228,6 @@ function ModuleToggle({
     | "data-sandyx-video"
     | "data-sandyx-sources"
     | "data-sandyx-code";
-  icon: LucideIcon;
   label: string;
   onOpen: () => void;
   hovered: boolean;
@@ -254,7 +245,6 @@ function ModuleToggle({
         hovered ? "border-dune-orange text-dune-orange" : "border-border"
       } ${className}`}
     >
-      <Icon className="h-4 w-4 shrink-0" />
       <span className="text-center leading-tight whitespace-normal break-words">
         {label}
       </span>
@@ -277,7 +267,6 @@ export function ShowMathToggle({
       isLightMode={isLightMode}
       moduleId={moduleId}
       dropAttr="data-sandyx-math"
-      icon={Sigma}
       label={NAV.revealMath}
       onOpen={() => openMath(moduleId)}
       hovered={hoverId === moduleId}
@@ -301,7 +290,6 @@ export function VideoExplanationToggle({
       isLightMode={isLightMode}
       moduleId={moduleId}
       dropAttr="data-sandyx-video"
-      icon={PlayCircle}
       label="Video Explanation"
       onOpen={() => openVideo(moduleId)}
       hovered={hoverId === moduleId}
@@ -325,7 +313,6 @@ export function SourcesToggle({
       isLightMode={isLightMode}
       moduleId={moduleId}
       dropAttr="data-sandyx-sources"
-      icon={BookText}
       label="Sources"
       onOpen={() => openSources(moduleId)}
       hovered={hoverId === moduleId}
@@ -349,7 +336,6 @@ export function CodePlotsToggle({
       isLightMode={isLightMode}
       moduleId={moduleId}
       dropAttr="data-sandyx-code"
-      icon={Code2}
       label="Code & Plots"
       onOpen={() => openCode(moduleId)}
       hovered={hoverId === moduleId}

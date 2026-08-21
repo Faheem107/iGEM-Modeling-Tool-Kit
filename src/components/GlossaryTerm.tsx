@@ -4,19 +4,6 @@ import React from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  X,
-  PlayCircle,
-  BookText,
-  FileText,
-  Loader2,
-  ExternalLink,
-  ArrowRight,
-  Code2,
-  Download,
-  Copy,
-  Check,
-} from "lucide-react";
-import {
   lookupTerm,
   glossaryPhrases,
   type GlossaryEntry,
@@ -183,7 +170,6 @@ function VideoPanel({
               }}
             />
             <div className="flex items-center gap-2 text-foreground">
-              <Loader2 className="h-4 w-4 animate-spin text-dune-rose" />
               <span className="text-[length:var(--text-micro)] font-bold">
                 Please wait, loading the animation…
               </span>
@@ -263,11 +249,6 @@ function CodePanel({
                 : "border-white/15 text-foreground hover:bg-white/10"
             }`}
           >
-            {copied ? (
-              <Check className="h-3.5 w-3.5" />
-            ) : (
-              <Copy className="h-3.5 w-3.5" />
-            )}
             {copied ? "Copied" : "Copy"}
           </button>
           <a
@@ -275,7 +256,7 @@ function CodePanel({
             download={filename}
             className="inline-flex items-center gap-2 text-[length:var(--text-caption)] font-bold px-2 py-2 rounded-[4px] bg-dune-orange text-dune-basalt transition-opacity hover:opacity-90"
           >
-            <Download className="h-3.5 w-3.5" /> Download .py
+            Download .py
           </a>
         </div>
       </div>
@@ -286,7 +267,7 @@ function CodePanel({
       >
         {code === null && !failed ? (
           <div className="flex items-center gap-2 p-4 text-[length:var(--text-micro)] text-muted-foreground">
-            <Loader2 className="h-4 w-4 animate-spin" /> Loading code…
+            Loading code…
           </div>
         ) : failed ? (
           <div className="p-4 text-[length:var(--text-micro)] text-muted-foreground">
@@ -561,7 +542,7 @@ export const GlossaryProvider: React.FC<{
                           : "border-white/15 text-foreground hover:bg-white/10"
                       }`}
                     >
-                      <X className="h-3.5 w-3.5" /> Close
+                      Close
                     </button>
                   </div>
 
@@ -624,8 +605,7 @@ export const GlossaryProvider: React.FC<{
                         className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-[4px] bg-dune-orange text-dune-basalt text-[length:var(--text-micro)] font-bold uppercase tracking-[0.1em] transition-opacity hover:opacity-90"
                       >
                         {entry.jumpLabel ?? "Go to the module"}
-                        <ArrowRight className="h-3.5 w-3.5" />
-                      </button>
+                        </button>
                     );
                   })()}
 
@@ -690,7 +670,7 @@ export const GlossaryProvider: React.FC<{
                           : "border-white/15 text-foreground hover:bg-white/10"
                       }`}
                     >
-                      <X className="h-3.5 w-3.5" /> Close
+                      Close
                     </button>
                   </div>
 
@@ -766,7 +746,7 @@ export const GlossaryProvider: React.FC<{
                             : "bg-dune-rose/15 text-dune-rose"
                         }`}
                       >
-                        <PlayCircle className="h-3.5 w-3.5" /> Video Explanation
+                        Video Explanation
                       </span>
                     </div>
                     <button
@@ -778,7 +758,7 @@ export const GlossaryProvider: React.FC<{
                           : "border-white/15 text-foreground hover:bg-white/10"
                       }`}
                     >
-                      <X className="h-3.5 w-3.5" /> Close
+                      Close
                     </button>
                   </div>
 
@@ -796,9 +776,6 @@ export const GlossaryProvider: React.FC<{
                           : "border-dune-rose/30 bg-dune-rose/5 text-foreground"
                       }`}
                     >
-                      <PlayCircle
-                        className={`w-8 h-8 mx-auto mb-2 ${isLightMode ? "text-dune-rose" : "text-dune-rose"}`}
-                      />
                       <p className="text-[length:var(--text-micro)] font-semibold">
                         Animation rendering soon
                       </p>
@@ -862,7 +839,7 @@ export const GlossaryProvider: React.FC<{
                             : "bg-dune-orange/15 text-dune-orange"
                         }`}
                       >
-                        <BookText className="h-3.5 w-3.5" /> Sources
+                        Sources
                       </span>
                     </div>
                     <button
@@ -874,7 +851,7 @@ export const GlossaryProvider: React.FC<{
                           : "border-white/15 text-foreground hover:bg-white/10"
                       }`}
                     >
-                      <X className="h-3.5 w-3.5" /> Close
+                      Close
                     </button>
                   </div>
 
@@ -898,21 +875,6 @@ export const GlossaryProvider: React.FC<{
                             : "bg-dune-basalt/50 border-white/10"
                         }`}
                       >
-                        <FileText
-                          className={`w-4 h-4 mt-1 shrink-0 ${
-                            s.kind === "internal"
-                              ? isLightMode
-                                ? "text-dune-teal"
-                                : "text-dune-teal"
-                              : s.kind === "model"
-                                ? isLightMode
-                                  ? "text-dune-orange"
-                                  : "text-dune-orange"
-                                : isLightMode
-                                  ? "text-dune-orange"
-                                  : "text-dune-orange"
-                          }`}
-                        />
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
                             <a
@@ -926,8 +888,7 @@ export const GlossaryProvider: React.FC<{
                               }`}
                             >
                               <span>{s.label}</span>
-                              <ExternalLink className="h-3.5 w-3.5 shrink-0 self-center opacity-60 group-hover/src:opacity-100" />
-                            </a>
+                              </a>
                             <span
                               className={`text-[length:var(--text-caption)] font-black uppercase tracking-wider px-2 py-1 rounded-full ${
                                 s.kind === "internal"
@@ -1006,7 +967,7 @@ export const GlossaryProvider: React.FC<{
                             : "bg-dune-teal/15 text-dune-teal"
                         }`}
                       >
-                        <Code2 className="h-3.5 w-3.5" /> Code &amp; Plots
+                        Code &amp; Plots
                       </span>
                     </div>
                     <button
@@ -1018,7 +979,7 @@ export const GlossaryProvider: React.FC<{
                           : "border-white/15 text-foreground hover:bg-white/10"
                       }`}
                     >
-                      <X className="h-3.5 w-3.5" /> Close
+                      Close
                     </button>
                   </div>
 

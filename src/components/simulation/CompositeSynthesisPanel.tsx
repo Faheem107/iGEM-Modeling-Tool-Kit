@@ -24,14 +24,6 @@ import {
   CartesianGrid,
   Cell,
 } from "recharts";
-import {
-  ShieldAlert,
-  TrendingUp,
-  GitCompareArrows,
-  ArrowDownRight,
-  ArrowUpRight,
-  Activity,
-} from "lucide-react";
 import { ModuleActions } from "./_shared";
 import GlossaryTerm from "../GlossaryTerm";
 import {
@@ -168,7 +160,6 @@ export default function CompositeSynthesisPanel({
             </GlossaryTerm>: what happens when they share a chassis & soil
           </>
         }
-        icon={GitCompareArrows}
         isLightMode={isLightMode}
       >
         {interactions.length === 0 ? (
@@ -181,12 +172,6 @@ export default function CompositeSynthesisPanel({
           <div className="space-y-2">
             {interactions.map((e, i) => {
               const neg = e.percent < 0;
-              const Icon =
-                e.kind === "synergy"
-                  ? ArrowUpRight
-                  : e.kind === "burden"
-                    ? Activity
-                    : ArrowDownRight;
               const tone =
                 e.kind === "synergy"
                   ? isLightMode
@@ -203,8 +188,7 @@ export default function CompositeSynthesisPanel({
                 <div key={i} className={`p-4 rounded-[6px] border ${tone}`}>
                   <div className="flex items-center justify-between gap-4 mb-1">
                     <span className="flex items-center gap-2 text-[length:var(--text-caption)] font-bold">
-                      <Icon className="h-3.5 w-3.5" />
-                      {e.prongs.map((p) => PRONG_LABEL[p]).join(" ↔ ")} ·{" "}
+                          {e.prongs.map((p) => PRONG_LABEL[p]).join(" ↔ ")} ·{" "}
                       {e.mechanism}
                     </span>
                     <span className="font-mono font-black text-[length:var(--text-micro)] shrink-0">
@@ -238,7 +222,6 @@ export default function CompositeSynthesisPanel({
               Failure-Mode Robustness
             </GlossaryTerm>
           }
-          icon={ShieldAlert}
           isLightMode={isLightMode}
         >
           <ResponsiveContainer width="100%" height={260}>
@@ -282,7 +265,6 @@ export default function CompositeSynthesisPanel({
           <div
             className={`mt-2 p-2 rounded-[4px] text-[length:var(--text-caption)] flex items-center gap-2 ${isLightMode ? "bg-dune-orange/10 text-dune-orange" : "bg-dune-orange/20 text-dune-orange"}`}
           >
-            <ShieldAlert className="h-4 w-4 shrink-0" />
             <span>
               Limiting scenario: <b>{limiting.scenario}</b> at{" "}
               {(limiting.resilience * 100).toFixed(0)}% combined resilience.
@@ -292,7 +274,6 @@ export default function CompositeSynthesisPanel({
 
         <Panel
           title="Cohesion Contribution by Prong"
-          icon={TrendingUp}
           isLightMode={isLightMode}
         >
           <ResponsiveContainer width="100%" height={200}>

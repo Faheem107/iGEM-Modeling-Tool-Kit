@@ -2,17 +2,6 @@ import React, { useState, useMemo, useEffect, useRef } from "react";
 import { BiophysicsParams } from "../types";
 import { solveCrossLink } from "../lib/physics";
 import { ModuleActions } from "./simulation/_shared";
-import {
-  Layers,
-  Thermometer,
-  Sun,
-  Moon,
-  Sparkles,
-  SlidersHorizontal,
-  Info,
-  Link2,
-  HelpCircle,
-} from "lucide-react";
 import GlossaryTerm from "./GlossaryTerm";
 import { DUNE, HAIRLINE, INK, STATUS, SURFACE, TINT } from "@/src/lib/palette";
 
@@ -493,9 +482,6 @@ export default function CrossLinkingBiophysics({
             <h3
               className={`text-[length:var(--text-micro)] font-black uppercase tracking-wider flex items-center gap-2 font-mono ${isLightMode ? "text-dune-orange" : "text-foreground"}`}
             >
-              <Layers
-                className={`w-5 h-5 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
-              />
               Bio-cementation{" "}
               <GlossaryTerm term="cross-linking">Cross-Link</GlossaryTerm>{" "}
               Settings
@@ -515,7 +501,7 @@ export default function CrossLinkingBiophysics({
                       : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <Sun className="h-3.5 w-3.5 text-dune-orange" /> Day
+                Day
               </button>
               <button
                 onClick={() => handlePreset("night")}
@@ -529,7 +515,7 @@ export default function CrossLinkingBiophysics({
                       : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <Moon className="h-3.5 w-3.5 text-dune-teal" /> Night
+                Night
               </button>
             </div>
           </div>
@@ -544,9 +530,6 @@ export default function CrossLinkingBiophysics({
                 <span
                   className={`flex items-center gap-2 font-bold font-sans ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
                 >
-                  <Link2
-                    className={`w-4 h-4 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
-                  />
                   Interconnect With Secretion Yield
                 </span>
                 <input
@@ -830,9 +813,6 @@ export default function CrossLinkingBiophysics({
                 : "text-foreground border-border"
             }`}
           >
-            <Sparkles
-              className={`w-5 h-5 ${isLightMode ? "text-dune-orange" : "text-dune-orange"}`}
-            />
             Quartz/SiO₂ Sand Gels Undergoing Coordinate Chelation
           </h3>
           <p
@@ -941,9 +921,6 @@ export default function CrossLinkingBiophysics({
                     : "border-border text-muted-foreground"
                 }`}
               >
-                <Info
-                  className={`w-4 h-4 shrink-0 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
-                />
                 <span>
                   An elevated Shear G ratio protects sand bed structures from
                   erosion up to 50 m/s gale dust storm stresses!

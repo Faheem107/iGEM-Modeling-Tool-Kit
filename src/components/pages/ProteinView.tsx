@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import { useTheme } from "@/components/theme-context";
 import { PortalIntro } from "@/components/portal-intro";
 import { PORTAL_INTROS } from "@/src/lib/portalIntros";
@@ -19,7 +18,7 @@ export default function ProteinView() {
         onClick={() => router.push("/portals")}
         className="mb-6 flex items-center gap-2 px-4 py-2 text-[length:var(--text-micro)] font-semibold rounded-[4px] border border-border bg-secondary hover:brightness-95 transition"
       >
-        <ArrowLeft className="h-4 w-4" /> {NAV.backToPortals}
+        {NAV.backToPortals}
       </button>
       <MolstarProteinExplorer isLightMode={isLightMode} />
     </div>

@@ -35,13 +35,8 @@ export default function PortalsView() {
                 {String(i + 1).padStart(2, "0")}
               </span>
               <span>
-                <span className="flex items-center gap-2">
-                  <span className="[&_svg]:h-4 [&_svg]:w-4" aria-hidden>
-                    {card.icon}
-                  </span>
-                  <span className="wght-head rule-link text-[length:var(--text-h3)] text-foreground">
-                    {card.title}
-                  </span>
+                <span className="wght-head rule-link block text-[length:var(--text-h3)] text-foreground">
+                  {card.title}
                 </span>
                 <span className="mt-2 block max-w-[58ch] text-[length:var(--text-body)] leading-relaxed text-muted-foreground">
                   {card.desc}

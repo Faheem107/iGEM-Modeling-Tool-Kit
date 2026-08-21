@@ -1,13 +1,3 @@
-import {
-  Workflow,
-  Bug,
-  Beaker,
-  Dna,
-  FlaskConical,
-  ShieldAlert,
-  Waves,
-} from "lucide-react";
-import type { ReactNode } from "react";
 import { PRONGS } from "./portalsData";
 import { PORTAL_NAMES, KILL_SWITCH_TITLE } from "@/content/copy";
 
@@ -24,7 +14,6 @@ export interface PortalIntroContent {
   /** localStorage key so a per-portal "don't show again" choice can be remembered. */
   storageKey: string;
   title: string;
-  icon: ReactNode;
   steps: [IntroStep, IntroStep, IntroStep];
 }
 
@@ -35,7 +24,6 @@ export const PORTAL_INTROS: Record<
   pipeline: {
     storageKey: "portal-intro:pipeline-fba",
     title: PORTAL_NAMES.pipeline,
-    icon: <Workflow className="h-4 w-4 text-dune-teal" />,
     steps: [
       {
         body: "A constraint-based model of the engineered B. subtilis metabolism, the mathematical core that decides how the cell splits its carbon between growing and making bio-adhesive.",
@@ -51,7 +39,6 @@ export const PORTAL_INTROS: Record<
   "wet-lab": {
     storageKey: "portal-intro:wet-lab",
     title: PORTAL_NAMES.wetlab,
-    icon: <Beaker className="h-4 w-4 text-dune-orange" />,
     steps: [
       {
         body: "A 2-D sandbox running the same assays the wet-lab team runs on treated sand.",
@@ -67,7 +54,6 @@ export const PORTAL_INTROS: Record<
   protein: {
     storageKey: "portal-intro:protein",
     title: PORTAL_NAMES.protein,
-    icon: <Dna className="h-4 w-4 text-dune-rose" />,
     steps: [
       {
         body: "A structural viewer for the two enzymes the design turns on: carbonic anhydrase, and the sortase that pins it to the cell wall.",
@@ -83,7 +69,6 @@ export const PORTAL_INTROS: Record<
   "xanthan-flow": {
     storageKey: "portal-intro:xanthan-flow",
     title: PORTAL_NAMES.xanthan,
-    icon: <Waves className="h-4 w-4 text-dune-teal" />,
     steps: [
       {
         body: "A power-law (Ostwald–de Waele) rheology model for how a xanthan gum solution, the shear-thinning carrier fluid used to pump the biopolymer mix, moves through the tubing that delivers it to the dune.",
@@ -102,7 +87,6 @@ export const PORTAL_INTROS: Record<
 export const KILL_SWITCH_INTRO: PortalIntroContent = {
   storageKey: "portal-intro:killswitch",
   title: KILL_SWITCH_TITLE,
-  icon: <ShieldAlert className="h-4 w-4 text-dune-orange" />,
   steps: [
     {
       body: "A MazE/MazF toxin and antitoxin pair, carried by the engineered B. subtilis. MazF cuts the cell's own RNA and kills it. MazE binds MazF and stops that, but breaks down fast, so the cell has to keep making more to stay alive.",
@@ -137,7 +121,6 @@ export function buildModelIntro(prongIds: number[]): PortalIntroContent {
       chosen.length === 0
         ? "Tailored Simulation"
         : `Tailored Simulation of ${namesJoined}`,
-    icon: <FlaskConical className="h-4 w-4 text-dune-orange" />,
     steps: [
       {
         body:

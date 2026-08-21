@@ -20,7 +20,6 @@ import {
   Legend,
   ReferenceLine,
 } from "recharts";
-import { ScanLine, TriangleAlert } from "lucide-react";
 import { Panel, StatCard, chartColors, tooltipStyle, Themed } from "./_shared";
 import GlossaryTerm from "../GlossaryTerm";
 import { ModuleActions } from "./_shared";
@@ -122,7 +121,6 @@ export default function GrainSizeCoveragePanel({
             vs grain diameter
           </>
         }
-        icon={ScanLine}
         isLightMode={isLightMode}
       >
         <ResponsiveContainer width="100%" height={280}>
@@ -226,7 +224,6 @@ export default function GrainSizeCoveragePanel({
               : "bg-dune-orange/20 text-dune-orange border-dune-orange/40"
         }`}
       >
-        <TriangleAlert className="h-4 w-4 shrink-0 mt-1" />
         <span>
           {multi ? (
             <>

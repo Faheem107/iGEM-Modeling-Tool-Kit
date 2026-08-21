@@ -20,7 +20,6 @@ import {
   ReferenceDot,
   ReferenceLine,
 } from "recharts";
-import { Droplets, ShieldCheck, CloudRain } from "lucide-react";
 import GlossaryTerm, { GlossaryText } from "../../GlossaryTerm";
 import type { AlginateParams } from "../../../types";
 import { DUNE, STATUS } from "@/src/lib/palette";
@@ -122,7 +121,6 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
     <>
       <Panel
         title="Applied Alginate Treatment"
-        icon={Droplets}
         isLightMode={isLightMode}
       >
         <div className="space-y-4">
@@ -238,7 +236,6 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
             <GlossaryTerm term="egg-box">Egg-Box Gelation</GlossaryTerm> vs Ca²⁺
           </>
         }
-        icon={ShieldCheck}
         isLightMode={isLightMode}
       >
         <ResponsiveContainer width="100%" height={150}>
@@ -296,7 +293,6 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
               </GlossaryTerm>
             </>
           }
-          icon={CloudRain}
           isLightMode={isLightMode}
         >
           <ResponsiveContainer width="100%" height={150}>
@@ -349,7 +345,6 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
               vs Humidity
             </>
           }
-          icon={Droplets}
           isLightMode={isLightMode}
         >
           <ResponsiveContainer width="100%" height={150}>

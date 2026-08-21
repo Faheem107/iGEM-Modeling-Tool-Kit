@@ -12,18 +12,6 @@
 
 import React, { useMemo } from "react";
 import { motion } from "motion/react";
-import {
-  ArrowLeft,
-  ShieldAlert,
-  Activity,
-  Share2,
-  Sprout,
-  Boxes,
-  Skull,
-  ShieldCheck,
-  Timer,
-  type LucideIcon,
-} from "lucide-react";
 
 import {
   DynamicsTab,
@@ -57,7 +45,6 @@ interface KsSection {
   title: string;
   blurb: string;
   scale: string;
-  icon: LucideIcon;
   render: (isLightMode: boolean) => React.ReactNode;
 }
 
@@ -68,7 +55,6 @@ const SECTIONS: KsSection[] = [
     blurb:
       "MazE/MazF toxin and antitoxin ODE. The aTc trigger over-produces the toxin on demand, and plasmid dilution removes the antitoxin so the strain self-limits.",
     scale: "genetic",
-    icon: Activity,
     render: (l) => <DynamicsTab isLightMode={l} />,
   },
   {
@@ -77,7 +63,6 @@ const SECTIONS: KsSection[] = [
     blurb:
       "The E. coli MazEF split. A wild recipient gets the toxin but not the cognate antitoxin, so it self-eliminates after gene transfer.",
     scale: "ecology",
-    icon: Share2,
     render: (l) => <HgtTab isLightMode={l} />,
   },
   {
@@ -86,7 +71,6 @@ const SECTIONS: KsSection[] = [
     blurb:
       "Germinate-then-kill over rounds. Enhanced germination wakes dormant spores so the toxin can clear them, down to a superdormant floor.",
     scale: "ecology",
-    icon: Sprout,
     render: (l) => <SporeTab isLightMode={l} />,
   },
   {
@@ -95,7 +79,6 @@ const SECTIONS: KsSection[] = [
     blurb:
       "Real toxin and antitoxin coordinates from the PDB, showing the neutralised complex and why the lock-and-key pairing contains gene transfer.",
     scale: "protein",
-    icon: Boxes,
     render: (l) => <StructuresTab isLightMode={l} />,
   },
 ];
@@ -127,10 +110,9 @@ export default function KillSwitchWorkspace({ isLightMode, onBack }: Props) {
           onClick={onBack}
           className="caption mb-6 inline-flex items-center gap-2 transition-colors hover:text-foreground"
         >
-          <ArrowLeft className="h-3.5 w-3.5" /> {NAV.backToOverview}
+          {NAV.backToOverview}
         </button>
         <h1 className="flex items-center gap-2 text-[length:var(--text-h1)] text-foreground">
-          <ShieldAlert className="h-4 w-4 shrink-0 text-dune-orange" />
           {KILL_SWITCH_TITLE}
         </h1>
         <p className="caption mt-4 flex flex-wrap items-center gap-x-4">
@@ -148,7 +130,6 @@ export default function KillSwitchWorkspace({ isLightMode, onBack }: Props) {
         <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-6 md:grid-cols-4">
           <HeadlineStat
             isLightMode={isLightMode}
-            icon={Skull}
             label="Time to 3-log kill"
             value={stats.tKill === null ? "48+" : stats.tKill.toFixed(1)}
             unit={stats.tKill === null ? "" : "h"}
@@ -156,21 +137,18 @@ export default function KillSwitchWorkspace({ isLightMode, onBack }: Props) {
           />
           <HeadlineStat
             isLightMode={isLightMode}
-            icon={Timer}
             label="Viability @ 48 h"
             value={stats.finalLog.toFixed(1)}
             unit="log"
           />
           <HeadlineStat
             isLightMode={isLightMode}
-            icon={ShieldCheck}
             label="HGT containment"
             value={(stats.containment * 100).toFixed(1)}
             unit="%"
           />
           <HeadlineStat
             isLightMode={isLightMode}
-            icon={Sprout}
             label="Spore log-reduction"
             value={stats.sporeLog.toFixed(1)}
             unit="log"
@@ -195,7 +173,6 @@ export default function KillSwitchWorkspace({ isLightMode, onBack }: Props) {
             >
               <SectionHeader
                 isLightMode={isLightMode}
-                icon={m.icon}
                 index={i}
                 title={m.title}
                 blurb={m.blurb}
@@ -216,14 +193,12 @@ export default function KillSwitchWorkspace({ isLightMode, onBack }: Props) {
 
 function SectionHeader({
   isLightMode,
-  icon: Icon,
   index,
   title,
   blurb,
   scale,
 }: {
   isLightMode: boolean;
-  icon: LucideIcon;
   index: number;
   title: string;
   blurb: string;
@@ -238,7 +213,6 @@ function SectionHeader({
         <span className="opacity-60">{scale}</span>
       </div>
       <h2 className="flex items-center gap-2 text-[length:var(--text-h3)] text-foreground">
-        <Icon className="h-4 w-4 shrink-0 text-dune-orange" />
         {title}
       </h2>
       <p className="mt-2 max-w-[70ch] text-[length:var(--text-micro)] leading-snug text-muted-foreground">
@@ -250,14 +224,12 @@ function SectionHeader({
 
 function HeadlineStat({
   isLightMode,
-  icon: Icon,
   label,
   value,
   unit,
   emphasize,
 }: {
   isLightMode: boolean;
-  icon: LucideIcon;
   label: string;
   value: string;
   unit: string;
@@ -267,7 +239,7 @@ function HeadlineStat({
     // A figure on a rule, matching the simulation workspace.
     <div className={`border-t pt-4 ${emphasize ? "border-dune-orange" : "border-border"}`}>
       <span className="caption mb-2 flex items-center gap-2">
-        <Icon className="h-3.5 w-3.5 shrink-0" /> {label}
+        {label}
       </span>
       <div className="flex items-baseline gap-2">
         <span

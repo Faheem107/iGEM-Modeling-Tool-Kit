@@ -10,7 +10,6 @@
 
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, Ban, Combine, Gauge, ShieldCheck, Wind } from "lucide-react";
 
 import { PRONGS as PRONG_COPY } from "../../lib/portalsData";
 
@@ -461,7 +460,6 @@ export default function SimulationWorkspace({
         <span className="opacity-60">{m.scale}</span>
       </div>
       <h2 className="flex items-center gap-2 text-[length:var(--text-h3)] text-foreground">
-        <m.icon className="h-4 w-4 shrink-0 text-dune-teal" />
         {m.title}
       </h2>
       <p className="mt-2 max-w-[70ch] text-[length:var(--text-micro)] leading-snug text-muted-foreground">
@@ -478,7 +476,7 @@ export default function SimulationWorkspace({
           onClick={onBack}
           className="caption mb-6 inline-flex items-center gap-2 transition-colors hover:text-foreground"
         >
-          <ArrowLeft className="h-3.5 w-3.5" /> {NAV.backToOverview}
+          {NAV.backToOverview}
         </button>
         <h1 className="text-[length:var(--text-h1)] text-foreground">
           {combinationLabel(prongs)}
@@ -486,10 +484,8 @@ export default function SimulationWorkspace({
         <p className="caption mt-4 flex flex-wrap items-center gap-x-4 gap-y-1">
           {prongs.map((p) => {
             const P = PRONGS[p];
-            const Icon = P.icon;
             return (
               <span key={p} className="inline-flex items-center gap-2">
-                <Icon className="h-3.5 w-3.5 text-dune-teal" />
                 {P.title}
               </span>
             );
@@ -500,7 +496,6 @@ export default function SimulationWorkspace({
         <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-6 md:grid-cols-4">
           <HeadlineStat
             isLightMode={isLightMode}
-            icon={Wind}
             label="Untreated threshold"
             termKey="untreated-threshold"
             value={`${uStarToFreestream(headline.uStarT0).toFixed(1)}`}
@@ -508,7 +503,6 @@ export default function SimulationWorkspace({
           />
           <HeadlineStat
             isLightMode={isLightMode}
-            icon={ShieldCheck}
             label="Treated threshold"
             termKey="treated-threshold"
             value={`${uStarToFreestream(headline.uStarT).toFixed(1)}`}
@@ -517,7 +511,6 @@ export default function SimulationWorkspace({
           />
           <HeadlineStat
             isLightMode={isLightMode}
-            icon={Gauge}
             label="Erosion reduction"
             termKey="erosion-reduction"
             value={`${(headline.fluxReduction * 100).toFixed(0)}`}
@@ -525,7 +518,6 @@ export default function SimulationWorkspace({
           />
           <HeadlineStat
             isLightMode={isLightMode}
-            icon={Combine}
             label="Composite cohesion"
             termKey="composite-cohesion"
             value={(composite.totalCohesion * 1000).toFixed(1)}
@@ -571,7 +563,6 @@ function AlginateRationaleBanner({ isLightMode }: { isLightMode: boolean }) {
   return (
     <div className="mb-12 border-t border-dune-rose pt-6">
       <div className="mb-4 flex items-center gap-2 text-dune-rose">
-        <Ban className="h-3.5 w-3.5 shrink-0" />
         <h2 className="caption text-dune-rose">{ALGINATE_STATUS}</h2>
       </div>
       <p className="mb-4 max-w-[70ch] text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
@@ -590,7 +581,6 @@ function AlginateRationaleBanner({ isLightMode }: { isLightMode: boolean }) {
 
 function HeadlineStat({
   isLightMode,
-  icon: Icon,
   label,
   termKey,
   value,
@@ -598,7 +588,6 @@ function HeadlineStat({
   emphasize,
 }: {
   isLightMode: boolean;
-  icon: React.ComponentType<{ className?: string }>;
   label: string;
   termKey?: string;
   value: string;
@@ -610,7 +599,6 @@ function HeadlineStat({
     // number rather than a tinted box.
     <div className={`border-t pt-4 ${emphasize ? "border-dune-orange" : "border-border"}`}>
       <span className="caption mb-2 flex items-center gap-2">
-        <Icon className="h-3.5 w-3.5 shrink-0" />
         {termKey ? <Term k={termKey}>{label}</Term> : label}
       </span>
       <div className="flex items-baseline gap-2">

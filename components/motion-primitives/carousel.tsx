@@ -10,7 +10,6 @@ import {
 } from "react";
 import { motion, Transition, useMotionValue } from "motion/react";
 import { cn } from "@/lib/utils";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export type CarouselContextType = {
   index: number;
@@ -153,10 +152,7 @@ function CarouselNavigation({
           }
         }}
       >
-        <ChevronLeft
-          className="stroke-border dark:stroke-border"
-          size={16}
-        />
+        Prev
       </button>
       <button
         type="button"
@@ -178,10 +174,7 @@ function CarouselNavigation({
           }
         }}
       >
-        <ChevronRight
-          className="stroke-border dark:stroke-border"
-          size={16}
-        />
+        Next
       </button>
     </div>
   );

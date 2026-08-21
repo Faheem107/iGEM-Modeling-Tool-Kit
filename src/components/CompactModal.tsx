@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { useScrollLock } from "@/src/lib/scrollLock";
-import { X } from "lucide-react";
 import { useHighlight, useStick } from "@/src/lib/motion/pointer";
 
 /**
@@ -105,7 +104,7 @@ export default function CompactModal({
                   data-cursor-radius="4"
                   className="-mr-1 -mt-1 shrink-0 rounded-[4px] border border-border p-2 text-muted-foreground transition-colors hover:border-dune-orange/50 hover:text-dune-orange"
                 >
-                  <X className="h-4 w-4" />
+                  Close
                 </button>
               </div>
 

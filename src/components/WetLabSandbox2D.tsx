@@ -1,18 +1,4 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import {
-  Wind,
-  ShieldCheck,
-  HelpCircle,
-  Sliders,
-  RefreshCw,
-  Layers,
-  ArrowLeft,
-  Play,
-  Pause,
-  Thermometer,
-  Droplet,
-  Beaker,
-} from "lucide-react";
 import GlossaryTerm from "./GlossaryTerm";
 import { ModuleActions } from "./simulation/_shared";
 import { PORTAL_NAMES } from "@/content/copy";
@@ -418,8 +404,7 @@ export default function WetLabSandbox2D({
         <div
           className={`p-2 rounded-[6px] ${isLightMode ? "bg-dune-teal/10 text-dune-teal" : "bg-dune-teal/40 text-dune-teal"}`}
         >
-          <Beaker className="h-4 w-4" />
-        </div>
+          </div>
         <div>
           <h3
             className={`text-[length:var(--text-micro)] font-black uppercase tracking-wider ${isLightMode ? "text-foreground" : "text-foreground"}`}
@@ -446,9 +431,6 @@ export default function WetLabSandbox2D({
         >
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <Thermometer
-                className={`w-4 h-4 ${isLightMode ? "text-dune-rose" : "text-dune-rose"}`}
-              />
               <h3 className="font-bold text-[length:var(--text-micro)] uppercase tracking-wider font-mono">
                 1. Lab Inputs
               </h3>
@@ -617,9 +599,6 @@ export default function WetLabSandbox2D({
             className={`p-4 rounded-[6px] border mt-6 ${isLightMode ? "bg-card border-dune-orange/10" : "bg-dune-ink border-border"}`}
           >
             <div className="flex items-center gap-2 mb-4">
-              <Wind
-                className={`w-4 h-4 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
-              />
               <h3 className="font-bold text-[length:var(--text-micro)] uppercase tracking-wider font-mono">
                 2. Storm Simulation
               </h3>
@@ -671,7 +650,7 @@ export default function WetLabSandbox2D({
                   className={`text-[length:var(--text-caption)] font-bold uppercase transition-colors ${stormActive ? "text-dune-maroon" : isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
                 >
                   {stormActive
-                    ? "⚠ GALE FORCE EVENT ACTIVE"
+                    ? "GALE FORCE EVENT ACTIVE"
                     : "Trigger Sudden Gale Event"}
                 </span>
               </label>
@@ -687,11 +666,6 @@ export default function WetLabSandbox2D({
                   : "bg-dune-basalt hover:bg-card text-foreground hover:text-foreground border-border"
               }`}
             >
-              {isSimulating ? (
-                <Pause className="h-3.5 w-3.5" />
-              ) : (
-                <Play className="h-3.5 w-3.5" />
-              )}
               {isSimulating ? "Pause dune grid" : "Resume dune grid"}
             </button>
 
@@ -704,7 +678,6 @@ export default function WetLabSandbox2D({
               }`}
               title="Reset grid simulation"
             >
-              <RefreshCw className="h-3.5 w-3.5" />
               Reset
             </button>
           </div>

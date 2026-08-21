@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Sun, Moon } from "lucide-react";
 import { useTheme } from "@/components/theme-context";
 import GlobalSandyx from "@/src/components/GlobalSandyx";
 import CustomCursor from "@/src/components/CustomCursor";
@@ -107,13 +106,9 @@ export function AppChrome() {
     <button
       onClick={() => setIsLightMode(!isLightMode)}
       aria-label={isLightMode ? "Switch to dark theme" : "Switch to light theme"}
-      className="grid h-8 w-8 shrink-0 place-items-center border border-border text-muted-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
+      className="caption shrink-0 border border-border px-3 py-2 text-muted-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
     >
-      {isLightMode ? (
-        <Moon className="h-3.5 w-3.5" strokeWidth={2} />
-      ) : (
-        <Sun className="h-3.5 w-3.5" strokeWidth={2} />
-      )}
+      {isLightMode ? "Dark" : "Light"}
     </button>
   );
 

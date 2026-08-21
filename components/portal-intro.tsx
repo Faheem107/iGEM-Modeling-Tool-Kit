@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { ArrowRight, X } from "lucide-react";
 import { TextEffect } from "@/components/motion-primitives/text-effect";
 import type { PortalIntroContent } from "@/src/lib/portalIntros";
 
@@ -70,7 +69,7 @@ export function PortalIntro({ content }: { content: PortalIntroContent }) {
               aria-label="Close and enter"
               className="absolute right-6 top-6 rounded-[4px] border border-border p-2 text-muted-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
             >
-              <X className="h-4 w-4" />
+              Close
             </button>
 
             <TextEffect
@@ -119,8 +118,7 @@ export function PortalIntro({ content }: { content: PortalIntroContent }) {
                 onClick={enter}
                 className="caption flex items-center justify-center gap-2 border border-border px-6 py-4 text-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
               >
-                Enter <ArrowRight className="h-3.5 w-3.5" />
-              </button>
+                Enter </button>
             </div>
           </motion.div>
         </motion.div>

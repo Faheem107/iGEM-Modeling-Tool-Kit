@@ -23,7 +23,6 @@ import {
   Legend,
   Cell,
 } from "recharts";
-import { FlaskConical, Anchor, Link2, CheckCircle2 } from "lucide-react";
 import GlossaryTerm, { GlossaryText } from "../../GlossaryTerm";
 import { STATUS, TINT } from "@/src/lib/palette";
 import {
@@ -92,7 +91,6 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
     <>
       <Panel
         title="Anchoring & Display Efficiencies"
-        icon={FlaskConical}
         isLightMode={isLightMode}
       >
         <div className="space-y-4">
@@ -167,9 +165,6 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
             : "bg-dune-teal/15 border-dune-teal/40"
         }`}
       >
-        <CheckCircle2
-          className={`w-7 h-7 shrink-0 ${isLightMode ? "text-dune-teal" : "text-dune-teal"}`}
-        />
         <div>
           <span
             className={`block text-[length:var(--text-caption)] font-bold uppercase tracking-wider ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
@@ -203,7 +198,6 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
             <GlossaryTerm term="cwbd-binding">Binding Motif</GlossaryTerm>
           </>
         }
-        icon={Anchor}
         isLightMode={isLightMode}
       >
         <ResponsiveContainer width="100%" height={240}>
@@ -273,7 +267,6 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
       <p
         className={`text-[length:var(--text-caption)] flex items-start gap-2 ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
       >
-        <Link2 className="h-3.5 w-3.5 text-dune-teal mt-1 shrink-0" />
         <GlossaryText>
           Display efficiency is the product of three independent steps, export
           times dimerization times anchoring, so it can never exceed the worst
