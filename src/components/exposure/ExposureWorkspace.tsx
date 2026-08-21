@@ -392,7 +392,7 @@ export default function ExposureWorkspace() {
           {fullyArrested && (
             <p className="mt-2 text-[length:var(--text-micro)] leading-relaxed text-dune-teal">
               The treated bed does not move at all at this wind. That is a real result of the
-              threshold shift, not a rounded-[4px] figure, but it holds only up to about{" "}
+              threshold shift, not a rounded figure, but it holds only up to about{" "}
               {(utFreeT).toFixed(1)} m/s. Above that the crust starts transporting again.
             </p>
           )}
