@@ -160,7 +160,8 @@ export default function EconomicScalabilityEngine({
         <StatCard
           isLightMode={isLightMode}
           label="All-in cost / ha"
-          value={`$${Math.round(cost.costPerHa).toLocaleString()}`}
+          value={Math.round(cost.costPerHa).toLocaleString()}
+          unit="USD"
           accent={isLightMode ? "text-dune-orange" : "text-dune-orange"}
           emphasize
           sub={combinationLabel(selected)}
@@ -168,7 +169,8 @@ export default function EconomicScalabilityEngine({
         <StatCard
           isLightMode={isLightMode}
           label="Total project cost"
-          value={`$${Math.round(cost.totalCost).toLocaleString()}`}
+          value={Math.round(cost.totalCost).toLocaleString()}
+          unit="USD"
           accent={isLightMode ? "text-foreground" : "text-foreground"}
           sub={`${targetArea} ha + capex`}
         />
@@ -180,7 +182,8 @@ export default function EconomicScalabilityEngine({
               <GlossaryTerm term="chemical-spray">chemical</GlossaryTerm>
             </>
           }
-          value={`${savingsVsChemical.toFixed(0)}%`}
+          value={savingsVsChemical.toFixed(0)}
+          unit="%"
           accent={
             savingsVsChemical > 0
               ? isLightMode
@@ -194,7 +197,7 @@ export default function EconomicScalabilityEngine({
         <StatCard
           isLightMode={isLightMode}
           label={<GlossaryTerm term="co2-sequestration">Net CO₂</GlossaryTerm>}
-          value={`${(cost.co2Total / 1000).toFixed(1)}`}
+          value={(cost.co2Total / 1000).toFixed(1)}
           unit="t"
           accent={
             cost.co2Total <= 0
@@ -205,7 +208,13 @@ export default function EconomicScalabilityEngine({
                 ? "text-muted-foreground"
                 : "text-muted-foreground"
           }
-          sub={cost.co2Total < 0 ? "sequestered" : "neutral"}
+          sub={
+            cost.co2Total < 0
+              ? "locked into the crust"
+              : cost.co2Total > 0
+                ? "released, not locked away"
+                : "breaks even"
+          }
         />
       </div>
 

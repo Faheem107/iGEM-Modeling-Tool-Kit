@@ -88,6 +88,11 @@ export default function CompositeSynthesisPanel({
     [contributions],
   );
 
+  // additiveCohesion of 0 means no prong is contributing yet, so
+  // compositeCohesion returns a ratio of 1 as a guard. Printing that as
+  // "+0%" would state a measured finding of no synergy where there is
+  // simply nothing to compare.
+  const hasSynergy = comp.additiveCohesion > 0;
   const synergyPct = (comp.synergyRatio - 1) * 100;
 
   return (
@@ -137,8 +142,8 @@ export default function CompositeSynthesisPanel({
         <StatCard
           isLightMode={isLightMode}
           label={<GlossaryTerm term="synergy">Synergy</GlossaryTerm>}
-          value={`${synergyPct >= 0 ? "+" : ""}${synergyPct.toFixed(0)}`}
-          unit="%"
+          value={hasSynergy ? `${synergyPct >= 0 ? "+" : ""}${synergyPct.toFixed(0)}` : null}
+          unit={hasSynergy ? "%" : undefined}
           accent={
             synergyPct >= 0
               ? isLightMode
@@ -148,7 +153,7 @@ export default function CompositeSynthesisPanel({
                 ? "text-dune-rose"
                 : "text-dune-rose"
           }
-          sub="vs simple sum"
+          sub={hasSynergy ? "against the two prongs added up separately" : "no prong is contributing yet"}
         />
       </div>
 

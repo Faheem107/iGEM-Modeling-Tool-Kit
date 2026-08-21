@@ -210,7 +210,11 @@ export default function Caco3PrecipitationModule({
           value={result.carbonateWtPercent.toFixed(2)}
           unit="wt%"
           accent={isLightMode ? "text-dune-teal" : "text-dune-teal"}
-          sub={`${(result.vateriteFraction * 100).toFixed(0)}% vaterite → calcite`}
+          sub={
+            Number.isFinite(result.vateriteFraction)
+              ? `${(result.vateriteFraction * 100).toFixed(0)}% still vaterite, turning to calcite`
+              : "nothing precipitated yet"
+          }
         />
         <StatCard
           isLightMode={isLightMode}
