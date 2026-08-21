@@ -340,7 +340,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
           <br />
           dC/dt = k_on·A·T − k_off·C − δ_C·C (sequestered toxin leaves via slow complex turnover)
           <br />
-          μ(T) = μ_max·(1−θ) − d_max·θ, θ = Tⁿ/(K_Tⁿ+Tⁿ); d/dt log₁₀N = μ/ln10
+          µ(T) = µ_max·(1−θ) − d_max·θ, θ = Tⁿ/(K_Tⁿ+Tⁿ); d/dt log₁₀N = µ/ln10
         </MathDisclosure>
       </div>
     </div>

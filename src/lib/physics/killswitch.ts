@@ -152,7 +152,7 @@ function derivs(p: KillSwitchParams, s: State, t: number): State {
   const dT = sigmaT - p.deltaT * s.T - bind + unbind;
   const dC = bind - unbind - p.deltaC * s.C;
   const mu = netGrowthRate(p, s.T);
-  const dLogN = mu / Math.LN10; // d/dt log10(N) = (μ/ln10)
+  const dLogN = mu / Math.LN10; // d/dt log10(N) = (µ/ln10)
   return { A: dA, T: dT, C: dC, logN: dLogN };
 }
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { CaptionText } from "./CaptionText";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { createTimeline, svg, type Timeline } from "animejs";
@@ -769,22 +770,6 @@ function BeatCaption({
  * unit is the whole token: keeping only the µ gives "~100 µM", which is a
  * concentration, not a width.
  */
-const KEEP_CASE = /([\u00B5\u0370-\u03FF\u2000-\u2BFF]+[A-Za-z]*)/;
-function CaptionText({ children }: { children: string }) {
-  return (
-    <>
-      {children.split(KEEP_CASE).map((part, i) =>
-        KEEP_CASE.test(part) ? (
-          <span key={i} className="caption-asis">
-            {part}
-          </span>
-        ) : (
-          <React.Fragment key={i}>{part}</React.Fragment>
-        ),
-      )}
-    </>
-  );
-}
 
 // ---------------------------------------------------------------------------
 // Sandyx, peeking out from behind the "Play as Sandyx" link.

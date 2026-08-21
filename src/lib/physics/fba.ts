@@ -405,7 +405,7 @@ export interface EnvelopePoint {
 }
 
 /**
- * Production envelope (phenotype phase plane): sweep the growth reaction across [0, μmax]
+ * Production envelope (phenotype phase plane): sweep the growth reaction across [0, µmax]
  * and, at each fixed growth, report the achievable product flux range. The upper edge is the
  * growth↔product Pareto front, how much growth must be traded for γ-PGA / glutamate.
  */

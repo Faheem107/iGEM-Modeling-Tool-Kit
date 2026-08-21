@@ -337,7 +337,7 @@ export default function ExposureWorkspace() {
           />
           <p className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
             <GlossaryText max={3}>
-              {"Source areas are mapped on a 0.1 degree grid, about 11 km across, by how often dust is seen over them, and only for March to May, which is the only window published for this region. They do not change when you change the season."}
+              {"Source areas are mapped on a 0.1° grid, about 11 km across, by how often dust is seen over them, and only for March to May, which is the only window published for this region. They do not change when you change the season."}
             </GlossaryText>
           </p>
         </div>
@@ -460,13 +460,13 @@ export default function ExposureWorkspace() {
               )}
               {live && !liveLoading && (
                 <div className="grid grid-cols-2 gap-4">
-                  <StatCard label="Surface dust" value={live.dust?.toFixed(0) ?? "n/a"} unit="ug/m3" accent="text-dune-orange" isLightMode={isLightMode} />
+                  <StatCard label="Surface dust" value={live.dust?.toFixed(0) ?? "n/a"} unit="µg/m³" accent="text-dune-orange" isLightMode={isLightMode} />
                   <StatCard label="Wind at 10 m" value={live.wind?.toFixed(1) ?? "n/a"} unit="m/s" accent="text-dune-teal" isLightMode={isLightMode} />
-                  <StatCard label="Direction from" value={live.dir?.toFixed(0) ?? "n/a"} unit="deg" accent="text-dune-teal" isLightMode={isLightMode} />
+                  <StatCard label="Direction from" value={live.dir?.toFixed(0) ?? "n/a"} unit="°" accent="text-dune-teal" isLightMode={isLightMode} />
                   <StatCard label="Valid" value={live.at?.slice(5, 16).replace("T", " ") ?? "n/a"} accent="text-muted-foreground" isLightMode={isLightMode} />
                 </div>
               )}
-              <p className="caption mt-4">CAMS global via Open-Meteo, 0.4 deg, 3-hourly</p>
+              <p className="caption mt-4">CAMS global via Open-Meteo, 0.4°, 3-hourly</p>
             </Panel>
           )}
 
@@ -479,7 +479,7 @@ export default function ExposureWorkspace() {
                 two. Read the value with that in mind.
               </p>
             )}
-            <Slider label="Crust cohesion from the wet lab" value={cohesion} onChange={setCohesion} min={0} max={0.01} step={0.0002} unit="N/m" isLightMode={isLightMode} />
+            <Slider label="Crust cohesion from the wet lab" value={cohesion} onChange={setCohesion} min={0} max={0.01} step={0.0002} unit="N m⁻¹" isLightMode={isLightMode} />
             <p className="-mt-2 mb-4 text-[length:var(--text-micro)] text-muted-foreground">
               About {(cohesion / 1.5e-5).toFixed(0)} kPa unconfined compressive strength at
               the repo's current UCS scaling, which is itself a placeholder awaiting the
@@ -500,7 +500,7 @@ export default function ExposureWorkspace() {
           <div className="grid grid-cols-2 gap-4">
             <StatCard label="Near field, untreated" value={(capture * 100).toFixed(1)} unit="%" accent="text-dune-orange" isLightMode={isLightMode} sub={`saltation over ${patchDist} m`} />
             <StatCard label="Near field, treated" value={(captureTreated * 100).toFixed(1)} unit="%" accent="text-dune-teal" isLightMode={isLightMode} emphasize />
-            <StatCard label="Suspension flux F" value={noTransport ? "0" : (F0 * 1e9).toFixed(2)} unit="ug/m2/s" accent="text-dune-orange" isLightMode={isLightMode} sub="regional, reaches the site" />
+            <StatCard label="Suspension flux F" value={noTransport ? "0" : (F0 * 1e9).toFixed(2)} unit="µg m⁻² s⁻¹" accent="text-dune-orange" isLightMode={isLightMode} sub="regional, reaches the site" />
             <StatCard
               label="Drift alignment"
               value={align == null ? "n/a" : (align * 100).toFixed(0)}
@@ -510,7 +510,7 @@ export default function ExposureWorkspace() {
               sub={
                 align == null
                   ? "no wind above threshold"
-                  : `source bearing ${sourceBearing?.toFixed(0)} deg, drift ${drift.RDD.toFixed(0)} deg`
+                  : `source bearing ${sourceBearing?.toFixed(0)}°, drift ${drift.RDD.toFixed(0)}°`
               }
             />
           </div>
@@ -575,7 +575,7 @@ export default function ExposureWorkspace() {
         {market === "solar" ? (
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-              <StatCard label="Transmittance loss" value={dep.value?.toFixed(1) ?? "n/a"} unit="%" accent="text-dune-orange" isLightMode={isLightMode} sub="at 2 g/m2, 24 deg tilt" />
+              <StatCard label="Transmittance loss" value={dep.value?.toFixed(1) ?? "n/a"} unit="%" accent="text-dune-orange" isLightMode={isLightMode} sub="at 2 g/m², 24° tilt" />
               <StatCard label="Site capacity" value={site?.capacityMw?.toFixed(0) ?? "n/a"} unit="MW" accent="text-muted-foreground" isLightMode={isLightMode} />
               <StatCard label="DEWA industrial" value="0.126" unit="USD/kWh" accent="text-muted-foreground" isLightMode={isLightMode} sub="retail, not PPA" />
               <StatCard label="Capacity factor" value="needs source" accent="text-dune-rose" isLightMode={isLightMode} />
