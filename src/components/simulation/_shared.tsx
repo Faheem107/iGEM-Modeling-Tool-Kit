@@ -9,6 +9,7 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
 import { useGlossary, GlossaryText } from "../GlossaryTerm";
+import { CaptionText } from "../CaptionText";
 import { MODULE_CODE } from "../../lib/moduleCode";
 import type { ModuleId } from "../../lib/prongs";
 import { NAV } from "@/content/copy";
@@ -66,8 +67,8 @@ export function Panel({
       } ${className}`}
     >
       <div className="mb-4 flex items-center justify-between gap-4 border-b border-border pb-4">
-        <h3 className="caption flex items-center gap-2 text-foreground">
-          {title}
+        <h3 className="caption text-foreground" style={{ textWrap: "balance" }}>
+          <CaptionText>{title}</CaptionText>
         </h3>
         {right}
       </div>
@@ -154,7 +155,9 @@ export function StatCard({
         emphasize ? "border-dune-orange" : "border-border"
       }`}
     >
-      <span className="caption mb-2 block">{label}</span>
+      <span className="caption mb-2 block" style={{ textWrap: "balance" }}>
+        <CaptionText>{label}</CaptionText>
+      </span>
       <div className="flex items-baseline gap-2">
         <span
           className={`tabular-nums ${emphasize ? "text-[length:var(--text-h3)]" : "text-[length:var(--text-body)]"} ${accent}`}

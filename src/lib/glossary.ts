@@ -75,9 +75,9 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
     category: "Metabolic Modeling",
   },
   "growth-rate": {
-    title: "Growth Rate (μ)",
+    title: "Growth Rate (µ)",
     plain:
-      "How fast the bacterial population expands, in units of per-hour. Higher μ means faster growth, which usually leaves fewer resources for γ-PGA.",
+      "How fast the bacterial population expands, in units of per-hour. Higher µ means faster growth, which usually leaves fewer resources for γ-PGA.",
     category: "Metabolic Modeling",
   },
   biomass: {

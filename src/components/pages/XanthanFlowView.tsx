@@ -290,7 +290,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           viscosity-like scale factor); <b>n</b> [dimensionless] is the{" "}
           <b>flow behaviour index</b>. For xanthan gum, n &lt; 1
           (shear-thinning), the smaller n is, the more strongly shear-thinning
-          the fluid is. n = 1 recovers a Newtonian fluid with K = μ.
+          the fluid is. n = 1 recovers a Newtonian fluid with K = µ.
           Literature values for dilute aqueous xanthan gum solutions
           commonly fall in n ≈ 0.15–0.3, K ≈ 1–20 Pa·s<sup>n</sup>. This
           page's working default (≈1% w/w, ≈25 °C) is:
@@ -578,10 +578,10 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
         <div className="overflow-x-auto mb-4">
           <table className="w-full text-[length:var(--text-caption)] border-collapse">
             <thead>
-              <tr
-                className={`text-left uppercase tracking-wider text-[length:var(--text-caption)] font-bold ${isLightMode ? "text-muted-foreground" : "text-muted-foreground"}`}
-              >
-                <th className="py-2 pr-4">Concentration φ</th>
+              <tr className="caption text-left">
+                <th className="py-2 pr-4">
+                  Concentration <span className="caption-asis">φ</span>
+                </th>
                 <th className="py-2 pr-4">K [Pa sⁿ]</th>
                 <th className="py-2 pr-4">n</th>
                 <th className="py-2 pr-4">V [cm/s]</th>
