@@ -257,7 +257,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
     category: "Computation",
   },
   "kill-switch": {
-    title: "Kill Switch (Biocontainment)",
+    title: "Biocontainment Kill Switch",
     plain:
       "A genetically-encoded safety circuit built on the MazE/MazF toxin–antitoxin pair. Adding the aTc trigger (or letting the plasmid dilute out over generations) tips the balance so the MazF toxin shreds the cell's RNA and the engineered bacteria self-limit. A second, E. coli-derived copy kills any wild microbe that picks up the genes by horizontal transfer, keeping the strain from spreading beyond the treated area.",
     category: "Biocontainment",
