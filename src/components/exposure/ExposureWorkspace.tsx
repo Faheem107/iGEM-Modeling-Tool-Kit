@@ -9,7 +9,7 @@ import {
   depositionFromConcentration, energyLossMwh, pvCellFor, revenueLossUsd,
   seasonCapacityFactor, type Mounting, type PvClimatology,
 } from "@/src/lib/physics/pv";
-import { camsFor, type CamsClimatology } from "@/src/lib/camsDust";
+import { camsFor, camsSpreadFor, type CamsClimatology } from "@/src/lib/camsDust";
 import { sourceColor } from "./ExposureMap";
 import { Fold, ModuleActions, Note, Slider, StatCard } from "@/src/components/simulation/_shared";
 import BusinessCaseBookmark from "@/src/components/BusinessCaseBookmark";
@@ -93,6 +93,7 @@ export default function ExposureWorkspace() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [siteQuery, setSiteQuery] = useState("");
   const [showSources, setShowSources] = useState(true);
+  const [showDust, setShowDust] = useState(true);
 
   // Seasonal wind comes from the fitted ERA5 climatology for the cell nearest
   // the selected site. The sliders are an OVERRIDE, off by default: a slider
@@ -286,6 +287,18 @@ export default function ExposureWorkspace() {
    * the seasonal Q from a sector mean speed would zero out months that plainly
    * move sand, because Q goes as the cube of the wind.
    */
+  /**
+   * What the map's dust layer reads over this site, so the wash under the
+   * marker has a number. July is high because July has storms, not because
+   * every July day is dusty, which is what the spread says.
+   */
+  const siteDust = useMemo(() => {
+    if (!site) return null;
+    const mean = camsFor(camsClim, site.lat, site.lon, seasonDef.months);
+    if (mean == null) return null;
+    return { mean, spread: camsSpreadFor(camsClim, site.lat, site.lon, seasonDef.months) };
+  }, [camsClim, site, seasonDef]);
+
   /** Source regions feeding this site this season, as percentages. */
   const shares = useMemo(() => {
     if (!site || !sources.length) return [];
@@ -477,21 +490,47 @@ export default function ExposureWorkspace() {
             onSelect={setSelectedId}
             driftDeg={drift.RDD}
             showSources={showSources}
+            camsClim={camsClim}
+            dustMonths={seasonDef.months}
+            showDust={showDust}
             windField={windField}
             isLightMode={isLightMode}
           />
+          {/* The season picker sits with the map because the map is what it
+              visibly changes. The wind fold reads the same state. */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="caption mr-1">Season</span>
+            {SEASONS.map((s) => (
+              <button
+                key={s.id}
+                {...hl}
+                onClick={() => setSeason(s.id)}
+                aria-pressed={season === s.id}
+                className={`rounded-[4px] border px-2 py-1 text-[length:var(--text-micro)] font-semibold plate-interactive ${
+                  season === s.id
+                    ? "border-dune-orange/60 text-dune-orange"
+                    : "border-border text-muted-foreground"
+                }`}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
           <MapLegend
             showSources={showSources}
             onToggleSources={setShowSources}
+            showDust={showDust}
+            onToggleDust={setShowDust}
             isLightMode={isLightMode}
+            seasonLabel={seasonDef.label}
             windLabel={
               mode === "live"
                 ? "Wind blowing right now, from the current feed"
                 : `Average wind direction across ${seasonDef.label}`
             }
           />
-          <Note label="How the source areas are mapped">
-            {"A 0.1° grid, about 11 km across, shaded by how often dust is seen over each cell. March to May is the only window published for this region, so the shading does not change with the season."}
+          <Note label="Why two dust layers">
+            {"They answer different questions. The pale wash is CAMS, a 1° grid of how much dust is in the air each month, averaged over 2020 to 2024. The coloured areas are Ginoux, a 0.1° grid of where dust is raised from the ground, published for March to May only. Dust raised over the Tigris and Euphrates plain is measured over the Gulf a day later, so a bright wash is not a source."}
           </Note>
         </div>
 
@@ -562,26 +601,10 @@ export default function ExposureWorkspace() {
             <Fold
               className="border-t border-border pt-5"
               title="Seasonal wind"
-              lede="The fitted wind distribution that drives every number on this page."
+              lede={`The fitted wind distribution across ${seasonDef.label}, which drives every number on this page. Pick the season with the map.`}
               wide
               right={<Grade grade={seasonal && !override ? "literature" : "unsourced"} />}
             >
-              <div className="mb-4 flex flex-wrap gap-2">
-                {SEASONS.map((s) => (
-                  <button
-                    key={s.id}
-                    {...hl}
-                    onClick={() => setSeason(s.id)}
-                    className={`rounded-[4px] border px-2 py-1 text-[length:var(--text-micro)] font-semibold plate-interactive ${
-                      season === s.id
-                        ? "border-dune-orange/60 text-dune-orange"
-                        : "border-border text-muted-foreground"
-                    }`}
-                  >
-                    {s.label}
-                  </button>
-                ))}
-              </div>
               {seasonal && !override ? (
                 <div className="space-y-4">
                   <WindRose
@@ -706,6 +729,22 @@ export default function ExposureWorkspace() {
             </p>
           ) : (
             <div className="space-y-4">
+              {siteDust && (
+                <StatCard
+                  label={`Dust in the air here, ${seasonDef.label}`}
+                  value={siteDust.mean.toFixed(0)}
+                  unit="µg m⁻³"
+                  accent="text-dune-orange"
+                  isLightMode={isLightMode}
+                  sub={
+                    siteDust.spread == null
+                      ? undefined
+                      : `± ${siteDust.spread.toFixed(0)} between years, 2020 to 2024`
+                  }
+                  note="A season's mean, not a typical day. The spread is between whole years, so a large one means some years carried storms the others did not, rather than a steady haze."
+                  rule={false}
+                />
+              )}
               <ul className="space-y-3">
                 {shares.slice(0, 6).map((sh) => (
                   <li key={sh.region} className="grid grid-cols-[1fr_auto] items-baseline gap-3">
