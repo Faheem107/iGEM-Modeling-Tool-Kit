@@ -62,6 +62,12 @@ python3 scripts/fetch_soilgrids_clay.py          # ISRIC SoilGrids clay content
 python3 scripts/sync_code.py                     # mirror python_models into public/code
 ```
 
+`scripts/fetch_merra2_dust_emission.py` builds a seasonal dust *emission* grid,
+which is the question neither existing layer answers: Ginoux has emission but
+only for March to May, CAMS has every month but only concentration. It needs a
+free NASA Earthdata Login in `~/.netrc`; the script header says exactly what
+that line looks like. Its output is not committed and nothing reads it yet.
+
 `scripts/verify_weibull_flux.py` checks the closed-form saltation flux against
 brute-force integration and is worth running after any change to the wind
 physics.
