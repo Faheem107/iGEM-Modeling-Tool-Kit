@@ -11,7 +11,7 @@ import {
 } from "@/src/lib/physics/pv";
 import { camsFor, type CamsClimatology } from "@/src/lib/camsDust";
 import { sourceColor } from "./ExposureMap";
-import { Fold, ModuleActions, Slider, StatCard } from "@/src/components/simulation/_shared";
+import { Fold, ModuleActions, Note, Slider, StatCard } from "@/src/components/simulation/_shared";
 import BusinessCaseBookmark from "@/src/components/BusinessCaseBookmark";
 import ExposureMap, { type SourceFeature, type TargetSite } from "./ExposureMap";
 import MapLegend from "./MapLegend";
@@ -28,7 +28,6 @@ import {
   AED_PER_USD, tariffUsdPerKwh, transmittanceLossPercent, type PriceBasis,
 } from "@/src/lib/physics/damage";
 import { useHighlight } from "@/src/lib/motion/pointer";
-import { GlossaryText } from "@/src/components/GlossaryTerm";
 import {
   climatologyField, toWindField, nearestCell,
   type Climatology, type WindField, type WindFieldResponse,
@@ -491,11 +490,9 @@ export default function ExposureWorkspace() {
                 : `Average wind direction across ${seasonDef.label}`
             }
           />
-          <p className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
-            <GlossaryText max={3}>
-              {"Source areas are mapped on a 0.1° grid, about 11 km across, by how often dust is seen over them, and only for March to May, which is the only window published for this region. They do not change when you change the season."}
-            </GlossaryText>
-          </p>
+          <Note label="How the source areas are mapped">
+            {"A 0.1° grid, about 11 km across, shaded by how often dust is seen over each cell. March to May is the only window published for this region, so the shading does not change with the season."}
+          </Note>
         </div>
 
         {/* controls */}
@@ -670,18 +667,22 @@ export default function ExposureWorkspace() {
           >
             <Slider label="Soil clay content" value={clay} onChange={setClay} min={0} max={25} step={0.5} unit="%" isLightMode={isLightMode} hint="Clay sets the sandblasting efficiency: how much fine dust the hopping grains knock loose. Dune sand has almost none." />
             {blast.capped && (
-              <p className="mb-4 text-[length:var(--text-micro)] text-dune-rose">
-                Clamped at 20 percent. Chappell Eq 3 is not valid above that, and SoilGrids
-                reads about 20 percent over UAE dune fields where the petrography says nearer
-                two. Read the value with that in mind.
+              <p className="mb-1 text-[length:var(--text-micro)] text-dune-rose">
+                Clamped at 20 percent.
               </p>
             )}
+            {blast.capped && (
+              <Note label="Why it is clamped" className="mb-4">
+                {"Chappell Eq 3 is not valid above 20 percent. SoilGrids also reads about 20 percent over UAE dune fields where the petrography says nearer two, so the input is doubtful at the clamp as well as past it."}
+              </Note>
+            )}
             <Slider label="Cohesion the crust adds" value={cohesion} onChange={setCohesion} min={0} max={0.01} step={0.0002} unit="N m⁻¹" isLightMode={isLightMode} />
-            <p className="-mt-2 mb-4 text-[length:var(--text-micro)] text-muted-foreground">
-              Roughly {(cohesion / 1.5e-5).toFixed(0)} kPa of crust strength. This is the
-              one number our own lab work has to supply, so it stays an input until it is
-              measured, and the strength it converts to is provisional too.
+            <p className="caption -mt-1">
+              Roughly {(cohesion / 1.5e-5).toFixed(0)} kPa of crust strength
             </p>
+            <Note label="Where this number comes from" className="mb-4 mt-1">
+              {"Nowhere yet. This is the one value our own lab has to measure, so it stays a slider, and the conversion to crust strength is provisional too."}
+            </Note>
             <Slider label="Treated patch to asset" value={patchDist} onChange={setPatchDist} min={1} max={200} step={1} unit="m" isLightMode={isLightMode} hint="How far the treated ground sits upwind. The capture fraction falls away fast with distance." />
           </Fold>
         </div>
@@ -736,11 +737,9 @@ export default function ExposureWorkspace() {
                   </li>
                 ))}
               </ul>
-              <p className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
-                <GlossaryText max={2}>
-                  {"An estimate for suspended dust, the fine material that travels. The sand that piles up and abrades comes from the ground within tens of metres, which is the next section."}
-                </GlossaryText>
-              </p>
+              <Note label="What this covers">
+                {"Suspended dust only, the fine material that travels. The sand that piles up and abrades comes from the ground within tens of metres, which is the next section."}
+              </Note>
             </div>
           )}
         </Fold>
@@ -769,11 +768,9 @@ export default function ExposureWorkspace() {
                   : `source bearing ${sourceBearing?.toFixed(0)}°, drift ${drift.RDD.toFixed(0)}°`
               } rule={false} />
           </div>
-          <p className="mt-4 text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
-            <GlossaryText max={2}>
-              {"The near-field figure is an upper bound. It ignores repeated re-launch, which extends transport, and it ignores turbulence."}
-            </GlossaryText>
-          </p>
+          <Note label="What would make this wrong" className="mt-4">
+            {"The near-field figure is an upper bound. It ignores repeated re-launch, which extends transport, and it ignores turbulence."}
+          </Note>
         </Fold>
 
         <Fold
@@ -800,13 +797,12 @@ export default function ExposureWorkspace() {
               unit={noTransport ? "" : "%"}
               accent="text-dune-teal"
               isLightMode={isLightMode}
+              rule={false}
             />
           </div>
-          <p className="mt-4 text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
-            <GlossaryText max={3}>
-              {"Cohesion is the only thing the product changes. It raises the threshold wind, which raises the lower limit of the flux integral, which drops both the sand and the suspension flux at once."}
-            </GlossaryText>
-          </p>
+          <Note label="Why treatment moves both" className="mt-4">
+            {"Cohesion is the only thing the product changes. It raises the threshold wind, which raises the lower limit of the flux integral, which drops the sand flux and the suspension flux at once."}
+          </Note>
           {noTransport && (
             <p className="mt-2 text-[length:var(--text-micro)] leading-relaxed text-dune-rose">
               At this wind the untreated bed does not move either, so there is no transport
@@ -849,7 +845,7 @@ export default function ExposureWorkspace() {
           <div className="space-y-5">
             {/* The comparison first; everything else supports it. */}
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-              <div className="border-t border-border pt-2">
+              <div>
                 <p className="caption mb-2">What dust costs this site now</p>
                 <p
                   className="tabular-nums text-[length:var(--text-h3)] text-dune-orange"
@@ -877,51 +873,38 @@ export default function ExposureWorkspace() {
                     </p>
                   </>
                 ) : (
-                  <p className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
-                    Too little to put a figure on. Almost all of the dust reaching this
-                    site was raised somewhere else.
-                  </p>
+                  // A stated absence, not a sentence in the slot where the
+                  // figure belongs. The reason is one tap away.
+                  <>
+                    <p className="text-[length:var(--text-h3)] italic text-muted-foreground">
+                      under $1,000
+                    </p>
+                    <Note label="Why" className="mt-2">
+                      {"Almost all of the dust reaching this site was raised hundreds of kilometres away, which treating the ground here does not change."}
+                    </Note>
+                  </>
                 )}
               </div>
             </div>
 
-            {/* The same in words. It must name the part treatment cannot
-                reach, or the figures above read as a claim we do not make. */}
+            {/* The scale of the loss, in units the two figures do not carry.
+                No sentence here: the figures above already say the rest. */}
             {money.usd && (
-              <p className="text-[length:var(--text-body)] leading-relaxed">
-                Dust settling on {site?.name} costs it about{" "}
-                <span className="text-dune-orange">{usd0(money.usd.costUntreated)}</span> of
-                electricity a year, which is{" "}
-                {(money.usd.shareOfRevenue * 100).toFixed(1)}% of what the plant earns, or
-                roughly {plural(money.usd.daysLost, "day")} of output.{" "}
-                {money.usd.saved >= 1000 ? (
-                  <>
-                    Most of it blows in from hundreds of kilometres away, which treating
-                    the ground here does not change. The part treatment reaches is worth
-                    about{" "}
-                    <span className="text-dune-teal">{usd0(money.usd.saved)}</span> a year.
-                  </>
-                ) : (
-                  <>
-                    Nearly all of it blows in from hundreds of kilometres away, so treating
-                    the ground here barely changes this particular number.
-                  </>
-                )}
+              <p className="caption">
+                {(money.usd.shareOfRevenue * 100).toFixed(1)}% of what the plant earns
+                {"  ·  "}
+                {plural(money.usd.daysLost, "day")} of output
               </p>
             )}
 
             {money.usd && (
-              <p className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
-                That is the expected answer, not a broken one. Dune sand is about 0.13
-                percent fine material, so stabilising it removes very little of what soils
-                glass. What treatment is for is the sand that piles against rows and access
-                roads and wears the panels, which the model above sizes but which nobody
-                has published a cost for.
-              </p>
+              <Note label="Why treatment reaches so little of it">
+                {"Dune sand is about 0.13 percent fine material, so stabilising it removes very little of what soils glass. What treatment does address is the sand that piles against rows and access roads and abrades the panels, which the model above sizes and which nobody has published a cost for."}
+              </Note>
             )}
 
             {/* The two inputs that move the answer most. */}
-            <div className="space-y-4 border-t border-border pt-4">
+            <div className="space-y-4 pt-2">
               <div>
                 <p className="caption mb-2">What a lost kilowatt-hour is worth</p>
                 <div className="flex flex-wrap gap-2">
@@ -959,7 +942,7 @@ export default function ExposureWorkspace() {
                 step={0.05}
                 unit=""
                 isLightMode={isLightMode}
-                hint="The weakest input here. Everything above scales with it and we have no published value, so it is a dial rather than a number we made up."
+                note="We have no published value for this, so it is a dial rather than a measurement. Every figure above scales with it."
               />
             </div>
 

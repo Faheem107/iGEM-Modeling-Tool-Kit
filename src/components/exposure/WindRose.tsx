@@ -137,7 +137,9 @@ export default function WindRose({
 
 function Row({ term, value, ink }: { term: string; value: string; ink: string }) {
   return (
-    <div className="border-t border-border pt-2">
+    // No rule: these sit inside an open Fold, where a stack of hairlines reads
+    // as three stray lines rather than as a table.
+    <div>
       <dt className="caption">{term}</dt>
       <dd className="text-[length:var(--text-micro)] tabular-nums" style={{ color: ink }}>
         {value}
