@@ -68,8 +68,9 @@ physics.
 
 ## Contributing
 
-`CLAUDE.md` and `AGENTS.md` carry the house rules: writing style, tone,
-information order, and the design language. They are the same file. Read
+`CLAUDE.md` carries the house rules for anything a reader sees: writing style,
+tone, information order, and the design language. `AGENTS.md` covers how to
+work: what to reuse, what to verify, and what never to invent. Read
 `.claude/RESPONSIBLE_AI_USE.md` before using an assistant on this repository.
 
 ## License

@@ -53,6 +53,41 @@ no em dashes anywhere, including there.
 `WRITING_STYLE.md` is the longer version of this with worked examples. It is
 local-only and not committed, so this section has to stand on its own.
 
+## Information order (applies wherever a number is shown)
+
+The two sections above are about the sentence and the stance. This one is about
+where the sentence goes. All three are one rule.
+
+**The number or result speaks first, alone.** No sentence sits between a figure
+and the next figure explaining what the first one meant. A reader who has not
+yet looked at a number should not be reading about it.
+
+The test before keeping any line of explanatory text: does the reader need this
+*before* they have seen the number, or *after*? If after, it does not sit above
+the fold of that section.
+
+- A clarification goes behind a `Note` (`src/components/simulation/_shared.tsx`),
+  or into one caption-size line, or nowhere. Never a body-size paragraph under a
+  heading or a number. `Note` collapses to a single muted line and opens to
+  prose in place.
+- Prefer cutting to relocating. If prose only restates the figure above it,
+  delete it. Moving it behind a disclosure keeps clutter that had no reader.
+- Editorial commentary is cut, not relocated. Telling the reader how to read a
+  result, or answering a question they have not asked, is not a caveat.
+- A **conditional** warning tied to the state on screen right now stays visible.
+  "Read as a range, this plant has no published price" is not background; it
+  says the number in front of the reader is qualified. Background is what goes
+  behind the `Note`.
+- A missing number renders as a stated absence in the figure's own slot
+  ("under $1,000", "no source yet"), never as a sentence where a figure belongs.
+- Words that are hard to follow get the dotted glossary underline, via `Term` or
+  `GlossaryText`. Not a parenthetical, not a gloss in the next sentence.
+
+**No decorative rules inside a `Fold`, a `Note` or a dialog.** Pass
+`rule={false}` to every `StatCard` inside a `Fold`; a single card that keeps its
+top rule reads as a stray line across the grid. Spacing separates things. A
+hairline is for the boundary between sections, not for the inside of one.
+
 ## Component gotchas (see DESIGN.md §14–16)
 
 - **Mol\* viewer** (`components/molstar-viewer.tsx`): give it a real height via the
