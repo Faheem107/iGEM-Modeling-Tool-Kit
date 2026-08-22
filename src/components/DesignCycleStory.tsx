@@ -232,7 +232,7 @@ export default function DesignCycleStory({
       tl.revert?.();
       tlRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, []);
 
   return (

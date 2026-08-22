@@ -115,21 +115,6 @@ export function smoothNavTo(target: number | HTMLElement, offset = 0) {
   });
 }
 
-/** Jump straight to the model index with no animation. */
-function jumpToModels(offset = -70) {
-  const el = document.getElementById(MODELS_ANCHOR);
-  if (!el) return false;
-  const y = el.getBoundingClientRect().top + window.scrollY + offset;
-  // `force` matters: Lenis can be stopped mid route transition, and without it
-  // the call is silently a no-op.
-  if (window.__lenis)
-    window.__lenis.scrollTo(y, { immediate: true, force: true });
-  else window.scrollTo(0, y);
-  ScrollTrigger.update();
-  settleScrubs();
-  return true;
-}
-
 /**
  * Run once per landing mount, in place of an unconditional scrollTo(0, 0).
  *

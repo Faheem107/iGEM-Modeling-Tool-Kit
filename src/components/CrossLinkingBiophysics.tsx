@@ -23,7 +23,6 @@ export default function CrossLinkingBiophysics({
   pgaAccum,
   isLinked,
   setIsLinked,
-  shearModulus,
   onUpdateShearModulus,
   isLightMode = false,
   environmentalModifier = 1.0,

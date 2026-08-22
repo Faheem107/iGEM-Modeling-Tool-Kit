@@ -65,7 +65,6 @@ const STRUCTURES: Structure[] = [
 ];
 
 export default function MolstarProteinExplorer({
-  isLightMode = false,
   prongs,
   showHeader = true,
 }: {

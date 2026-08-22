@@ -85,7 +85,6 @@ export function Slider({
   step,
   unit,
   onChange,
-  isLightMode,
   accent = "accent-dune-teal",
   hint,
   format,
@@ -225,7 +224,6 @@ export function StatCard({
   value,
   unit,
   accent,
-  isLightMode,
   sub,
   emphasize,
   rule = true,
@@ -301,7 +299,6 @@ export function StatCard({
 
 /** Collapsible block hiding dense formulae behind a toggle (graph-first by default). */
 export function MathDisclosure({
-  isLightMode,
   children,
   label = NAV.revealMath,
 }: Themed & { children: React.ReactNode; label?: string }) {
@@ -336,7 +333,6 @@ export function MathDisclosure({
  * mascot hovers over it. Click it, or drop Sandyx on it, to open the matching window.
  */
 function ModuleToggle({
-  isLightMode,
   moduleId,
   dropAttr,
   label,

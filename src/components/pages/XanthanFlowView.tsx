@@ -293,7 +293,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           the fluid is. n = 1 recovers a Newtonian fluid with K = µ.
           Literature values for dilute aqueous xanthan gum solutions
           commonly fall in n ≈ 0.15–0.3, K ≈ 1–20 Pa·s<sup>n</sup>. This
-          page's working default (≈1% w/w, ≈25 °C) is:
+          page&apos;s working default (≈1% w/w, ≈25 °C) is:
         </p>
         <div className="grid grid-cols-3 gap-4 mb-4">
           <StatCard
@@ -324,7 +324,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           className={`text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}
         >
           Replace these three numbers with a rheometer measurement (or the
-          manufacturer's data sheet) of your actual solution, everything
+          manufacturer&apos;s data sheet) of your actual solution, everything
           below updates automatically, they are the only material inputs to
           the model.
         </p>
@@ -789,7 +789,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
             className={`text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}
           >
             Dashed lines are the five reference concentrations. The bold amber
-            line is your slider's live curve. Moving to a lower concentration
+            line is your slider&apos;s live curve. Moving to a lower concentration
             shifts the curve down and right: the same pressure drives a far
             higher speed.
           </p>
@@ -841,7 +841,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           </li>
           <li>
             Plug them into ΔP(V) (pressure for a target speed) or V(ΔP)
-            (speed from an applied pressure), using R =" "
+            (speed from an applied pressure), using R ={" "}
             {TUBE.radius.toFixed(3)} m and L = {TUBE.length.toFixed(2)} m
             for this tube.
           </li>

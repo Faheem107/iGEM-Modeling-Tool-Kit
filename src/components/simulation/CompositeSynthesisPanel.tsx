@@ -31,7 +31,6 @@ import {
   robustnessMatrix,
   limitingScenario,
   PRONG_LABEL,
-  SCENARIOS,
   type ProngContribution,
   type ProngId,
   type InteractionEffect,
@@ -205,7 +204,7 @@ export default function CompositeSynthesisPanel({
               className={`text-[length:var(--text-caption)] leading-relaxed pt-1 text-muted-foreground`}
             >
               Competition (Ca²⁺) and metabolic burden are applied to each
-              prong's cohesion <b>before</b> the synergy term above, so the
+              prong&apos;s cohesion <b>before</b> the synergy term above, so the
               composite total already reflects them.
             </p>
           </div>

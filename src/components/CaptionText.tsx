@@ -20,7 +20,7 @@ import React from "react";
  */
 
 /** Micro sign, Greek and Coptic, and the symbol/arrow blocks. */
-const KEEP_CASE = /([µͰ-Ͽ -⯿]+[A-Za-z]*)/;
+const KEEP_CASE = /([µͰ-Ͽ\u2000-\u2bff]+[A-Za-z]*)/;
 
 /**
  * A short trailing parenthetical or bracket: "(pFBA)", "(fresh)", "[Pa s]".

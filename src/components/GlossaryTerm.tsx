@@ -110,7 +110,6 @@ export function useGlossary(): GlossaryContextValue {
  */
 function VideoPanel({
   id,
-  isLightMode,
 }: {
   id: ModuleId;
   isLightMode: boolean;
@@ -123,7 +122,7 @@ function VideoPanel({
 
   return (
     <div className="relative aspect-video w-full rounded-[6px] overflow-hidden border border-black/10 bg-black ">
-      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+      { }
       <video
         key={id}
         controls

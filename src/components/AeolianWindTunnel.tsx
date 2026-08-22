@@ -551,7 +551,7 @@ export default function AeolianWindTunnel({
       ro.disconnect();
     };
     // Set up once per binder change; all fast-changing values are read live from drawRef.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [prongKey]);
 
   return (
