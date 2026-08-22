@@ -3,8 +3,6 @@ import { CAConfig } from "../types";
 import GlossaryTerm from "./GlossaryTerm";
 import { ModuleActions } from "./simulation/_shared";
 import {
-  ECOLOGY_CALIB,
-  cval,
   frontKinematics,
   latticeInvasionProb,
   combinedEscapeFrequency,
@@ -92,7 +90,6 @@ export default function EcologicalSpread({
     pEscape,
     deployedPopulation(HECTARE_SPAN_MM, 1),
   );
-  const nihThreshold = cval(ECOLOGY_CALIB.nihEscapeThreshold);
   // Compact scientific-notation formatter for the tiny probabilities.
   const sci = (x: number) => {
     if (x <= 0) return "0";
@@ -317,15 +314,12 @@ export default function EcologicalSpread({
   const updateMetrics = () => {
     const size = config.gridSize;
     let totalBact = 0;
-    let totalDead = 0;
     let totalRes = 0;
     let totalPGA = 0;
 
     for (let r = 0; r < size; r++) {
       for (let c = 0; c < size; c++) {
         if (gridRef.current[r]?.[c] === 1) totalBact++;
-        if (gridRef.current[r]?.[c] === 2 || gridRef.current[r]?.[c] === 3)
-          totalDead++;
         totalRes += resourceGridRef.current[r]?.[c] || 0;
         totalPGA += pgaGridRef.current[r]?.[c] || 0;
       }

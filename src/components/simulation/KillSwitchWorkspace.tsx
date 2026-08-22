@@ -192,7 +192,6 @@ export default function KillSwitchWorkspace({ isLightMode, onBack }: Props) {
 }
 
 function SectionHeader({
-  isLightMode,
   index,
   title,
   blurb,
@@ -223,7 +222,6 @@ function SectionHeader({
 }
 
 function HeadlineStat({
-  isLightMode,
   label,
   value,
   unit,

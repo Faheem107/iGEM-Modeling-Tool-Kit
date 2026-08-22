@@ -27,7 +27,7 @@ interface Props {
   isLightMode: boolean;
 }
 
-export default function SandyxCompanion({ items, isLightMode }: Props) {
+export default function SandyxCompanion({ items }: Props) {
   const [activeId, setActiveId] = React.useState<string | null>(
     items[0]?.id ?? null,
   );

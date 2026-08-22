@@ -86,7 +86,6 @@ export default function KillSwitchModule({ isLightMode }: Themed) {
       <div className="mb-6 flex flex-wrap gap-2">
         {TABS.map((t) => {
           const active = tab === t.id;
-          const Icon = null;
           return (
             <button
               key={t.id}
@@ -705,7 +704,6 @@ export function StructuresTab({ isLightMode }: Themed) {
 // Small labelled toggle (matches the module aesthetic).
 // ------------------------------------------------------------------------------------------
 function Toggle({
-  isLightMode,
   label,
   on,
   onToggle,

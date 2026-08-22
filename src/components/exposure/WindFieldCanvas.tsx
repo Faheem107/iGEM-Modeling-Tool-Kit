@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { EXTENT, H, W, project, unproject } from "./mapExtent";
+import { H, W, project, unproject } from "./mapExtent";
 import { FULL_VIEW, type MapView } from "./useMapView";
 import { sampleField, type WindField } from "@/src/lib/windField";
 import { DUNE } from "@/src/lib/palette";
@@ -211,7 +211,7 @@ export default function WindFieldCanvas({
     // Only the theme rebuilds the loop. The field is read through a ref, so
     // changing month or refreshing the live reading swaps the vectors without
     // restarting the particles.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [isLightMode]);
 
   return (

@@ -117,7 +117,7 @@ export default function ExposureWorkspace() {
   /** Unsourced, and it multiplies the whole chain, so it stays visible. */
   const [retention, setRetention] = useState(0.3);
   /** Days between washes: the deposit that matters is what builds up between. */
-  const [cleanDays, setCleanDays] = useState(21);
+  const [cleanDays] = useState(21);
   const [camsClim, setCamsClim] = useState<CamsClimatology | null>(null);
   const [liveField, setLiveField] = useState<WindField | null>(null);
 

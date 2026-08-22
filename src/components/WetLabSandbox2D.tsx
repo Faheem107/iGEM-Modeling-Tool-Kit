@@ -14,8 +14,6 @@ interface WetLabSandbox2DProps {
 }
 
 export default function WetLabSandbox2D({
-  onBack,
-  universalVitals,
   isLightMode = false,
 }: WetLabSandbox2DProps) {
   // --- REAL LABORATORY ENTER-ABLE VALUES IN WET LAB ASSAY ---
@@ -24,7 +22,7 @@ export default function WetLabSandbox2D({
   const [labGlutamate, setLabGlutamate] = useState<number>(50); // mM glutamate precursor concentration (range 0 to 120)
   const [labSalinity, setLabSalinity] = useState<number>(2.0); // g/L divalent calcium salts (range 0.1 to 12.0)
   const [labTemp, setLabTemp] = useState<number>(37); // °C Incubation temperature (range 15 to 55)
-  const [enableNoise, setEnableNoise] = useState<boolean>(true); // Experimental noise to mimic life
+  const [enableNoise] = useState<boolean>(true); // Experimental noise to mimic life
   const [windFriction, setWindFriction] = useState<number>(0.65); // m/s friction velocity u*
 
   // Real-time micro noise oscillation value
@@ -65,9 +63,6 @@ export default function WetLabSandbox2D({
   }, [labSalinity, noiseVal]);
 
   const [isSimulating, setIsSimulating] = useState<boolean>(true);
-  const [stormSeverity, setStormSeverity] = useState<
-    "mild" | "severe" | "gale"
-  >("severe");
   const [stormActive, setStormActive] = useState<boolean>(false);
   const [erosionUntreated, setErosionUntreated] = useState<number>(0);
   const [erosionTreated, setErosionTreated] = useState<number>(0);

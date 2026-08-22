@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import GlossaryTerm from "./GlossaryTerm";
 import { PORTAL_NAMES } from "@/content/copy";
 import { DUNE, HAIRLINE, STATUS, SURFACE, TINT } from "@/src/lib/palette";
@@ -567,7 +567,6 @@ export default function AdvancedFbaPortal({
   const [currentObjective, setCurrentObjective] = useState<string>("R_PGAsyn"); // default maximizes visual iGEM biopolymer
 
   // Glossary and active tooltips state management
-  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
 
   // Pulse animation state for metric recalculations
   const [pulseMetric, setPulseMetric] = useState<boolean>(false);
@@ -605,7 +604,6 @@ export default function AdvancedFbaPortal({
 
   // Derived dashboard analytics from core FBA solution
   const metabolicFlux = fbaResults.fluxMap;
-  const growthRate = metabolicFlux["R_Biomass"] || 0;
   const pgaSynthesisFlux = metabolicFlux["R_PGAsyn"] || 0;
 
   // Pulse effect handler upon flux recalculations

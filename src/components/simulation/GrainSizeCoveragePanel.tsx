@@ -206,9 +206,9 @@ export default function GrainSizeCoveragePanel({
         <p
           className={`mt-2 text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}
         >
-          Dashed lines are each binder's per-grain effectiveness. The solid band
+          Dashed lines are each binder&apos;s per-grain effectiveness. The solid band
           is the union (a grain is held if <b>any</b> mechanism binds it: 1 −
-          Π(1 − eₚ)). The grey silhouette is where the deployment sand's mass
+          Π(1 − eₚ)). The grey silhouette is where the deployment sand&apos;s mass
           actually sits (D₅₀ ≈ {profile.d50.toFixed(0)} µm).
         </p>
       </Panel>
@@ -235,7 +235,7 @@ export default function GrainSizeCoveragePanel({
             </>
           ) : (
             <>
-              A single binder leaves a grain-size gap, this selection's weakest
+              A single binder leaves a grain-size gap, this selection&apos;s weakest
               band is at
               <b> {profile.weakestDiameter.toFixed(0)} µm</b> (
               {(profile.weakestCoverage * 100).toFixed(0)}% held). Adding

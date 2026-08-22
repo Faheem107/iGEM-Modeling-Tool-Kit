@@ -28,7 +28,7 @@ export default class ModuleErrorBoundary extends React.Component<Props, State> {
 
   componentDidCatch(error: unknown) {
     // Keep a console trace for debugging; never rethrow (that would crash the app).
-    // eslint-disable-next-line no-console
+
     console.error("[Sandyx] module render error:", error);
   }
 

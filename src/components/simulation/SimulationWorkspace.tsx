@@ -528,7 +528,7 @@ export default function SimulationWorkspace({
 
       {/* Why Sodium Alginate is modelled but not deployed as a prong */}
       {prongs.includes(3) && (
-        <AlginateRationaleBanner isLightMode={isLightMode} />
+        <AlginateRationaleBanner />
       )}
 
       {/* Rail + stacked modules */}
@@ -558,7 +558,7 @@ export default function SimulationWorkspace({
   );
 }
 
-function AlginateRationaleBanner({ isLightMode }: { isLightMode: boolean }) {
+function AlginateRationaleBanner() {
   const reasons = PRONG_COPY.find((p) => p.id === 3)?.whyDropped ?? [];
   return (
     <div className="mb-12 border-t border-dune-rose pt-6">
@@ -580,7 +580,6 @@ function AlginateRationaleBanner({ isLightMode }: { isLightMode: boolean }) {
 }
 
 function HeadlineStat({
-  isLightMode,
   label,
   termKey,
   value,
