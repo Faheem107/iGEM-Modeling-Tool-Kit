@@ -1,26 +1,21 @@
-# Without this file GitLab falls back to Auto DevOps, which tries to containerise
-# the app with Heroku buildpacks. That cannot work on the iGEM runners: they have
-# no Docker-in-Docker service, and the buildpack binaries are built for a
-# different CPU architecture. Defining a pipeline here replaces Auto DevOps.
-
+# Same shape as the wiki repo's pipeline. This is the software tool rather than
+# a Pages site, so it verifies rather than deploying.
 image: node:22
 
-stages:
-  - build
-
-variables:
-  NEXT_TELEMETRY_DISABLED: "1"
-
-cache:
-  key:
-    files:
-      - package-lock.json
-  paths:
-    - .npm/
-
-build:
+verify:
   stage: build
-  script:
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm/
+  before_script:
     - npm ci --cache .npm --prefer-offline
-    - npm run lint
-    - npm run build
+  script:
+    - npm run verify
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: always
+    - if: $CI_MERGE_REQUEST_IID
+      when: always

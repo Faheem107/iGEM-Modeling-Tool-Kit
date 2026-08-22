@@ -7,8 +7,8 @@
  *
  * Videos live in /public/videos/<id>.mp4 with a matching /public/videos/<id>.en.vtt subtitle track,
  * produced by the Manim project in /manim_videos (see manim_videos/README.md). `ready:false` means
- * the render hasn't been produced yet, the window then shows the layman explanation + a
- * "coming soon" note instead of a broken <video>. Flip to true once the file exists.
+ * the render does not exist yet. The window then shows the layman explanation and says there is no
+ * video for that module, rather than a broken <video>. Flip to true once the file exists.
  */
 
 import type { ModuleId } from "./prongs";

@@ -82,3 +82,6 @@ references/
 # Resume cache for scripts/fetch_pv_climatology.py, deleted on a successful run
 .pv_cache.json
 .cams_cache.json
+
+# npm cache, written by CI
+.npm/
