@@ -85,3 +85,6 @@ references/
 
 # npm cache, written by CI
 .npm/
+
+# Browser-check scratch output
+shots/
