@@ -29,6 +29,10 @@ DUST_EXPOSURE_DATA_SOURCES.md
 DUST_EXPOSURE_KNOWLEDGE_GRAPH.md
 DUST_EXPOSURE_MODULE_SPEC.md
 DUST_EXPOSURE_TRANSPORT_AND_VALUE.md
+# Wind model validation. The scripts in scripts/verify_wind_*.py are the code and
+# are pushed; these two are the write-up and the working notes, kept on disk.
+WIND_PATTERN_TESTS_NEXT_STEPS.md
+WIND_VALIDATION_RESULTS.md
 Research Table iGEM 2026*.md
 Business team plan.md
 Toolkit in layman's terminology.md
@@ -92,3 +96,6 @@ shots/
 
 # Its own repository, pushed to github.com/Faheem107/model-wiki
 model-wiki/
+
+# Resume cache for scripts/verify_wind_stations.py (METAR from the IEM archive)
+.metar_cache/

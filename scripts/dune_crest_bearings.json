@@ -1,0 +1,109 @@
+{
+  "what": "Dune crest orientations for checking the model's resultant drift direction against a landform. Fryberger's convention is that transverse dune crests sit roughly perpendicular to the resultant drift, so a measured crest bearing should fall near model_predicted_crest_bearing_deg.",
+  "how_to_measure": [
+    "Open satellite imagery centred on measure_at. Any of Google Earth, Esri World Imagery or Sentinel-2 will do.",
+    "Find the dominant linear dune crests, the long ridge lines, not the small superimposed dunes on their flanks.",
+    "Measure the bearing of the ridge line in degrees from north, as a value in [0, 180). A ridge running northeast to southwest is 45, one running east to west is 90.",
+    "Average three or four ridges across a patch about 20 km across, so the value describes the cell rather than one dune.",
+    "Write it into measured_crest_bearing_deg, put your name in measured_by and the imagery you used in imagery_source, and delete the NEEDS_MEASUREMENT note."
+  ],
+  "why_these_five": "They are five DIFFERENT ERA5 cells spanning the belt, and the model predicts the drift rotates by about 43 degrees across them, from 181 in the west to 138 in the northeast. A single site could agree by luck. A rotation of that size either shows up in the landform or it does not.",
+  "model_source": "public/data/era5_wind_climatology.json, annual sum of the monthly Fryberger Q per sector",
+  "sites": [
+    {
+      "id": "liwa-west",
+      "where": "Rub al Khali margin, west of the Liwa crescent",
+      "measure_at": {
+        "lon": 52.0,
+        "lat": 23.0
+      },
+      "era5_cell": {
+        "lon": 52.0,
+        "lat": 23.0
+      },
+      "model_rdd_deg": 180.7,
+      "model_predicted_crest_bearing_deg": 90.7,
+      "model_udi": 0.737,
+      "measured_crest_bearing_deg": null,
+      "measured_by": null,
+      "imagery_source": null,
+      "note": "NEEDS_MEASUREMENT"
+    },
+    {
+      "id": "liwa-buhasa",
+      "where": "Dune belt south of Bu Hasa",
+      "measure_at": {
+        "lon": 53.0,
+        "lat": 23.0
+      },
+      "era5_cell": {
+        "lon": 53.0,
+        "lat": 23.0
+      },
+      "model_rdd_deg": 166.6,
+      "model_predicted_crest_bearing_deg": 76.6,
+      "model_udi": 0.714,
+      "measured_crest_bearing_deg": null,
+      "measured_by": null,
+      "imagery_source": null,
+      "note": "NEEDS_MEASUREMENT"
+    },
+    {
+      "id": "liwa-moreeb",
+      "where": "Liwa crescent, the Moreeb Dune megabarchanoid ridges",
+      "measure_at": {
+        "lon": 54.0,
+        "lat": 23.0
+      },
+      "era5_cell": {
+        "lon": 54.0,
+        "lat": 23.0
+      },
+      "model_rdd_deg": 158.5,
+      "model_predicted_crest_bearing_deg": 68.5,
+      "model_udi": 0.652,
+      "measured_crest_bearing_deg": null,
+      "measured_by": null,
+      "imagery_source": null,
+      "note": "NEEDS_MEASUREMENT"
+    },
+    {
+      "id": "liwa-east",
+      "where": "Eastern Liwa, toward Umm az Zumul",
+      "measure_at": {
+        "lon": 55.0,
+        "lat": 23.0
+      },
+      "era5_cell": {
+        "lon": 55.0,
+        "lat": 23.0
+      },
+      "model_rdd_deg": 149.1,
+      "model_predicted_crest_bearing_deg": 59.1,
+      "model_udi": 0.42,
+      "measured_crest_bearing_deg": null,
+      "measured_by": null,
+      "imagery_source": null,
+      "note": "NEEDS_MEASUREMENT"
+    },
+    {
+      "id": "dhafra-madinat-zayed",
+      "where": "Al Dhafra interior, around Madinat Zayed",
+      "measure_at": {
+        "lon": 54.0,
+        "lat": 24.0
+      },
+      "era5_cell": {
+        "lon": 54.0,
+        "lat": 24.0
+      },
+      "model_rdd_deg": 138.1,
+      "model_predicted_crest_bearing_deg": 48.1,
+      "model_udi": 0.689,
+      "measured_crest_bearing_deg": null,
+      "measured_by": null,
+      "imagery_source": null,
+      "note": "NEEDS_MEASUREMENT"
+    }
+  ]
+}
