@@ -88,3 +88,4 @@ references/
 
 # Browser-check scratch output
 shots/
+.merra2_cache.json
