@@ -87,6 +87,7 @@ export function Slider({
   onChange,
   accent = "accent-dune-teal",
   hint,
+  note,
   format,
 }: Themed & {
   label: React.ReactNode;
@@ -97,7 +98,11 @@ export function Slider({
   unit?: string;
   onChange: (v: number) => void;
   accent?: string;
+  /** A short unit-style clarification, always visible. One line at most. */
   hint?: string;
+  /** A caveat the reader wants only after they have moved the slider. Behind a
+   *  Note, so it does not sit between the control and the next figure. */
+  note?: string;
   format?: (v: number) => string;
 }) {
   return (
@@ -120,12 +125,75 @@ export function Slider({
         className={`w-full ${accent}`}
       />
       {hint && (
-        <span
-          className="mt-2 block text-[length:var(--text-caption)] leading-snug text-muted-foreground opacity-80"
-        >
+        <span className="mt-2 block text-[length:var(--text-caption)] leading-snug text-muted-foreground opacity-80">
           <GlossaryText max={3}>{hint}</GlossaryText>
         </span>
       )}
+      {note && (
+        <Note label="What this assumes" className="mt-2">
+          {note}
+        </Note>
+      )}
+    </div>
+  );
+}
+
+/**
+ * A caption-size disclosure for one clarification.
+ *
+ * The rule it exists to enforce (CLAUDE.md, "Information order"): the number
+ * comes first, alone. A sentence explaining what a figure means goes behind
+ * this, so a reader who has not yet looked at the figure is not reading about
+ * it. Collapsed it is one muted line; open it is prose in place, with no
+ * border, no fill and no rule, because a box here reads as a second panel
+ * rather than an answer to a question the reader just asked.
+ *
+ * Use `Fold` for a section. This is for a single caveat next to a figure.
+ */
+export function Note({
+  label = "Why",
+  children,
+  className = "",
+}: {
+  /** What the reader is asking. Keep it to two or three words. */
+  label?: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className={className}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="caption inline-flex items-center gap-2 text-left text-muted-foreground transition-colors hover:text-dune-orange"
+      >
+        <span className="rule-link">{label}</span>
+        <span aria-hidden className="text-dune-orange">
+          {open ? "\u2212" : "+"}
+        </span>
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            key="note"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="max-w-[62ch] pt-2 text-[length:var(--text-caption)] leading-relaxed text-muted-foreground">
+              {typeof children === "string" ? (
+                <GlossaryText max={3}>{children}</GlossaryText>
+              ) : (
+                children
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -225,6 +293,7 @@ export function StatCard({
   unit,
   accent,
   sub,
+  note,
   emphasize,
   rule = true,
 }: Themed & {
@@ -237,7 +306,10 @@ export function StatCard({
   value: string | null;
   unit?: string;
   accent: string;
+  /** A unit or provenance line, always visible. One line at most. */
   sub?: string;
+  /** A caveat the reader only wants after the number. Behind a Note. */
+  note?: string;
   emphasize?: boolean;
   /** The top rule reads as a stray line once the Panel around it is gone, so
    *  pass false inside a Fold. Defaults true so no existing module changes. */
@@ -257,6 +329,7 @@ export function StatCard({
             {sub}
           </span>
         )}
+        {note && <Note className="mt-2">{note}</Note>}
       </div>
     );
   }
@@ -293,6 +366,7 @@ export function StatCard({
           {sub}
         </span>
       )}
+      {note && <Note className="mt-2">{note}</Note>}
     </div>
   );
 }
