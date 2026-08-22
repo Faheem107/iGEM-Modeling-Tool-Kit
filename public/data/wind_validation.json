@@ -1,0 +1,123 @@
+{
+ "what": "What the wind model has been tested against, and what those tests found. Written by scripts/write_wind_validation.py from the verify_* scripts. Read by the exposure module.",
+ "generated": "2026-08-22",
+ "record": {
+  "cells": 306,
+  "from": "2022-01-01T00:00",
+  "to": "2024-12-31T23:00",
+  "source": "ERA5 hourly 10 m wind via the Open-Meteo archive"
+ },
+ "heldOutYear": {
+  "fluid": {
+   "thresholdMs": 10.18,
+   "medianErrorPct": 110.1,
+   "worstErrorPct": 507.0,
+   "seasonsScored": 11,
+   "seasonsTotal": 16,
+   "seasonsWithInventedTransport": 5
+  },
+  "impact": {
+   "thresholdMs": 5.4,
+   "medianErrorPct": 18.8,
+   "worstErrorPct": 67.8,
+   "seasonsScored": 16,
+   "seasonsTotal": 16,
+   "seasonsWithInventedTransport": 0
+  }
+ },
+ "stations": [
+  {
+   "station": "OMAA",
+   "name": "Abu Dhabi Intl",
+   "cell": {
+    "lon": 55.0,
+    "lat": 24.75
+   },
+   "pairedHours": 24896,
+   "speedBiasMs": -0.46,
+   "rmseMs": 1.36,
+   "correlation": 0.76,
+   "directionBiasDeg": 3.9,
+   "aboveThresholdObservedPct": 25.1,
+   "aboveThresholdEra5Pct": 15.8
+  },
+  {
+   "station": "OMDB",
+   "name": "Dubai Intl",
+   "cell": {
+    "lon": 55.0,
+    "lat": 24.75
+   },
+   "pairedHours": 24542,
+   "speedBiasMs": -0.27,
+   "rmseMs": 1.55,
+   "correlation": 0.62,
+   "directionBiasDeg": 1.6,
+   "aboveThresholdObservedPct": 20.2,
+   "aboveThresholdEra5Pct": 15.9
+  },
+  {
+   "station": "OMAL",
+   "name": "Al Ain Intl",
+   "cell": {
+    "lon": 56.0,
+    "lat": 24.0
+   },
+   "pairedHours": 24919,
+   "speedBiasMs": -1.2,
+   "rmseMs": 2.0,
+   "correlation": 0.6,
+   "directionBiasDeg": 6.3,
+   "aboveThresholdObservedPct": 23.0,
+   "aboveThresholdEra5Pct": 6.7
+  }
+ ],
+ "sensitivity": [
+  {
+   "input": "Wind to surface shear ratio",
+   "grade": "literature",
+   "elasticityFlux": 11.14,
+   "elasticityReduction": -0.51
+  },
+  {
+   "input": "Typical wind speed",
+   "grade": "fitted to ERA5",
+   "elasticityFlux": 11.14,
+   "elasticityReduction": -0.51
+  },
+  {
+   "input": "How gusty the wind is",
+   "grade": "fitted to ERA5",
+   "elasticityFlux": -8.95,
+   "elasticityReduction": 0.7
+  },
+  {
+   "input": "Bagnold coefficient A",
+   "grade": "literature",
+   "elasticityFlux": -8.14,
+   "elasticityReduction": 0.51
+  },
+  {
+   "input": "Grain diameter",
+   "grade": "measured",
+   "elasticityFlux": -4.07,
+   "elasticityReduction": -0.22
+  },
+  {
+   "input": "Saltation constant C",
+   "grade": "literature",
+   "elasticityFlux": 1.0,
+   "elasticityReduction": 0.0
+  },
+  {
+   "input": "Crust cohesion",
+   "grade": "unsourced",
+   "elasticityFlux": 0.0,
+   "elasticityReduction": 0.24
+  }
+ ],
+ "duneOrientation": {
+  "status": "not yet measured",
+  "note": "Five dune-field cells with the model's predicted crest orientation filled in and the measurement blank. scripts/verify_dune_orientation.py refuses to report a result until somebody measures them off imagery."
+ }
+}

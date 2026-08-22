@@ -753,6 +753,98 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
       "How often satellites see dust over a given patch of ground, as a share of days. It is how the source areas on the map are mapped, and darker shading means dust is seen there more often.",
     category: "Wind and Exposure",
   },
+
+  // ---- Exposure - the money side ------------------------------------------
+  // Written for a reader with no background in energy or economics. Each one
+  // says what the word means and why it changes a number on this page.
+  ppa: {
+    title: "PPA, the price the plant sells at",
+    plain:
+      "Short for power purchase agreement. Before a big solar plant is built, the owner signs a contract to sell its electricity at one fixed price for the next 20 or 25 years. That price is the PPA. It is usually far lower than the price a home or a shop pays, so the same lost unit of electricity is worth very different amounts depending on who lost it. That is why this page asks you to pick.",
+    category: "Money",
+    module: "Exposure and the commercial case",
+  },
+  tariff: {
+    title: "Tariff, the price a customer pays",
+    plain:
+      "The price on an electricity bill, set by the utility. In Dubai an industrial customer pays roughly ten times what a solar plant earns for the same unit under its PPA. Neither number is wrong. They answer different questions: what does it cost to buy power, and what does it earn to sell it.",
+    category: "Money",
+  },
+  "kilowatt-hour": {
+    title: "Kilowatt-hour (kWh)",
+    plain:
+      "One unit of electricity, the amount a 1,000 watt kettle uses in an hour. Prices are quoted per kilowatt-hour. A megawatt-hour (MWh) is a thousand of them.",
+    category: "Money",
+  },
+  "capacity-factor": {
+    title: "Capacity Factor",
+    plain:
+      "A solar plant almost never runs at its full rated size, because of night, cloud and heat. The capacity factor is the fraction it manages on average across a year, typically around a fifth for solar in this region. It is how we turn a plant's size into the electricity it actually produces.",
+    category: "Money",
+  },
+  "nameplate-capacity": {
+    title: "Nameplate Capacity",
+    plain:
+      "The size a plant is advertised at, in megawatts. It is the most the plant could produce at one instant in ideal conditions, not what it produces in practice. We need it to work out how much electricity a percentage loss actually costs, which is why sites with no published capacity show a blank here instead of a number.",
+    category: "Money",
+  },
+  "deposit-retention": {
+    title: "How much dust sticks",
+    plain:
+      "Solar panels are tilted, so some dust that lands slides or blows off again and only a fraction stays. That fraction is this number. Nobody has published a value we could use, so it is a slider rather than a measurement, and every money figure on the page scales straight up and down with it.",
+    category: "Money",
+  },
+  "evidence-grade": {
+    title: "Evidence grade",
+    plain:
+      "A label next to each result saying how well we can back it up. Measured means our own lab or a dataset measured it. Literature means a published paper gives it. Unsourced means the physics is sound but no published number exists, and in that case we show a blank rather than something we made up.",
+    category: "Method",
+  },
+
+  // ---- Exposure - two different fluxes, kept apart on purpose --------------
+  // Before these existed the bare word "flux" auto-linked to the metabolic
+  // definition, so a reader on the wind page was shown something from a
+  // completely different model.
+  "saltation-flux": {
+    title: "Sand flux",
+    plain:
+      "How much sand is hopping past, per metre of ground, per second. This is the coarse material that bounces along near the surface, piles against panel rows and scours glass. It is the part a crust on the ground can actually stop.",
+    category: "Wind and Exposure",
+    module: "Exposure and the commercial case",
+  },
+  "suspension-flux": {
+    title: "Dust flux",
+    plain:
+      "How much fine dust is being lifted off the ground into the air, per square metre, per second. Unlike hopping sand this material floats and can travel hundreds of kilometres, which is what settles on panels far from where it started.",
+    category: "Wind and Exposure",
+    module: "Exposure and the commercial case",
+  },
+
+  // ---- Exposure - the datasets, named on screen ---------------------------
+  ginoux: {
+    title: "Ginoux dust source map",
+    plain:
+      "A published map of where on Earth dust gets lifted off the ground, built from satellite observations. We use it to draw the coloured source areas. It covers March to May only, which is why that layer does not change when you switch season.",
+    category: "Wind and Exposure",
+  },
+  soilgrids: {
+    title: "SoilGrids",
+    plain:
+      "A free global map of what soil is made of. We use its clay content, with a caution: over UAE dune fields it reads about 20 percent clay where studies of the actual sand grains say nearer 2 percent. We show the value and the contradiction rather than quietly using it.",
+    category: "Wind and Exposure",
+  },
+  "sand-sea": {
+    title: "Sand sea",
+    plain:
+      "A desert region large enough to be covered in dunes rather than scattered patches of sand. The Rub al Khali, the Empty Quarter, is one. Sand seas move a great deal of sand and make surprisingly little floating dust, because their grains are too coarse to stay airborne.",
+    category: "Wind and Exposure",
+  },
+  "grid-cell": {
+    title: "Grid cell",
+    plain:
+      "Weather data comes on a grid of squares, not for exact points. Ours is about 31 km across, so everything inside one square gets the same wind. Abu Dhabi and Dubai airports fall in the same square, which is a fair warning about how finely these numbers can be read.",
+    category: "Method",
+  },
 };
 
 /** Alternate spellings / keys used in code, routed to a canonical GLOSSARY key. */
@@ -812,6 +904,25 @@ export const ALIASES: Record<string, string> = {
   "wind climatology": "climatology",
   "dust source": "frequency-of-occurrence",
   "source areas": "frequency-of-occurrence",
+  // Money. A reader with no economics background meets these cold.
+  "power purchase agreement": "ppa",
+  "contracted ppa": "ppa",
+  "capacity factor": "capacity-factor",
+  "nameplate capacity": "capacity-factor",
+  nameplate: "nameplate-capacity",
+  kwh: "kilowatt-hour",
+  "kilowatt hour": "kilowatt-hour",
+  mwh: "kilowatt-hour",
+  "evidence grade": "evidence-grade",
+  // The two fluxes. These are longer than the bare "flux" that used to win, so
+  // longest-first matching sends them to the right model.
+  "saltation flux": "saltation-flux",
+  "sand flux": "saltation-flux",
+  "suspension flux": "suspension-flux",
+  "dust flux": "suspension-flux",
+  "sand sea": "sand-sea",
+  "sand seas": "sand-sea",
+  "grid cell": "grid-cell",
 };
 
 /** Normalize a lookup key: lowercase, collapse whitespace, trim symbols we route on. */

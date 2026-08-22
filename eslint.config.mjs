@@ -22,6 +22,10 @@ export default tseslint.config(
       "public/code/**",
       "manim_videos/**",
       "cobrapy/**",
+      // Its own repository, cloned in here and pushed to github.com/Faheem107/model-wiki.
+      // It carries its own eslint config and its own CI; checking it from this
+      // repo reported 3,000 problems that belong to a different project.
+      "model-wiki/**",
     ],
   },
   js.configs.recommended,
