@@ -1,7 +1,14 @@
 "use client";
 
 import { DUNE } from "@/src/lib/palette";
-import { FOO_ALPHA, FOO_BANDS, sourceColor } from "./ExposureMap";
+import {
+  DUST_ALPHA,
+  DUST_BREAKS,
+  FOO_ALPHA,
+  FOO_BANDS,
+  dustColor,
+  sourceColor,
+} from "./ExposureMap";
 
 /**
  * A key for every mark on the map.
@@ -35,18 +42,25 @@ const SOURCE_KINDS: [string, string][] = [
 export default function MapLegend({
   showSources,
   onToggleSources,
+  showDust,
+  onToggleDust,
   isLightMode,
   windLabel,
+  seasonLabel,
 }: {
   showSources: boolean;
   onToggleSources: (v: boolean) => void;
+  showDust: boolean;
+  onToggleDust: (v: boolean) => void;
   isLightMode: boolean;
   /** What the moving field currently shows, so the caption never lies. */
   windLabel: string;
+  /** The months the dust layer is averaged over, so the key names them. */
+  seasonLabel: string;
 }) {
   const glyphFill = isLightMode ? "#3d332c" : "#e9dccb";
   return (
-    <div className="grid grid-cols-1 gap-6 border-t border-border pt-4 sm:grid-cols-3">
+    <div className="grid grid-cols-1 gap-6 border-t border-border pt-4 sm:grid-cols-2 lg:grid-cols-4">
       <div>
         <p className="caption mb-3">Sites</p>
         <ul className="space-y-2">
@@ -61,6 +75,35 @@ export default function MapLegend({
             </li>
           ))}
         </ul>
+      </div>
+
+      <div>
+        <label className="caption mb-3 flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={showDust}
+            onChange={(e) => onToggleDust(e.target.checked)}
+          />
+          Dust in the air
+        </label>
+        <div className="flex items-center gap-2">
+          <span className="flex shrink-0" aria-hidden>
+            {DUST_ALPHA.map((a, i) => (
+              <span
+                key={i}
+                className="h-3 w-3"
+                style={{ background: dustColor(isLightMode), opacity: a }}
+              />
+            ))}
+          </span>
+          <span className="text-[length:var(--text-caption)] text-muted-foreground">
+            Under {DUST_BREAKS[0]} to over {DUST_BREAKS[DUST_BREAKS.length - 1]} µg/m³
+          </span>
+        </div>
+        <p className="mt-3 text-[length:var(--text-caption)] leading-snug text-muted-foreground">
+          Where dust is measured in the air across {seasonLabel}, not where it
+          was raised. This is the one layer that changes with the season.
+        </p>
       </div>
 
       <div>
