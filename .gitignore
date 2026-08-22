@@ -89,3 +89,6 @@ references/
 # Browser-check scratch output
 shots/
 .merra2_cache.json
+
+# Its own repository, pushed to github.com/Faheem107/model-wiki
+model-wiki/
