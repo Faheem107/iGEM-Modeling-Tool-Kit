@@ -13,6 +13,7 @@ import { camsFor, camsSpreadFor, type CamsClimatology } from "@/src/lib/camsDust
 import { sourceColor } from "./ExposureMap";
 import { Fold, ModuleActions, Note, Slider, StatCard } from "@/src/components/simulation/_shared";
 import BusinessCaseBookmark from "@/src/components/BusinessCaseBookmark";
+import { GlossaryText } from "@/src/components/GlossaryTerm";
 import ExposureMap, { type SourceFeature, type TargetSite } from "./ExposureMap";
 import MapLegend from "./MapLegend";
 import WindRose from "./WindRose";
@@ -827,7 +828,15 @@ export default function ExposureWorkspace() {
           <div className="grid grid-cols-2 gap-4">
             <StatCard label="Near field, untreated" value={(capture * 100).toFixed(1)} unit="%" accent="text-dune-orange" isLightMode={isLightMode} sub={`saltation over ${patchDist} m`} rule={false} />
             <StatCard label="Near field, treated" value={(captureTreated * 100).toFixed(1)} unit="%" accent="text-dune-teal" isLightMode={isLightMode} emphasize rule={false} />
-            <StatCard label="Suspension flux F" value={noTransport ? "0" : (F0 * 1e9).toFixed(2)} unit="µg m⁻² s⁻¹" accent="text-dune-orange" isLightMode={isLightMode} sub="regional, reaches the site" rule={false} />
+            <StatCard
+              label="Dust reaching the site"
+              value={noTransport ? "0" : (F0 * 1e9).toFixed(2)}
+              unit="µg m⁻² s⁻¹"
+              accent="text-dune-orange"
+              isLightMode={isLightMode}
+              sub="dust flux raised far upwind, which the crust does not touch"
+              rule={false}
+            />
             <StatCard
               label="Drift alignment"
               value={align == null ? "n/a" : (align * 100).toFixed(0)}
@@ -853,22 +862,45 @@ export default function ExposureWorkspace() {
           right={<Grade grade="measured" />}
         >
           <div className="grid grid-cols-2 gap-4">
-            <StatCard label="Threshold, untreated" value={uStarT0.toFixed(3)} unit="m/s" accent="text-dune-orange" isLightMode={isLightMode} rule={false} />
-            <StatCard label="Threshold, treated" value={uStarT.toFixed(3)} unit="m/s" accent="text-dune-teal" isLightMode={isLightMode} rule={false} />
             <StatCard
-              label="Saltation flux cut"
+              label="Threshold, untreated"
+              value={uStarT0.toFixed(3)}
+              unit="m/s"
+              accent="text-dune-orange"
+              isLightMode={isLightMode}
+              sub="the friction velocity at which bare sand starts to move"
+              rule={false}
+            />
+            <StatCard
+              label="Threshold, treated"
+              value={uStarT.toFixed(3)}
+              unit="m/s"
+              accent="text-dune-teal"
+              isLightMode={isLightMode}
+              sub="the same, once the crust adds cohesion"
+              rule={false}
+            />
+            <StatCard
+              label="Sand flux cut"
               value={noTransport ? "n/a" : (reduction * 100).toFixed(1)}
               unit={noTransport ? "" : "%"}
               accent="text-dune-teal"
               isLightMode={isLightMode}
               emphasize
-              sub={noTransport ? "untreated bed already still" : undefined} rule={false} />
+              sub={
+                noTransport
+                  ? "untreated bed already still"
+                  : "how much less sand flux hops past the site"
+              }
+              rule={false}
+            />
             <StatCard
-              label="Suspension flux cut"
+              label="Dust flux cut"
               value={noTransport ? "n/a" : (F0 > 0 ? (1 - Ft / F0) * 100 : 0).toFixed(1)}
               unit={noTransport ? "" : "%"}
               accent="text-dune-teal"
               isLightMode={isLightMode}
+              sub="how much less dust flux is lifted off the treated ground"
               rule={false}
             />
           </div>
@@ -909,9 +941,9 @@ export default function ExposureWorkspace() {
           </p>
         ) : !money ? (
           <p className="text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
-            This site has no published generating capacity in OpenStreetMap, so there is
-            no nameplate to turn a light loss into a quantity of electricity. Pick one of
-            the plants that does carry a capacity.
+            <GlossaryText max={2}>
+              {"This site has no published nameplate capacity in OpenStreetMap, so there is no size to turn a percentage of lost light into an amount of electricity. Pick one of the plants that does carry a capacity."}
+            </GlossaryText>
           </p>
         ) : (
           <div className="space-y-5">
@@ -964,11 +996,16 @@ export default function ExposureWorkspace() {
             {/* The scale of the loss, in units the two figures do not carry.
                 No sentence here: the figures above already say the rest. */}
             {money.usd && (
-              <p className="caption">
-                {(money.usd.shareOfRevenue * 100).toFixed(1)}% of what the plant earns
-                {"  ·  "}
-                {plural(money.usd.daysLost, "day")} of output
-              </p>
+              <div>
+                <p className="caption">
+                  {(money.usd.shareOfRevenue * 100).toFixed(1)}% of what the plant earns
+                  {"  ·  "}
+                  {plural(money.usd.daysLost, "day")} of output
+                </p>
+                <Note label="What these two mean" className="mt-2">
+                  {"The first is the share of a year's income the dust takes. The second is the same loss written as time. If the plant ran at full output and then stopped, this is how many days would be missing by the end of the year. Both come from the nameplate capacity and the capacity factor, so a site with neither published shows nothing here."}
+                </Note>
+              </div>
             )}
 
             {money.usd && (
@@ -998,14 +1035,18 @@ export default function ExposureWorkspace() {
                   ))}
                 </div>
                 <p className="caption mt-2">
-                  {money.price.label}, {money.price.value.toFixed(4)} USD/kWh.{" "}
-                  {money.price.source}
+                  <GlossaryText max={2}>
+                    {`${money.price.label}, ${money.price.value.toFixed(4)} USD/kWh. ${money.price.source}`}
+                  </GlossaryText>
                 </p>
                 {!money.price.exact && (
                   <p className="mt-1 text-[length:var(--text-micro)] text-dune-rose">
                     Read as a range. This plant has no published price.
                   </p>
                 )}
+                <Note label="Why this choice changes the answer" className="mt-2">
+                  {"A large solar plant signs a contract before it is built, agreeing to sell its electricity at one fixed price for the next 20 or 25 years. That price is the PPA. In Dubai it is around a tenth of what an industrial customer pays on a bill. So the same lost unit of electricity is worth roughly ten times more to a factory that has to buy it than to the plant that would have sold it. Neither price is wrong. They answer different questions, and the page cannot answer both at once, so it asks which one you mean."}
+                </Note>
               </div>
               <Slider
                 label="Dust that sticks to tilted glass"
