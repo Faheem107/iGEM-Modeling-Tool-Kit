@@ -14,6 +14,8 @@ import { sourceColor } from "./ExposureMap";
 import { Fold, ModuleActions, Note, Slider, StatCard } from "@/src/components/simulation/_shared";
 import BusinessCaseBookmark from "@/src/components/BusinessCaseBookmark";
 import { GlossaryText } from "@/src/components/GlossaryTerm";
+import Grade from "./Grade";
+import WindValidation, { useWindValidation } from "./WindValidation";
 import ExposureMap, { type SourceFeature, type TargetSite } from "./ExposureMap";
 import MapLegend from "./MapLegend";
 import WindRose from "./WindRose";
@@ -69,16 +71,6 @@ const SEASONS = [
   { id: "SON", label: "Sep to Nov", months: [9, 10, 11], mid: 10 },
 ] as const;
 
-function Grade({ grade }: { grade: "measured" | "literature" | "unsourced" }) {
-  const tone =
-    grade === "measured" ? "text-dune-teal border-dune-teal/40"
-    : grade === "literature" ? "text-dune-orange border-dune-orange/40"
-    : "text-dune-rose border-dune-rose/40";
-  return (
-    <span className={`caption rounded-[4px] border px-2 py-1 ${tone}`}>{grade}</span>
-  );
-}
-
 export default function ExposureWorkspace() {
   const { isLightMode } = useTheme();
   // The index links here twice, once per view, so the link has to land on the
@@ -127,6 +119,10 @@ export default function ExposureWorkspace() {
   const [liveLoading, setLiveLoading] = useState(false);
 
   const hl = useHighlight();
+
+  /** What the verify_* scripts found. Read at runtime like every other dataset,
+   *  so a number here cannot drift from the test that produced it. */
+  const validation = useWindValidation();
 
   useEffect(() => {
     // Measured grain size, rather than the constant hard-coded above it.
@@ -550,6 +546,17 @@ export default function ExposureWorkspace() {
               </button>
             ))}
           </div>
+          {mode === "seasonal" && validation && (
+            <div>
+              <p className="text-[length:var(--text-micro)] leading-relaxed text-dune-rose">
+                At about half the sites we tested, switching season moves these numbers
+                by less than the model&apos;s own error.
+              </p>
+              <Note label="How we know that" className="mt-1">
+                {`We built the wind on 2022 and 2023, asked it to predict 2024, and measured how wrong it was. That error was larger than the gap between two neighbouring seasons in ${validation.heldOutYear.impact.seasonGapSwamped} of the ${validation.heldOutYear.impact.seasonGapChecked} season pairs we scored. So the season buttons resolve something real at the sites with a strong seasonal swing, and at the flatter sites they are inside the noise. The last section on this page has the rest of it.`}
+              </Note>
+            </div>
+          )}
           <MapLegend
             showSources={showSources}
             onToggleSources={setShowSources}
@@ -665,6 +672,9 @@ export default function ExposureWorkspace() {
                   <p className="caption">
                     ERA5 2022 to 2024, grid cell {seasonal.at.lat}°N {seasonal.at.lon}°E
                   </p>
+                  <Note label="How far to trust this">
+                    {"The direction is the part to rely on. It agrees with three UAE airport records to within 6.3 degrees across about 75,000 paired hours, and nothing in the model rotates it. The speed does not agree as well. The grid reads low, and it sees between 29 and 78 percent of the hours those airports recorded above the speed that starts sand moving, so the sand figures below are more likely to be under than over."}
+                  </Note>
                 </div>
               ) : (
                 <>
@@ -737,18 +747,30 @@ export default function ExposureWorkspace() {
             <p className="caption -mt-1">
               Roughly {(cohesion / 1.5e-5).toFixed(0)} kPa of crust strength
             </p>
-            <Note label="Where this number comes from" className="mb-4 mt-1">
+            <Note label="Where this number comes from" className="mt-1">
               {"Nowhere yet. This is the one value our own lab has to measure, so it stays a slider, and the conversion to crust strength is provisional too."}
+            </Note>
+            <Note label="How much it matters" className="mb-4 mt-1">
+              {"Two different questions get run together here, so they are worth separating. Nobody has measured this number, which makes it the least sourced input on the page. Of the seven inputs it also moves the amount of sand the least. But because it is unmeasured its plausible range is the widest of any input here, and across that range the cut we report runs from 45 percent to 100 percent. It is not the number that most changes the physics. It is the number that most changes how sure we are allowed to be."}
             </Note>
             <Slider label="Treated patch to asset" value={patchDist} onChange={setPatchDist} min={1} max={200} step={1} unit="m" isLightMode={isLightMode} hint="How far the treated ground sits upwind. The capture fraction falls away fast with distance." />
           </Fold>
         </div>
       </div>
 
-      {/* Outputs. One column of folds rather than a grid of panels: collapsed,
+      {/* Outputs, grouped by the question each group answers, with the group's
+          name in the rail gutter. Folds rather than a grid of panels: collapsed,
           they read as a list of questions the reader can open, which is the
-          point of folding them at all. */}
-      <div className="space-y-5">
+          point of folding them at all. The rail label is what tells them which
+          of those questions they are looking at.
+
+          No indices in the gutter. A number would imply an order the reader has
+          to follow, and they do not: somebody who only wants the money can go
+          straight to it. */}
+      <section className="border-t border-border pt-6">
+        <div className="rail-row">
+          <p className="caption pt-1">Where it comes from</p>
+          <div className="space-y-5">
         <Fold
           className="border-t border-border pt-5"
           title={`Where ${site ? site.name + "'s" : "this site's"} dust comes from`}
@@ -816,7 +838,14 @@ export default function ExposureWorkspace() {
             </div>
           )}
         </Fold>
+          </div>
+        </div>
+      </section>
 
+      <section className="border-t border-border pt-6">
+        <div className="rail-row">
+          <p className="caption pt-1">What reaches the site</p>
+          <div className="space-y-5">
         <Fold
           className="border-t border-border pt-5"
           title="Fraction of sand reaching the site"
@@ -904,8 +933,14 @@ export default function ExposureWorkspace() {
               rule={false}
             />
           </div>
-          <Note label="Why treatment moves both" className="mt-4">
-            {"Cohesion is the only thing the product changes. It raises the threshold wind, which raises the lower limit of the flux integral, which drops the sand flux and the suspension flux at once."}
+          <p className="mt-4 max-w-[62ch] text-[length:var(--text-micro)] leading-relaxed text-dune-rose">
+            Both thresholds above are calculated from grain size, not measured. At the
+            wind they imply, about {utFree0.toFixed(1)} m/s, the year we held back
+            predicted sand moving in seasons where the record shows none. Read the cut
+            as evidence that treatment works, not as how much.
+          </p>
+          <Note label="Why treatment moves both" className="mt-2">
+            {"Cohesion is the only thing the product changes. It raises the threshold wind, which raises the lower limit of the flux integral, which drops the sand flux and the dust flux at once."}
           </Note>
           {noTransport && (
             <p className="mt-2 text-[length:var(--text-micro)] leading-relaxed text-dune-rose">
@@ -921,8 +956,14 @@ export default function ExposureWorkspace() {
             </p>
           )}
         </Fold>
-      </div>
+          </div>
+        </div>
+      </section>
 
+      <section className="border-t border-border pt-6">
+        <div className="rail-row">
+          <p className="caption pt-1">What it costs</p>
+          <div className="space-y-5">
       <Fold
         className="border-t border-border pt-5"
         title="What it costs, and what treating the ground saves"
@@ -1070,6 +1111,21 @@ export default function ExposureWorkspace() {
           </div>
         )}
       </Fold>
+          </div>
+        </div>
+      </section>
+
+      {/* Last, and not folded away behind the sources toggle. A reader who has
+          just been shown a number in dollars should be able to keep scrolling
+          and find out how far we have actually checked it. */}
+      <section className="border-t border-border pt-6">
+        <div className="rail-row">
+          <p className="caption pt-1">How well it is tested</p>
+          <div>
+            <WindValidation doc={validation} isLightMode={isLightMode} />
+          </div>
+        </div>
+      </section>
 
       {/* Mounted here so the bookmark appears only on this module. */}
       <BusinessCaseBookmark />
