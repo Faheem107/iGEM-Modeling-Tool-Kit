@@ -35,31 +35,75 @@ import era5_cache                    # noqa: E402
 import verify_wind_holdout as HO     # noqa: E402
 import verify_wind_stations as ST    # noqa: E402
 import verify_wind_sensitivity as SE # noqa: E402
+import verify_weibull_fit as WF      # noqa: E402
 import aeolian                       # noqa: E402
 
 OUT = ROOT / "public" / "data" / "wind_validation.json"
 
 
 def holdout():
+    """Refit on 2022-23, predict 2024, and score against the hourly truth.
+
+    Three things come out of the same pass, because they are three readings of
+    one experiment and computing them separately would let them disagree:
+
+      - how far off the prediction is
+      - whether averaging A and k across the season, which is what the page
+        does, beats integrating each month and averaging the fluxes
+      - whether the error is smaller than the gap between two adjacent seasons.
+        If it is not, the season buttons are not resolving anything at that
+        site, and the page should say so rather than imply a precision it does
+        not have.
+    """
     d = HO.grain_diameter_m()
     site_list = HO.sites()
     out = {}
     for name, ut in (("fluid", HO.fluid_threshold_ms(d)),
                      ("impact", HO.GULF_IMPACT_THRESHOLD_MS)):
         errs, invented, scored, total = [], 0, 0, 0
-        for _label, cell, _names in site_list:
-            for _sid, months in HO.SEASONS:
+        truths = {}                     # (site, season) -> hourly 2024 truth
+        rows = []                       # (site, season, held-out err, summed err)
+        for label, cell, _names in site_list:
+            for sid, months in HO.SEASONS:
                 total += 1
                 truth = HO.flux_hourly(cell.speeds(years=HO.TEST_YEAR, months=months), ut)
                 held = HO.season_prediction(cell, months, HO.TRAIN_HOLDOUT, ut, summed=False)
+                summ = HO.season_prediction(cell, months, HO.TRAIN_HOLDOUT, ut, summed=True)
+                truths[(label, sid)] = truth
                 if truth <= 0:
                     if np.isfinite(held) and held > 0:
                         invented += 1
                     continue
                 e = HO.pct(held, truth)
+                es = HO.pct(summ, truth)
+                rows.append((label, sid, e, es))
                 if np.isfinite(e):
                     errs.append(abs(e))
                     scored += 1
+
+        # Is the held-out error bigger than the season-to-season difference the
+        # reader is being shown? Each season is compared with the next one round
+        # the year, so all four pairs are checked and none is privileged.
+        swamped = checked = 0
+        for label, _cell, _names in site_list:
+            for i in range(len(HO.SEASONS)):
+                a = HO.SEASONS[i][0]
+                b = HO.SEASONS[(i + 1) % len(HO.SEASONS)][0]
+                ta, tb = truths.get((label, a)), truths.get((label, b))
+                if not ta or not tb or ta <= 0 or tb <= 0:
+                    continue
+                gap = abs(tb - ta) / max(ta, tb) * 100.0
+                pair = [abs(e) for lb, sd, e, _es in rows
+                        if lb == label and sd in (a, b) and np.isfinite(e)]
+                if not pair:
+                    continue
+                checked += 1
+                swamped += int(max(pair) > gap)
+
+        paired = [(abs(e), abs(es)) for _lb, _sd, e, es in rows
+                  if np.isfinite(e) and np.isfinite(es)]
+        better = sum(1 for e, es in paired if es < e)
+
         out[name] = {
             "thresholdMs": round(ut, 2),
             "medianErrorPct": round(float(np.median(errs)), 1) if errs else None,
@@ -67,8 +111,42 @@ def holdout():
             "seasonsScored": scored,
             "seasonsTotal": total,
             "seasonsWithInventedTransport": invented,
+            # Averaging the monthly fluxes against averaging A and k first.
+            "monthlyMeanBetter": better,
+            "monthlyMeanPaired": len(paired),
+            # Adjacent season pairs where the error is larger than the gap.
+            "seasonGapSwamped": int(swamped),
+            "seasonGapChecked": int(checked),
         }
     return out
+
+
+def weibull_fit():
+    """How well the shipped Weibull describes the hours it was fitted to.
+
+    In sample, so this is the optimistic case. The held-out figures above are
+    what the page should be read against.
+    """
+    rows, missing = WF.collect_rows()
+    D = np.array([r[4] for r in rows], dtype=float)
+    flux = np.array([r[8] for r in rows], dtype=float)
+    flux = flux[np.isfinite(flux)]
+    over = int((np.abs(flux) > WF.FLUX_TOLERANCE_PCT).sum())
+
+    by_month = WF.by_month_flux_error(rows)
+    ranked = sorted(by_month.items(), key=lambda kv: abs(kv[1]), reverse=True)
+    names = WF.MONTH_NAMES
+    return {
+        "cellMonths": len(rows),
+        "cellsWithoutRecord": missing,
+        "ksMedian": round(float(np.median(D)), 4),
+        "fluxErrorMedianPct": round(float(np.median(flux)), 1),
+        "fluxErrorTolerancePct": WF.FLUX_TOLERANCE_PCT,
+        "fluxOutsideTolerance": over,
+        "fluxScored": int(flux.size),
+        "worstMonths": [names[m] for m, _ in ranked[:4]],
+        "bestMonths": [names[m] for m, _ in ranked[-4:]],
+    }
 
 
 def stations():
@@ -140,6 +218,7 @@ def main():
         "record": {"cells": n_cells, "from": first, "to": last,
                    "source": "ERA5 hourly 10 m wind via the Open-Meteo archive"},
         "heldOutYear": holdout(),
+        "weibullFit": weibull_fit(),
         "stations": stations(),
         "sensitivity": sensitivity(),
         "duneOrientation": {
