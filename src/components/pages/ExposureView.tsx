@@ -27,6 +27,11 @@ export default function ExposureView() {
             {"Pick a market, pick a site, and the model estimates how much wind-blown sand reaches it and how much less would reach it if the source were treated. The seasonal view runs on a fitted wind climatology, month by month. The live view runs the same model on the current feed, which is what makes deployment timing and pricing possible."}
           </GlossaryText>
         </p>
+        <p className="mt-4 text-[length:var(--text-body)] leading-relaxed text-muted-foreground">
+          <GlossaryText max={3}>
+            {"Two of those numbers are not equally well supported, and it is worth knowing which before reading any of them. Where the sand travels has been checked against airport wind records and comes out well. How much of it travels has never been checked against a measurement of sand at all. The last section says how far each test went, including the two that failed."}
+          </GlossaryText>
+        </p>
       </header>
 
       <ExposureWorkspace />
