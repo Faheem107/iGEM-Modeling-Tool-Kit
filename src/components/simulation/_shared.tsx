@@ -254,18 +254,25 @@ export function Fold({
               {open ? "\u2212" : "+"}
             </span>
           </span>
-          {lede && (
-            <span
-              className={`mt-2 block text-[length:var(--text-micro)] leading-snug text-muted-foreground ${
-                wide ? "max-w-[62ch]" : "max-w-[32ch]"
-              }`}
-            >
-              {lede}
-            </span>
-          )}
         </button>
         {right && <span className="shrink-0 pt-1">{right}</span>}
       </div>
+      {/* The lede sits OUTSIDE the button. It is where a reader meets a
+          section's vocabulary for the first time, so it is where a word they do
+          not know most needs somewhere to go, and a glossary term is itself a
+          control. Nesting one inside the fold's button would put a focus stop
+          inside a button and announce as one control containing another. The
+          heading and the sign next to it are still the target that opens the
+          fold. Two terms per lede: more reads as noise rather than as help. */}
+      {lede && (
+        <p
+          className={`mt-2 text-[length:var(--text-micro)] leading-snug text-muted-foreground ${
+            wide ? "max-w-[62ch]" : "max-w-[32ch]"
+          }`}
+        >
+          <GlossaryText max={2}>{lede}</GlossaryText>
+        </p>
+      )}
       {aside}
       <AnimatePresence initial={false}>
         {open && (

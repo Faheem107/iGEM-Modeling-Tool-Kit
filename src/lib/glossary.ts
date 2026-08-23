@@ -845,6 +845,32 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
       "Weather data comes on a grid of squares, not for exact points. Ours is about 31 km across, so everything inside one square gets the same wind. Abu Dhabi and Dubai airports fall in the same square, which is a fair warning about how finely these numbers can be read.",
     category: "Method",
   },
+
+  // ---- Exposure - how the model was tested --------------------------------
+  // A reader meets these three for the first time in the validation section,
+  // where the whole point is that they can check our reasoning rather than
+  // take a verdict on trust.
+  "held-out-test": {
+    title: "Holding a year back",
+    plain:
+      "A way of testing a model that stops it marking its own homework. You hide part of the data, build the model on what is left, then ask it to predict the part you hid. A model that only works on the years it was shown has memorised them rather than learned anything. Ours was built on 2022 and 2023 and asked to predict 2024.",
+    category: "Method",
+    module: "Exposure and the commercial case",
+  },
+  elasticity: {
+    title: "How hard an input moves the answer",
+    plain:
+      "Change one input by one percent and see how many percent the answer moves. That ratio is the elasticity. It is a way of ranking which numbers are worth arguing about: an input with an elasticity of 11 will wreck the result if it is slightly wrong, and one near zero will not.",
+    category: "Method",
+    module: "Exposure and the commercial case",
+  },
+  metar: {
+    title: "Airport weather reports",
+    plain:
+      "Every airport files a short weather report about once an hour, wind speed and direction included, measured by an instrument on the ground. The Iowa Environmental Mesonet keeps an archive of them and gives it away. We used three UAE airports, about 75,000 paired hours, as the first real instrument this model has been compared against.",
+    category: "Method",
+    module: "Exposure and the commercial case",
+  },
 };
 
 /** Alternate spellings / keys used in code, routed to a canonical GLOSSARY key. */
@@ -908,7 +934,7 @@ export const ALIASES: Record<string, string> = {
   "power purchase agreement": "ppa",
   "contracted ppa": "ppa",
   "capacity factor": "capacity-factor",
-  "nameplate capacity": "capacity-factor",
+  "nameplate capacity": "nameplate-capacity",
   nameplate: "nameplate-capacity",
   kwh: "kilowatt-hour",
   "kilowatt hour": "kilowatt-hour",
@@ -923,6 +949,12 @@ export const ALIASES: Record<string, string> = {
   "sand sea": "sand-sea",
   "sand seas": "sand-sea",
   "grid cell": "grid-cell",
+  // How the model was tested.
+  "held-out": "held-out-test",
+  "held out": "held-out-test",
+  "holding a year back": "held-out-test",
+  "airport records": "metar",
+  "airport wind records": "metar",
 };
 
 /** Normalize a lookup key: lowercase, collapse whitespace, trim symbols we route on. */
