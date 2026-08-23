@@ -231,10 +231,21 @@ export default function ExposureWorkspace() {
   const seasonDef = SEASONS.find((x) => x.id === season) ?? SEASONS[1];
 
   /**
-   * The fitted climatology for the cell nearest this site, averaged over the
-   * three months of the chosen window. A and k are averaged directly; the rose
-   * sums, because drift potential is an amount of work done over a period and
-   * three months of it add.
+   * The fitted climatology for the cell nearest this site, over the three months
+   * of the chosen window.
+   *
+   * Three quantities, aggregated three different ways, because they are three
+   * different kinds of thing:
+   *
+   *   A and k   averaged, and used only to SHOW a season's typical wind. They
+   *             are no longer integrated once to get the flux. Doing that
+   *             smears a windy month into two calm ones before the cubing that
+   *             matters, and verify_wind_holdout.py measured the cost: at the
+   *             5.4 m/s threshold, integrating each month and averaging the
+   *             fluxes is closer to the hourly truth in 13 of 16 seasons.
+   *   months    kept per month, so the flux can be integrated month by month.
+   *   rose      summed, because drift potential is an amount of work done over
+   *             a period and three months of it add.
    */
   const seasonal = useMemo(() => {
     if (!clim || !site) return null;
@@ -245,6 +256,7 @@ export default function ExposureWorkspace() {
     let A = 0;
     let k = 0;
     let n = 0;
+    const months: { A: number; k: number }[] = [];
     const freq = new Array(ROSE_SECTORS).fill(0);
     const spd = new Array(ROSE_SECTORS).fill(0);
     const q = new Array(ROSE_SECTORS).fill(0);
@@ -255,6 +267,7 @@ export default function ExposureWorkspace() {
       A += mm.A;
       k += mm.k;
       n++;
+      months.push({ A: mm.A, k: mm.k });
       const r = cell.rose?.[String(m)];
       if (r) {
         for (let i = 0; i < ROSE_SECTORS; i++) {
@@ -268,6 +281,7 @@ export default function ExposureWorkspace() {
     return {
       A: A / n,
       k: k / n,
+      months,
       freq,
       spd,
       q,
@@ -339,8 +353,27 @@ export default function ExposureWorkspace() {
   const fitted = mode === "seasonal" && !override && seasonal;
   const kEff = mode === "live" ? 12 : fitted ? seasonal!.k : windK;
   const aEff = mode === "live" ? Math.max(speed, 0.01) : fitted ? seasonal!.A : windA;
-  const Q0 = meanSaltationFlux({ A: aEff, k: kEff, uThreshold: utFree0 });
-  const Qt = meanSaltationFlux({ A: aEff, k: kEff, uThreshold: utFreeT });
+
+  /**
+   * The same argument one level up. Averaging A and k across a season and
+   * integrating once is a flux of the mean applied to months instead of to
+   * hours, and it has the same failure: a windy month averaged with two calm
+   * ones loses the tail that carries the sand. So each month is integrated on
+   * its own fit and the fluxes are averaged.
+   *
+   * Only the fitted branch gets this. An overridden slider and a live reading
+   * both carry one wind, so there is nothing to average.
+   */
+  const seasonFlux = (uThreshold: number) => {
+    const ms = fitted ? seasonal!.months : [];
+    if (ms.length === 0) return meanSaltationFlux({ A: aEff, k: kEff, uThreshold });
+    let sum = 0;
+    for (const m of ms) sum += meanSaltationFlux({ A: m.A, k: m.k, uThreshold });
+    return sum / ms.length;
+  };
+
+  const Q0 = seasonFlux(utFree0);
+  const Qt = seasonFlux(utFreeT);
   const reduction = Q0 > 0 ? 1 - Qt / Q0 : 0;
   // Q0 = 0 means the untreated bed never moves at this wind, so there is nothing
   // to reduce and a percentage would be meaningless. Qt = 0 with Q0 > 0 means the
