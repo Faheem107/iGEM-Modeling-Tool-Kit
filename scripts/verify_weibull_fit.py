@@ -91,17 +91,24 @@ def flux_closed(A, k, ut):
     )
 
 
-def main():
+def collect_rows():
+    """Score every shipped (A, k) against the hourly record it was fitted to.
+
+    Returns (rows, missing), where a row is
+
+        (lon, lat, month, n, D, p, tail_err, p90_err, flux_err)
+
+    and `missing` counts cells in the fit with no cached hourly record. Nothing
+    is refitted. Split out of main() so write_wind_validation.py can report the
+    same numbers this script prints, instead of a second copy of the loop that
+    could drift away from it.
+    """
     if not CLIM.exists():
         raise SystemExit(f"{CLIM} not found. Run scripts/fit_era5_weibull.py first.")
     doc = json.loads(CLIM.read_text())
     lons, lats = doc["lon"], doc["lat"]
-    n_cells, first, last = era5_cache.coverage()
-    print(f"Shipped fit: {CLIM.relative_to(ROOT)}")
-    print(f"ERA5 cache:  {n_cells} cells, {first} to {last}")
-    print(f"Testing the shipped (A, k) against the hourly record. Nothing is refitted.\n")
 
-    rows = []          # (lon, lat, month, n, D, p, tail_err, p90_err, flux_err)
+    rows = []
     missing = 0
     for key, cell_doc in doc["cells"].items():
         i, j = (int(x) for x in key.split(","))
@@ -140,6 +147,26 @@ def main():
     if not rows:
         raise SystemExit("No cell-month could be compared. The cache and the "
                          "climatology do not line up.")
+    return rows, missing
+
+
+def by_month_flux_error(rows):
+    """Median flux error per calendar month, as {month: percent}."""
+    out = {}
+    for m in range(1, 13):
+        sel = [r for r in rows if r[2] == m]
+        if sel:
+            out[m] = float(np.nanmedian([r[8] for r in sel]))
+    return out
+
+
+def main():
+    n_cells, first, last = era5_cache.coverage()
+    print(f"Shipped fit: {CLIM.relative_to(ROOT)}")
+    print(f"ERA5 cache:  {n_cells} cells, {first} to {last}")
+    print(f"Testing the shipped (A, k) against the hourly record. Nothing is refitted.\n")
+
+    rows, missing = collect_rows()
 
     arr = np.array([(r[4], r[6], r[7], r[8]) for r in rows], dtype=float)
     D_all, tail_all, p90_all, flux_all = arr[:, 0], arr[:, 1], arr[:, 2], arr[:, 3]

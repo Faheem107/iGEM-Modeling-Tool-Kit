@@ -1,6 +1,6 @@
 {
  "what": "What the wind model has been tested against, and what those tests found. Written by scripts/write_wind_validation.py from the verify_* scripts. Read by the exposure module.",
- "generated": "2026-08-22",
+ "generated": "2026-08-23",
  "record": {
   "cells": 306,
   "from": "2022-01-01T00:00",
@@ -14,7 +14,11 @@
    "worstErrorPct": 507.0,
    "seasonsScored": 11,
    "seasonsTotal": 16,
-   "seasonsWithInventedTransport": 5
+   "seasonsWithInventedTransport": 5,
+   "monthlyMeanBetter": 4,
+   "monthlyMeanPaired": 11,
+   "seasonGapSwamped": 7,
+   "seasonGapChecked": 8
   },
   "impact": {
    "thresholdMs": 5.4,
@@ -22,8 +26,33 @@
    "worstErrorPct": 67.8,
    "seasonsScored": 16,
    "seasonsTotal": 16,
-   "seasonsWithInventedTransport": 0
+   "seasonsWithInventedTransport": 0,
+   "monthlyMeanBetter": 13,
+   "monthlyMeanPaired": 16,
+   "seasonGapSwamped": 7,
+   "seasonGapChecked": 16
   }
+ },
+ "weibullFit": {
+  "cellMonths": 3672,
+  "cellsWithoutRecord": 0,
+  "ksMedian": 0.0421,
+  "fluxErrorMedianPct": -7.9,
+  "fluxErrorTolerancePct": 25.0,
+  "fluxOutsideTolerance": 1020,
+  "fluxScored": 3520,
+  "worstMonths": [
+   "Dec",
+   "Oct",
+   "Nov",
+   "Jan"
+  ],
+  "bestMonths": [
+   "Jun",
+   "May",
+   "Aug",
+   "Jul"
+  ]
  },
  "stations": [
   {
