@@ -673,7 +673,7 @@ export default function ExposureWorkspace() {
                     ERA5 2022 to 2024, grid cell {seasonal.at.lat}°N {seasonal.at.lon}°E
                   </p>
                   <Note label="How far to trust this">
-                    {"The direction is the part to rely on. It agrees with three UAE airport records to within 6.3 degrees across about 75,000 paired hours, and nothing in the model rotates it. The speed does not agree as well. The grid reads low, and it sees between 29 and 78 percent of the hours those airports recorded above the speed that starts sand moving, so the sand figures below are more likely to be under than over."}
+                    {"The direction is the part to rely on. It agrees with three UAE airport records to within 6.3 degrees across about 75,000 paired hours, and nothing in the model rotates it. The speed does not agree as well. The grid reads low, and it sees between 29 and 79 percent of the hours those airports recorded above the speed that starts sand moving, so the sand figures below are more likely to be under than over."}
                   </Note>
                 </div>
               ) : (

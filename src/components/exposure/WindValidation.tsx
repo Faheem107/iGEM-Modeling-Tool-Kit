@@ -236,51 +236,48 @@ export default function WindValidation({
         wide
       >
         <div className="space-y-4">
-          <div className="caption grid grid-cols-[1fr_5rem_5rem] gap-3">
-            <span>input</span>
-            <span>sand</span>
-            <span>the cut</span>
-          </div>
-          <ul className="space-y-3">
+          <ul className="space-y-4">
             {doc.sensitivity.map((r) => (
               <li key={r.input} className="border-t border-border pt-3">
-                <div className="grid grid-cols-[1fr_5rem_5rem] items-baseline gap-3">
-                  <div className="min-w-0">
-                    <p className="text-[length:var(--text-micro)] text-foreground">
-                      {r.input}
-                    </p>
-                    <span className="mt-1 inline-block">
-                      <Grade grade={gradeFromScript(r.grade)} />
-                    </span>
-                  </div>
-                  <span className="tabular-nums caption">
-                    {Math.abs(r.elasticityFlux).toFixed(1)}
-                  </span>
-                  <span className="tabular-nums caption">
-                    {r.elasticityReduction == null
-                      ? "n/a"
-                      : Math.abs(r.elasticityReduction).toFixed(2)}
-                  </span>
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <p className="text-[length:var(--text-micro)] text-foreground">
+                    {r.input}
+                  </p>
+                  <Grade grade={gradeFromScript(r.grade)} />
                 </div>
-                <div className="mt-2 grid grid-cols-[1fr_5rem_5rem] items-center gap-3">
-                  <span />
-                  <span
-                    aria-hidden
-                    className="block h-[3px] bg-dune-orange"
-                    style={{
-                      width: `${Math.max(1, (Math.abs(r.elasticityFlux) / maxFlux) * 100)}%`,
-                    }}
-                  />
-                  <span
-                    aria-hidden
-                    className="block h-[3px] bg-dune-teal"
-                    style={{
-                      width: `${Math.max(
-                        1,
-                        (Math.abs(r.elasticityReduction ?? 0) / maxCut) * 100,
-                      )}%`,
-                    }}
-                  />
+                {/* Two bars, each on its own row with the quantity named at the
+                    leading edge. Side by side in narrow columns they read as
+                    decoration; given the width they read as the comparison the
+                    fold is about. The bar is the number drawn, so it is a plain
+                    rule at the colour that quantity carries elsewhere on the
+                    page, not a filled track. */}
+                <div className="mt-2 space-y-1">
+                  {(
+                    [
+                      ["sand", Math.abs(r.elasticityFlux), maxFlux,
+                       "bg-dune-orange", Math.abs(r.elasticityFlux).toFixed(1)],
+                      ["the cut", Math.abs(r.elasticityReduction ?? 0), maxCut,
+                       "bg-dune-teal",
+                       r.elasticityReduction == null
+                         ? "n/a"
+                         : Math.abs(r.elasticityReduction).toFixed(2)],
+                    ] as const
+                  ).map(([name, value, max, tone, shown]) => (
+                    <div
+                      key={name}
+                      className="grid grid-cols-[4.5rem_1fr_3rem] items-center gap-3"
+                    >
+                      <span className="caption">{name}</span>
+                      <span className="block h-[3px] bg-border">
+                        <span
+                          aria-hidden
+                          className={`block h-[3px] ${tone}`}
+                          style={{ width: `${Math.max(0.5, (value / max) * 100)}%` }}
+                        />
+                      </span>
+                      <span className="caption tabular-nums text-right">{shown}</span>
+                    </div>
+                  ))}
                 </div>
               </li>
             ))}
