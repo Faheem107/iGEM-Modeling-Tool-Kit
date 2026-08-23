@@ -896,13 +896,15 @@ export default function ExposureWorkspace() {
                   {money.usd ? `${aed0(money.usd.costUntreated)} a year` : ""}
                 </p>
               </div>
-              <div className="border-l-2 border-dune-teal pl-3">
+              {/* The emphasised half of the comparison is marked the way
+                  StatCard marks one, by weight, not by a coloured bar. */}
+              <div>
                 <p className="caption mb-2">The part treating the ground reaches</p>
                 {money.usd && money.usd.saved >= 1000 ? (
                   <>
                     <p
                       className="tabular-nums text-[length:var(--text-h3)] text-dune-teal"
-                      style={{ fontVariationSettings: '"wght" 620' }}
+                      style={{ fontVariationSettings: '"wght" 700' }}
                     >
                       {usd0(money.usd.saved)}
                     </p>
