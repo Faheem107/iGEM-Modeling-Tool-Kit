@@ -524,9 +524,22 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
         url: "https://www.naturalearthdata.com/",
       },
       {
+        label: "Iowa Environmental Mesonet, ASOS archive",
+        detail:
+          "Hourly METAR for Abu Dhabi, Dubai and Al Ain international airports, 2022 to 2024, about 75,000 paired hours. Free and needs no key, which is why the wind model could be compared against an instrument at all. This is the only measured record anything on this page has been tested against.",
+        kind: "literature",
+        url: "https://mesonet.agron.iastate.edu/request/download.phtml",
+      },
+      {
+        label: "Our own tests, scripts/verify_wind_*.py",
+        detail:
+          "Holding a year back, checking the Weibull assumption, the airport comparison, and which input moves the answer. Each writes its failure criterion before it runs, and two of them exit non-zero because they found something. Their headline figures are collected into public/data/wind_validation.json and read by the section at the end of this page, so a number on screen and a number in a test cannot disagree.",
+        kind: "internal",
+      },
+      {
         label: "Crust cohesion, and the gaps",
         detail:
-          "The cohesion the crust adds is ours to measure and is shown as an input until the wet lab returns it. Four numbers have no source and are left blank rather than guessed: the UAE tariff a generator actually earns, the utility PV capacity factor, the cost of clearing a cubic metre of sand in the Gulf, and any relation between blowing sand and glass wear.",
+          "The cohesion the crust adds is ours to measure and is shown as an input until the wet lab returns it. Being unsourced and being influential are separate things and this number is the first without being the second: of the seven inputs it moves the amount of sand the least, but because nobody has measured it its plausible range is the widest here, and across that range the reduction we report runs from 45 to 100 percent. Four other numbers have no source and are left blank rather than guessed: the UAE tariff a generator actually earns, the utility PV capacity factor, the cost of clearing a cubic metre of sand in the Gulf, and any relation between blowing sand and glass wear.",
         kind: "internal",
       },
     ],
