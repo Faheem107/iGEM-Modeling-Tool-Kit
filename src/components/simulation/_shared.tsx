@@ -335,14 +335,18 @@ export function StatCard({
   }
   return (
     // A figure on a rule, not a tile. The emphasised one is marked by a heavier
-    // top rule and a larger number, never by a ring or a fill.
+    // top rule and a larger number, never by a ring, a fill or a stripe.
+    //
+    // With rule={false} there is no rule to thicken, so the size step carries it
+    // alone. It used to get `border-l-2 border-dune-orange`, a coloured accent
+    // bar, which DESIGN.md section 3.2 bans outright. Where the size step alone
+    // reads as under-marked, give the figure its own row above the grid rather
+    // than a stripe beside it.
     <div
       className={
         rule
           ? `border-t pt-2 ${emphasize ? "border-dune-orange" : "border-border"}`
-          : emphasize
-            ? "border-l-2 border-dune-orange pl-3"
-            : ""
+          : ""
       }
     >
       <span className="caption mb-2 block" style={{ textWrap: "balance" }}>
@@ -351,7 +355,7 @@ export function StatCard({
       <div className="flex items-baseline gap-2">
         <span
           className={`tabular-nums ${emphasize ? "text-[length:var(--text-h3)]" : "text-[length:var(--text-body)]"} ${accent}`}
-          style={{ fontVariationSettings: '"wght" 620' }}
+          style={{ fontVariationSettings: emphasize ? '"wght" 700' : '"wght" 620' }}
         >
           {value}
         </span>
@@ -363,7 +367,13 @@ export function StatCard({
       </div>
       {sub && (
         <span className="mt-1 block text-[length:var(--text-caption)] leading-snug text-muted-foreground">
-          {sub}
+          {/* One dotted term per line at most. This is where a reader who has
+              just met a number looks for the word they did not know, and it is
+              also where Sandyx has somewhere to land. `label` is NOT glossed:
+              .caption is 11px uppercase at 0.14em tracking, where a dotted
+              underline is close to invisible and Term's padding would knock the
+              row's baselines out of line. */}
+          {typeof sub === "string" ? <GlossaryText max={1}>{sub}</GlossaryText> : sub}
         </span>
       )}
       {note && <Note className="mt-2">{note}</Note>}
