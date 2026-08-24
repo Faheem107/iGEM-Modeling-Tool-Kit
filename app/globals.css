@@ -313,6 +313,33 @@ input[type="range"]::-moz-range-thumb {
   animation-delay: 0.42s;
 }
 
+/* ---- CO2 drifting onto the enzyme, landing cinematic beat 3 ----
+ * The mineral on the wall is keyed to the scroll, because that is the part the
+ * reader is walking through. The gas is not: it runs on its own clock, so the
+ * frame is never completely still even when the reader has stopped. Transform
+ * and opacity only, so it stays off the main thread inside a pinned section.
+ * The global reduced-motion rule above collapses this to a single frame. */
+@keyframes ca-gas-fall {
+  0% {
+    opacity: 0;
+    transform: translate(0, -80px);
+  }
+  14% {
+    opacity: 0.72;
+  }
+  70% {
+    opacity: 0.72;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--ca-x, 0px), 430px);
+  }
+}
+.ca-gas-mol {
+  animation: ca-gas-fall 7s linear infinite both;
+  will-change: transform, opacity;
+}
+
 /* Tabular numbers everywhere numbers are shown in the UI chrome */
 .tabular-nums, [class*="tabular"] {
   font-variant-numeric: tabular-nums;
