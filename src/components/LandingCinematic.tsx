@@ -334,12 +334,38 @@ export default function LandingCinematic({
     // spacer and no measurement pass. The height is real from the first layout,
     // so scrolling up is the same operation as scrolling down, and the protein
     // holds its place in the frame instead of being re-parented under it.
-    section.style.height = `calc(100vh + ${storyTravel(3100, 1400)}px)`;
     // Applied here rather than in the class, so the static and narrow branch,
     // which returns before this point, keeps a stage sized by its own content.
-    scope.style.position = "sticky";
-    scope.style.top = "0";
-    scope.style.height = "100vh";
+    const TRAVEL = storyTravel(3100, 1400);
+    const stageEl = scope;
+    const sectionEl = section;
+    // Sized from the measured viewport, not from vh.
+    //
+    // `100vh` is the LARGE viewport height. It is not always the height the
+    // page is actually laid out in: browser chrome, a zoom level and a
+    // classic scrollbar all move one and not the other, and when they
+    // disagree the stage is a strip taller or shorter than the screen. That
+    // strip is the page ground showing through beside the scene, under the
+    // header and down the right edge. Measuring removes the disagreement.
+    const sizeStage = () => {
+      const vh = document.documentElement.clientHeight;
+      stageEl.style.height = `${vh}px`;
+      sectionEl.style.height = `${vh + TRAVEL}px`;
+    };
+    stageEl.style.position = "sticky";
+    stageEl.style.top = "0";
+    stageEl.style.width = "100%";
+    sizeStage();
+
+    // ScrollTrigger used to re-measure on resize. Nothing else does now, and a
+    // stage sized in pixels has to be told.
+    let resizeTimer = 0;
+    const onResize = () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(sizeStage, 120);
+    };
+    window.addEventListener("resize", onResize);
+
 
     // One frame loop, one easing constant, frame-rate independent. dt-scaled,
     // so a 120Hz display and a 60Hz display travel the same distance per second
@@ -392,9 +418,12 @@ export default function LandingCinematic({
       else window.clearTimeout(mount as number);
       cancelAnimationFrame(raf);
       vis.disconnect();
+      window.clearTimeout(resizeTimer);
+      window.removeEventListener("resize", onResize);
       section.style.height = "";
       scope.style.position = "";
       scope.style.top = "";
+      scope.style.width = "";
       scope.style.height = "";
       tl.revert?.();
       tlRef.current = null;

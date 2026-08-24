@@ -204,10 +204,36 @@ export default function DesignCycleStory({
     // this stage to position: fixed inside a generated spacer, and crossing
     // that boundary upward flipped it back on a frame the browser had already
     // laid out. A sticky child of a tall section never swaps.
-    section.style.height = `calc(100vh + ${storyTravel(2700, 1200)}px)`;
-    stage.style.position = "sticky";
-    stage.style.top = "0";
-    stage.style.height = "100vh";
+    const TRAVEL = storyTravel(2700, 1200);
+    const stageEl = stage;
+    const sectionEl = section;
+    // Sized from the measured viewport, not from vh.
+    //
+    // `100vh` is the LARGE viewport height. It is not always the height the
+    // page is actually laid out in: browser chrome, a zoom level and a
+    // classic scrollbar all move one and not the other, and when they
+    // disagree the stage is a strip taller or shorter than the screen. That
+    // strip is the page ground showing through beside the scene, under the
+    // header and down the right edge. Measuring removes the disagreement.
+    const sizeStage = () => {
+      const vh = document.documentElement.clientHeight;
+      stageEl.style.height = `${vh}px`;
+      sectionEl.style.height = `${vh + TRAVEL}px`;
+    };
+    stageEl.style.position = "sticky";
+    stageEl.style.top = "0";
+    stageEl.style.width = "100%";
+    sizeStage();
+
+    // ScrollTrigger used to re-measure on resize. Nothing else does now, and a
+    // stage sized in pixels has to be told.
+    let resizeTimer = 0;
+    const onResize = () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(sizeStage, 120);
+    };
+    window.addEventListener("resize", onResize);
+
 
     const SMOOTH = 5.5;
     let smoothP = 0;
@@ -250,9 +276,12 @@ export default function DesignCycleStory({
     return () => {
       cancelAnimationFrame(raf);
       vis.disconnect();
+      window.clearTimeout(resizeTimer);
+      window.removeEventListener("resize", onResize);
       section.style.height = "";
       stage.style.position = "";
       stage.style.top = "";
+      stage.style.width = "";
       stage.style.height = "";
       tl.revert?.();
       tlRef.current = null;
@@ -558,14 +587,18 @@ function BeatBody({
           scale as the beat headline in the dune story, not the display face
           shouting in caps. */}
       <h2
-        className={`mb-4 text-[length:var(--text-h3)] leading-snug ${
+        className={`mb-5 text-[length:var(--text-h3)] leading-snug ${
           isLightMode ? "text-dune-maroon" : "text-dune-paper"
         }`}
         style={{ fontVariationSettings: '"wght" 600' }}
       >
         {beat.title}
       </h2>
-      <p className="text-[length:var(--text-body)] leading-relaxed text-foreground">
+      {/* Held to a reading measure and opened up. The plate is wide enough for
+          the illustration beside it to breathe, which left the body running to
+          about 78 characters a line in one unbroken block. The column is the
+          panel's, the measure is the paragraph's. */}
+      <p className="max-w-[58ch] text-[length:var(--text-body)] leading-[1.75] text-foreground">
         <GlossaryText>{beat.body}</GlossaryText>
       </p>
     </>
