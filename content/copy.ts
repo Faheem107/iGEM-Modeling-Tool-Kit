@@ -25,7 +25,7 @@
 // ---------------------------------------------------------------------------
 
 /** The wordmark line. Appears once, on the hero. */
-export const PROJECT_TITLE = "Locking down the dunes";
+export const PROJECT_TITLE = "Modeling Toolkit for Sand Stabilization";
 
 export const PROJECT_TEAM = "NYUAD iGEM 2026";
 
@@ -35,13 +35,18 @@ export const PROJECT_TEAM = "NYUAD iGEM 2026";
  * This is the thesis. It is stated on the hero and nowhere else on the landing.
  * Page metadata and the arcade intro reuse it rather than inventing a sixth
  * phrasing.
+ *
+ * It names the pollutant first. The thing being remediated is airborne mineral
+ * dust, and sand that stays on the ground is how the model measures that. Read
+ * the other way round, the crust is the result and the reader has to supply the
+ * reason themselves.
  */
 export const PROJECT_ONE_LINER =
-  "Loose sand starts moving at a threshold wind speed. Two engineered routes bind the grains into a crust and raise that threshold. A kill switch ends the strain when the work is done.";
+  "Wind lifts loose grains off exposed sand, and the fine fraction stays airborne as particulate matter. Two engineered routes bind those grains into a crust, and the cementing route locks CO\u2082 into the mineral it grows. A kill switch ends the strain when the work is done.";
 
 /** The metadata description. The one-liner, trimmed to what a search result shows. */
 export const PROJECT_META_DESCRIPTION =
-  "An interactive dry lab for Dunelock: engineered Bacillus subtilis binds loose sand into a crust and raises the wind speed needed to move it. Metabolism, cross-linking, aeolian transport, protein structure and biocontainment, each one modelled.";
+  "An interactive dry lab for Dunelock: engineered Bacillus subtilis binds loose sand into a crust, so the mineral dust that would otherwise become airborne particulate matter stays on the ground. Metabolism, cross-linking, aeolian transport, protein structure and biocontainment, each one modelled.";
 
 /**
  * The mechanism, stated once.

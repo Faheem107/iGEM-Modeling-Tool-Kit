@@ -15,7 +15,12 @@ import Link from "next/link";
 import { duneGradient, grainOverlayStyle } from "@/src/lib/grain";
 import { moduleHref } from "@/src/lib/modelIndex";
 import type { MolstarApi } from "@/components/molstar-viewer";
-import { NAV, PROJECT_TEAM, PROJECT_TITLE } from "@/content/copy";
+import {
+  NAV,
+  PROJECT_ONE_LINER,
+  PROJECT_TEAM,
+  PROJECT_TITLE,
+} from "@/content/copy";
 import { DUNE, TINT } from "@/src/lib/palette";
 import {
   dunePath,
@@ -93,7 +98,7 @@ interface BeatCopy {
 // the site, and the way there is one click.
 const BEATS: BeatCopy[] = [
   {
-    line: "Past a threshold wind speed, loose sand lifts off the surface.",
+    line: "Past a threshold wind speed, sand lifts, and the finest grains stay in the air.",
     scale: "~10 m",
     place: "top-left",
     model: { label: "Aeolian Wind Tunnel", href: moduleHref("1,2", "aeolian") },
@@ -111,7 +116,8 @@ const BEATS: BeatCopy[] = [
   {
     line: (
       <>
-        Carbonic anhydrase on the cell wall grows CaCO<sub>3</sub> cement.
+        Carbonic anhydrase on the cell wall turns CO<sub>2</sub> into CaCO
+        <sub>3</sub> cement.
       </>
     ),
     scale: "~5 nm",
@@ -249,11 +255,21 @@ export default function LandingCinematic({
       setLayer(
         microRef.current,
         `scale(${((2.2 - microIn * 1.2) * (1 + caPeak * 0.9)).toFixed(4)})`,
-        microIn * (1 - microOut) * (1 - 0.62 * caPeak),
+        microIn * (1 - microOut) * (1 - 0.88 * caPeak),
       );
 
       // Carbonic-anhydrase 3D layer fades in for its beat, then recedes.
       setLayer(caRef.current, `scale(${(0.86 + caZoom * 0.14).toFixed(4)})`, caPeak);
+      // The wall draws on as the beat arrives, and the calcite accumulates
+      // across it. Passed down as CSS variables rather than per-element writes:
+      // one property set here reaches every rhomb and every tick.
+      if (caRef.current) {
+        // The beat holds at full opacity between about 0.52 and 0.56 and fades
+        // out by 0.66, so the growth has to finish inside that hold. Run to
+        // 0.64 and the crust arrives while the frame is already leaving.
+        caRef.current.style.setProperty("--ca-draw", smooth(p, 0.4, 0.49).toFixed(3));
+        caRef.current.style.setProperty("--ca-grow", smooth(p, 0.43, 0.56).toFixed(3));
+      }
       // Mount the WebGL viewer once as we approach the protein beat and keep it
       // mounted. Turning the spin OFF when the beat is off-screen lets Mol* idle
       // with no render loop, so we avoid both the always-spinning cost of the
@@ -431,6 +447,9 @@ export default function LandingCinematic({
           className="absolute inset-0 flex items-center justify-center will-change-transform"
           style={{ transformOrigin: "center", opacity: 0 }}
         >
+          {/* The wall the enzyme is pinned to, under the protein. Mol* renders
+              on a transparent background, so this shows through it. */}
+          <CaScene isLightMode={isLightMode} />
           <div className="relative h-[76%] w-[76%] max-w-[820px]">
             {caMounted && (
               <MolstarViewer
@@ -516,9 +535,7 @@ export default function LandingCinematic({
                   isLightMode ? "text-dune-maroon/85" : "text-dune-paper/85"
                 }`}
               >
-                Loose sand starts moving at a threshold wind speed. Two
-                engineered routes bind the grains into a crust and raise that
-                threshold. A kill switch ends the strain when the work is done.
+                {PROJECT_ONE_LINER}
               </p>
 
               <div
@@ -1182,6 +1199,205 @@ function MicroScene({
         <rect x="0" y="0" width="1200" height="800" fill="url(#ds-vignette)" />
       </svg>
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// The surface the carbonic anhydrase sits on.
+//
+// The protein used to be a dimer turning in an empty frame. Nothing in the
+// picture said where it was, and the beat is about where it is: sortase pins it
+// to the outside of the cell wall, which is the side the CO2 and the calcium
+// are on. So the frame gets the wall back, and the two ends of the reaction the
+// enzyme runs.
+//
+// Two clocks, deliberately. The CO2 drifts on its own (CSS, always moving,
+// because the gas does not wait for a reader), and the mineral grows on the
+// scroll (--ca-grow, because that is the part the reader is walking through).
+// Nothing here is labelled: the beat caption already names both ends, and a
+// label in the drawing would be the same sentence twice.
+// ---------------------------------------------------------------------------
+
+/**
+ * The wall as a parabola, so the ticks, the anchor and the calcite can all sit
+ * on the same curve instead of each carrying its own guess at where it is.
+ *
+ * `M -40 690 Q 600 442 1240 690` is exactly y = 690 - 124(1 - u^2) with
+ * u = (x - 600) / 640, because a quadratic with symmetric endpoints is a
+ * parabola in x. Both forms are here so the drawn line and the things standing
+ * on it cannot drift apart.
+ */
+const CA_WALL = "M -40 690 Q 600 442 1240 690";
+const CA_MEMBRANE = "M -40 728 Q 600 480 1240 728";
+const caWallY = (x: number) => {
+  const u = (x - 600) / 640;
+  return 690 - 124 * (1 - u * u);
+};
+
+function CaScene({ isLightMode }: { isLightMode: boolean }) {
+  // Deterministic, so the frame is the same on the server and on every pass.
+  // Each molecule converges most of the way to the enzyme as it falls, which is
+  // the only thing in the picture that says the enzyme is what they are for.
+  const co2 = useMemo(
+    () =>
+      [0.04, 0.15, 0.26, 0.37, 0.48, 0.59, 0.7, 0.81, 0.92, 1].map((f, i) => {
+        const x = Math.round(40 + f * 1120);
+        return {
+          x,
+          delay: ((i * 2.3) % 6.9).toFixed(2),
+          // Ends over the enzyme, not beside it. A molecule that falls past the
+          // thing it reacts with says the opposite of what the beat says.
+          converge: 600 - x,
+        };
+      }),
+    [],
+  );
+
+  // Calcite grows out from the anchor, so the ones nearest it start first.
+  // Sizes and stand-off vary and a few overlap, because an evenly spaced row of
+  // equal squares reads as a border drawn along the wall rather than as mineral
+  // coming out of solution onto it.
+  const rhombs = useMemo(() => {
+    const spread = [
+      -472, -438, -400, -366, -338, -300, -268, -242, -208, -178, -150, -118,
+      -92, -64, -38, 40, 74, 112, 158, 206, 262,
+    ];
+    return spread.map((dx, i) => {
+      const x = 600 + dx;
+      const r = 5 + ((i * 11) % 9);
+      // Some sit on the line, some a grain proud of it.
+      const lift = ((i * 7) % 5) * 2.5;
+      return {
+        x,
+        y: Math.round(caWallY(x) - r * 0.5 - lift),
+        r,
+        tilt: -28 + ((i * 41) % 56),
+        start: 0.04 + Math.abs(dx) / 760,
+      };
+    });
+  }, []);
+
+  const ink = isLightMode ? "#3d7d72" : "#8fd3c2";
+
+  return (
+    <svg
+      viewBox="0 0 1200 800"
+      preserveAspectRatio="xMidYMid slice"
+      className="absolute inset-0 h-full w-full"
+      aria-hidden
+    >
+      <defs>
+        {/* The cytoplasm below the membrane, lit from the same upper left as
+            every other scene, so this reads as the same cell zoomed in. */}
+        <linearGradient id="ca-body" x1="0.2" y1="0" x2="0.8" y2="1">
+          <stop offset="0%" stopColor={isLightMode ? "#7cc4b4" : "#3f8d80"} />
+          <stop offset="100%" stopColor={isLightMode ? "#3d7d72" : "#16443d"} />
+        </linearGradient>
+        {/* Calcium in solution above the wall: warm, thin, and only near the
+            surface, which is the side the carbonate comes out on. */}
+        <linearGradient id="ca-solution" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={C.sand} stopOpacity="0" />
+          <stop offset="100%" stopColor={C.sand} stopOpacity={isLightMode ? 0.2 : 0.14} />
+        </linearGradient>
+        <radialGradient id="ca-vignette" cx="50%" cy="42%" r="70%">
+          <stop offset="52%" stopColor="#000" stopOpacity="0" />
+          <stop offset="100%" stopColor="#000" stopOpacity={isLightMode ? 0.18 : 0.55} />
+        </radialGradient>
+      </defs>
+
+      {/* Everything below the membrane is cell. */}
+      <path
+        d={`${CA_MEMBRANE} L 1240 840 L -40 840 Z`}
+        fill="url(#ca-body)"
+        opacity={isLightMode ? 0.62 : 0.72}
+        style={{ opacity: "calc(var(--ca-draw, 0) * 0.7)" }}
+      />
+      <path d="M -40 300 L 1240 300 L 1240 800 L -40 800 Z" fill="url(#ca-solution)" />
+
+      {/* The wall and the membrane draw on as the beat arrives. pathLength=1
+          keeps the dash in normalised units, so the uniform slice transform
+          cannot pull the dash and the geometry out of step. */}
+      <g
+        fill="none"
+        stroke={ink}
+        style={{ strokeDashoffset: "calc(1 - var(--ca-draw, 0))" }}
+      >
+        <path d={CA_WALL} pathLength={1} strokeDasharray={1} strokeWidth="3.6" opacity="0.95" />
+        <path d={CA_MEMBRANE} pathLength={1} strokeDasharray={1} strokeWidth="2.2" opacity="0.55" />
+      </g>
+
+      {/* Peptidoglycan, as ticks across the wall rather than a texture fill. A
+          drawn strand would have to be some width, and at this scale we do not
+          know it. */}
+      <g stroke={ink} strokeWidth="1.7" style={{ opacity: "calc(0.4 * var(--ca-draw, 0))" }}>
+        {Array.from({ length: 29 }, (_, i) => {
+          const x = -20 + i * 44;
+          const y = caWallY(x);
+          return <line key={i} x1={x} y1={y + 4} x2={x} y2={y + 34} />;
+        })}
+      </g>
+
+      {/* The sortase anchor: the enzyme is stitched to the wall covalently, so
+          it gets a stem, not a gap. */}
+      <g style={{ opacity: "var(--ca-draw, 0)" }}>
+        {/* Only the lower half of the stem is ever uncovered, the protein sits
+            over the rest, so the visible part carries the whole read and is
+            drawn to be seen against a dark frame. */}
+        <line x1="600" y1={caWallY(600)} x2="600" y2="452" stroke={DUNE.rose} strokeWidth="4" />
+        <circle cx="600" cy={caWallY(600)} r="8" fill={DUNE.rose} />
+        <circle cx="600" cy={caWallY(600)} r="15" fill="none" stroke={DUNE.rose} strokeWidth="1.6" opacity="0.45" />
+      </g>
+
+      {/* CO2 falling onto the enzyme. Three dots, O=C=O, because a label would
+          say what the beat caption already says. */}
+      <g>
+        {co2.map((m, i) => (
+          <g
+            key={i}
+            className="ca-gas-mol"
+            style={
+              {
+                "--ca-x": `${m.converge}px`,
+                animationDelay: `${m.delay}s`,
+              } as React.CSSProperties
+            }
+            transform={`translate(${m.x} 0)`}
+          >
+            <g fill={ink}>
+              <circle cx="-11" cy="0" r="3.6" />
+              <circle cx="0" cy="0" r="5" />
+              <circle cx="11" cy="0" r="3.6" />
+            </g>
+          </g>
+        ))}
+      </g>
+
+      {/* Calcite on the wall. Rhombs, which is the habit calcite grows in, and
+          they arrive from the anchor outwards. */}
+      <g
+        style={{
+          transform: "scale(calc(0.36 + 0.64 * var(--ca-grow, 0)))",
+          transformOrigin: "600px 640px",
+        }}
+      >
+        {rhombs.map((r, i) => (
+          <rect
+            key={i}
+            x={r.x - r.r}
+            y={r.y - r.r}
+            width={r.r * 2}
+            height={r.r * 2}
+            fill={C.sand}
+            stroke={C.sandDeep}
+            strokeWidth="1.1"
+            transform={`rotate(${r.tilt} ${r.x} ${r.y})`}
+            style={{ opacity: `calc((var(--ca-grow, 0) - ${r.start.toFixed(3)}) * 6)` }}
+          />
+        ))}
+      </g>
+
+      <rect x="0" y="0" width="1200" height="800" fill="url(#ca-vignette)" />
+    </svg>
   );
 }
 
