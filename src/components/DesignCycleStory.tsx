@@ -201,33 +201,65 @@ export default function DesignCycleStory({
     }
 
     gsap.registerPlugin(ScrollTrigger);
+
+    // Same split as the dune story: ScrollTrigger owns the pin and reports raw
+    // progress, and one frame loop below eases toward it. The old scrub: 0.6
+    // was a second filter stacked on Lenis's own easing, which is what made a
+    // fling back up to this section play back in steps.
+    const SMOOTH = 5.5;
+    let targetP = 0;
+    let smoothP = 0;
+    let last = performance.now();
+    let raf = 0;
+    let onScreen = true;
+
     const st = ScrollTrigger.create({
       trigger: stage,
       start: "top top",
       // Longer travel (~900px/beat) so a small scroll no longer jumps between
-      // beats; the scrub smoothing keeps it from feeling heavy.
-      // Pin length, see the note in LandingCinematic: normalised progress, so
-      // this is a uniform speed-up rather than a change to any beat.
+      // beats. Pin length, see the note in LandingCinematic: normalised
+      // progress, so this is a uniform speed-up rather than a change to any
+      // beat.
       end: storyPinLength(2700, 1200),
       pin: true,
       pinSpacing: true,
       // Apply the pin slightly early to avoid a one-frame flash at the top
       // boundary when scrolling up out of the pinned range.
       anticipatePin: 1,
-      // Smoothing lag: the timeline eases toward the scroll position instead of
-      // hard-snapping. This is what stops the reverse-play "breaks" when you fling
-      // back up to this section from lower on the page. invalidateOnRefresh
-      // re-measures cleanly on resize.
-      scrub: 0.6,
       invalidateOnRefresh: true,
+      scrub: true,
       onUpdate: (self) => {
-        progressRef.current = self.progress;
-        tl.seek(tl.duration * self.progress);
-        setActive(Math.min(BEATS.length - 1, Math.floor(self.progress * BEATS.length)));
+        targetP = self.progress;
       },
     });
 
+    const vis = new IntersectionObserver(
+      ([entry]) => {
+        onScreen = entry.isIntersecting;
+      },
+      { rootMargin: "200px" },
+    );
+    vis.observe(stage);
+
+    const loop = (now: number) => {
+      raf = requestAnimationFrame(loop);
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      if (!onScreen) return;
+      smoothP += (targetP - smoothP) * Math.min(1, dt * SMOOTH);
+      if (Math.abs(targetP - smoothP) < 0.0002) smoothP = targetP;
+      progressRef.current = smoothP;
+      tl.seek(tl.duration * smoothP);
+      // setActive only when the band actually changes, so a scrolling reader is
+      // not re-rendering React on every frame of the story.
+      const beat = Math.min(BEATS.length - 1, Math.floor(smoothP * BEATS.length));
+      setActive((prev) => (prev === beat ? prev : beat));
+    };
+    raf = requestAnimationFrame(loop);
+
     return () => {
+      cancelAnimationFrame(raf);
+      vis.disconnect();
       st.kill();
       tl.revert?.();
       tlRef.current = null;
