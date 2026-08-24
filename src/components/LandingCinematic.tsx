@@ -274,7 +274,7 @@ export default function LandingCinematic({
       // mounted. Turning the spin OFF when the beat is off-screen lets Mol* idle
       // with no render loop, so we avoid both the always-spinning cost of the
       // original and the ~400ms freeze of remounting the GL context on every pass.
-      if (!caMounted && p > 0.28) setCaMounted(true);
+      // (the viewer is mounted up front now, see the idle mount below)
       const inCaBeat = p > 0.34 && p < 0.72;
       if (molApiRef.current) {
         const speed = inCaBeat ? (caPeak > 0.4 ? 1.1 : 0.14) : 0;
@@ -312,8 +312,40 @@ export default function LandingCinematic({
       };
     }
 
+    // Mount the protein viewer while the reader is still at the top, not at
+    // p > 0.28 on the way into its beat. Creating a WebGL context costs a long
+    // frame wherever it happens, and it used to happen mid-scroll, from inside
+    // the scroll path, via a setState that re-rendered React in the same frame.
+    // Here it lands in idle time before any of that.
+    const mount = window.requestIdleCallback
+      ? window.requestIdleCallback(() => setCaMounted(true), { timeout: 2000 })
+      : window.setTimeout(() => setCaMounted(true), 400);
+
     gsap.registerPlugin(ScrollTrigger);
     renderFrame(0);
+
+    // One frame loop, one easing constant, frame-rate independent. dt-scaled,
+    // so a 120Hz display and a 60Hz display travel the same distance per second
+    // instead of the fast one arriving twice as soon. 5.5 is the constant the
+    // reference scroll model uses, and it is the one that feels right: short
+    // enough that the scene tracks the finger, long enough to absorb a wheel's
+    // discrete steps.
+    const SMOOTH = 5.5;
+    let targetP = 0;
+    let smoothP = 0;
+    let last = performance.now();
+    let raf = 0;
+    let onScreen = true;
+
+    // Progress is READ here and RENDERED in the loop below, never both.
+    //
+    // This was `scrub: 0.6` with renderFrame called straight out of onUpdate,
+    // which put two smoothing filters in series: Lenis already eases the real
+    // scroll position (lerp 0.12, see SmoothScroll), and the scrub then eased a
+    // second time toward that eased value over a 0.6s constant. Every beat was
+    // chasing a target that was itself chasing the scroll. That is what the
+    // rubber-banding and the reverse-play breaks were. ScrollTrigger now owns
+    // nothing but the pin and reports raw progress.
     const st = ScrollTrigger.create({
       trigger: scope,
       // Named so storyPlayback can read this trigger's absolute scroll range
@@ -326,20 +358,50 @@ export default function LandingCinematic({
       end: storyPinLength(3100, 1400),
       pin: true,
       pinSpacing: true,
-      scrub: 0.6,
+      scrub: true,
       // Apply the pin a touch early so the fixed<->static swap at the top
       // boundary does not flash the hero out for a frame when scrolling up.
       anticipatePin: 1,
       invalidateOnRefresh: true,
-      onUpdate: (self) => renderFrame(self.progress),
+      onUpdate: (self) => {
+        targetP = self.progress;
+      },
     });
 
+    // Off screen the loop ticks but draws nothing. A story rendering behind a
+    // reader who has scrolled past it is work nobody sees, and it is frame
+    // budget the section below this one wants.
+    const vis = new IntersectionObserver(
+      ([entry]) => {
+        onScreen = entry.isIntersecting;
+      },
+      { rootMargin: "200px" },
+    );
+    vis.observe(scope);
+
+    const loop = (now: number) => {
+      raf = requestAnimationFrame(loop);
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      if (!onScreen) return;
+      smoothP += (targetP - smoothP) * Math.min(1, dt * SMOOTH);
+      // Settle exactly, so a story at rest is not redrawing forever over the
+      // last ten-thousandth of the easing.
+      if (Math.abs(targetP - smoothP) < 0.0002) smoothP = targetP;
+      renderFrame(smoothP);
+    };
+    raf = requestAnimationFrame(loop);
+
     return () => {
+      if (window.cancelIdleCallback) window.cancelIdleCallback(mount as number);
+      else window.clearTimeout(mount as number);
+      cancelAnimationFrame(raf);
+      vis.disconnect();
       st.kill();
       tl.revert?.();
       tlRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, []);
 
   useEffect(() => {
