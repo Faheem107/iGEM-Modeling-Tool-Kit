@@ -1,15 +1,13 @@
 "use client";
 
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { settleScrubs } from "./scrollRestore";
 import { DUNE } from "@/src/lib/palette";
 
 /**
  * Jumping past a pinned story without showing the trip.
  * ==========================================================================
- * The landing pins two scroll-scrubbed stories, which between them add roughly
- * 5800px of pin spacer to the document. A smooth scroll to the model index
- * therefore has to travel through both of them, and every frame of that travel
+ * The landing carries two scroll-driven stories, which between them add roughly
+ * 5800px to the document. A smooth scroll to the model index therefore has to
+ * travel through both of them, and every frame of that travel
  * is a real frame of the story: the camera dives, the protein spins, the crust
  * assembles, all at ten times the intended speed. It reads as a fault.
  *
@@ -17,7 +15,7 @@ import { DUNE } from "@/src/lib/palette";
  * position in one frame, then uncover. The reader sees a 220ms fade to the page
  * ground and then the destination. The instant move itself is the same
  * mechanism restoreLandingScroll() already uses on a return trip: a forced
- * immediate Lenis scroll, then ScrollTrigger.update() and settleScrubs() so the
+ * immediate Lenis scroll, so the
  * pinned timelines are rendered at their new position rather than easing toward
  * it afterwards.
  *
@@ -44,8 +42,8 @@ function land(target: HTMLElement | number, offset: number) {
   // the call is silently a no-op.
   if (window.__lenis) window.__lenis.scrollTo(y, { immediate: true, force: true });
   else window.scrollTo(0, y);
-  ScrollTrigger.update();
-  settleScrubs();
+  // Nothing to nudge afterwards: each story reads its own progress off its own
+  // rect on the next frame, so landing somewhere new is already the answer.
 }
 
 /** Page ground behind the curtain, matching the nav's own scrolled colours. */

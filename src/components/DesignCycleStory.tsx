@@ -2,10 +2,8 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createTimeline, svg, stagger, type Timeline } from "animejs";
-import { gsap } from "gsap";
 import StoryEscape from "@/src/components/landing/StoryEscape";
-import { storyPinLength } from "@/src/lib/scrollRestore";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { storyTravel } from "@/src/lib/scrollRestore";
 import SandParticles from "./dune-story/SandParticles";
 import { GlossaryText } from "@/src/components/GlossaryTerm";
 import { DUNE } from "@/src/lib/palette";
@@ -24,7 +22,7 @@ import {
  * to two prongs plus a kill switch -> the model linking cell to crust -> field
  * scale-up. A panel on the left and a dot rail track which beat you are on.
  *
- * Motion split (per the brief): GSAP ScrollTrigger owns the pin + scroll
+ * Motion split (per the brief): a sticky stage holds the frame + scroll
  * progress; an anime.js timeline (autoplay off) owns the SVG choreography and is
  * scrubbed by seeking it to `progress * duration`. No image frames, so it stays
  * crisp at any size and reads in both themes. Under reduced motion / small
@@ -121,6 +119,7 @@ export default function DesignCycleStory({
   isLightMode: boolean;
 }) {
   const { grains, mesh } = useMemo(buildLayout, []);
+  const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const progressRef = useRef(0);
@@ -141,7 +140,8 @@ export default function DesignCycleStory({
   useEffect(() => {
     const scope = svgRef.current;
     const stage = stageRef.current;
-    if (!scope || !stage) return;
+    const section = sectionRef.current;
+    if (!scope || !stage || !section) return;
 
     const wide = window.matchMedia("(min-width: 768px)").matches;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -200,38 +200,27 @@ export default function DesignCycleStory({
       };
     }
 
-    gsap.registerPlugin(ScrollTrigger);
+    // Sticky, not pinned. Same reasoning as the dune story: GSAP's pin swapped
+    // this stage to position: fixed inside a generated spacer, and crossing
+    // that boundary upward flipped it back on a frame the browser had already
+    // laid out. A sticky child of a tall section never swaps.
+    section.style.height = `calc(100vh + ${storyTravel(2700, 1200)}px)`;
+    stage.style.position = "sticky";
+    stage.style.top = "0";
+    stage.style.height = "100vh";
 
-    // Same split as the dune story: ScrollTrigger owns the pin and reports raw
-    // progress, and one frame loop below eases toward it. The old scrub: 0.6
-    // was a second filter stacked on Lenis's own easing, which is what made a
-    // fling back up to this section play back in steps.
     const SMOOTH = 5.5;
-    let targetP = 0;
     let smoothP = 0;
     let last = performance.now();
     let raf = 0;
     let onScreen = true;
 
-    const st = ScrollTrigger.create({
-      trigger: stage,
-      start: "top top",
-      // Longer travel (~900px/beat) so a small scroll no longer jumps between
-      // beats. Pin length, see the note in LandingCinematic: normalised
-      // progress, so this is a uniform speed-up rather than a change to any
-      // beat.
-      end: storyPinLength(2700, 1200),
-      pin: true,
-      pinSpacing: true,
-      // Apply the pin slightly early to avoid a one-frame flash at the top
-      // boundary when scrolling up out of the pinned range.
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-      scrub: true,
-      onUpdate: (self) => {
-        targetP = self.progress;
-      },
-    });
+    const readProgress = () => {
+      const rect = section.getBoundingClientRect();
+      const travel = rect.height - window.innerHeight;
+      if (travel <= 0) return 0;
+      return Math.min(1, Math.max(0, -rect.top / travel));
+    };
 
     const vis = new IntersectionObserver(
       ([entry]) => {
@@ -239,13 +228,14 @@ export default function DesignCycleStory({
       },
       { rootMargin: "200px" },
     );
-    vis.observe(stage);
+    vis.observe(section);
 
     const loop = (now: number) => {
       raf = requestAnimationFrame(loop);
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       if (!onScreen) return;
+      const targetP = readProgress();
       smoothP += (targetP - smoothP) * Math.min(1, dt * SMOOTH);
       if (Math.abs(targetP - smoothP) < 0.0002) smoothP = targetP;
       progressRef.current = smoothP;
@@ -260,20 +250,22 @@ export default function DesignCycleStory({
     return () => {
       cancelAnimationFrame(raf);
       vis.disconnect();
-      st.kill();
+      section.style.height = "";
+      stage.style.position = "";
+      stage.style.top = "";
+      stage.style.height = "";
       tl.revert?.();
       tlRef.current = null;
     };
-
   }, []);
 
   return (
-    <section id="design-cycle" className="relative w-full">
+    <section id="design-cycle" ref={sectionRef} className="relative w-full">
       <div
         ref={stageRef}
         className="relative flex min-h-screen w-full flex-col overflow-hidden py-24 md:justify-center md:py-0"
       >
-        {/* Skip / Escape / progress rule, inside the pinned stage. */}
+        {/* Skip / Escape / progress rule, inside the sticky stage. */}
         {!staticMode && (
           <StoryEscape progressRef={progressRef} />
         )}

@@ -1,17 +1,16 @@
 "use client";
 
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { curtainJumpTo, setCurtainInterrupt } from "./curtainJump";
 
 /**
  * Playing the dune story without the reader having to drive it.
  * ==========================================================================
- * The cinematic is scroll-scrubbed, so "play it" means "move the scroll
- * position for them". A GSAP timeline tweens a proxy number and writes it to
- * Lenis every frame with `immediate`, which is the same path a programmatic
- * jump takes, so the pinned ScrollTrigger sees ordinary scrolling and every
- * beat renders exactly as it would by hand.
+ * The cinematic is scroll-driven, so "play it" means "move the scroll position
+ * for them". A GSAP timeline tweens a proxy number and writes it to Lenis every
+ * frame with `immediate`, which is the same path a programmatic jump takes, so
+ * the story sees ordinary scrolling and every beat renders exactly as it would
+ * by hand.
  *
  * It rests on each beat instead of gliding through at a constant rate. The beat
  * boundaries live in LandingCinematic's renderFrame (p < 0.22 / 0.40 / 0.58 /
@@ -22,7 +21,8 @@ import { curtainJumpTo, setCurtainInterrupt } from "./curtainJump";
  * the playback to cancel itself.
  */
 
-export const STORY_TRIGGER_ID = "cinematic-story";
+/** The story section's element id. Its rect is the scroll range to play. */
+export const STORY_SECTION_ID = "cinematic";
 export const AUTOPLAY_EVENT = "dunelock:story-autoplay";
 
 /** Beat centres, then the end of the story. */
@@ -62,25 +62,31 @@ export function playCinematic() {
     return;
   }
 
-  const st = ScrollTrigger.getById(STORY_TRIGGER_ID);
+  const section = document.getElementById(STORY_SECTION_ID);
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // No pin under reduced motion or on a narrow screen: the story is already a
-  // static list, so the honest equivalent of playing it is showing the end.
-  if (!st || reduced) {
+  // The range used to be read off the pinned ScrollTrigger. It is the section's
+  // own rect now: it starts where the section starts and runs for its height
+  // less the one viewport the sticky stage occupies, which is exactly the
+  // travel the story reads its progress against.
+  const rect = section?.getBoundingClientRect();
+  const span = rect ? rect.height - window.innerHeight : 0;
+
+  // No story under reduced motion or on a narrow screen: it is already a static
+  // list, so the honest equivalent of playing it is showing the end.
+  if (!section || !rect || reduced || span <= 0) {
     const models = document.getElementById("models");
     if (models) curtainJumpTo(models, -70);
     return;
   }
 
-  const span = st.end - st.start;
+  const start = rect.top + window.scrollY;
   const proxy = { y: window.scrollY };
 
   const write = () => {
     if (window.__lenis)
       window.__lenis.scrollTo(proxy.y, { immediate: true, force: true });
     else window.scrollTo(0, proxy.y);
-    ScrollTrigger.update();
   };
 
   const t = gsap.timeline({
@@ -95,7 +101,7 @@ export function playCinematic() {
   // Start from wherever the reader already is, and only play forward.
   const from = window.scrollY;
   for (const p of RESTS) {
-    const y = st.start + p * span;
+    const y = start + p * span;
     if (y <= from + 8) continue;
     t.to(proxy, {
       y,
