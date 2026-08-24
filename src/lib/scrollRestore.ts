@@ -1,17 +1,19 @@
 "use client";
 
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
 /**
  * Landing scroll restoration and programmatic navigation.
  * ==========================================================================
- * The landing pins two scroll-scrubbed stories with `pinSpacing`, which adds
- * several thousand pixels of spacer to the document. Those spacers do not
- * exist until ScrollTrigger has built and refreshed them, so any scroll
- * performed before that refresh clamps against a document that is still far
- * too short and lands in the wrong place. Everything here is built around
- * that one fact.
+ * This file used to be built around one fact: the landing pinned its two
+ * stories with GSAP, `pinSpacing` added several thousand pixels of spacer, and
+ * those spacers did not exist until ScrollTrigger had built and refreshed them.
+ * Any scroll before that refresh clamped against a document still far too short
+ * and landed in the wrong place, so everything here compensated for it.
+ *
+ * The stories are sticky now. A sticky stage inside a tall section means the
+ * section has its real height from the first layout, so the document is never
+ * the wrong length and there is nothing to wait for. What survives is the part
+ * that was never about pinning: remembering that a reader came back from a
+ * module and belongs at the model index rather than the top of the story.
  */
 
 const RETURN_KEY = "dunelock:landing-return";
@@ -65,24 +67,13 @@ function settleRestore() {
 }
 
 /**
- * Scrub triggers carry a lag (`scrub: 0.6`) so manual scrolling feels eased.
- * During a programmatic jump that lag makes each pinned timeline ease toward
- * the moving scroll position a beat behind it, which reads as "the story
- * rewinds, THEN the page moves". Snapping every scrub tween to completion
- * removes the lag for the duration of the trip only.
- */
-export function settleScrubs() {
-  ScrollTrigger.getAll().forEach((st) => {
-    const tw = (
-      st as unknown as { getTween?: () => gsap.core.Tween | undefined }
-    ).getTween?.();
-    if (tw) tw.progress(1);
-  });
-}
-
-/**
- * Smoothly scroll to a target that sits below one or more pinned sections,
- * keeping the pinned timelines in sync the whole way (see settleScrubs).
+ * Smoothly scroll to a target below the stories.
+ *
+ * This used to run a rAF loop alongside the trip, snapping every scrub tween to
+ * completion so the pinned timelines did not lag a beat behind the moving
+ * scroll position and read as "the story rewinds, THEN the page moves". Each
+ * story reads its own progress off its own rect every frame now, so a moving
+ * scroll position is simply where the story is. Nothing to keep in sync.
  */
 export function smoothNavTo(target: number | HTMLElement, offset = 0) {
   const lenis = typeof window !== "undefined" ? window.__lenis : undefined;
@@ -95,24 +86,7 @@ export function smoothNavTo(target: number | HTMLElement, offset = 0) {
     return;
   }
 
-  let active = true;
-  const sync = () => {
-    if (!active) return;
-    settleScrubs();
-    requestAnimationFrame(sync);
-  };
-  requestAnimationFrame(sync);
-
-  lenis.scrollTo(target, {
-    offset,
-    duration: 0.9,
-    onComplete: () => {
-      active = false;
-      // ScrollTrigger only re-renders on movement, so nudge it once on arrival.
-      ScrollTrigger.update();
-      settleScrubs();
-    },
-  });
+  lenis.scrollTo(target, { offset, duration: 0.9 });
 }
 
 /**
@@ -131,14 +105,12 @@ export function restoreLandingScroll(): () => void {
     return () => {};
   }
 
-  // Re-assert the position over a window rather than jumping once. Three
-  // separate things move the page out from under a single jump:
-  //   - Next scrolls to the top of the new route after this effect runs
-  //     (ModelView passes scroll: false, this is the belt to that brace),
-  //   - the pinned ScrollTriggers do not add their pin spacers until they
-  //     build and refresh, so an early jump clamps to a much shorter document,
-  //   - the cinematic mounts a dynamic Mol* viewer that changes height again.
-  // The loop stops as soon as the target has held still for a few frames.
+  // Re-assert the position over a window rather than jumping once. The pin
+  // spacers are gone, so the document is the right length immediately, but Next
+  // still scrolls to the top of the new route after this effect runs (ModelView
+  // passes scroll: false, this is the belt to that brace) and the stories set
+  // their section heights on mount. The loop stops as soon as the target has
+  // held still for a few frames.
   let raf = 0;
   let stable = 0;
   const deadline = performance.now() + 3000;
@@ -155,8 +127,6 @@ export function restoreLandingScroll(): () => void {
       } else {
         stable++;
       }
-      ScrollTrigger.update();
-      settleScrubs();
     }
     if (stable < 5 && performance.now() < deadline) {
       raf = requestAnimationFrame(attempt);
@@ -166,32 +136,29 @@ export function restoreLandingScroll(): () => void {
     }
   };
 
-  // A refresh means the pins just re-measured and the target has moved, so
-  // start counting for stability again.
-  const onRefresh = () => {
-    stable = 0;
-  };
-  ScrollTrigger.addEventListener("refresh", onRefresh);
   raf = requestAnimationFrame(attempt);
 
   return () => {
     cancelAnimationFrame(raf);
-    ScrollTrigger.removeEventListener("refresh", onRefresh);
   };
 }
 
 /**
- * Pin length for a scroll story. A first visit gets the full travel; a repeat
- * visit in the same session gets a recap, because a reader who has already
- * seen it should not have to scroll it again to reach the models.
+ * How far a scroll story travels, in pixels, on top of its one viewport of
+ * stage. A first visit gets the full travel; a repeat visit in the same session
+ * gets a recap, because a reader who has already seen it should not have to
+ * scroll it again to reach the models.
+ *
+ * A number now, not a GSAP `+=` string: it is the section's height minus a
+ * viewport, applied as a style, rather than the end of a pinned range.
  */
-export function storyPinLength(full: number, recap: number): string {
+export function storyTravel(full: number, recap: number): number {
   try {
     const key = "dunelock:story-seen";
     const seen = sessionStorage.getItem(key) === "1";
     sessionStorage.setItem(key, "1");
-    return `+=${seen ? recap : full}`;
+    return seen ? recap : full;
   } catch {
-    return `+=${full}`;
+    return full;
   }
 }

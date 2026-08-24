@@ -4,11 +4,9 @@ import { CaptionText } from "./CaptionText";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { createTimeline, svg, type Timeline } from "animejs";
-import { gsap } from "gsap";
 import StoryEscape, { skipToModels } from "@/src/components/landing/StoryEscape";
-import { storyPinLength } from "@/src/lib/scrollRestore";
-import { playCinematic, STORY_TRIGGER_ID } from "@/src/lib/storyPlayback";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { storyTravel } from "@/src/lib/scrollRestore";
+import { playCinematic } from "@/src/lib/storyPlayback";
 import { motion } from "motion/react";
 import SandParticles from "./dune-story/SandParticles";
 import Link from "next/link";
@@ -49,7 +47,7 @@ const MolstarViewer = dynamic(() => import("@/components/molstar-viewer"), {
  *   stabilized crust.
  * Scenes cross-fade over a continuous camera scale, so it reads as one move.
  *
- * Motion split: GSAP ScrollTrigger owns the pin + progress; scenes are placed
+ * Motion split: a sticky stage holds the frame; scenes are placed
  * imperatively per frame (no React re-render); anime.js draws the polymer;
  * react-spring cross-fades the captions; a Canvas layer carries drifting sand;
  * Mol* renders the spinning protein.
@@ -321,52 +319,48 @@ export default function LandingCinematic({
       ? window.requestIdleCallback(() => setCaMounted(true), { timeout: 2000 })
       : window.setTimeout(() => setCaMounted(true), 400);
 
-    gsap.registerPlugin(ScrollTrigger);
     renderFrame(0);
+
+    // The stage is sticky, not pinned.
+    //
+    // GSAP pinned this section by swapping the stage to position: fixed inside
+    // a generated spacer, and the document was not even the right length until
+    // that spacer had been built and measured. That swap is where the
+    // scroll-up glitches came from: crossing the pin boundary upward flips the
+    // element between fixed and static on a frame the browser has already laid
+    // out, and it lands on the wrong one.
+    //
+    // A sticky child of a tall section does the same job with no swap, no
+    // spacer and no measurement pass. The height is real from the first layout,
+    // so scrolling up is the same operation as scrolling down, and the protein
+    // holds its place in the frame instead of being re-parented under it.
+    section.style.height = `calc(100vh + ${storyTravel(3100, 1400)}px)`;
+    // Applied here rather than in the class, so the static and narrow branch,
+    // which returns before this point, keeps a stage sized by its own content.
+    scope.style.position = "sticky";
+    scope.style.top = "0";
+    scope.style.height = "100vh";
 
     // One frame loop, one easing constant, frame-rate independent. dt-scaled,
     // so a 120Hz display and a 60Hz display travel the same distance per second
     // instead of the fast one arriving twice as soon. 5.5 is the constant the
-    // reference scroll model uses, and it is the one that feels right: short
-    // enough that the scene tracks the finger, long enough to absorb a wheel's
-    // discrete steps.
+    // reference scroll model uses: short enough that the scene tracks the
+    // finger, long enough to absorb a wheel's discrete steps.
     const SMOOTH = 5.5;
-    let targetP = 0;
     let smoothP = 0;
     let last = performance.now();
     let raf = 0;
     let onScreen = true;
 
-    // Progress is READ here and RENDERED in the loop below, never both.
-    //
-    // This was `scrub: 0.6` with renderFrame called straight out of onUpdate,
-    // which put two smoothing filters in series: Lenis already eases the real
-    // scroll position (lerp 0.12, see SmoothScroll), and the scrub then eased a
-    // second time toward that eased value over a 0.6s constant. Every beat was
-    // chasing a target that was itself chasing the scroll. That is what the
-    // rubber-banding and the reverse-play breaks were. ScrollTrigger now owns
-    // nothing but the pin and reports raw progress.
-    const st = ScrollTrigger.create({
-      trigger: scope,
-      // Named so storyPlayback can read this trigger's absolute scroll range
-      // back and drive it for a reader who asked to just watch the story.
-      id: STORY_TRIGGER_ID,
-      start: "top top",
-      // Pin length. Every beat is keyed to normalised progress, so this scales
-      // the whole story uniformly rather than dropping any of it. A repeat
-      // visit in the same session gets the recap length.
-      end: storyPinLength(3100, 1400),
-      pin: true,
-      pinSpacing: true,
-      scrub: true,
-      // Apply the pin a touch early so the fixed<->static swap at the top
-      // boundary does not flash the hero out for a frame when scrolling up.
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-      onUpdate: (self) => {
-        targetP = self.progress;
-      },
-    });
+    // Progress is the section's own rect, read fresh every frame, so a resize,
+    // a font landing or an image settling can never leave the story reading
+    // against a stale measurement. Read before any write, so no layout thrash.
+    const readProgress = () => {
+      const rect = section.getBoundingClientRect();
+      const travel = rect.height - window.innerHeight;
+      if (travel <= 0) return 0;
+      return Math.min(1, Math.max(0, -rect.top / travel));
+    };
 
     // Off screen the loop ticks but draws nothing. A story rendering behind a
     // reader who has scrolled past it is work nobody sees, and it is frame
@@ -377,13 +371,14 @@ export default function LandingCinematic({
       },
       { rootMargin: "200px" },
     );
-    vis.observe(scope);
+    vis.observe(section);
 
     const loop = (now: number) => {
       raf = requestAnimationFrame(loop);
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       if (!onScreen) return;
+      const targetP = readProgress();
       smoothP += (targetP - smoothP) * Math.min(1, dt * SMOOTH);
       // Settle exactly, so a story at rest is not redrawing forever over the
       // last ten-thousandth of the easing.
@@ -397,11 +392,13 @@ export default function LandingCinematic({
       else window.clearTimeout(mount as number);
       cancelAnimationFrame(raf);
       vis.disconnect();
-      st.kill();
+      section.style.height = "";
+      scope.style.position = "";
+      scope.style.top = "";
+      scope.style.height = "";
       tl.revert?.();
       tlRef.current = null;
     };
-     
   }, []);
 
   useEffect(() => {
@@ -443,8 +440,8 @@ export default function LandingCinematic({
           isLightMode ? "bg-[#e9c99a]" : "bg-[#0b0908]"
         }`}
       >
-        {/* Skip / Escape / progress rule. Inside the pinned scope so it stays
-            fixed with the story and disappears with it. */}
+        {/* Skip / Escape / progress rule. Inside the sticky stage so it holds
+            with the story and leaves with it. */}
         {!staticMode && <StoryEscape progressRef={progressRef} />}
 
         {/* --- SCENE 1: desert (photo) --- */}
