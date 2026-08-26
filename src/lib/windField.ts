@@ -158,8 +158,16 @@ export interface Climatology {
   >;
 }
 
-/** Mean vector wind for one calendar month, as a field the canvas can advect. */
-export function climatologyField(c: Climatology, month: number): WindField {
+/**
+ * Mean vector wind averaged over a set of calendar months, as a field the
+ * canvas can advect.
+ *
+ * The average is taken on u and v, not on speed and direction, so a month that
+ * blows one way and a month that blows back cancel the way real air does. That
+ * makes this weaker than any single day's wind wherever the direction varies,
+ * which is the honest thing for a seasonal average to be.
+ */
+export function climatologyField(c: Climatology, months: readonly number[]): WindField {
   const nx = c.lon.length;
   const ny = c.lat.length;
   const u = new Float32Array(nx * ny);
@@ -168,10 +176,19 @@ export function climatologyField(c: Climatology, month: number): WindField {
   for (let j = 0; j < ny; j++) {
     for (let i = 0; i < nx; i++) {
       const cell = c.cells[`${i},${j}`];
-      const m = cell?.months[String(month)];
+      let su = 0;
+      let sv = 0;
+      let n = 0;
+      for (const month of months) {
+        const m = cell?.months[String(month)];
+        if (!m) continue;
+        su += m.u;
+        sv += m.v;
+        n++;
+      }
       const row = ny - 1 - j;
-      u[row * nx + i] = m ? m.u : 0;
-      v[row * nx + i] = m ? m.v : 0;
+      u[row * nx + i] = n ? su / n : 0;
+      v[row * nx + i] = n ? sv / n : 0;
     }
   }
   return {
