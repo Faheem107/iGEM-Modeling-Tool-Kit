@@ -36,10 +36,10 @@ const U_STAR_RATIO = 0.03;
 const MONTH_DAYS = [31, 28.25, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 const SEASONS = [
-  { id: "DJF", label: "Dec to Feb", months: [12, 1, 2], mid: 1 },
-  { id: "MAM", label: "Mar to May", months: [3, 4, 5], mid: 4 },
-  { id: "JJA", label: "Jun to Aug", months: [6, 7, 8], mid: 7 },
-  { id: "SON", label: "Sep to Nov", months: [9, 10, 11], mid: 10 },
+  { id: "DJF", label: "Dec to Feb", months: [12, 1, 2] },
+  { id: "MAM", label: "Mar to May", months: [3, 4, 5] },
+  { id: "JJA", label: "Jun to Aug", months: [6, 7, 8] },
+  { id: "SON", label: "Sep to Nov", months: [9, 10, 11] },
 ] as const;
 
 /** Mass that reads as an amount rather than as a number. */
@@ -283,8 +283,8 @@ export default function ExposureWorkspace() {
 
   const windField = useMemo(() => {
     if (mode === "live") return liveField;
-    return clim ? climatologyField(clim, seasonDef.mid) : null;
-  }, [mode, liveField, clim, seasonDef.mid]);
+    return clim ? climatologyField(clim, seasonDef.months) : null;
+  }, [mode, liveField, clim, seasonDef.months]);
 
   const per = mode === "live" ? "an hour" : seasonDef.label;
   const noWind = mode === "live" && !liveField;
