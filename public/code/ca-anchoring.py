@@ -13,7 +13,14 @@ scaling in src/lib/physics/caco3.ts.
   a_CA        = log10(1 + f E) / log10(1 + E)               normalised CA activity
 
 E = caRateEnhancement = 1e6 (CACO3_CALIB), CA kcat ~ 1e6 /s vs kuncat ~ 0.04 /s.
-Component defaults: export 0.70, dimer 0.65, sortase 0.60, motif 0.50.
+Step efficiencies from CA_DISPLAY_CALIB: export 0.70, dimer 0.65, sortase 0.60,
+motif 0.50.
+
+What would make this wrong: those four are the wet lab's working estimates for a choice
+it has not made yet, not measurements, and the product of four guesses is a guess. The
+part worth reading is that sortase comes out ahead of the binding motif, which holds
+across a wide range of the inputs. The absolute 27% does not.
+
 Run:  python ca-anchoring.py
 """
 
