@@ -244,7 +244,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
               <XAxis
                 dataKey="t"
                 stroke={c.axis}
-                tick={{ fontSize: 10 }}
+                tick={{ fontSize: 12 }}
                 unit="h"
                 type="number"
                 domain={[0, 48]}
@@ -252,18 +252,18 @@ export function DynamicsTab({ isLightMode }: Themed) {
               <YAxis
                 yAxisId="conc"
                 stroke={c.axis}
-                tick={{ fontSize: 10 }}
-                label={{ value: "MazE / MazF", angle: -90, position: "insideLeft", fontSize: 10, fill: c.axis }}
+                tick={{ fontSize: 12 }}
+                label={{ value: "MazE / MazF", angle: -90, position: "insideLeft", fontSize: 12, fill: c.axis }}
               />
               <YAxis
                 yAxisId="via"
                 orientation="right"
                 stroke={c.axis}
-                tick={{ fontSize: 10 }}
+                tick={{ fontSize: 12 }}
                 domain={[-10, 0]}
               />
               <Tooltip contentStyle={tooltipStyle(isLightMode)} />
-              <Legend wrapperStyle={{ fontSize: 10 }} />
+              <Legend wrapperStyle={{ fontSize: 12 }} />
               <ReferenceLine yAxisId="via" y={-3} stroke={STATUS.bad} strokeDasharray="4 4" />
               <Area
                 yAxisId="via"
@@ -323,7 +323,7 @@ export function DynamicsTab({ isLightMode }: Themed) {
           />
         </div>
 
-        <p className={`text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}>
+        <p className={`text-[length:var(--text-micro)] leading-relaxed text-muted-foreground`}>
           <GlossaryText>
             Two independent kill modes: the aTc trigger over-produces MazF on demand, while plasmid
             dilution slowly removes the antitoxin so the strain self-limits even with no inducer.
@@ -446,7 +446,7 @@ export function HgtTab({ isLightMode }: Themed) {
               margin={{ top: 4, right: 16, left: 4, bottom: 0 }}
             >
               <CartesianGrid stroke={chartColors(isLightMode).grid} strokeDasharray="3 3" horizontal={false} />
-              <XAxis type="number" stroke={chartColors(isLightMode).axis} tick={{ fontSize: 10 }} unit="%" />
+              <XAxis type="number" stroke={chartColors(isLightMode).axis} tick={{ fontSize: 12 }} unit="%" />
               <YAxis type="category" dataKey="name" hide />
               <Tooltip
                 contentStyle={tooltipStyle(isLightMode)}
@@ -474,7 +474,7 @@ export function HgtTab({ isLightMode }: Themed) {
           </div>
         </Panel>
 
-        <p className={`text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}>
+        <p className={`text-[length:var(--text-micro)] leading-relaxed text-muted-foreground`}>
           <GlossaryText>
             The plasmid carries an E. coli MazF linked to the biofilm payload, so a wild recipient
             gets the toxin but not the cognate E. coli MazE, so it self-eliminates. Splitting and
@@ -582,8 +582,8 @@ export function SporeTab({ isLightMode }: Themed) {
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={data} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
               <CartesianGrid stroke={c.grid} strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="round" stroke={c.axis} tick={{ fontSize: 10 }} label={{ value: "round", position: "insideBottom", offset: -2, fontSize: 10, fill: c.axis }} />
-              <YAxis stroke={c.axis} tick={{ fontSize: 10 }} label={{ value: "−log₁₀ viable", angle: -90, position: "insideLeft", fontSize: 10, fill: c.axis }} />
+              <XAxis dataKey="round" stroke={c.axis} tick={{ fontSize: 12 }} label={{ value: "round", position: "insideBottom", offset: -2, fontSize: 12, fill: c.axis }} />
+              <YAxis stroke={c.axis} tick={{ fontSize: 12 }} label={{ value: "−log₁₀ viable", angle: -90, position: "insideLeft", fontSize: 12, fill: c.axis }} />
               <Tooltip
                 contentStyle={tooltipStyle(isLightMode)}
                 formatter={(v: number, n: string) => [n === "logReduction" ? `${v} log` : `${v}%`, n === "logReduction" ? "reduction" : "viable"]}
@@ -612,7 +612,7 @@ export function SporeTab({ isLightMode }: Themed) {
           />
         </div>
 
-        <p className={`text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}>
+        <p className={`text-[length:var(--text-micro)] leading-relaxed text-muted-foreground`}>
           <GlossaryText>
             MazF needs active translation, so it cannot touch a dormant spore, the spore must be
             germinated first. gerB* and multiple germinants wake more spores each round, but a
@@ -684,7 +684,7 @@ export function StructuresTab({ isLightMode }: Themed) {
             </button>
           );
         })}
-        <p className={`text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}>
+        <p className={`text-[length:var(--text-micro)] leading-relaxed text-muted-foreground`}>
           {s.desc}
         </p>
       </div>

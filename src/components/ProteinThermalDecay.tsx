@@ -91,7 +91,7 @@ export default function ProteinThermalDecay({
     }
 
     return points;
-  }, [operativeT_melting]);
+  }, [operativeT_melting, STABILITY_FACTOR]);
 
   // SVG Drawing Path path
   const pathData = useMemo(() => {

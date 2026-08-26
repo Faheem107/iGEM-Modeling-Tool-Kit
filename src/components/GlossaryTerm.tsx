@@ -273,7 +273,7 @@ function CodePanel({
         ) : (
           <pre
             data-lenis-prevent
-            className="max-h-[42vh] overflow-auto overscroll-contain no-scrollbar p-4 text-[length:var(--text-caption)] leading-relaxed text-foreground"
+            className="max-h-[42vh] overflow-auto overscroll-contain no-scrollbar p-4 text-[length:var(--text-micro)] leading-relaxed text-foreground"
           >
             <code>{code}</code>
           </pre>
@@ -916,7 +916,7 @@ export const GlossaryProvider: React.FC<{
                   </ol>
 
                   <p
-                    className={`mt-4 pt-4 border-t text-[length:var(--text-caption)] leading-relaxed ${isLightMode ? "border-border text-muted-foreground" : "border-white/10 text-muted-foreground"}`}
+                    className={`mt-4 pt-4 border-t text-[length:var(--text-micro)] leading-relaxed ${isLightMode ? "border-border text-muted-foreground" : "border-white/10 text-muted-foreground"}`}
                   >
                     These are the model&apos;s grounding references, drawn from
                     the calibration provenance in the code. Each title links out
@@ -1034,7 +1034,7 @@ export const GlossaryProvider: React.FC<{
                   </div>
 
                   <p
-                    className={`mt-4 pt-4 border-t text-[length:var(--text-caption)] leading-relaxed ${isLightMode ? "border-border text-muted-foreground" : "border-white/10 text-muted-foreground"}`}
+                    className={`mt-4 pt-4 border-t text-[length:var(--text-micro)] leading-relaxed ${isLightMode ? "border-border text-muted-foreground" : "border-white/10 text-muted-foreground"}`}
                   >
                     This script ports the module&apos;s physics from the toolkit
                     source, and running it reproduces the plots above. Every constant

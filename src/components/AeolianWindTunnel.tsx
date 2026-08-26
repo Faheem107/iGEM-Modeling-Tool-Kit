@@ -729,7 +729,7 @@ export default function AeolianWindTunnel({
 
             {/* PHYSICAL SHATTER ALERTS */}
             {physicsResult.isShattered && (
-              <div className="flex items-start gap-2 border-t border-dune-maroon pt-2 text-[length:var(--text-caption)] leading-relaxed text-dune-maroon">
+              <div className="flex items-start gap-2 border-t border-dune-maroon pt-2 text-[length:var(--text-micro)] leading-relaxed text-dune-maroon">
                 <span>
                   <strong>ALERT: INSTANT FAILURE.</strong> Wind-tunnel shear
                   forcing exceeds maximum cohesion structure strength of the{" "}
@@ -1014,7 +1014,7 @@ export default function AeolianWindTunnel({
               <span className="text-[length:var(--text-caption)] uppercase font-mono font-black tracking-wider text-dune-orange block mb-1">
                 Durability stopwatch
               </span>
-              <p className="text-[length:var(--text-caption)] text-muted-foreground leading-normal mb-4">
+              <p className="text-[length:var(--text-micro)] text-muted-foreground leading-normal mb-4">
                 Simulated time until the crust fails at the set wind speed.
               </p>
             </div>
@@ -1079,7 +1079,7 @@ export default function AeolianWindTunnel({
               <span className="text-[length:var(--text-caption)] uppercase font-mono font-black tracking-wider text-dune-teal block mb-1">
                 Wet-lab directives
               </span>
-              <p className="text-[length:var(--text-caption)] text-muted-foreground leading-normal mb-4">
+              <p className="text-[length:var(--text-micro)] text-muted-foreground leading-normal mb-4">
                 Settings for the bench to aim at. Only the survival rating comes
                 out of the model above. The cultivation period and the spray
                 density are rules of thumb we wrote down, not results.

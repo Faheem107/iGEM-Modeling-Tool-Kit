@@ -844,23 +844,23 @@ export default function FbaOptimizationModule({
             <XAxis
               dataKey="growth"
               stroke={c.axis}
-              tick={{ fontSize: 10 }}
+              tick={{ fontSize: 12 }}
               label={{
                 value: "growth µ (h⁻¹)",
                 position: "insideBottom",
                 offset: -2,
-                fontSize: 10,
+                fontSize: 12,
                 fill: c.axis,
               }}
             />
             <YAxis
               stroke={c.axis}
-              tick={{ fontSize: 10 }}
+              tick={{ fontSize: 12 }}
               label={{
                 value: `${productLabel} flux`,
                 angle: -90,
                 position: "insideLeft",
-                fontSize: 10,
+                fontSize: 12,
                 fill: c.axis,
               }}
             />
@@ -973,12 +973,12 @@ export default function FbaOptimizationModule({
                 strokeDasharray="3 3"
                 horizontal={false}
               />
-              <XAxis type="number" stroke={c.axis} tick={{ fontSize: 10 }} />
+              <XAxis type="number" stroke={c.axis} tick={{ fontSize: 12 }} />
               <YAxis
                 type="category"
                 dataKey="id"
                 stroke={c.axis}
-                tick={{ fontSize: 10 }}
+                tick={{ fontSize: 12 }}
                 width={56}
               />
               <Tooltip
@@ -1073,7 +1073,7 @@ export default function FbaOptimizationModule({
       </div>
 
       <div
-        className={`px-4 py-4 rounded-[6px] border text-[length:var(--text-caption)] font-mono leading-relaxed ${
+        className={`px-4 py-4 rounded-[6px] border text-[length:var(--text-micro)] font-mono leading-relaxed ${
           isLightMode
             ? "bg-card border-dune-orange/10 text-muted-foreground"
             : "bg-dune-ink border-border text-muted-foreground"

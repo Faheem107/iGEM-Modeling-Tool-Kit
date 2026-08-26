@@ -462,7 +462,7 @@ export default function SimulationWorkspace({
       <h2 className="flex items-center gap-2 text-[length:var(--text-h3)] text-foreground">
         {m.title}
       </h2>
-      <p className="mt-2 max-w-[70ch] text-[length:var(--text-micro)] leading-snug text-muted-foreground">
+      <p className="mt-2 max-w-[var(--measure)] text-[length:var(--text-body)] leading-relaxed text-muted-foreground">
         <GlossaryText max={4}>{m.blurb}</GlossaryText>
       </p>
     </div>
@@ -565,7 +565,7 @@ function AlginateRationaleBanner() {
       <div className="mb-4 flex items-center gap-2 text-dune-rose">
         <h2 className="caption text-dune-rose">{ALGINATE_STATUS}</h2>
       </div>
-      <p className="mb-4 max-w-[70ch] text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
+      <p className="mb-4 max-w-[var(--measure)] text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
         Alginate was scoped as a third prong, a binder you spread on rather
         than one the cells make. Three findings took it out, each of which
         stands on its own:

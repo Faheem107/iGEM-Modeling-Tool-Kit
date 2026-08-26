@@ -2024,7 +2024,7 @@ export default function AdvancedFbaPortal({
               </div>
             </div>
 
-            <p className="text-[length:var(--text-caption)] text-muted-foreground leading-normal">
+            <p className="text-[length:var(--text-micro)] text-muted-foreground leading-normal">
               Heatmap representation of chemical formulas. Red cells indicate
               substrate consumption (negative entry). Green cells signify
               synthesis products (positive stoichiometry entry).
@@ -2138,7 +2138,7 @@ export default function AdvancedFbaPortal({
                 Matrix
                 Constraint Shadow Prices
               </h4>
-              <p className="text-[length:var(--text-caption)] text-muted-foreground leading-normal">
+              <p className="text-[length:var(--text-micro)] text-muted-foreground leading-normal">
                 Shadow price identifies the fractional increase in the objective
                 function if we relax a nutrient barrier by 1 unit.
               </p>
@@ -2184,13 +2184,13 @@ export default function AdvancedFbaPortal({
                 iGEM FBA
                 Science Deck
               </h4>
-              <p className="text-[length:var(--text-caption)] text-muted-foreground leading-relaxed font-sans">
+              <p className="text-[length:var(--text-micro)] text-muted-foreground leading-relaxed font-sans">
                 FBA calculates intracellular reaction speeds (fluxes) assuming
                 static internal metabolite pools at equilibrium (the S • v = 0
                 balance constraint).
               </p>
               <div
-                className={`p-2 rounded-[4px] border text-[length:var(--text-caption)] font-mono text-left leading-normal ${
+                className={`p-2 rounded-[4px] border text-[length:var(--text-micro)] font-mono text-left leading-normal ${
                   isLightMode
                     ? "bg-background border-border"
                     : "bg-dune-basalt/45 border-border"
@@ -2251,7 +2251,7 @@ export default function AdvancedFbaPortal({
             </span>
           </div>
         </div>
-        <p className="text-[length:var(--text-caption)] text-muted-foreground max-w-2xl mx-auto leading-relaxed mt-2 font-sans">
+        <p className="text-[length:var(--text-micro)] text-muted-foreground max-w-2xl mx-auto leading-relaxed mt-2 font-sans">
           This optimized Precursor Export represents the mathematical maximum
           solution of the linear system <strong>S • v = 0</strong>. Knocking out
           metabolic side channels like <strong>pta</strong> (acetate excretion)

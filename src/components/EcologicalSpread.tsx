@@ -504,7 +504,7 @@ export default function EcologicalSpread({
               />
             </label>
             <p
-              className={`text-[length:var(--text-caption)] mt-1 font-sans leading-normal ${isLightMode ? "text-muted-foreground font-medium" : "text-muted-foreground"}`}
+              className={`text-[length:var(--text-micro)] mt-1 font-sans leading-normal ${isLightMode ? "text-muted-foreground font-medium" : "text-muted-foreground"}`}
             >
               When enabled, moisture spread speed (
               <code
@@ -555,7 +555,7 @@ export default function EcologicalSpread({
                   Moisture Spread Probability
                 </span>
                 <div
-                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border border-border"}`}
+                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-micro)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border border-border"}`}
                 >
                   The raw probability rate of vegetative binary fission and
                   cellular spread to adjacent porous sand cavities.
@@ -597,7 +597,7 @@ export default function EcologicalSpread({
             )}
             {/* Rigorous physical front speed (Fisher–KPP), reported alongside the schematic map. */}
             <div
-              className={`mt-2 p-2 rounded-[4px] text-[length:var(--text-caption)] font-mono border leading-relaxed ${isLightMode ? "bg-dune-teal/50 border-dune-teal text-foreground" : "bg-dune-teal/15 border-dune-teal/30 text-foreground"}`}
+              className={`mt-2 p-2 rounded-[4px] text-[length:var(--text-micro)] font-mono border leading-relaxed ${isLightMode ? "bg-dune-teal/50 border-dune-teal text-foreground" : "bg-dune-teal/15 border-dune-teal/30 text-foreground"}`}
             >
               <div className="flex items-center gap-1 mb-1 font-bold not-italic">
                 <GlossaryTerm term="fisher-kpp">Fisher–KPP</GlossaryTerm> colony
@@ -646,7 +646,7 @@ export default function EcologicalSpread({
                   Ca²⁺ Dose (sliding suppression)
                 </span>
                 <div
-                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border border-border"}`}
+                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-micro)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border border-border"}`}
                 >
                   The same Ca²⁺ dosed for γ-PGA cross-linking / MICP complexes
                   surfactin and disables flagellum-independent sliding, lowering
@@ -682,7 +682,7 @@ export default function EcologicalSpread({
                   Water Consumption Efficiency
                 </span>
                 <div
-                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border border-border"}`}
+                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-micro)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border border-border"}`}
                 >
                   Nutrient/water uptake rate of bacillus colony clusters per
                   simulated generation generation step.
@@ -748,7 +748,7 @@ export default function EcologicalSpread({
             Validation
           </h4>
           <p
-            className={`text-[length:var(--text-caption)] leading-normal mb-4 ${isLightMode ? "text-muted-foreground font-medium" : "text-muted-foreground"}`}
+            className={`text-[length:var(--text-micro)] leading-normal mb-4 ${isLightMode ? "text-muted-foreground font-medium" : "text-muted-foreground"}`}
           >
             A <GlossaryTerm term="maze-mazf">MazE/MazF</GlossaryTerm>{" "}
             toxin–antitoxin{" "}
@@ -808,7 +808,7 @@ export default function EcologicalSpread({
               />
             </label>
             <p
-              className={`text-[length:var(--text-caption)] mt-1 leading-normal font-sans text-muted-foreground`}
+              className={`text-[length:var(--text-micro)] mt-1 leading-normal font-sans text-muted-foreground`}
             >
               Two independent switches multiply their escape frequencies, the
               design route to beating the NIH 10⁻⁸ line.
@@ -907,7 +907,7 @@ export default function EcologicalSpread({
             </div>
             {killSwitchTriggered && (
               <div
-                className={`border-2 border-dashed p-2 rounded-[4px] text-[length:var(--text-caption)] font-bold leading-normal ${
+                className={`border-2 border-dashed p-2 rounded-[4px] text-[length:var(--text-micro)] font-bold leading-normal ${
                   isLightMode
                     ? "bg-dune-teal/10 text-dune-teal border-dune-teal"
                     : "bg-dune-ink text-dune-teal border-dune-teal"
@@ -979,7 +979,7 @@ export default function EcologicalSpread({
             </div>
           </div>
           <p
-            className={`text-[length:var(--text-caption)] leading-relaxed mb-4 ${isLightMode ? "text-muted-foreground font-medium" : "text-muted-foreground"}`}
+            className={`text-[length:var(--text-micro)] leading-relaxed mb-4 ${isLightMode ? "text-muted-foreground font-medium" : "text-muted-foreground"}`}
           >
             An overhead view of the treated patch. Click anywhere to inoculate a
             colony; watch it spread along the moisture front, lay down{" "}

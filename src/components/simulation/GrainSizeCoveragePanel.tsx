@@ -136,19 +136,19 @@ export default function GrainSizeCoveragePanel({
               domain={[20, 600]}
               ticks={[20, 40, 63, 100, 125, 200, 300, 500]}
               stroke={c.axis}
-              tick={{ fontSize: 10 }}
+              tick={{ fontSize: 12 }}
               label={{
                 value: "grain diameter (µm)",
                 position: "insideBottom",
                 offset: -8,
-                fontSize: 10,
+                fontSize: 12,
                 fill: c.axis,
               }}
             />
             <YAxis
               domain={[0, 100]}
               stroke={c.axis}
-              tick={{ fontSize: 10 }}
+              tick={{ fontSize: 12 }}
               unit="%"
               width={38}
             />
@@ -157,7 +157,7 @@ export default function GrainSizeCoveragePanel({
               formatter={(v: number, n: string) => [`${v}%`, n]}
               labelFormatter={(d) => `${d} µm`}
             />
-            <Legend wrapperStyle={{ fontSize: 10 }} />
+            <Legend wrapperStyle={{ fontSize: 12 }} />
             {/* Where the site's sand actually is (PSD silhouette). */}
             <Area
               type="monotone"
@@ -196,7 +196,7 @@ export default function GrainSizeCoveragePanel({
               strokeDasharray="2 2"
               label={{
                 value: "D₅₀",
-                fontSize: 10,
+                fontSize: 12,
                 fill: c.axis,
                 position: "top",
               }}
@@ -204,7 +204,7 @@ export default function GrainSizeCoveragePanel({
           </ComposedChart>
         </ResponsiveContainer>
         <p
-          className={`mt-2 text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}
+          className={`mt-2 text-[length:var(--text-micro)] leading-relaxed text-muted-foreground`}
         >
           Dashed lines are each binder&apos;s per-grain effectiveness. The solid band
           is the union (a grain is held if <b>any</b> mechanism binds it: 1 −

@@ -839,7 +839,7 @@ export default function WetLabSandbox2D({
                         1. Temperature Viability:
                       </span>
                       <code>Yield ∝ Feed * (1 - α|T - T_opt|)</code>
-                      <p className="text-[length:var(--text-caption)] text-muted-foreground mt-1 leading-normal font-sans">
+                      <p className="text-[length:var(--text-micro)] text-muted-foreground mt-1 leading-normal font-sans">
                         Metabolic productivity penalty function tracking
                         divergence from ideal 37°C.
                       </p>
@@ -851,7 +851,7 @@ export default function WetLabSandbox2D({
                         2. Salinity Saturation:
                       </span>
                       <code>θ = S / (Kd + S)</code>
-                      <p className="text-[length:var(--text-caption)] text-muted-foreground mt-1 leading-normal font-sans">
+                      <p className="text-[length:var(--text-micro)] text-muted-foreground mt-1 leading-normal font-sans">
                         Michaelis-Menten coordination saturation scaling for
                         matrix cohesiveness.
                       </p>
@@ -863,7 +863,7 @@ export default function WetLabSandbox2D({
                         3. Sand Shear Modulus Gs:
                       </span>
                       <code>Gs = G_base + Yield_PGA * θ * Elasticity</code>
-                      <p className="text-[length:var(--text-caption)] text-muted-foreground mt-1 leading-normal font-sans">
+                      <p className="text-[length:var(--text-micro)] text-muted-foreground mt-1 leading-normal font-sans">
                         Affinement elastomer network model calculating
                         structural stiffness (measured in Pascals).
                       </p>
@@ -879,7 +879,7 @@ export default function WetLabSandbox2D({
                           "u*t = u_base + sqrt(Cohesion_Gs * Thickness / Air_Density)"
                         }
                       </code>
-                      <p className="text-[length:var(--text-caption)] text-muted-foreground mt-1 leading-normal font-sans">
+                      <p className="text-[length:var(--text-micro)] text-muted-foreground mt-1 leading-normal font-sans">
                         The absolute wind friction speed limit before the dune
                         starts suffering aeolian erosion.
                       </p>

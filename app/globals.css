@@ -59,16 +59,29 @@
   --plate: rgb(255 255 255 / 0.55);
   --plate-border: rgb(42 26 22 / 0.1);
 
-  /* ---- The type scale. Five sizes, floor at 11px. ----
+  /* ---- The type scale. Five sizes, floor at 13px. ----
    * Nothing on the site renders below --text-caption. --text-display is the one
    * documented exception, used once, on the hero. --text-h2 and --text-lede were
-   * retired: h2 never had a consumer, and lede was --text-body with extra steps. */
-  --text-caption: 0.6875rem;
-  --text-micro: 0.8125rem;
-  --text-body: 1.0625rem;
-  --text-h3: clamp(1.125rem, 1.6vw, 1.3125rem);
-  --text-h1: clamp(2rem, 4.6vw, 3.25rem);
+   * retired: h2 never had a consumer, and lede was --text-body with extra steps.
+   *
+   * The floor was 11px and the whole interface had settled onto it: on the model
+   * workspace, 509 elements rendered at 11px and only 49 at body size, and of the
+   * elements carrying a full sentence, 36 were at 11px against 7 at 13px. A label
+   * size was doing the work of a reading size. The scale moved up one step so the
+   * floor is a size a judge can read at arm's length, and body now sits at 18px,
+   * which is where a long-form page usually lands. Sizes stay relative, so this
+   * is the one place to change them. */
+  --text-caption: 0.8125rem;
+  --text-micro: 0.9375rem;
+  --text-body: 1.125rem;
+  --text-h3: clamp(1.25rem, 1.8vw, 1.5rem);
+  --text-h1: clamp(2.125rem, 4.8vw, 3.5rem);
   --text-display: clamp(2.75rem, 8vw, 6rem);
+
+  /* The measure. Prose past about 70 characters loses the reader on the return
+   * sweep, and several blocks were running to 150. Anything set as a sentence
+   * gets this ceiling. */
+  --measure: 68ch;
 
   /* ---- Weight axes, each paired to its tracking ----
    * Lexend sets optically heavier than a normal grotesque, so body sits at 340
@@ -592,6 +605,19 @@ html {
     line-height: 1.4;
   }
 
+  /* A panel title is a heading, not a footnote. It keeps the caption register,
+     uppercase and tracked, but sits one step up so the eye can tell a section
+     apart from the labels inside it. Without this every title on the page was
+     the same size as the units beside the numbers. */
+  .caption-head {
+    font-size: var(--text-micro);
+    font-variation-settings: "wght" var(--wght-caption);
+    letter-spacing: var(--track-caption);
+    text-transform: uppercase;
+    color: var(--foreground);
+    line-height: 1.4;
+  }
+
   /* Opt one run of characters out of the uppercase transform, inside a
      .caption. CSS uppercase maps the symbols it meets: "~100 µm" came out as
      "~100 MM", which states the wrong unit, and "γ-PGA" came out as "Γ-PGA".
@@ -620,8 +646,14 @@ html {
     color: var(--foreground);
   }
 
+  /* Heading leading travels with the class, not with the tag. Several headings
+     are spans or buttons, because they open a panel rather than start a
+     document section, and those were inheriting the body's 1.65. At the old
+     scale nobody noticed; at 24px a two-line title fell apart. */
   .wght-head {
     transition: font-variation-settings 0.25s ease;
+    line-height: 1.18;
+    text-wrap: balance;
   }
   h1.wght-head:hover { font-variation-settings: "wght" 760; }
   h2.wght-head:hover { font-variation-settings: "wght" 720; }
