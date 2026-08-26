@@ -454,7 +454,7 @@ export default function SimulationWorkspace({
   // The index and the scale label live in the rail, so position carries them
   // instead of an icon chip and a pill badge.
   const sectionHeader = (m: ModuleMeta, index: number) => (
-    <div className="mb-6 border-b border-border pb-4">
+    <div className="mb-8 border-b border-border pb-6">
       <div className="caption mb-2 flex items-center gap-4">
         <span>{String(index + 1).padStart(2, "0")}</span>
         <span className="opacity-60">{m.scale}</span>
@@ -535,7 +535,7 @@ export default function SimulationWorkspace({
       <div className="lg:grid lg:grid-cols-[210px_minmax(0,1fr)] lg:gap-6">
         <SandyxCompanion items={treeItems} isLightMode={isLightMode} />
 
-        <div className="space-y-12 min-w-0">
+        <div className="space-y-20 min-w-0">
           {modules.map((m, i) => (
             <motion.section
               key={m.id}
