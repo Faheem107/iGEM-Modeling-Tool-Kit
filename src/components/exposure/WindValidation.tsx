@@ -82,30 +82,30 @@ const pct = (v: number) => `${Math.round(Math.abs(v))}`;
 
 const Para = ({ children }: { children: string }) => (
   <p className="max-w-[62ch] leading-relaxed text-muted-foreground">
-    <GlossaryText max={2}>{children}</GlossaryText>
+    <GlossaryText max={4}>{children}</GlossaryText>
   </p>
 );
 
 const GAPS: [string, string][] = [
   [
     "No measured sand has been weighed",
-    "Nothing here compares a quantity of sand we predicted against a quantity somebody collected. A field study in Kuwait measured about 20 cubic metres per metre of width per year, mostly May to August, moving southeast. Our model reproduces the timing and the direction. It has never been asked to reproduce the amount, and that is the largest gap.",
+    "We have never put a number we predicted next to a pile of sand somebody weighed. A field study in Kuwait measured the sand drift there at about 20 cubic metres crossing each metre of ground per year, mostly between May and August, heading southeast. Our model gets the timing and the direction right. Nobody has asked it for the amount.",
   ],
   [
     "Nothing at the scale of one site",
-    "The wind grid is about 31 km across. A passing test on a regional average is not a passing test at a solar plant, and we have not run the second kind.",
+    "Each square in the wind grid is about 31 km across. Passing a test on a regional average is not the same as passing one at a solar plant, and we have only run the first kind.",
   ],
   [
     "The dune test is set up and unmeasured",
-    "The model says the direction sand drifts rotates about 43 degrees across the Liwa belt. A rotation that size either shows up in the shape of the dunes or it does not, so five crest bearings read off satellite imagery would settle it. The test refuses to print a result until somebody measures them, which is the honest way to leave a test we have not done.",
+    "The model says the direction sand drifts turns by about 43 degrees across the Liwa dunes. A turn that size either shows up in the shape of the dunes or it does not, so five crest angles read off satellite images would settle it. The test refuses to print anything until somebody measures them.",
   ],
   [
     "The crust strength is ours to measure",
-    "How much strength the treatment adds is a dial on this page because our own lab has not returned a number for it yet.",
+    "How much cohesion the treatment adds is a dial on this page because our own lab has not measured it yet. Until it does, the difference we report is a range, not a number.",
   ],
   [
     "The browser has not been checked against the maths",
-    "The sand equation was verified against a brute-force sum. The version that runs in your browser is a separate implementation and has not been compared against it.",
+    "We checked the sand equation against a slow, brute-force version and it agreed. The copy running in your browser is a second piece of code, and nobody has checked the two against each other.",
   ],
 ];
 
@@ -214,11 +214,14 @@ export default function WindValidation({
               </div>
 
               <Para>
-                {"We fitted the wind on two years, then asked that fit to predict a third year it had never seen, and compared it hour by hour against what the wind actually did. Nothing was adjusted after seeing the answer. There are two figures rather than one because the answer depends on how hard the wind has to blow before sand moves, and there are two published values for that. At the lower one the model is usable. At the higher one, which we calculate from our own grain size, it is not."}
+                {"We built the wind model on two years of data, then asked it to predict a third year we held back. Nothing was adjusted afterwards. There are two figures because the answer depends on the threshold wind, the speed sand starts moving at, and there are two published values for it. At the lower one the model is usable. At the higher one, which we work out from our own grain size, it is not."}
               </Para>
 
               <div className="space-y-3 border-t border-border pt-4">
-                <p className="caption">Against three airport records, hour by hour</p>
+                <p className="caption">Against three airports, hour by hour</p>
+                <Para>
+                  {"Airport records are the only instrument this model has been held up against. Every airport files a short weather report about once an hour, wind included."}
+                </Para>
                 <ul className="space-y-2">
                   {doc.stations.map((s) => (
                     <li
@@ -251,7 +254,7 @@ export default function WindValidation({
                   on this page are more likely to be under than over.
                 </p>
                 <Para>
-                  {"Two of these airports fall inside the same grid square, about 31 km across, and are given the same wind. Nothing tested here is a test at the scale of a single solar plant."}
+                  {"Two of these airports sit in the same grid cell, about 31 km across, so the model hands them the same wind. Nothing here is a test at the size of one solar plant."}
                 </Para>
               </div>
             </div>
@@ -263,7 +266,7 @@ export default function WindValidation({
           body: (
             <div className="space-y-5">
               <Para>
-                {"Direction is an average over thousands of hours, so errors in single hours cancel out. The amount of sand moved is not an average of anything. It goes as roughly the cube of the wind above a threshold, so a handful of the windiest hours in a season carry nearly all of it, and an error in that handful is cancelled by nothing. A four percent error at the strong-wind end becomes a sixty percent error in the sand."}
+                {"Direction comes out well and the amount does not, and there is a reason. Direction is an average over thousands of hours, so mistakes in single hours cancel out. The amount of sand is not an average of anything. It climbs as the cube of the wind, so the windiest few hours of a season carry nearly all of it, and a mistake in those hours cancels against nothing. Being four percent off at the strong end makes the sand sixty percent off."}
               </Para>
 
               <div className="space-y-2 border-t border-border pt-4">
@@ -276,7 +279,7 @@ export default function WindValidation({
                   {doc.weibullFit.bestMonths.slice().reverse().join(", ")}.
                 </p>
                 <Para>
-                  {"We describe a month's wind with a two-number curve. A curve like that cannot represent two weather patterns at once, and the Gulf has two: the steady summer Shamal, and winter fronts that arrive and pass. We expected the fit to struggle in spring and autumn where the two overlap. It does not. It struggles in winter, and summer is the half of the year one curve describes well. That is the opposite of what we guessed, and it is written down because we guessed first."}
+                  {"We describe a whole month of wind with a two-number curve called a Weibull. One curve cannot hold two weather patterns at once, and the Gulf has two: the steady summer Shamal, and winter fronts that blow through. We expected trouble in spring and autumn, where the two overlap. We were wrong. The fit struggles in winter, and summer is the half of the year it describes well. We wrote the guess down before we ran the test, which is why we can say we were wrong."}
                 </Para>
               </div>
 
@@ -325,10 +328,10 @@ export default function WindValidation({
                   ))}
                 </ul>
                 <Para>
-                  {"The first bar is how hard an input moves the amount of sand: a 1 means a one percent change in the input gives a one percent change in the answer, and an 11 means it gives eleven. The second is how hard the same input moves the percentage this page reports as the cut. Wind dominates the first and nothing dominates the second, which is why the cut is a steadier claim than the amount."}
+                  {"The first bar says how hard an input pushes the amount of sand. A 1 means one percent in gives one percent out; an 11 means one percent in gives eleven percent out. That ratio is the elasticity. The second bar says how hard the same input pushes the difference treatment makes. Wind rules the first bar and nothing rules the second, which is why the difference is a steadier claim than the amount."}
                 </Para>
                 <Para>
-                  {"The top two are the same number twice. The typical wind speed and the ratio that turns wind at 10 metres into force on the ground enter the equation only as a product, so no measurement of sand could ever tell them apart. If we later calibrate one against field data, it will quietly absorb any error in the other."}
+                  {"The top two entries are the same number twice. Wind speed and the ratio that turns wind into friction velocity, the force the air puts on the ground, only ever appear multiplied together, so no measurement of sand could tell them apart. If we ever fit one to field data, it will quietly swallow any error in the other."}
                 </Para>
               </div>
             </div>
@@ -340,7 +343,7 @@ export default function WindValidation({
           body: (
             <div className="space-y-4">
               <Para>
-                {"The gaps, in the order they matter. Every test in the other two tabs checks the wind, or checks the sand equation against its own inputs."}
+                {"The gaps, worst first. Every test in the other two tabs checks the wind, or checks the sand equation against its own inputs. None of them checks the sand against sand."}
               </Para>
               <ul className="space-y-4">
                 {GAPS.map(([title, body]) => (

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "@/components/theme-context";
-import { Note, Slider, SourcesToggle, StatCard } from "@/src/components/simulation/_shared";
+import { CodePlotsToggle, Fold, Note, Slider, SourcesToggle, StatCard } from "@/src/components/simulation/_shared";
 import WindValidation, { useWindValidation } from "./WindValidation";
 import ExposureMap, { sourceColor, type SourceFeature, type TargetSite } from "./ExposureMap";
 import MapLegend from "./MapLegend";
@@ -18,6 +18,7 @@ import {
   type Climatology, type WindField, type WindFieldResponse,
 } from "@/src/lib/windField";
 import { useHighlight } from "@/src/lib/motion/pointer";
+import { GlossaryText } from "@/src/components/GlossaryTerm";
 
 type Mode = "seasonal" | "live";
 
@@ -427,7 +428,7 @@ export default function ExposureWorkspace() {
                 unit="km²"
                 format={(v) => (10 ** v).toLocaleString("en-US", { maximumFractionDigits: 0 })}
                 isLightMode={isLightMode}
-                hint="Spent on the hotspots that send this site the most, worst first."
+                hint="We treat the hotspots that send this site the most, worst first."
               />
               <Slider
                 label="Strength the crust adds"
@@ -438,27 +439,33 @@ export default function ExposureWorkspace() {
                 step={0.0002}
                 unit="N m⁻¹"
                 isLightMode={isLightMode}
-                hint={`Waiting on the lab, so it is a range for now. Bare sand moves at about ${utFree0.toFixed(1)} m/s; treated, it holds to about ${utFreeT.toFixed(1)} m/s.`}
+                hint={`How much cohesion the crust adds. Our lab has not measured it yet, so try a range. Bare sand starts moving at about ${utFree0.toFixed(1)} m/s. Treated, it holds until about ${utFreeT.toFixed(1)} m/s.`}
               />
               <p className="text-[length:var(--text-caption)] leading-snug text-muted-foreground">
-                Two more are fixed: a twentieth of each hotspot is loose enough to
-                blow away, and a site catches what falls on one square kilometre.
+                <GlossaryText max={1}>
+                  {"Two more are fixed. A twentieth of each hotspot is loose enough to blow away, and a site catches whatever falls on one square kilometre around it."}
+                </GlossaryText>
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* The two answers, stated rather than folded away. Both of these opened
-          by default, so the disclosure was a plus sign with nothing behind it. */}
+      {/* Each answer under its own heading, opened by a click. The rail keeps
+          the window the numbers belong to, so the heading does not have to. */}
       <section className="border-t border-border pt-6">
         <div className="rail-row">
-          <p className="caption pt-1">What reaches the site</p>
-          <div className="space-y-5">
+          <p className="caption pt-1">{mode === "live" ? "right now" : seasonDef.label}</p>
+          <Fold
+            title="How much sand reaches this site?"
+            lede="Wind lifts material at every hotspot and carries it downwind. Only the fine part, the dust in suspension, travels far enough to land here."
+            defaultOpen
+            wide
+          >
             {noWind ? (
               <p className="text-[length:var(--text-micro)] text-dune-rose">
-                Data pending. The live wind feed has not returned, so nothing here
-                can be computed.
+                Data pending. The live wind feed has not answered, so there is
+                nothing to compute from.
               </p>
             ) : !result ? (
               <p className="text-[length:var(--text-micro)] text-muted-foreground">
@@ -466,11 +473,11 @@ export default function ExposureWorkspace() {
               </p>
             ) : result.landedKg <= 0 ? (
               <p className="max-w-[62ch] text-[length:var(--text-micro)] leading-relaxed">
-                Nothing is arriving.{" "}
-                {mode === "live"
-                  ? `The wind at this site is ${siteWind?.speed.toFixed(1)} m/s, and it takes about ${utFree0.toFixed(1)} m/s to start lifting sand off bare ground.`
-                  : `Across ${seasonDef.label} the wind at the hotspots feeding this site stays below the roughly ${utFree0.toFixed(1)} m/s it takes to start lifting sand.`}{" "}
-                With nothing moving there is nothing for the treatment to reduce.
+                <GlossaryText max={2}>
+                  {mode === "live"
+                    ? `Nothing is arriving. The wind here is ${siteWind?.speed.toFixed(1)} m/s, and it takes about ${utFree0.toFixed(1)} m/s to lift sand off bare ground. Nothing is moving, so there is nothing for the treatment to reduce.`
+                    : `Nothing is arriving. Across ${seasonDef.label} the wind at the hotspots upwind of this site stays under the ${utFree0.toFixed(1)} m/s it takes to lift sand off bare ground. Nothing is moving, so there is nothing for the treatment to reduce.`}
+                </GlossaryText>
               </p>
             ) : (
               <div className="space-y-5">
@@ -485,16 +492,16 @@ export default function ExposureWorkspace() {
                     rule={false}
                   />
                   <StatCard
-                    label="With the hotspots treated"
+                    label="Lands here if we treat"
                     value={mass(result.treatedLandedKg)}
                     unit={massUnit(result.treatedLandedKg)}
                     accent="text-dune-teal"
                     isLightMode={isLightMode}
-                    sub={`${treatedAreaKm2.toLocaleString("en-US", { maximumFractionDigits: 0 })} km² of hotspot ground covered`}
+                    sub={`with ${treatedAreaKm2.toLocaleString("en-US", { maximumFractionDigits: 0 })} km² of hotspot treated`}
                     rule={false}
                   />
                   <StatCard
-                    label="Cut from treatment"
+                    label="The difference"
                     value={
                       result.reduction == null ? "n/a" : (result.reduction * 100).toFixed(1)
                     }
@@ -502,44 +509,44 @@ export default function ExposureWorkspace() {
                     accent="text-dune-teal"
                     isLightMode={isLightMode}
                     emphasize
-                    sub="less material arriving here"
+                    sub="less sand arriving"
                     rule={false}
                   />
                 </div>
 
-                <p className="text-[length:var(--text-micro)] text-muted-foreground">
-                  {(result.landingFraction * 1e6).toFixed(2)} kg of every million
-                  released across{" "}
-                  {Math.round(result.hotspotAreaM2 / 1e6).toLocaleString("en-US")} km²
-                  of hotspot.
+                <p className="max-w-[62ch] text-[length:var(--text-micro)] leading-snug text-muted-foreground">
+                  <GlossaryText max={2}>
+                    {`The hotspots upwind of this site cover ${Math.round(result.hotspotAreaM2 / 1e6).toLocaleString("en-US")} km² between them. Out of every million kilograms they lose to the wind, ${(result.landingFraction * 1e6).toFixed(2)} kg ends up here.`}
+                  </GlossaryText>
                 </p>
 
                 <p className="max-w-[62ch] text-[length:var(--text-micro)] leading-relaxed text-dune-rose">
-                  Read the split and the cut, not the kilograms. The wind behind
-                  them is hourly averages on a 100 km grid, which misses the gusts
-                  that do most of the lifting, so the amount is a floor.
+                  <GlossaryText max={2}>
+                    {"Trust the split and the difference more than the kilograms. Our wind data averages each hour across a grid cell about 100 km wide, so it misses the gusts that lift most of the sand. The real amount is higher than this."}
+                  </GlossaryText>
                 </p>
 
                 <Note label="What would make this wrong">
-                  {"Dust already in the air blows past regardless of what the ground under it is doing, and this model does not track it. It also assumes the wind blows straight from a hotspot to the site, when real air curves around the Gulf. And the hopping sand that buries an access road comes from within tens of metres, not from any hotspot on this map."}
+                  {"Dust already in the air blows past whatever we do to the ground under it, and this model does not follow it. We also send the wind straight from a hotspot to the site, when real air bends around the Gulf. And the sand that piles against a fence gets there by saltation, hopping a few metres at a time, so it comes from the ground next to the fence and not from any hotspot on this map."}
                 </Note>
               </div>
             )}
-          </div>
+          </Fold>
         </div>
       </section>
 
       <section className="border-t border-border pt-6">
         <div className="rail-row">
-          <p className="caption pt-1">Where it comes from</p>
-          <div className="space-y-4">
-            <p className="text-[length:var(--text-micro)] text-muted-foreground">
-              Ranked by how much of what lands here came from each.
-            </p>
+          <p className="caption pt-1">{mode === "live" ? "right now" : seasonDef.label}</p>
+          <Fold
+            title="Where does that sand come from?"
+            lede="Each hotspot region, ranked by how much of what lands here came from it."
+            wide
+          >
             {!result || result.shares.length === 0 ? (
               <p className="text-[length:var(--text-micro)] text-muted-foreground">
                 {noWind
-                  ? "Data pending. The live wind feed has not returned."
+                  ? "Data pending. The live wind feed has not answered."
                   : result
                     ? "Nothing is arriving, so there is nothing to break down."
                     : "Pick a site to see its breakdown."}
@@ -550,7 +557,7 @@ export default function ExposureWorkspace() {
                   <li key={sh.region} className="grid grid-cols-[1fr_auto] items-baseline gap-3">
                     <div className="min-w-0">
                       <p className="text-[length:var(--text-micro)] text-foreground">
-                        {sh.region}
+                        <GlossaryText max={1}>{sh.region}</GlossaryText>
                       </p>
                       <p className="caption">
                         {sh.distanceKm.toFixed(0)} km away, arrives from the{" "}
@@ -578,13 +585,12 @@ export default function ExposureWorkspace() {
                 ))}
               </ul>
             )}
-          </div>
+          </Fold>
         </div>
       </section>
 
-      {/* The working, and the references. Both one click away rather than three
-          more sections to scroll past. */}
-      <div className="grid grid-cols-2 items-stretch gap-2 border-t border-border pt-6">
+      {/* The working, the code and the references. One row, one click each. */}
+      <div className="grid grid-cols-1 items-stretch gap-2 border-t border-border pt-6 sm:grid-cols-3">
         <button
           type="button"
           {...hl}
@@ -593,6 +599,7 @@ export default function ExposureWorkspace() {
         >
           <span className="text-center leading-tight">How well is this tested</span>
         </button>
+        <CodePlotsToggle moduleId="exposure" isLightMode={isLightMode} />
         <SourcesToggle moduleId="exposure" isLightMode={isLightMode} />
       </div>
 
