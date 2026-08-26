@@ -108,6 +108,12 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
           "caRateEnhancement in constants.ts. Measured by pNPA esterase / pH-drop assay.",
         kind: "literature",
       },
+      {
+        label: "The four step efficiencies are estimates, not measurements",
+        detail:
+          "Export 0.70, dimerisation 0.65, sortase 0.60 and binding motif 0.50 (CA_DISPLAY_CALIB) are the wet lab's working numbers for a choice it has not made yet. The product of four estimates is an estimate. What survives a wide range of them is the ordering of the two routes, not the 27%.",
+        kind: "internal",
+      },
     ],
   },
   caco3: {
@@ -174,6 +180,12 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
         label: "Protein two-state stability curve ΔG(T)",
         detail: "The thermodynamic form the folded-fraction gate is built on.",
         kind: "literature",
+      },
+      {
+        label: "No measured melting point, for any protein in this project",
+        detail:
+          "Tm₀ = 52 °C, the 4.5 °C transition width and both penalty coefficients (THERMAL_CALIB) are placeholders for a mesophilic B. subtilis enzyme. Published midpoints for human carbonic anhydrase II sit nearer 60 °C, and none has been published for PgsBCA. Read the shape of the curve, not the temperature on it.",
+        kind: "internal",
       },
     ],
   },
@@ -323,6 +335,12 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
         label: "Per-binder maturation τ and field half-life H",
         detail:
           "Alginate fast/short, γ-PGA intermediate, calcite slow/durable, the multi-prong timing advantage.",
+        kind: "internal",
+      },
+      {
+        label: "Nothing here is anchored to published work",
+        detail:
+          "Every entry above is our own protocol or our own estimate. No weathering study, no field half-life, no published maturation curve stands behind the timeline. It is the least externally supported module on the site, and the months on its axis should be read that way.",
         kind: "internal",
       },
     ],

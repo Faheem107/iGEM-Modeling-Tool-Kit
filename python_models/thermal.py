@@ -13,7 +13,15 @@ src/lib/moduleMath.ts.
   f_folded     = 1 / (1 + exp((T - Tm) / w))                   Boltzmann two-state
   (equivalently dG(T) = dH - T dS and f = 1/(1 + exp(-dG/RT)); the melt is where f = 1/2)
 
-Constants: Tm0 = 52 C, transition width w = 4.5 C, pH optimum 7.4, salinity optimum 1.2%.
+Constants from THERMAL_CALIB in src/lib/physics/constants.ts: Tm0 = 52 C, transition
+width w = 4.5 C, pH optimum 7.4, salinity optimum 1.2%.
+
+What would make this wrong: all four are placeholders for a mesophilic B. subtilis
+enzyme, not measurements of any protein in this project. Published midpoints for human
+carbonic anhydrase II sit nearer 60 C and no Tm has been published for PgsBCA, so read
+the shape of these curves and not the temperatures on them. A melt curve from the wet
+lab replaces every number here.
+
 Run:  python thermal.py
 """
 

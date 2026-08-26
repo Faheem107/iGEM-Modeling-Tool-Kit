@@ -25,6 +25,7 @@ import {
 } from "recharts";
 import GlossaryTerm, { GlossaryText } from "../../GlossaryTerm";
 import { STATUS, TINT } from "@/src/lib/palette";
+import { CA_DISPLAY_CALIB, cval } from "@/src/lib/physics/constants";
 import {
   ModuleShell,
   Panel,
@@ -43,11 +44,13 @@ interface Props extends Themed {
 export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
   const c = chartColors(isLightMode);
   // Shared bacterial physiology (both routes use the Sec pathway and need CA dimers).
-  const [exportEff, setExportEff] = useState(0.7); // signal-peptide export success
-  const [dimerEff, setDimerEff] = useState(0.65); // CA dimerization fraction
+  // Starting values come from CA_DISPLAY_CALIB, which records that they are the wet
+  // lab's working estimates rather than measurements.
+  const [exportEff, setExportEff] = useState(cval(CA_DISPLAY_CALIB.exportEfficiency));
+  const [dimerEff, setDimerEff] = useState(cval(CA_DISPLAY_CALIB.dimerEfficiency));
   // Route-specific anchoring step.
-  const [sortaseEff, setSortaseEff] = useState(0.6); // sortase ligation efficiency
-  const [motifEff, setMotifEff] = useState(0.5); // LytE-CWBD cell-wall binding
+  const [sortaseEff, setSortaseEff] = useState(cval(CA_DISPLAY_CALIB.sortaseEfficiency));
+  const [motifEff, setMotifEff] = useState(cval(CA_DISPLAY_CALIB.motifEfficiency));
 
   const sortaseDisplay = exportEff * dimerEff * sortaseEff;
   const motifDisplay = exportEff * dimerEff * motifEff;

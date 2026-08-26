@@ -1080,7 +1080,9 @@ export default function AeolianWindTunnel({
                 Wet-lab directives
               </span>
               <p className="text-[length:var(--text-caption)] text-muted-foreground leading-normal mb-4">
-                Model outputs turned into wet-lab settings to target.
+                Settings for the bench to aim at. Only the survival rating comes
+                out of the model above. The cultivation period and the spray
+                density are rules of thumb we wrote down, not results.
               </p>
             </div>
 
@@ -1089,6 +1091,8 @@ export default function AeolianWindTunnel({
                 <span className="text-muted-foreground">
                   Cultivation Period:
                 </span>
+                {/* Rule of thumb, not a model output: longer culture for a
+                    stiffer target crust, clamped to a working shift range. */}
                 <span className="font-extrabold text-foreground">
                   {Math.max(16, Math.min(72, (18000 / activeGs) * 2.5)).toFixed(
                     1,
@@ -1101,6 +1105,8 @@ export default function AeolianWindTunnel({
                 <span className="text-muted-foreground">
                   Required Spray Density:
                 </span>
+                {/* Rule of thumb, not a model output: a base wetting volume
+                    plus a linear allowance per mm of crust. */}
                 <span className="font-extrabold text-dune-rose">
                   {(250.0 + crustThickness * 14.5).toFixed(0)} mL/m²
                 </span>

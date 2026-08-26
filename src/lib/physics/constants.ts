@@ -814,6 +814,110 @@ export const ECONOMIC_CALIB = {
   ),
 } as const;
 
+/**
+ * Protein thermal stability (Prong 1 & 2 enzymes).
+ *
+ * WHOSE MELTING POINT. These four numbers were written into the module component and
+ * never sourced, which made a placeholder read as a measurement. They are a stand-in
+ * for a mesophilic B. subtilis enzyme and NOT a value for any named protein: published
+ * midpoints for human carbonic anhydrase II sit nearer 60 C, and no Tm has been
+ * published for PgsBCA at all. Until the wet lab runs a melt, every number this module
+ * reports is a shape, not a temperature.
+ */
+export const THERMAL_CALIB = {
+  /** Baseline denaturation midpoint at the pH and salinity optima. */
+  tmBase: calib(
+    52,
+    "°C",
+    "placeholder for a mesophilic B. subtilis enzyme; no measured Tm for PgsBCA",
+    "Differential scanning fluorimetry or CD melt on the purified enzyme; read the midpoint.",
+    [40, 70],
+  ),
+  /** Boltzmann transition width. Wider means the melt is less cooperative. */
+  transitionWidth: calib(
+    4.5,
+    "°C",
+    "typical two-state melt width; not fitted to our protein",
+    "Fit the width from the same melt curve, not just the midpoint.",
+    [2, 10],
+  ),
+  /** Tm penalty coefficient away from the pH optimum, quadratic in pH units. */
+  pHPenalty: calib(
+    3.2,
+    "°C per (pH unit)²",
+    "assumed quadratic fall-off; unmeasured",
+    "Repeat the melt at several pH values and fit the curvature.",
+    [0, 8],
+  ),
+  /** Tm penalty coefficient away from the salinity optimum, quadratic in %. */
+  salinityPenalty: calib(
+    4.5,
+    "°C per (%)²",
+    "assumed quadratic fall-off; unmeasured",
+    "Repeat the melt across a salinity series and fit the curvature.",
+    [0, 10],
+  ),
+  /** pH at which the enzyme is most stable. */
+  pHOptimum: calib(
+    7.4,
+    "pH",
+    "near-neutral cytoplasmic optimum, assumed",
+    "The pH at which the measured Tm peaks.",
+    [6.5, 8.5],
+  ),
+  /** Salinity at which the enzyme is most stable. */
+  salinityOptimum: calib(
+    1.2,
+    "% w/v",
+    "mild ionic strength stabilises; assumed",
+    "The salinity at which the measured Tm peaks.",
+    [0, 3],
+  ),
+} as const;
+
+/**
+ * Carbonic anhydrase surface display (Prong 2).
+ *
+ * The four step efficiencies the module multiplies. They are the wet lab's own working
+ * estimates for a decision it has not made yet, not measurements, and the product of
+ * four guesses is a guess. What the module is good for is the ordering of the two
+ * routes, which holds over a wide range of these values.
+ */
+export const CA_DISPLAY_CALIB = {
+  /** Fraction of CA that clears the Sec pathway with the signal peptide. */
+  exportEfficiency: calib(
+    0.7,
+    "fraction",
+    "working estimate for Sec-pathway export; unmeasured",
+    "Quantify secreted vs cytoplasmic CA by western blot on fractionated culture.",
+    [0.3, 0.95],
+  ),
+  /** Fraction that forms the active dimer once outside. */
+  dimerEfficiency: calib(
+    0.65,
+    "fraction",
+    "working estimate; unmeasured",
+    "Native PAGE or SEC on the displayed fraction; read the dimer share.",
+    [0.3, 0.95],
+  ),
+  /** Sortase-mediated ligation to the cell wall. */
+  sortaseEfficiency: calib(
+    0.6,
+    "fraction",
+    "working estimate for sortase ligation; unmeasured",
+    "Compare surface CA activity with and without the sortase motif.",
+    [0.2, 0.9],
+  ),
+  /** LytE-CWBD non-covalent binding to the cell wall. */
+  motifEfficiency: calib(
+    0.5,
+    "fraction",
+    "working estimate for the cell-wall binding motif; unmeasured",
+    "Same assay as sortase, on the binding-motif construct.",
+    [0.2, 0.9],
+  ),
+} as const;
+
 /** Convenience: every calibration group, for UI provenance panels and audits. */
 export const CALIBRATION = {
   FBA: FBA_CALIB,
@@ -827,6 +931,8 @@ export const CALIBRATION = {
   COMPOSITE: COMPOSITE_CALIB,
   INTERACTION: INTERACTION_CALIB,
   ECONOMIC: ECONOMIC_CALIB,
+  THERMAL: THERMAL_CALIB,
+  CA_DISPLAY: CA_DISPLAY_CALIB,
 } as const;
 
 /** Helper: pull just the numeric value of a calibration entry. */

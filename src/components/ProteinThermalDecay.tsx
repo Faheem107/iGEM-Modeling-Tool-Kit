@@ -2,6 +2,7 @@ import React, { useMemo, useEffect } from "react";
 import GlossaryTerm from "./GlossaryTerm";
 import { ModuleActions } from "./simulation/_shared";
 import { DUNE, STATUS, SURFACE } from "@/src/lib/palette";
+import { THERMAL_CALIB, cval } from "@/src/lib/physics/constants";
 
 interface ProteinThermalDecayProps {
   isLightMode: boolean;
@@ -23,19 +24,23 @@ export default function ProteinThermalDecay({
   const [pH, setPh] = React.useState<number>(initialPh);
   const [salinity, setSalinity] = React.useState<number>(initialSalinity);
 
-  // Constants for B. subtilis engineered gamma-PGA stabilizing protein scaffold representation
-  const T_MELTING_BASE = 52.0; // Baseline denaturation midpoint temperature in Celsius
-  const STABILITY_FACTOR = 4.5; // Slope factor of transition (Boltzmann width)
+  // THERMAL_CALIB carries the provenance: these are placeholders for a mesophilic
+  // B. subtilis enzyme, not a measured Tm for any protein in this project.
+  const T_MELTING_BASE = cval(THERMAL_CALIB.tmBase);
+  const STABILITY_FACTOR = cval(THERMAL_CALIB.transitionWidth);
+  const PH_OPTIMUM = cval(THERMAL_CALIB.pHOptimum);
+  const SALT_OPTIMUM = cval(THERMAL_CALIB.salinityOptimum);
 
   // Derived Stability Parameters based on biochemical pH/salt environment
   const derivedParameters = useMemo(() => {
-    // Stability is maximal at pH 7.2 - 7.6. Deviations weaken folding structural integrity.
-    const pHDeviation = pH - 7.4;
-    const pH_Tm_Penalty = -3.2 * Math.pow(pHDeviation, 2);
+    // Stability is maximal at the optimum. Deviations weaken folding structural integrity.
+    const pHDeviation = pH - PH_OPTIMUM;
+    const pH_Tm_Penalty = -cval(THERMAL_CALIB.pHPenalty) * Math.pow(pHDeviation, 2);
 
-    // Ionic strength protects up to 1.2%, extreme hypersalinity details denature proteins
-    const salinityDeviation = salinity - 1.2;
-    const salinity_Tm_Penalty = -4.5 * Math.pow(salinityDeviation, 2);
+    // Ionic strength protects up to the optimum; hypersalinity denatures proteins.
+    const salinityDeviation = salinity - SALT_OPTIMUM;
+    const salinity_Tm_Penalty =
+      -cval(THERMAL_CALIB.salinityPenalty) * Math.pow(salinityDeviation, 2);
 
     // Calculate actual operative melting temperature
     const operativeT_melting = Math.max(
@@ -55,7 +60,7 @@ export default function ProteinThermalDecay({
       viabilityMultiplier,
       foldedPercentage: viabilityMultiplier * 100,
     };
-  }, [temperature, pH, salinity]);
+  }, [temperature, pH, salinity, T_MELTING_BASE, STABILITY_FACTOR, PH_OPTIMUM, SALT_OPTIMUM]);
 
   const { operativeT_melting, viabilityMultiplier, foldedPercentage } =
     derivedParameters;
