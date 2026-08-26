@@ -57,10 +57,6 @@ export default function MapLegend({
             </li>
           ))}
         </ul>
-        <p className="mt-3 text-[length:var(--text-caption)] leading-snug text-muted-foreground">
-          Only the sites in the chosen market are drawn. Click one to run the
-          model for it.
-        </p>
       </div>
 
       <div>
@@ -118,7 +114,7 @@ export default function MapLegend({
         </div>
         <p className="mt-3 text-[length:var(--text-caption)] leading-snug text-muted-foreground">
           Teal is calm, orange is strong. The tracers run faster than real wind
-          so the flow reads on screen. Speed is the colour, not the pace.
+          so the flow reads on screen.
         </p>
       </div>
     </div>
