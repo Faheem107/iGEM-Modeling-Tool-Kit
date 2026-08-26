@@ -80,20 +80,20 @@ export default function ModelIndex({
         })}
       </div>
 
-      {/* Where the crust ends up: the sand that arrives at a site, and what
-          stopping it is worth. One destination, so the heading is the link and
-          there is nothing to unfold. */}
+      {/* Where the crust ends up: the sand that arrives at a site. One
+          destination, so the heading is the link and there is nothing to
+          unfold. */}
       <div className="mt-12 border-t border-border pt-6">
         <div className="rail-row">
-          <p className="caption pt-1">Wind and cost</p>
+          <p className="caption pt-1">Wind and exposure</p>
           <Link href="/exposure" className="group block">
             <span className="wght-head rule-link block text-[length:var(--text-h3)] text-foreground">
-              Exposure and the commercial case
+              Where the sand comes from
             </span>
             <span className="mt-2 block max-w-[62ch] text-[length:var(--text-micro)] leading-snug text-muted-foreground">
-              The prongs set how well a treated surface holds. This takes that outward:
-              how much sand reaches a given site, when in the year it arrives, and what
-              stopping it is worth to whoever owns it.
+              The prongs set how well a treated surface holds. This takes that
+              outward: which sand hotspots feed a given site, how much reaches
+              it, and how much less would reach it if we treated the ground.
             </span>
           </Link>
         </div>

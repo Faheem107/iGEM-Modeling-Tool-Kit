@@ -24,12 +24,12 @@ export default function ExposureView() {
         </h1>
         <p className="text-[length:var(--text-body)] leading-relaxed text-muted-foreground">
           <GlossaryText max={4}>
-            {"Pick a market, pick a site, and the model estimates how much wind-blown sand reaches it and how much less would reach it if the source were treated. The seasonal view runs on a fitted wind climatology, month by month. The live view runs the same model on the current feed, which is what makes deployment timing and pricing possible."}
+            {"Pick a market and pick a site. The model works out which sand hotspots feed it, how much material lands there, and how much less would land if we treated the ground at those hotspots. The seasonal view uses the average wind over a three month window. The live view runs the same model on the wind blowing right now."}
           </GlossaryText>
         </p>
         <p className="mt-4 text-[length:var(--text-body)] leading-relaxed text-muted-foreground">
           <GlossaryText max={3}>
-            {"Two of those numbers are not equally well supported, and it is worth knowing which before reading any of them. Where the sand travels has been checked against airport wind records and comes out well. How much of it travels has never been checked against a measurement of sand at all. The last section says how far each test went, including the two that failed."}
+            {"Two parts of this are not equally well tested, and it is worth knowing which. Where the sand travels has been checked against airport wind records and comes out well. How much of it travels has never been checked against a measurement of sand. The last section says how far each test went."}
           </GlossaryText>
         </p>
       </header>
