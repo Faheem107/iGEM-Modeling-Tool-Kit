@@ -247,10 +247,10 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
             <XAxis
               dataKey="ca"
               stroke={c.axis}
-              tick={{ fontSize: 10 }}
+              tick={{ fontSize: 12 }}
               unit=" mM"
             />
-            <YAxis stroke={c.axis} tick={{ fontSize: 10 }} />
+            <YAxis stroke={c.axis} tick={{ fontSize: 12 }} />
             <Tooltip
               contentStyle={tooltipStyle(isLightMode)}
               formatter={(v: number) => [`${v} Pa`, "G"]}
@@ -301,8 +301,8 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
               margin={{ top: 4, right: 10, left: -20, bottom: 0 }}
             >
               <CartesianGrid stroke={c.grid} strokeDasharray="3 3" />
-              <XAxis dataKey="cycle" stroke={c.axis} tick={{ fontSize: 10 }} />
-              <YAxis stroke={c.axis} tick={{ fontSize: 10 }} unit="%" />
+              <XAxis dataKey="cycle" stroke={c.axis} tick={{ fontSize: 12 }} />
+              <YAxis stroke={c.axis} tick={{ fontSize: 12 }} unit="%" />
               <Tooltip
                 contentStyle={tooltipStyle(isLightMode)}
                 formatter={(v: number) => [`${v}%`, "residual"]}
@@ -356,10 +356,10 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
               <XAxis
                 dataKey="rh"
                 stroke={c.axis}
-                tick={{ fontSize: 10 }}
+                tick={{ fontSize: 12 }}
                 unit="%"
               />
-              <YAxis stroke={c.axis} tick={{ fontSize: 10 }} />
+              <YAxis stroke={c.axis} tick={{ fontSize: 12 }} />
               <Tooltip
                 contentStyle={tooltipStyle(isLightMode)}
                 formatter={(v: number) => [`${v} g/L`, "water"]}

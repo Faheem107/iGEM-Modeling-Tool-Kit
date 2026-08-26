@@ -368,7 +368,7 @@ export default function ExposureMap({
                   x={flip ? -9 : 9}
                   y={3.5}
                   textAnchor={flip ? "end" : "start"}
-                  fontSize={10}
+                  fontSize={12}
                   fill={isLightMode ? "rgb(0 0 0 / 0.62)" : "rgb(255 255 255 / 0.6)"}
                   style={{ pointerEvents: "none" }}
                 >

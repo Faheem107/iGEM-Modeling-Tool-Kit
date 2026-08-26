@@ -181,7 +181,7 @@ export default function MetabolicModel({
                   )
                 </span>
                 <div
-                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
+                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-micro)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
                 >
                   Rate of transcribing PgsBCA operon mRNA strands from the DNA
                   synthetic promoter.
@@ -228,7 +228,7 @@ export default function MetabolicModel({
                   )
                 </span>
                 <div
-                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
+                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-micro)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
                 >
                   Rate at which cellular RNases degrade the transcribed mRNA
                   species.
@@ -272,7 +272,7 @@ export default function MetabolicModel({
                   )
                 </span>
                 <div
-                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
+                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-micro)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
                 >
                   Ribosome recruitment speed to translate active PgsB, PgsC, and
                   PgsA enzymes.
@@ -319,7 +319,7 @@ export default function MetabolicModel({
                   )
                 </span>
                 <div
-                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
+                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-micro)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
                 >
                   Intracellular enzyme clearance speed orchestrated by host cell
                   proteasome machinery.
@@ -356,7 +356,7 @@ export default function MetabolicModel({
                   </span>
                 </span>
                 <div
-                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
+                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-micro)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
                 >
                   Maximum polymer chain synthesis turnover cycle count of the
                   PgsBCA complex per hour.
@@ -400,7 +400,7 @@ export default function MetabolicModel({
                   )
                 </span>
                 <div
-                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-caption)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
+                  className={`absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 text-[length:var(--text-micro)] rounded-[4px] border z-25 font-sans leading-relaxed ${isLightMode ? "bg-white text-foreground border-dune-orange/15" : "bg-dune-basalt text-foreground border-border"}`}
                 >
                   Extracellular precursor feeding stock concentration providing
                   monomer units.
@@ -832,7 +832,7 @@ export default function MetabolicModel({
             iGEM Wet Lab Calibration Interface
           </h4>
           <p
-            className={`text-[length:var(--text-caption)] leading-relaxed mb-4 ${isLightMode ? "text-muted-foreground font-medium" : "text-muted-foreground"}`}
+            className={`text-[length:var(--text-micro)] leading-relaxed mb-4 ${isLightMode ? "text-muted-foreground font-medium" : "text-muted-foreground"}`}
           >
             To integrate our dry-lab model with NYUAD laboratory assays: enter
             your spectrophotometric experimental yield to reverse-calibrate and

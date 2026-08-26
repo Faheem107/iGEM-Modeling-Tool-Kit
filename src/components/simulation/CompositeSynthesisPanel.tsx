@@ -193,7 +193,7 @@ export default function CompositeSynthesisPanel({
                     </span>
                   </div>
                   <p
-                    className={`text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}
+                    className={`text-[length:var(--text-micro)] leading-relaxed text-muted-foreground`}
                   >
                     {e.description}
                   </p>
@@ -201,7 +201,7 @@ export default function CompositeSynthesisPanel({
               );
             })}
             <p
-              className={`text-[length:var(--text-caption)] leading-relaxed pt-1 text-muted-foreground`}
+              className={`text-[length:var(--text-micro)] leading-relaxed pt-1 text-muted-foreground`}
             >
               Competition (Ca²⁺) and metabolic burden are applied to each
               prong&apos;s cohesion <b>before</b> the synergy term above, so the
@@ -225,11 +225,11 @@ export default function CompositeSynthesisPanel({
               <PolarGrid stroke={c.grid} />
               <PolarAngleAxis
                 dataKey="scenario"
-                tick={{ fontSize: 10, fill: c.axis }}
+                tick={{ fontSize: 12, fill: c.axis }}
               />
               <PolarRadiusAxis
                 domain={[0, 100]}
-                tick={{ fontSize: 10, fill: c.axis }}
+                tick={{ fontSize: 12, fill: c.axis }}
                 angle={90}
               />
               {prongs.map((p) => (
@@ -251,7 +251,7 @@ export default function CompositeSynthesisPanel({
                 fillOpacity={0.3}
                 strokeWidth={2.5}
               />
-              <Legend wrapperStyle={{ fontSize: 10 }} />
+              <Legend wrapperStyle={{ fontSize: 12 }} />
               <Tooltip
                 contentStyle={tooltipStyle(isLightMode)}
                 formatter={(v: number) => [`${v}%`, ""]}
@@ -286,14 +286,14 @@ export default function CompositeSynthesisPanel({
               <XAxis
                 type="number"
                 stroke={c.axis}
-                tick={{ fontSize: 10 }}
+                tick={{ fontSize: 12 }}
                 unit=" mN/m"
               />
               <YAxis
                 type="category"
                 dataKey="name"
                 stroke={c.axis}
-                tick={{ fontSize: 10 }}
+                tick={{ fontSize: 12 }}
                 width={64}
               />
               <Tooltip
@@ -308,7 +308,7 @@ export default function CompositeSynthesisPanel({
             </BarChart>
           </ResponsiveContainer>
           <p
-            className={`mt-2 text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}
+            className={`mt-2 text-[length:var(--text-micro)] leading-relaxed text-muted-foreground`}
           >
             Each binder reduces to an interparticle cohesion (γ-PGA &amp;
             alginate via shear modulus G; CaCO₃ via UCS). The combined radar

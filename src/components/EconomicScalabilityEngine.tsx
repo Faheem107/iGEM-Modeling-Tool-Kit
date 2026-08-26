@@ -249,7 +249,7 @@ export default function EconomicScalabilityEngine({
               <XAxis
                 dataKey="label"
                 stroke={c.axis}
-                tick={{ fontSize: 10 }}
+                tick={{ fontSize: 12 }}
                 angle={-30}
                 textAnchor="end"
                 interval={0}
@@ -257,7 +257,7 @@ export default function EconomicScalabilityEngine({
               />
               <YAxis
                 stroke={c.axis}
-                tick={{ fontSize: 10 }}
+                tick={{ fontSize: 12 }}
                 scale="log"
                 domain={["auto", "auto"]}
                 tickFormatter={(v) =>

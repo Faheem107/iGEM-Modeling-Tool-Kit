@@ -291,8 +291,8 @@ export default function Caco3PrecipitationModule({
             margin={{ top: 4, right: 8, left: -18, bottom: 0 }}
           >
             <CartesianGrid stroke={c.grid} strokeDasharray="3 3" />
-            <XAxis dataKey="pH" stroke={c.axis} tick={{ fontSize: 10 }} />
-            <YAxis stroke={c.axis} tick={{ fontSize: 10 }} unit="%" />
+            <XAxis dataKey="pH" stroke={c.axis} tick={{ fontSize: 12 }} />
+            <YAxis stroke={c.axis} tick={{ fontSize: 12 }} unit="%" />
             <Tooltip contentStyle={tooltipStyle(isLightMode)} />
             <Area
               type="monotone"
@@ -351,12 +351,12 @@ export default function Caco3PrecipitationModule({
               <XAxis
                 dataKey="t"
                 stroke={c.axis}
-                tick={{ fontSize: 10 }}
+                tick={{ fontSize: 12 }}
                 unit="h"
               />
-              <YAxis stroke={c.axis} tick={{ fontSize: 10 }} />
+              <YAxis stroke={c.axis} tick={{ fontSize: 12 }} />
               <Tooltip contentStyle={tooltipStyle(isLightMode)} />
-              <Legend wrapperStyle={{ fontSize: 10 }} />
+              <Legend wrapperStyle={{ fontSize: 12 }} />
               <Line
                 type="monotone"
                 dataKey="Ca"
@@ -417,10 +417,10 @@ export default function Caco3PrecipitationModule({
               <XAxis
                 dataKey="pct"
                 stroke={c.axis}
-                tick={{ fontSize: 10 }}
+                tick={{ fontSize: 12 }}
                 unit="%"
               />
-              <YAxis stroke={c.axis} tick={{ fontSize: 10 }} />
+              <YAxis stroke={c.axis} tick={{ fontSize: 12 }} />
               <Tooltip
                 contentStyle={tooltipStyle(isLightMode)}
                 formatter={(v: number) => [`${v} kPa`, "UCS"]}

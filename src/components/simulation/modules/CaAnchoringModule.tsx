@@ -213,10 +213,10 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
               strokeDasharray="3 3"
               vertical={false}
             />
-            <XAxis dataKey="stage" stroke={c.axis} tick={{ fontSize: 10 }} />
+            <XAxis dataKey="stage" stroke={c.axis} tick={{ fontSize: 12 }} />
             <YAxis
               stroke={c.axis}
-              tick={{ fontSize: 10 }}
+              tick={{ fontSize: 12 }}
               unit="%"
               domain={[0, 100]}
             />
@@ -224,7 +224,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
               contentStyle={tooltipStyle(isLightMode)}
               formatter={(v: number) => [`${v}%`, ""]}
             />
-            <Legend wrapperStyle={{ fontSize: 10 }} />
+            <Legend wrapperStyle={{ fontSize: 12 }} />
             <Bar
               dataKey="Sortase"
               radius={[4, 4, 0, 0]}

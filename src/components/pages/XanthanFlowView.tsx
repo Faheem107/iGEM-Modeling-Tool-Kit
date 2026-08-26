@@ -321,7 +321,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           />
         </div>
         <p
-          className={`text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}
+          className={`text-[length:var(--text-micro)] leading-relaxed text-muted-foreground`}
         >
           Replace these three numbers with a rheometer measurement (or the
           manufacturer&apos;s data sheet) of your actual solution, everything
@@ -383,7 +383,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           </div>
         </MathDisclosure>
         <p
-          className={`text-[length:var(--text-caption)] leading-relaxed mt-4 text-muted-foreground`}
+          className={`text-[length:var(--text-micro)] leading-relaxed mt-4 text-muted-foreground`}
         >
           The flow is <b>nonlinear</b>: ΔP ∝ V<sup>n</sup> with n ≈{" "}
           {BASE_XANTHAN.n0}, so doubling the speed increases the required
@@ -453,7 +453,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           </table>
         </div>
         <p
-          className={`text-[length:var(--text-caption)] mt-2 leading-relaxed text-muted-foreground`}
+          className={`text-[length:var(--text-micro)] mt-2 leading-relaxed text-muted-foreground`}
         >
           Despite a 20× speed-up from 0.5 to 10 cm/s, the required pressure
           only about doubles ({sampleTable[0].dP.toFixed(0)} →{" "}
@@ -475,25 +475,25 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
               type="number"
               domain={[0, 12]}
               stroke={c.axis}
-              tick={{ fontSize: 10 }}
+              tick={{ fontSize: 12 }}
               label={{
                 value: "mean speed V (cm/s)",
                 position: "insideBottom",
                 offset: -8,
-                fontSize: 10,
+                fontSize: 12,
                 fill: c.axis,
               }}
             />
             <YAxis
               domain={[150, 500]}
               stroke={c.axis}
-              tick={{ fontSize: 10 }}
+              tick={{ fontSize: 12 }}
               width={44}
               label={{
                 value: "ΔP (Pa)",
                 angle: -90,
                 position: "insideLeft",
-                fontSize: 10,
+                fontSize: 12,
                 fill: c.axis,
               }}
             />
@@ -512,7 +512,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           </LineChart>
         </ResponsiveContainer>
         <p
-          className={`mt-2 text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}
+          className={`mt-2 text-[length:var(--text-micro)] leading-relaxed text-muted-foreground`}
         >
           The strongly sublinear (concave) shape is the hallmark of
           shear-thinning flow: large increases in speed require only modest
@@ -614,7 +614,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           </table>
         </div>
         <p
-          className={`text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}
+          className={`text-[length:var(--text-micro)] leading-relaxed text-muted-foreground`}
         >
           Values at a fixed applied pressure of 100 Pa. Because K falls
           steeply with dilution while n rises toward 1, speed is extremely
@@ -634,7 +634,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
             Interactive Calculator
           </h3>
           <p
-            className={`text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}
+            className={`text-[length:var(--text-micro)] leading-relaxed text-muted-foreground`}
           >
             Pick a concentration and an applied pressure, and the model works
             out how fast the mix moves and how long it takes to get there.
@@ -729,19 +729,19 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
                 domain={[0.01, 100]}
                 ticks={[0.01, 0.1, 1, 10, 100]}
                 stroke={c.axis}
-                tick={{ fontSize: 10 }}
+                tick={{ fontSize: 12 }}
                 label={{
                   value: "mean speed V (cm/s, log)",
                   position: "insideBottom",
                   offset: -8,
-                  fontSize: 10,
+                  fontSize: 12,
                   fill: c.axis,
                 }}
               />
               <YAxis
                 domain={[0, 600]}
                 stroke={c.axis}
-                tick={{ fontSize: 10 }}
+                tick={{ fontSize: 12 }}
                 width={40}
               />
               <Tooltip
@@ -749,7 +749,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
                 formatter={(v: number, name: string) => [`${v} Pa`, name]}
                 labelFormatter={(v) => `V = ${v} cm/s`}
               />
-              <Legend wrapperStyle={{ fontSize: 10 }} />
+              <Legend wrapperStyle={{ fontSize: 12 }} />
               {CONCENTRATION_LEVELS.map((level) => (
                 <Line
                   key={level}
@@ -777,7 +777,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
                   strokeDasharray="2 2"
                   label={{
                     value: "V now",
-                    fontSize: 10,
+                    fontSize: 12,
                     fill: STATUS.warn,
                     position: "top",
                   }}
@@ -786,7 +786,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
             </LineChart>
           </ResponsiveContainer>
           <p
-            className={`text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}
+            className={`text-[length:var(--text-micro)] leading-relaxed text-muted-foreground`}
           >
             Dashed lines are the five reference concentrations. The bold amber
             line is your slider&apos;s live curve. Moving to a lower concentration
@@ -811,7 +811,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           <Katex tex="Re_{MR}=\dfrac{\rho\,V^{2-n}D^{n}}{8^{\,n-1}K\left(\dfrac{3n+1}{4n}\right)^{n}}" />
         </div>
         <p
-          className={`text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}
+          className={`text-[length:var(--text-micro)] leading-relaxed text-muted-foreground`}
         >
           As with Newtonian pipe flow, Re<sub>MR</sub> ≲{" "}
           {RE_LAMINAR_LIMIT} is a reasonable laminar cutoff. At the flow

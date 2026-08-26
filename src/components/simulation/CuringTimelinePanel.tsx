@@ -192,18 +192,18 @@ export default function CuringTimelinePanel({
                 domain={[0, 48]}
                 ticks={[0, 8, 16, 24, 32, 40, 48]}
                 stroke={c.axis}
-                tick={{ fontSize: 10 }}
+                tick={{ fontSize: 12 }}
                 unit="h"
               />
               <YAxis
                 stroke={c.axis}
-                tick={{ fontSize: 10 }}
+                tick={{ fontSize: 12 }}
                 width={40}
                 label={{
                   value: "mN/m",
                   angle: -90,
                   position: "insideLeft",
-                  fontSize: 10,
+                  fontSize: 12,
                   fill: c.axis,
                 }}
               />
@@ -230,7 +230,7 @@ export default function CuringTimelinePanel({
                   strokeOpacity={0.6}
                   label={{
                     value: `${h}h`,
-                    fontSize: 10,
+                    fontSize: 12,
                     fill: c.axis,
                     position: "top",
                   }}
@@ -239,7 +239,7 @@ export default function CuringTimelinePanel({
             </AreaChart>
           </ResponsiveContainer>
           <p
-            className={`mt-2 text-[length:var(--text-caption)] leading-relaxed text-muted-foreground`}
+            className={`mt-2 text-[length:var(--text-micro)] leading-relaxed text-muted-foreground`}
           >
             Dashed lines are the protocol spray times (0/8/16/24/32 h). Alginate
             gels on contact, γ-PGA sets within hours, and MICP calcite ripens
@@ -270,18 +270,18 @@ export default function CuringTimelinePanel({
                 type="number"
                 domain={[0, "dataMax"]}
                 stroke={c.axis}
-                tick={{ fontSize: 10 }}
+                tick={{ fontSize: 12 }}
                 unit="mo"
               />
               <YAxis
                 stroke={c.axis}
-                tick={{ fontSize: 10 }}
+                tick={{ fontSize: 12 }}
                 width={40}
                 label={{
                   value: "mN/m",
                   angle: -90,
                   position: "insideLeft",
-                  fontSize: 10,
+                  fontSize: 12,
                   fill: c.axis,
                 }}
               />
@@ -290,7 +290,7 @@ export default function CuringTimelinePanel({
                 formatter={(v: number, n: string) => [`${v} mN/m`, n]}
                 labelFormatter={(m) => `${m} mo`}
               />
-              <Legend wrapperStyle={{ fontSize: 10 }} />
+              <Legend wrapperStyle={{ fontSize: 12 }} />
               {active.map((p) => (
                 <Area
                   key={p}
@@ -309,7 +309,7 @@ export default function CuringTimelinePanel({
                 strokeDasharray="5 3"
                 label={{
                   value: `survive ${designWind} m/s`,
-                  fontSize: 10,
+                  fontSize: 12,
                   fill: isLightMode ? DUNE.maroon : TINT.roseLight,
                   position: "insideTopRight",
                 }}
@@ -322,7 +322,7 @@ export default function CuringTimelinePanel({
                     strokeDasharray="2 2"
                     label={{
                       value: "re-apply",
-                      fontSize: 10,
+                      fontSize: 12,
                       fill: c.axis,
                       position: "top",
                     }}

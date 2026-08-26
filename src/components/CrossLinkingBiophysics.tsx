@@ -539,7 +539,7 @@ export default function CrossLinkingBiophysics({
                 />
               </label>
               <p
-                className={`text-[length:var(--text-caption)] mt-2 font-sans leading-relaxed ${isLightMode ? "text-muted-foreground font-medium" : "text-muted-foreground"}`}
+                className={`text-[length:var(--text-micro)] mt-2 font-sans leading-relaxed ${isLightMode ? "text-muted-foreground font-medium" : "text-muted-foreground"}`}
               >
                 When checked, local biopolymer density (
                 <code
@@ -914,7 +914,7 @@ export default function CrossLinkingBiophysics({
               </div>
 
               <div
-                className={`pt-2 border-t leading-normal text-[length:var(--text-caption)] font-sans flex gap-2 items-start ${
+                className={`pt-2 border-t leading-normal text-[length:var(--text-micro)] font-sans flex gap-2 items-start ${
                   isLightMode
                     ? "border-dune-orange/10 text-muted-foreground font-medium"
                     : "border-border text-muted-foreground"

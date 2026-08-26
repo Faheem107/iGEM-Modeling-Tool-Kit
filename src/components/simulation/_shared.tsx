@@ -42,7 +42,7 @@ export const tooltipStyle = (light: boolean) => ({
   backgroundColor: light ? "rgba(255,255,255,0.97)" : "rgba(28,21,18,0.97)",
   border: `1px solid ${light ? HAIRLINE.light : HAIRLINE.dark}`,
   borderRadius: 3,
-  fontSize: 11,
+  fontSize: 13,
   fontFamily: "var(--font-lexend), system-ui, sans-serif",
   color: light ? INK.light : INK.dark,
 });
@@ -67,7 +67,7 @@ export function Panel({
       } ${className}`}
     >
       <div className="mb-4 flex items-center justify-between gap-4 border-b border-border pb-4">
-        <h3 className="caption text-foreground" style={{ textWrap: "balance" }}>
+        <h3 className="caption-head" style={{ textWrap: "balance" }}>
           <CaptionText>{title}</CaptionText>
         </h3>
         {right}
@@ -125,7 +125,7 @@ export function Slider({
         className={`w-full ${accent}`}
       />
       {hint && (
-        <span className="mt-2 block text-[length:var(--text-caption)] leading-snug text-muted-foreground opacity-80">
+        <span className="mt-2 block max-w-[var(--measure)] text-[length:var(--text-micro)] leading-snug text-muted-foreground opacity-80">
           <GlossaryText max={3}>{hint}</GlossaryText>
         </span>
       )}
@@ -184,7 +184,7 @@ export function Note({
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden"
           >
-            <div className="max-w-[62ch] pt-2 text-[length:var(--text-caption)] leading-relaxed text-muted-foreground">
+            <div className="max-w-[var(--measure)] pt-2 text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
               {typeof children === "string" ? (
                 <GlossaryText max={3}>{children}</GlossaryText>
               ) : (
@@ -409,7 +409,7 @@ export function MathDisclosure({
       </button>
       {open && (
         <div
-          className="border-t border-border px-4 py-4 font-mono text-[length:var(--text-caption)] leading-relaxed text-foreground"
+          className="border-t border-border px-4 py-4 font-mono text-[length:var(--text-micro)] leading-relaxed text-foreground"
         >
           {children}
         </div>
