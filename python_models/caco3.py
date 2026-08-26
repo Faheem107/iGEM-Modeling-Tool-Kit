@@ -93,7 +93,7 @@ def figures():
     ax1.plot(t, cal * 1000, color=MAROON, lw=2.4, label="calcite (durable)")
     ax1.set_xlabel("time (h)")
     ax1.set_ylabel("carbonate  (mmol/L)")
-    ax1.set_title("ACC -> vaterite -> calcite polymorph cascade")
+    ax1.set_title("Carbonate polymorphs over time")
     ax1.legend(frameon=False)
     fig1.tight_layout()
     figs.append((fig1, "caco3-1.png"))
@@ -104,7 +104,7 @@ def figures():
     ax2.plot(wt, calcite_to_ucs(wt) / 1000.0, color=ORANGE, lw=2.4)
     ax2.set_xlabel("load-bearing carbonate  (wt%)")
     ax2.set_ylabel("UCS  (MPa)")
-    ax2.set_title(r"Biocement strength  UCS = $k\,w^{\,n}$  (n = 1.5)")
+    ax2.set_title("Biocement strength against carbonate content")
     fig2.tight_layout()
     figs.append((fig2, "caco3-2.png"))
     return figs

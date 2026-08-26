@@ -64,7 +64,7 @@ def figures():
         ax1.axvline(ustar_to_freestream(ut), color=c, ls="--", lw=1)
     ax1.set_xlabel("freestream wind U  (m/s)")
     ax1.set_ylabel("saltation flux q  (g m$^{-1}$ s$^{-1}$)")
-    ax1.set_title("Cohesion raises the threshold and cuts erosion")
+    ax1.set_title("Sand flux against wind speed")
     ax1.legend(frameon=False)
     fig1.tight_layout()
     figs.append((fig1, "aeolian-1.png"))
@@ -78,7 +78,14 @@ def figures():
     ax2.text(0.05, 18, "UAE design winds 16-20 m/s", color=ASH, fontsize=9)
     ax2.set_xlabel("interparticle cohesion gamma  (mN/m)")
     ax2.set_ylabel("threshold wind speed  (m/s)")
-    ax2.set_title("Threshold wind rises with engineered cohesion")
+    ax2.set_title("Threshold wind against crust cohesion")
+    # Say what the curve does rather than leaving the band floating above it: over the
+    # whole cohesion range plotted, the crust never holds at the design wind.
+    ax2.text(0, -0.22,
+             f"At the strongest crust plotted the threshold reaches {Ut.max():.1f} m/s, "
+             f"still short of the design band.\nRaising it further needs a cohesion we "
+             f"have not measured.",
+             transform=ax2.transAxes, fontsize=8, color=ASH, va="top")
     fig2.tight_layout()
     figs.append((fig2, "aeolian-2.png"))
     return figs

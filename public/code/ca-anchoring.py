@@ -44,24 +44,29 @@ def ca_activity(f):
 def figures():
     figs = []
 
-    # 1) Stacked multiplicative efficiency for both anchoring routes.
+    # 1) The running product along each anchoring route. Grouped, not stacked: each bar
+    # is the fraction still left after that step, so the last bar is the answer. Drawing
+    # them on top of one another would invite a reader to add the bands, and a
+    # multiplicative cascade does not add.
     routes = ["Sortase\nligation", "Binding\nmotif"]
-    export = [EXPORT, EXPORT]
-    after_dimer = [EXPORT * DIMER, EXPORT * DIMER]
-    final = [display_efficiency(EXPORT, DIMER, SORTASE),
-             display_efficiency(EXPORT, DIMER, MOTIF)]
+    steps = ["after export", "x dimerisation", "x anchoring"]
+    vals = [
+        [EXPORT, EXPORT * DIMER, display_efficiency(EXPORT, DIMER, SORTASE)],
+        [EXPORT, EXPORT * DIMER, display_efficiency(EXPORT, DIMER, MOTIF)],
+    ]
     x = np.arange(len(routes))
+    w = 0.26
     fig1, ax1 = plt.subplots()
-    ax1.bar(x, export, color=TEAL, edgecolor=ASH, label="after export")
-    ax1.bar(x, after_dimer, color=ORANGE, edgecolor=ASH, label="x dimerisation")
-    ax1.bar(x, final, color=MAROON, edgecolor=ASH, label="x anchoring (display)")
-    for xi, fv in zip(x, final):
-        ax1.text(xi, fv + 0.01, f"{fv*100:.0f}%", ha="center", fontsize=9, color=MAROON)
+    for k, (step, colour) in enumerate(zip(steps, [TEAL, ORANGE, MAROON])):
+        heights = [vals[r][k] for r in range(len(routes))]
+        ax1.bar(x + (k - 1) * w, heights, w, color=colour, edgecolor=ASH, label=step)
+        for xi, hv in zip(x + (k - 1) * w, heights):
+            ax1.text(xi, hv + 0.015, f"{hv*100:.0f}%", ha="center", fontsize=8, color=ASH)
     ax1.set_xticks(x)
     ax1.set_xticklabels(routes)
-    ax1.set_ylabel("fraction of cells")
+    ax1.set_ylabel("enzyme still displayed and active")
     ax1.set_ylim(0, 1)
-    ax1.set_title("Display efficiency = export x dimer x anchor")
+    ax1.set_title("Display efficiency by anchoring route")
     ax1.legend(frameon=False, fontsize=9)
     fig1.tight_layout()
     figs.append((fig1, "ca-anchoring-1.png"))
@@ -72,7 +77,7 @@ def figures():
     ax2.plot(f, ca_activity(f), color=ORANGE, lw=2.4)
     ax2.set_xlabel("realised enhancement fraction f")
     ax2.set_ylabel("normalised CA activity a$_{CA}$")
-    ax2.set_title("CA activity is log-scaled (E spans ~10$^6$)")
+    ax2.set_title("CA activity against realised enhancement")
     ax2.set_ylim(0, 1)
     fig2.tight_layout()
     figs.append((fig2, "ca-anchoring-2.png"))

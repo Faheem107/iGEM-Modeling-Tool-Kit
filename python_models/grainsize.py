@@ -14,7 +14,15 @@ Exact port of src/lib/physics/grainsize.ts.
   C(d)      = 1 - prod_p (1 - e_p(d))
   f_bound   = integral C(d) phi(ln d) d ln d,  phi ~ LogNormal(D50, sigma_g)
 
-Constants from GRAINSIZE_CALIB (constants.ts). Run:  python grainsize.py
+Constants from GRAINSIZE_CALIB (constants.ts).
+
+What would make this wrong: phi is read as a mass distribution, which holds only because
+GRAINSIZE_CALIB.uaeD50 comes from a sieve/laser PSD and those are reported by mass. Read
+the same curve as a count of grains and the answer moves, because the fine tail carries
+many grains and little mass. Alginate is included for comparison only; the deployed
+product is P1 + P2.
+
+Run:  python grainsize.py
 """
 
 import numpy as np
@@ -84,34 +92,53 @@ def figures():
     figs = []
     d = np.exp(np.linspace(np.log(20), np.log(600), 400))
 
-    # 1) Per-prong coverage vs grain diameter + the site PSD.
+    # 1) Per-prong coverage vs grain diameter + the site PSD. Two unions are drawn: the
+    # deployed pair, and the same with alginate added. Alginate is modelled for
+    # comparison and is not carried forward, so its union is the fainter line.
     fig1, ax1 = plt.subplots()
+    ax1b = ax1.twinx()
+    psd = ax1b.fill_between(d, grain_pdf(d), color=ROSE, alpha=0.18,
+                            label="sand at the site, by mass")
+    ax1b.set_yticks([])
     ax1.plot(d, micp_eff(d), color=MAROON, lw=2.2, label="CaCO3 / MICP (P2)")
     ax1.plot(d, pga_cover(d), color=ORANGE, lw=2.2, label="gamma-PGA (P1)")
-    ax1.plot(d, alginate_cover(d), color=TEAL, lw=2.2, label="alginate (P3)")
-    ax1.plot(d, combined(d, [1, 2, 3]), color=ASH, lw=2.6, ls="--", label="union (all three)")
-    ax1b = ax1.twinx()
-    ax1b.fill_between(d, grain_pdf(d), color=ROSE, alpha=0.18)
-    ax1b.set_yticks([])
+    ax1.plot(d, alginate_cover(d), color=TEAL, lw=2.2, ls=":",
+             label="alginate (P3), modelled only")
+    ax1.plot(d, combined(d, [1, 2]), color=ASH, lw=2.6, ls="--",
+             label="union, P1 + P2 (deployed)")
+    ax1.plot(d, combined(d, [1, 2, 3]), color=ASH, lw=1.4, ls="-.", alpha=0.6,
+             label="union with alginate")
     ax1.set_xscale("log")
+    ax1.set_xticks([20, 50, 100, 200, 500])
+    ax1.get_xaxis().set_major_formatter(plt.ScalarFormatter())
+    ax1.set_xlim(d[0], d[-1])
     ax1.set_xlabel("grain diameter  (micron)")
     ax1.set_ylabel("binding effectiveness")
-    ax1.set_title("No single binder covers every grain size")
-    ax1.legend(frameon=False, fontsize=9, loc="lower center")
+    ax1.set_ylim(0, 1.08)
+    ax1.set_title("Binding effectiveness against grain size")
+    handles, labels = ax1.get_legend_handles_labels()
+    ax1.legend(handles + [psd], labels + ["sand at the site, by mass"],
+               frameon=False, fontsize=8, loc="lower center", ncol=2)
     fig1.tight_layout()
     figs.append((fig1, "grainsize-1.png"))
 
     # 2) Effective bound mass fraction per prong combination.
     combos = [[1], [2], [3], [1, 2], [1, 2, 3]]
-    labels = ["P1", "P2", "P3", "P1+P2", "P1+P2+P3"]
+    labels = ["P1", "P2", "P3*", "P1+P2", "P1+P2+P3*"]
     vals = [bound_fraction(c) * 100 for c in combos]
+    # Alginate-containing bars are hatched: it is modelled for comparison, not deployed.
+    hatch = ["", "", "//", "", "//"]
     fig2, ax2 = plt.subplots()
-    ax2.bar(labels, vals, color=[ORANGE, MAROON, TEAL, ROSE, ASH], edgecolor=ASH)
+    bars = ax2.bar(labels, vals, color=[ORANGE, MAROON, TEAL, ROSE, ASH], edgecolor=ASH)
+    for b, h in zip(bars, hatch):
+        b.set_hatch(h)
     for i, v in enumerate(vals):
         ax2.text(i, v + 1, f"{v:.0f}%", ha="center", fontsize=9)
-    ax2.set_ylabel("bound mass fraction of site sand (%)")
-    ax2.set_title("Combining prongs covers more of the size distribution")
+    ax2.set_ylabel("site sand held, by mass (%)")
+    ax2.set_title("Sand held by prong combination")
     ax2.set_ylim(0, 100)
+    ax2.text(0.0, -0.20, "* includes alginate, which is modelled for comparison and not deployed",
+             transform=ax2.transAxes, fontsize=8, color=ASH)
     fig2.tight_layout()
     figs.append((fig2, "grainsize-2.png"))
     return figs

@@ -68,7 +68,9 @@ plt.rcParams.update({
 # constants.ts: PHYS and AEOLIAN_CALIB. USTAR_RATIO belongs to a 10 m wind,
 # which is what ERA5 reports. A 2 m or 50 m wind source would silently break it.
 # ---------------------------------------------------------------------------
-RHO_AIR, RHO_SAND, G, NU_AIR = 1.225, 2650.0, 9.80665, 1.5e-5
+RHO_AIR, RHO_SAND, G = 1.225, 2650.0, 9.80665
+MU_AIR = 1.81e-5                        # dynamic viscosity of air [Pa s]
+NU_AIR = MU_AIR / RHO_AIR               # kinematic, as dustTransport.ts derives it
 A_THR, SALT_C, USTAR_RATIO = 0.11, 1.8, 0.03
 
 # hotspotTransport.ts
@@ -151,6 +153,12 @@ def threshold(grain_d_m, cohesion=0.0):
 def upper_incomplete_gamma(s, x, terms=600):
     if x <= 0:
         return math.gamma(s)
+    if x > 60:
+        # Past here the series underflows and the honest answer is zero, which is
+        # what windStats.ts and wind_stats.py return. Without this the script
+        # invents a sliver of transport in the regime the validation says to
+        # distrust most.
+        return 0.0
     total, term = 0.0, 1.0 / s
     for n in range(1, terms):
         total += term
@@ -204,7 +212,7 @@ def settling_velocity(d):
 
 def sandblasting_alpha(clay_percent):
     """Chappell Eq 3: how much fine dust hopping grains knock loose [1/m]."""
-    return 10 ** (0.134 * min(clay_percent, 20.0) - 6.0)
+    return 10 ** (0.134 * min(max(clay_percent, 0.0), 20.0) - 6.0)
 
 
 def deposition_length_m(wind_ms):
@@ -373,7 +381,8 @@ def transport_to_site(hotspots, site, wind, season_seconds,
     for r in rows:
         r.setdefault("treated_share", 0.0)
 
-    shares, landed, landed_treated, emitted, area = {}, 0.0, 0.0, 0.0, 0.0
+    shares, dist_sum = {}, {}
+    landed, landed_treated, emitted, area = 0.0, 0.0, 0.0, 0.0
     for r in rows:
         t = r["treated_share"]
         emitted_now = r["bare"] * (1 - t) + r["treated"] * t
@@ -381,11 +390,16 @@ def transport_to_site(hotspots, site, wind, season_seconds,
         landed_treated += emitted_now * r["landing"]
         emitted += r["bare"]
         area += r["h"]["area_m2"]
-        shares[r["h"]["region"]] = shares.get(r["h"]["region"], 0.0) + r["landed"]
+        region = r["h"]["region"]
+        shares[region] = shares.get(region, 0.0) + r["landed"]
+        # Weight distance by what actually arrives, not by polygon count: a region
+        # is "544 km away" in the sense that most of what it sends came from there.
+        dist_sum[region] = dist_sum.get(region, 0.0) + r["km"] * r["landed"]
 
     return {
         "shares": sorted(((k, v / landed * 100) for k, v in shares.items()),
                          key=lambda kv: -kv[1]) if landed > 0 else [],
+        "distance_km": {k: dist_sum[k] / v for k, v in shares.items() if v > 0},
         "landed_kg": landed,
         "landed_treated_kg": landed_treated,
         "difference_pct": (1 - landed_treated / landed) * 100 if landed > 0 else 0.0,
@@ -441,7 +455,7 @@ def figures():
     ax1.set_xlabel("wind speed 10 m above the ground [m/s]")
     ax1.set_ylabel("each curve scaled to its own peak", fontsize=9)
     ax1.set_yticks([])
-    ax1.set_title("Sand moves on a few windy days, not on an average day")
+    ax1.set_title("Sand movement pattern")
     ax1.legend(frameon=False, fontsize=9, loc="upper right")
     verdict = ("Using the average wind would say no sand moves at all"
                if q_naive <= 0 else
@@ -458,12 +472,14 @@ def figures():
     fig2, (ax2, ax3) = plt.subplots(1, 2, figsize=(11.4, 4.6))
 
     top = result["shares"][:6][::-1]
-    names = [n.replace(" and ", " &\n") for n, _ in top]
+    # Name the distance on the axis: the share alone does not say how far off it starts.
+    names = [f"{n.replace(' and ', ' &' + chr(10))}\n{result['distance_km'][n]:.0f} km away"
+             for n, _ in top]
     ax2.barh(range(len(top)), [v for _, v in top], color=ORANGE, height=0.62)
     ax2.set_yticks(range(len(top)))
-    ax2.set_yticklabels(names, fontsize=9)
+    ax2.set_yticklabels(names, fontsize=8)
     ax2.set_xlabel("share of the sand landing at Al Dhafra, March to May [%]")
-    ax2.set_title("Most of it starts hundreds of kilometres away")
+    ax2.set_title("Where the sand comes from")
     ax2.grid(axis="y", visible=False)
     for i, (_, v) in enumerate(top):
         ax2.text(v + 0.8, i, f"{v:.0f}%", va="center", fontsize=9, color=MAROON)
@@ -479,7 +495,7 @@ def figures():
     ax3.set_xticklabels(["1", "10", "100", "1,000", "10,000", "100,000"])
     ax3.set_xlabel("hotspot ground treated [km²]")
     ax3.set_ylabel("less sand landing at Al Dhafra [%]")
-    ax3.set_title("A small patch does almost nothing")
+    ax3.set_title("Effect of treating hotspot ground")
     ax3.axvline(1, color=ASH, ls=":", lw=1.4)
     ax3.annotate("a 1 km² pilot plot", (1, max(cuts) * 0.72), color=ASH, fontsize=9,
                  xytext=(6, 0), textcoords="offset points")
@@ -541,7 +557,7 @@ def _self_test():
     print(f"  bare sand moves above {r['ut_bare']:.1f} m/s, treated {r['ut_treated']:.1f} m/s")
     print("  where it comes from:")
     for name, share in r["shares"][:5]:
-        print(f"    {share:5.1f}%  {name}")
+        print(f"    {share:5.1f}%  {name}, {r['distance_km'][name]:.0f} km away")
 
     small = transport_to_site(hotspots, site, wind, seconds, treated_area_m2=1e6,
                               grain_d_m=grain_d)["difference_pct"]

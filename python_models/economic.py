@@ -71,7 +71,7 @@ def figures():
     fig1, ax1 = plt.subplots()
     for combo, lab, c in [([1, 2], "gamma-PGA + CaCO3", MAROON),
                           ([2], "CaCO3 only", ORANGE),
-                          ([3], "alginate only", TEAL)]:
+                          ([3], "alginate only (modelled, not deployed)", TEAL)]:
         capex, recurring, _ = combination_cost(combo, 1.0)
         cost_per_ha = capex / area + recurring
         ax1.plot(area, cost_per_ha, color=c, lw=2.2, label=lab)
@@ -79,7 +79,7 @@ def figures():
     ax1.text(320, CHEM_HA + 120, "chemical spray baseline", color=ROSE, fontsize=9)
     ax1.set_xlabel("treated area (ha)")
     ax1.set_ylabel("all-in cost  (USD/ha)")
-    ax1.set_title("Cost per hectare falls as capex amortises")
+    ax1.set_title("Cost per hectare against treated area")
     ax1.set_ylim(0, 4000)
     ax1.legend(frameon=False, fontsize=9)
     fig1.tight_layout()
@@ -87,7 +87,7 @@ def figures():
 
     # 2) Cost breakdown per combination at 100 ha.
     combos = [[1], [2], [3], [1, 2], [1, 2, 3]]
-    labels = ["P1", "P2", "P3", "P1+P2", "all"]
+    labels = ["P1", "P2", "P3*", "P1+P2", "all*"]
     area = 100.0
     capex_ha, opex_ha, app_ha = [], [], []
     for c in combos:
@@ -103,9 +103,15 @@ def figures():
             color=TEAL, label="amortised capex (100 ha)")
     ax2.set_xticks(x)
     ax2.set_xticklabels(labels)
+    for i, c in enumerate(combos):          # hatch anything that leans on alginate
+        if 3 in c:
+            for container in ax2.containers:
+                container[i].set_hatch("//")
     ax2.set_ylabel("cost  (USD/ha)")
-    ax2.set_title("Deployment cost breakdown at 100 ha")
+    ax2.set_title("Cost breakdown at 100 hectares")
     ax2.legend(frameon=False, fontsize=9)
+    ax2.text(0, -0.16, "* includes alginate, modelled for comparison and not deployed",
+             transform=ax2.transAxes, fontsize=8, color=ASH, va="top")
     fig2.tight_layout()
     figs.append((fig2, "economic-2.png"))
     return figs

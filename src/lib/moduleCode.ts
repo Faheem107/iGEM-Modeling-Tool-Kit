@@ -58,7 +58,7 @@ const p = (id: string, n: number, caption: string): ModulePlot => ({
   caption,
 });
 
-// Only the 14 computational modules get reproducible code (protein-3d is a viewer, not a model).
+// Only the 15 computational modules get reproducible code (protein-3d and wetlab are not models).
 export const MODULE_CODE: Partial<Record<ModuleId, ModuleCode>> = {
   fba: entry(
     "fba",
@@ -75,7 +75,7 @@ export const MODULE_CODE: Partial<Record<ModuleId, ModuleCode>> = {
     "Integrates the transcription → translation → catalysis ODE for γ-PGA with RK4, and shows how degradation-pathway knockouts (Δggt, ΔpgcA) lift the final yield.",
     [
       p("metabolic", 1, "mRNA, enzyme and γ-PGA time-courses for the double-knockout strain."),
-      p("metabolic", 2, "Final γ-PGA yield across knockout strategies."),
+      p("metabolic", 2, "Final γ-PGA yield across knockout strategies. Removing the degradation pathways lifts it."),
     ],
   ),
   crosslink: entry(
@@ -84,7 +84,7 @@ export const MODULE_CODE: Partial<Record<ModuleId, ModuleCode>> = {
     "Langmuir Ca²⁺ binding feeding rubber-elasticity network theory (G = νRT) for γ-PGA hydrogel stiffness.",
     [
       p("crosslink", 1, "Langmuir saturation of carboxylate sites vs [Ca²⁺]."),
-      p("crosslink", 2, "Shear modulus vs [Ca²⁺] at several polymer densities."),
+      p("crosslink", 2, "Shear modulus against [Ca²⁺] at several polymer densities. Calcium is what turns loose polymer into a gel."),
     ],
   ),
   caco3: entry(
@@ -101,8 +101,8 @@ export const MODULE_CODE: Partial<Record<ModuleId, ModuleCode>> = {
     "Carbonic Anhydrase Surface Display",
     "Multiplicative display efficiency (export × dimer × anchor) for the two anchoring routes, and the log-scaled normalised CA activity.",
     [
-      p("ca-anchoring", 1, "Stacked multiplicative efficiency for Sortase vs binding-motif routes."),
-      p("ca-anchoring", 2, "Normalised CA activity vs realised rate-enhancement fraction."),
+      p("ca-anchoring", 1, "The running product along each route: export, then dimerisation, then anchoring. Sortase ends at 27% of the enzyme displayed and active, the binding motif at 23%."),
+      p("ca-anchoring", 2, "Normalised CA activity against realised rate-enhancement fraction. The scale is logarithmic because the enhancement spans about 10⁶."),
     ],
   ),
   alginate: entry(
@@ -111,7 +111,7 @@ export const MODULE_CODE: Partial<Record<ModuleId, ModuleCode>> = {
     "Guluronate-weighted egg-box gelation (G = νRT) and the honest rain-washout solubility limit R(n) = (1−k)ⁿ.",
     [
       p("alginate", 1, "Gel modulus vs [Ca²⁺] at several applied alginate loadings."),
-      p("alginate", 2, "Residual alginate over rain/wet cycles (solubility limit)."),
+      p("alginate", 2, "Residual alginate over rain and wet cycles. It is soluble, so it washes out."),
     ],
   ),
   thermal: entry(
@@ -119,7 +119,7 @@ export const MODULE_CODE: Partial<Record<ModuleId, ModuleCode>> = {
     "Protein Thermal Stability",
     "Two-state folding sets the active-enzyme fraction. The operative melting temperature is penalised away from the pH and salinity optima.",
     [
-      p("thermal", 1, "Folded / active fraction vs temperature at several pH values."),
+      p("thermal", 1, "Folded and active fraction against temperature at several pH values. The melting point shifts with pH."),
       p("thermal", 2, "Operative melting temperature over pH and salinity."),
     ],
   ),
@@ -128,7 +128,7 @@ export const MODULE_CODE: Partial<Record<ModuleId, ModuleCode>> = {
     "Ecological Spread & Containment",
     "Fisher–KPP colony front speed c = 2√(Dµ) with Ca²⁺ suppression, and kill-switch escape statistics over the deployed population.",
     [
-      p("ecological", 1, "Ca²⁺ dosing slows the colony front speed (mm/day)."),
+      p("ecological", 1, "Colony front speed against local [Ca²⁺]. The calcium that cross-links the crust also slows the colony."),
       p("ecological", 2, "Escape probability vs single-cell escape frequency at deployment scale."),
     ],
   ),
@@ -138,7 +138,7 @@ export const MODULE_CODE: Partial<Record<ModuleId, ModuleCode>> = {
     "RK4 integration of the toxin–antitoxin ODE with an aTc trigger and plasmid dilution, and the resulting population viability collapse.",
     [
       p("killswitch", 1, "Toxin / antitoxin / complex dynamics after the aTc trigger."),
-      p("killswitch", 2, "Population viability collapse in log₁₀(N/N₀)."),
+      p("killswitch", 2, "Population viability after induction, in log₁₀(N/N₀)."),
     ],
   ),
   aeolian: entry(
@@ -146,8 +146,8 @@ export const MODULE_CODE: Partial<Record<ModuleId, ModuleCode>> = {
     "Aeolian Sand Transport",
     "Bagnold threshold friction velocity and cubic saltation flux. Engineered cohesion raises the threshold and cuts erosion.",
     [
-      p("aeolian", 1, "Saltation mass flux vs wind, untreated vs treated crust."),
-      p("aeolian", 2, "Threshold wind speed vs engineered cohesion."),
+      p("aeolian", 1, "Saltation mass flux against wind, untreated and treated. Cohesion raises the threshold, so the treated curve starts later and stays lower."),
+      p("aeolian", 2, "Threshold wind against engineered cohesion. Over the whole range plotted the crust stays short of the 16 to 20 m/s design band."),
     ],
   ),
   grainsize: entry(
@@ -155,8 +155,8 @@ export const MODULE_CODE: Partial<Record<ModuleId, ModuleCode>> = {
     "Grain-Size Coverage",
     "Per-prong binding vs grain diameter and the probabilistic union, integrated over the UAE dune-sand log-normal distribution.",
     [
-      p("grainsize", 1, "Per-prong coverage vs grain diameter, with the site grain-size distribution."),
-      p("grainsize", 2, "Effective bound mass fraction per prong combination."),
+      p("grainsize", 1, "Per-prong binding against grain diameter, with the site size distribution behind it. No single binder covers every size. The heavy dashed line is the union of the two deployed prongs."),
+      p("grainsize", 2, "Site sand held, by mass, per prong combination. Combining prongs covers more of the distribution. Bars marked with a star include alginate, which is modelled for comparison and not deployed."),
     ],
   ),
   composite: entry(
@@ -164,8 +164,8 @@ export const MODULE_CODE: Partial<Record<ModuleId, ModuleCode>> = {
     "Composite Strength Synthesis",
     "Competitive-Langmuir Ca²⁺ partition and co-expression burden knock each prong down before the synergy combination, plus the redundancy matrix.",
     [
-      p("composite", 1, "Additive vs composite cohesion across prong combinations."),
-      p("composite", 2, "Per-scenario resilience: best single prong vs the full combination."),
+      p("composite", 1, "Additive against composite cohesion across prong combinations. Two binders in one crust do not simply add."),
+      p("composite", 2, "Per-scenario resilience: the best single prong against the two deployed prongs together. Combining assumes they fail independently, which is what Bacterial Death breaks."),
     ],
   ),
   curing: entry(
@@ -173,8 +173,8 @@ export const MODULE_CODE: Partial<Record<ModuleId, ModuleCode>> = {
     "Curing & Deployment Timeline",
     "Per-binder maturation γ(t) = γ_mature(1−e^(−t/τ)) over the spray protocol and field weathering γ(m) = γ_mature·2^(−m/H).",
     [
-      p("curing", 1, "Maturation over the 0–48 h spray protocol (per prong + total)."),
-      p("curing", 2, "Field weathering over months with the re-application cadence."),
+      p("curing", 1, "Maturation over the 0 to 48 h spray protocol, per prong and total. Alginate sets fast, calcite ripens slowly."),
+      p("curing", 2, "Field weathering over months with the re-application cadence. Calcite persists, the polymers weather."),
     ],
   ),
   economic: entry(
@@ -182,8 +182,8 @@ export const MODULE_CODE: Partial<Record<ModuleId, ModuleCode>> = {
     "Economic Scalability",
     "Bottom-up per-prong deployment cost summed per combination, with capex amortisation and break-even against a conventional chemical spray.",
     [
-      p("economic", 1, "All-in cost per hectare vs treated area against baselines."),
-      p("economic", 2, "Deployment cost breakdown per combination at 100 ha."),
+      p("economic", 1, "All-in cost per hectare against treated area, with baselines. The per-hectare cost falls as the capex amortises."),
+      p("economic", 2, "Deployment cost breakdown per combination at 100 ha. Bars marked with a star include alginate, which is modelled for comparison and not deployed."),
     ],
   ),
   exposure: entry(
@@ -194,12 +194,12 @@ export const MODULE_CODE: Partial<Record<ModuleId, ModuleCode>> = {
       {
         src: "/code/plots/exposure-1.png",
         caption:
-          "Why we never put an average wind into the sand equation. The teal curve is how often the wind blows at each speed. The orange curve is when sand is actually moving. They barely overlap, because nothing moves below a threshold and above it the amount climbs as the cube of the wind. At Al Dhafra in spring the average wind sits below the threshold entirely, so using it would predict no sand at all.",
+          "How often the wind blows at each speed, against when sand is actually moving, at Al Dhafra in spring. The two barely overlap: nothing moves below a threshold, and above it the amount climbs as the cube of the wind. The average wind sits below the threshold, so putting it into the sand equation predicts no sand at all.",
       },
       {
         src: "/code/plots/exposure-2.png",
         caption:
-          "Left: half of what lands at Al Dhafra in spring starts in the Eastern Province sand sheets, 544 km upwind. Right: treating a pilot-sized patch changes almost nothing, and the difference only becomes visible once thousands of square kilometres are covered. That is the model telling us this product protects a site by treating ground near it, not by treating the regional hotspots.",
+          "Left: half of what lands at Al Dhafra in spring starts 544 km upwind in the Eastern Province sand sheets, and a sixth starts 22 km away. Right: a pilot-sized patch changes nothing measurable, and the curve only lifts past a few thousand square kilometres. The model is saying this protects a site by treating ground near it, not by treating the regional hotspots.",
       },
     ],
     "Python (numpy · matplotlib), no other libraries",

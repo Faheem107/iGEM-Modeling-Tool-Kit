@@ -15,7 +15,17 @@ Port of src/lib/physics/composite.ts and interactions.ts.
 
 Constants: INTERACTION_CALIB (caSupply 2.6, demands 1.0/2.0/1.2, KdCalcite 0.05,
 coexpressionBurden 0.78), CROSSLINK KdPGA 4.0, ALGINATE KdCa 1.0, COMPOSITE eta
-(1-2 0.2, 1-3 0.05, 2-3 0.1). Run:  python composite.py
+(1-2 0.2, 1-3 0.05, 2-3 0.1).
+
+Two things the figures assume rather than compute. The standalone cohesions in figures()
+(0.5, 0.9 and 0.4 mN/m) are an operating point chosen to show the shape, not an output of
+this model; on the site they arrive from the crosslink and CaCO3 modules. And robustness
+takes prong failures as independent, which is the weak step: P1 and P2 are the same
+organism, so under Bacterial Death they fail together and the combined figure for that
+scenario reads better than it should. Alginate is modelled for comparison and is not
+deployed.
+
+Run:  python composite.py
 """
 
 import numpy as np
@@ -96,11 +106,12 @@ def robustness(prongs):
 
 def figures():
     figs = []
-    base = {1: 5e-4, 2: 9e-4, 3: 4e-4}   # per-prong standalone cohesion [N/m]
+    # Assumed operating point, not model output: standalone cohesion per prong [N/m].
+    base = {1: 5e-4, 2: 9e-4, 3: 4e-4}
 
     # 1) Additive vs composite cohesion across combinations (competition + synergy).
     combos = [[1], [2], [3], [1, 2], [2, 3], [1, 2, 3]]
-    labels = ["P1", "P2", "P3", "P1+P2", "P2+P3", "all"]
+    labels = ["P1", "P2", "P3*", "P1+P2", "P2+P3*", "all*"]
     add_vals, tot_vals = [], []
     for c in combos:
         a, t, _ = composite_cohesion(c, base)
@@ -108,29 +119,39 @@ def figures():
         tot_vals.append(t * 1000)
     x = np.arange(len(combos))
     fig1, ax1 = plt.subplots()
-    ax1.bar(x - 0.2, add_vals, 0.4, color=ASH, label="additive (no interaction)")
-    ax1.bar(x + 0.2, tot_vals, 0.4, color=MAROON, label="composite (competition + synergy)")
+    b1 = ax1.bar(x - 0.2, add_vals, 0.4, color=ASH, label="additive (no interaction)")
+    b2 = ax1.bar(x + 0.2, tot_vals, 0.4, color=MAROON, label="composite (competition + synergy)")
+    for i, c in enumerate(combos):          # hatch anything that leans on alginate
+        if 3 in c:
+            b1[i].set_hatch("//")
+            b2[i].set_hatch("//")
     ax1.set_xticks(x)
     ax1.set_xticklabels(labels)
     ax1.set_ylabel("cohesion  (mN/m)")
-    ax1.set_title("Composite cohesion: shared-Ca$^{2+}$ competition vs synergy")
+    ax1.set_title("Cohesion by prong combination")
     ax1.legend(frameon=False, fontsize=9)
+    ax1.text(0, -0.20, "* includes alginate, modelled for comparison and not deployed. "
+             "Standalone cohesions are an assumed operating point.",
+             transform=ax1.transAxes, fontsize=8, color=ASH, va="top")
     fig1.tight_layout()
     figs.append((fig1, "composite-1.png"))
 
     # 2) Redundancy: per-scenario resilience, single best prong vs full combination.
-    combined_all = robustness([1, 2, 3])
-    best_single = [max(RESILIENCE[p][k] for p in (1, 2, 3)) for k in range(len(SCENARIOS))]
+    combined_pair = robustness([1, 2])
+    best_single = [max(RESILIENCE[p][k] for p in (1, 2)) for k in range(len(SCENARIOS))]
     x = np.arange(len(SCENARIOS))
     fig2, ax2 = plt.subplots()
     ax2.bar(x - 0.2, best_single, 0.4, color=ROSE, label="best single prong")
-    ax2.bar(x + 0.2, combined_all, 0.4, color=TEAL, label="all three (redundant)")
+    ax2.bar(x + 0.2, combined_pair, 0.4, color=TEAL, label="P1 + P2 together")
     ax2.set_xticks(x)
     ax2.set_xticklabels(SCENARIOS, rotation=20, ha="right", fontsize=9)
     ax2.set_ylabel("resilience  (0-1)")
     ax2.set_ylim(0, 1)
-    ax2.set_title("Prongs cover each other's failure modes")
+    ax2.set_title("Resilience by failure scenario")
     ax2.legend(frameon=False, fontsize=9)
+    ax2.text(0, -0.42, "Combining assumes the two fail independently. They share an "
+             "organism, so Bacterial Death is\noptimistic here.",
+             transform=ax2.transAxes, fontsize=8, color=ASH, va="top")
     fig2.tight_layout()
     figs.append((fig2, "composite-2.png"))
     return figs

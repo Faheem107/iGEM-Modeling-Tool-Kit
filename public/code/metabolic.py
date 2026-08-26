@@ -76,7 +76,7 @@ def figures():
     ax1.plot(t, y[:, 2], color=MAROON, lw=2.4, label="gamma-PGA [P]")
     ax1.set_xlabel("time (h)")
     ax1.set_ylabel("concentration (a.u.)")
-    ax1.set_title("Gene -> mRNA -> enzyme -> gamma-PGA  (dggt dpgcA)")
+    ax1.set_title("Expression cascade over time")
     ax1.legend(frameon=False)
     fig1.tight_layout()
     figs.append((fig1, "metabolic-1.png"))
@@ -89,7 +89,7 @@ def figures():
     ax2.bar([s[0] for s in strategies], yields,
             color=[ASH, TEAL, ROSE, MAROON], edgecolor=ASH)
     ax2.set_ylabel("final gamma-PGA (a.u.)")
-    ax2.set_title("Knocking out the degradation pathways lifts yield")
+    ax2.set_title("Final yield by knockout strain")
     fig2.tight_layout()
     figs.append((fig2, "metabolic-2.png"))
     return figs

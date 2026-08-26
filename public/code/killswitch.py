@@ -99,7 +99,7 @@ def figures():
     ax1.text(P["induceAt"] + 0.5, ax1.get_ylim()[1] * 0.85, "aTc added", color=ASH, fontsize=9)
     ax1.set_xlabel("time (h)")
     ax1.set_ylabel("level (a.u.)")
-    ax1.set_title("Toxin-antitoxin dynamics on induction")
+    ax1.set_title("Toxin and antitoxin after induction")
     ax1.legend(frameon=False)
     fig1.tight_layout()
     figs.append((fig1, "killswitch-1.png"))
@@ -115,7 +115,7 @@ def figures():
                      color=ROSE, fontsize=9)
     ax2.set_xlabel("time (h)")
     ax2.set_ylabel("viability  log$_{10}$(N/N$_0$)")
-    ax2.set_title("Kill-switch viability collapse")
+    ax2.set_title("Population viability after induction")
     fig2.tight_layout()
     figs.append((fig2, "killswitch-2.png"))
     return figs
