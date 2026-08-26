@@ -93,7 +93,7 @@ const GAPS: [string, string][] = [
   ],
   [
     "Nothing at the scale of one site",
-    "Each square in the wind grid is about 31 km across. Passing a test on a regional average is not the same as passing one at a solar plant, and we have only run the first kind.",
+    "ERA5 averages each hour over about 31 km of ground, and this page reads one of those cells every 100 km. Passing a test on a regional average is not the same as passing one at a solar plant, and we have only run the first kind.",
   ],
   [
     "The dune test is set up and unmeasured",
@@ -254,7 +254,7 @@ export default function WindValidation({
                   on this page are more likely to be under than over.
                 </p>
                 <Para>
-                  {"Two of these airports sit in the same grid cell, about 31 km across, so the model hands them the same wind. Nothing here is a test at the size of one solar plant."}
+                  {"Two of these airports sit in the same ERA5 cell, about 31 km across, so the model hands them the same wind. This test ran against those cells, while the page reads one of them every 100 km, so it is a gentler test than the page deserves. Nothing here is a test at the size of one solar plant."}
                 </Para>
               </div>
             </div>

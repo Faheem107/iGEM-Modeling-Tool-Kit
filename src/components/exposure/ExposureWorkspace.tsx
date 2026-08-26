@@ -522,7 +522,7 @@ export default function ExposureWorkspace() {
 
                 <p className="max-w-[62ch] text-[length:var(--text-micro)] leading-relaxed text-dune-rose">
                   <GlossaryText max={2}>
-                    {"Trust the split and the difference more than the kilograms. Our wind data averages each hour across a grid cell about 100 km wide, so it misses the gusts that lift most of the sand. The real amount is higher than this."}
+                    {"Trust the split and the difference more than the kilograms. We read the wind at one point every 100 km, and each reading is an hourly average over about 31 km of ground, so it misses the gusts that lift most of the sand. The real amount is higher than this."}
                   </GlossaryText>
                 </p>
 

@@ -687,10 +687,19 @@ function IntroScene({
 // SCENE 2, Desert: the stakes, presented by Sandyx
 // ===========================================================================
 const DESERT_LINES = [
-  "The World Meteorological Association and the WHO state that 3.8 billion people, nearly half the world's population, are exposed to dust levels that vastly exceed safe thresholds.",
-  "In the Middle East alone, particulate pollution is responsible for nearly 118,000 premature deaths. The World Bank estimates the MENA region loses around $13 billion each year to sand and dust storms affecting health, infrastructure, and agriculture.",
+  "The World Meteorological Organization and the WHO put 3.8 billion people, close to half the world, in places where airborne dust sits above the safe threshold.",
+  "Across the Middle East and North Africa, particulate pollution is linked to about 118,000 premature deaths a year. The World Bank puts the region's losses from sand and dust storms at around $13 billion a year, across health, infrastructure and agriculture.",
   "This loss of life is the cost of severe sand and dust storms. Our project hopes to make the sky clearer for all those that see a future as bright.",
   "A project designed for where the wind meets the soil.",
+];
+
+// These are the only numbers in the game that come from outside our own models,
+// so they carry their source on screen rather than in a footnote nobody opens.
+const DESERT_SOURCES: (string | null)[] = [
+  "WMO Airborne Dust Bulletin; WHO global air quality guidelines",
+  "World Bank, Sand and Dust Storms in the Middle East and North Africa Region (2019)",
+  null,
+  null,
 ];
 
 function DesertScene({ onFinish }: { onFinish: () => void }) {
@@ -851,6 +860,14 @@ function DesertScene({ onFinish }: { onFinish: () => void }) {
             onDone={() => setTyped(true)}
           />
         </AnimatePresence>
+        {DESERT_SOURCES[i] ? (
+          <span
+            className="font-retro text-[8px] leading-relaxed px-1"
+            style={{ color: "rgba(255,255,255,0.62)" }}
+          >
+            {DESERT_SOURCES[i]}
+          </span>
+        ) : null}
         <motion.img
           src="/sandyx.png"
           alt="Sandyx"
