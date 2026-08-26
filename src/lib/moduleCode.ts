@@ -43,12 +43,13 @@ const entry = (
   title: string,
   intro: string,
   plots: ModulePlot[],
+  language = "Python (numpy · scipy · matplotlib)",
 ): ModuleCode => ({
   title,
   intro,
   filename: `${id}.py`,
   codeUrl: `/code/${id}.py`,
-  language: "Python (numpy · scipy · matplotlib)",
+  language,
   plots,
 });
 
@@ -187,19 +188,20 @@ export const MODULE_CODE: Partial<Record<ModuleId, ModuleCode>> = {
   ),
   exposure: entry(
     "exposure",
-    "Exposure and the commercial case",
-    "From a season's wind distribution to the sand arriving at one asset, and to what treating the ground upwind takes off that number.",
+    "Where the sand comes from, and what reaches a site",
+    "The whole chain, from a season of wind to the sand landing on one site, and to how much less would land if we treated the hotspots upwind. It downloads the same four data files the page uses and prints the findings before it draws the plots.",
     [
       {
         src: "/code/plots/exposure-1.png",
         caption:
-          "Why the average wind is the wrong input. The teal curve is how often the wind blows at each speed; the orange is where the sand actually moves. They barely overlap, because transport climbs as the cube of the wind above a threshold. For this month the average wind sits below the threshold entirely, so it predicts no sand movement at all while the real answer is not zero.",
+          "Why we never put an average wind into the sand equation. The teal curve is how often the wind blows at each speed. The orange curve is when sand is actually moving. They barely overlap, because nothing moves below a threshold and above it the amount climbs as the cube of the wind. At Al Dhafra in spring the average wind sits below the threshold entirely, so using it would predict no sand at all.",
       },
       {
         src: "/code/plots/exposure-2.png",
         caption:
-          "Left: saltating sand lands within tens of metres, whatever the wind, which is why a dust source 7 km away is a different problem from the ground next to the fence. Right: the whole product effect as one measured number, the cohesion the crust adds, moving through one integral.",
+          "Left: half of what lands at Al Dhafra in spring starts in the Eastern Province sand sheets, 544 km upwind. Right: treating a pilot-sized patch changes almost nothing, and the difference only becomes visible once thousands of square kilometres are covered. That is the model telling us this product protects a site by treating ground near it, not by treating the regional hotspots.",
       },
     ],
+    "Python (numpy · matplotlib), no other libraries",
   ),
 };

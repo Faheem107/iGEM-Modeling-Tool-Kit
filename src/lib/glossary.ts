@@ -747,6 +747,32 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
       "What the weather usually does at a place and time of year, averaged over many years. Not a forecast for a particular day, and it should never be read as one.",
     category: "Wind and Exposure",
   },
+  hotspot: {
+    title: "Sand hotspot",
+    plain:
+      "A patch of ground that satellites see raising dust often. A global survey mapped them across the Middle East on a grid of about 10 km, and those are the coloured areas on the map. A hotspot is where sand and dust leave the ground, not where they land.",
+    category: "Wind and Exposure",
+    module: "Exposure and the commercial case",
+  },
+  plume: {
+    title: "Plume",
+    plain:
+      "The cloud of dust travelling away from a hotspot. It spreads sideways as it goes and drops material the whole way, so a site far downwind gets a thin share of what left.",
+    category: "Wind and Exposure",
+    module: "Exposure and the commercial case",
+  },
+  sabkha: {
+    title: "Sabkha",
+    plain:
+      "A flat salt crust near the coast, left behind where salty groundwater evaporates. When the crust breaks up it gives off fine dust, so sabkha counts as a source even though it is not a dune.",
+    category: "Wind and Exposure",
+  },
+  "flood-plain": {
+    title: "Flood plain",
+    plain:
+      "The flat land a river floods and leaves silt on. That silt is fine and clay-rich, which makes it a far better dust source than dune sand. The Tigris and Euphrates plain is the biggest one near us.",
+    category: "Wind and Exposure",
+  },
   "frequency-of-occurrence": {
     title: "Frequency of Occurrence",
     plain:
@@ -953,8 +979,26 @@ export const ALIASES: Record<string, string> = {
   "held-out": "held-out-test",
   "held out": "held-out-test",
   "holding a year back": "held-out-test",
+  "held back": "held-out-test",
+  "year we held back": "held-out-test",
+  "threshold wind": "threshold-velocity",
+  "airport record": "metar",
   "airport records": "metar",
   "airport wind records": "metar",
+  // The words this page uses for the things it draws.
+  hotspots: "hotspot",
+  "sand hotspot": "hotspot",
+  "sand hotspots": "hotspot",
+  "dust hotspot": "hotspot",
+  "crust strength": "composite-cohesion",
+  "strength the crust adds": "composite-cohesion",
+  cohesion: "composite-cohesion",
+  "flood plain": "flood-plain",
+  "settles out": "plume",
+  saltation: "saltation-flux",
+  saltating: "saltation-flux",
+  "hopping sand": "saltation-flux",
+  "in suspension": "suspension",
 };
 
 /** Normalize a lookup key: lowercase, collapse whitespace, trim symbols we route on. */

@@ -24,7 +24,7 @@ export default function ExposureView() {
         </h1>
         <p className="text-[length:var(--text-body)] leading-relaxed text-muted-foreground">
           <GlossaryText max={4}>
-            {"Pick a market and a site. The model works out which sand hotspots feed it, how much lands there, and how much less would land if we treated the ground at those hotspots. The seasonal view averages the wind over three months. The live view runs the same model on the wind blowing right now."}
+            {"Wind picks sand up in one place and drops it in another. Pick a market and a site, and this page works out which sand hotspots feed that site, how much reaches it, and how much less would reach it if we treated the ground where the sand starts. One view runs on a wind climatology, what the wind usually does over three months. The other runs on the wind blowing right now."}
           </GlossaryText>
         </p>
       </header>
