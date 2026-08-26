@@ -570,7 +570,7 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           <StatCard
             isLightMode={isLightMode}
             label="Halving K"
-            value={`Math.pow(2, DILUTION.alpha).toFixed(1)}`}
+            value={Math.pow(2, DILUTION.alpha).toFixed(1)}
             unit="×"
             accent="text-dune-teal"
             sub="per halved concentration"
