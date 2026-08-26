@@ -6,7 +6,6 @@ import { EXTENT, H, W, project } from "./mapExtent";
 import { useMapView } from "./useMapView";
 import WindFieldCanvas from "./WindFieldCanvas";
 import type { WindField } from "@/src/lib/windField";
-import type { CamsClimatology } from "@/src/lib/camsDust";
 
 export { EXTENT, H, W, project };
 
@@ -23,11 +22,9 @@ export { EXTENT, H, W, project };
  * horizontally, which is enough to make a coastline look wrong once one is
  * drawn on it.
  *
- * The two marker layers mean different things and are drawn differently on
- * purpose. Ginoux polygons are REGIONAL dust source activity on a 0.1 degree
- * grid. Target sites are point assets. A line between them represents the
- * suspension and drift pathways, never saltating sand, which travels tens of
- * metres. See DUST_EXPOSURE_MODULE_SPEC.md section 2.
+ * Two data layers, and nothing else. Ginoux polygons are the sand hotspots, on
+ * a 0.1 degree grid. Target sites are point assets. The moving field is the
+ * wind. Nothing is drawn that the legend does not name.
  */
 
 interface BoundaryFeature {
@@ -100,44 +97,6 @@ export const sourceColor = (kind: string, isLightMode: boolean) =>
 export const FOO_BANDS = [10, 20, 40, 60] as const;
 export { FOO_ALPHA };
 
-/**
- * The airborne dust ramp, which is a different quantity from the source
- * colours above and must not read like them.
- *
- * Ginoux says where dust is RAISED, on a mask published for March to May only.
- * CAMS says where dust IS, month by month. Reading one as the other is the
- * error DUST_EXPOSURE_MODULE_SPEC.md section 7 warns against, so the two layers
- * get different hues, different shapes and separate names in the legend.
- *
- * Breaks are quintiles of the whole 2020-2024 monthly distribution, fixed
- * rather than rescaled per season. Rescaling would give winter the same colours
- * as summer and hide the six-fold difference the data actually shows: the
- * seasonal medians are 89, 149, 210 and 83 ug/m3 for DJF, MAM, JJA and SON.
- *
- * A linear ramp reads as flat here. The field spans 1.5 to 3896 ug/m3 with a
- * median of 121, so almost every cell would land in the bottom tenth of it.
- */
-export const DUST_BREAKS = [40, 90, 180, 350, 600] as const;
-// Capped well below the source bands' 0.62. This layer covers the entire
-// frame, so at the alpha a standalone choropleth would use it buries the
-// coastline and the source polygons both.
-const DUST_ALPHA = [0.04, 0.09, 0.15, 0.22, 0.3, 0.38] as const;
-
-/** Index into DUST_ALPHA for a concentration in ug/m3. */
-export function dustBand(ugM3: number): number {
-  let i = 0;
-  while (i < DUST_BREAKS.length && ugM3 >= DUST_BREAKS[i]) i++;
-  return i;
-}
-
-/** Ash in light mode, sand in dark: a neutral haze either way, and neither is
- *  one of the three saturated source hues. */
-export const dustColor = (isLightMode: boolean) =>
-  isLightMode ? DUNE.ash : DUNE.sand;
-
-export const dustOpacity = (ugM3: number) => DUST_ALPHA[dustBand(ugM3)];
-export { DUST_ALPHA };
-
 const MARKET_GLYPH: Record<string, string> = {
   solar: "M0,-5 L4.3,2.5 L-4.3,2.5 Z",
   industrial: "M-4,-4 H4 V4 H-4 Z",
@@ -150,11 +109,7 @@ export default function ExposureMap({
   sites,
   selectedId,
   onSelect,
-  driftDeg,
   showSources = true,
-  camsClim = null,
-  dustMonths,
-  showDust = true,
   windField = null,
   isLightMode,
 }: {
@@ -162,14 +117,7 @@ export default function ExposureMap({
   sites: TargetSite[];
   selectedId: string | null;
   onSelect: (id: string) => void;
-  /** Resultant drift direction, degrees the sand moves toward. */
-  driftDeg?: number | null;
   showSources?: boolean;
-  /** Seasonal airborne dust, or null while the file loads. */
-  camsClim?: CamsClimatology | null;
-  /** 1-based calendar months to average the dust over. */
-  dustMonths: readonly number[];
-  showDust?: boolean;
   /** 10 m wind vectors to animate over the map, or null while loading. */
   windField?: WindField | null;
   isLightMode: boolean;
@@ -237,33 +185,6 @@ export default function ExposureMap({
     [sources],
   );
 
-  /**
-   * One rect per CAMS cell, averaged over the chosen months.
-   *
-   * The grid is 1 degree over exactly the map extent, so a cell key maps
-   * straight onto a rect with no reprojection. Rects are grown by half a
-   * hairline on the right and bottom: at fractional zoom levels the browser
-   * rounds adjacent edges apart and a lattice of pale seams appears over the
-   * whole Gulf.
-   */
-  const dustCells = useMemo(() => {
-    if (!camsClim) return [];
-    const step = camsClim.step;
-    const out: { key: string; x: number; y: number; w: number; h: number; v: number }[] = [];
-    for (const [key, cell] of Object.entries(camsClim.cells)) {
-      const [lat, lon] = key.split(",").map(Number);
-      const vals = dustMonths
-        .map((m) => cell.monthly[m - 1])
-        .filter((v): v is number => typeof v === "number");
-      if (!vals.length) continue;
-      const v = vals.reduce((t, x) => t + x, 0) / vals.length;
-      const a = project(lon, lat + step);
-      const b = project(lon + step, lat);
-      out.push({ key, x: a.x, y: a.y, w: b.x - a.x + 0.5, h: b.y - a.y + 0.5, v });
-    }
-    return out;
-  }, [camsClim, dustMonths]);
-
   const selected = sites.find((s) => s.id === selectedId) ?? null;
   const grid = isLightMode ? "rgb(0 0 0 / 0.07)" : "rgb(255 255 255 / 0.07)";
 
@@ -302,25 +223,6 @@ export default function ExposureMap({
           />
         ))}
       </g>
-
-      {/* Airborne dust for the chosen season. Under the graticule and the
-          source polygons, because it is context for both rather than a mark
-          of its own, and it covers the entire frame. */}
-      {showDust && dustCells.length > 0 && (
-        <g shapeRendering="crispEdges">
-          {dustCells.map((c) => (
-            <rect
-              key={c.key}
-              x={c.x}
-              y={c.y}
-              width={c.w}
-              height={c.h}
-              fill={dustColor(isLightMode)}
-              fillOpacity={dustOpacity(c.v)}
-            />
-          ))}
-        </g>
-      )}
 
       {/* graticule, every 2 degrees */}
       <g stroke={grid} strokeWidth={1 / k}>
@@ -417,37 +319,6 @@ export default function ExposureMap({
       className="pointer-events-none absolute inset-0 h-full w-full"
       aria-hidden
     >
-      {/* The drift and suspension pathway: drawn FROM upwind INTO the site, so
-          the arrowhead lands on the receptor. It used to be drawn the other
-          way, pointing back at the origin, which reads as sand leaving. */}
-      {selected && driftDeg != null && Number.isFinite(driftDeg) && (
-        (() => {
-          const p = project(selected.lon, selected.lat);
-          const up = ((driftDeg + 180) % 360) * (Math.PI / 180);
-          const len = 130 / k;
-          const x1 = p.x + Math.sin(up) * len;
-          const y1 = p.y - Math.cos(up) * len;
-          return (
-            <g>
-              <defs>
-                {/* Namespaced: a bare id="arrow" collides the moment two maps
-                    are on one page, and SVG marker ids are document-global. */}
-                <marker id="exposure-drift-arrow" markerWidth="7" markerHeight="7"
-                        refX="5" refY="3.5" orient="auto">
-                  <path d="M0,0 L7,3.5 L0,7 Z" fill="var(--dune-orange)" />
-                </marker>
-              </defs>
-              <line
-                x1={x1} y1={y1} x2={p.x} y2={p.y}
-                stroke="var(--dune-orange)" strokeWidth={2 / k}
-                strokeDasharray={`${6 / k} ${4 / k}`} markerEnd="url(#exposure-drift-arrow)"
-                opacity={0.9}
-              />
-            </g>
-          );
-        })()
-      )}
-
       {/* Target sites. There are a few hundred of them now, so markers off the
           visible window are skipped rather than drawn and clipped, and the
           glyph carries its own inverse scale so it stays the size it was drawn
@@ -509,24 +380,6 @@ export default function ExposureMap({
           );
         })}
       </g>
-
-      {/* the nearest mapped source, and the line to it. Regional context for the
-          suspension and drift pathways only, never saltation. */}
-      {selected?.nearestSourceLat != null && selected?.nearestSourceLon != null && (
-        (() => {
-          const a = project(selected.nearestSourceLon!, selected.nearestSourceLat!);
-          const b = project(selected.lon, selected.lat);
-          return (
-            <g>
-              <line x1={a.x} y1={a.y} x2={b.x} y2={b.y}
-                    stroke="var(--dune-teal)" strokeWidth={1.4 / k}
-                    strokeDasharray={`${3 / k} ${3 / k}`} opacity={0.75} />
-              <circle cx={a.x} cy={a.y} r={4 / k} fill="none"
-                      stroke="var(--dune-teal)" strokeWidth={1.6 / k} />
-            </g>
-          );
-        })()
-      )}
 
       {selected && (
         (() => {

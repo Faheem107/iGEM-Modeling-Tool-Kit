@@ -426,7 +426,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
   },
   exposure: {
     intro:
-      "The chain from a season's wind to money at one asset. Every step is a published relation or a public dataset, and the gaps that have neither are named as gaps rather than filled in.",
+      "The chain from a season's wind to the sand landing at one site. Every step is either a published relation or a public dataset. Where there is neither, the page says so rather than filling the gap in.",
     sources: [
       {
         label: "Fryberger (1979), Dune forms and wind regime",
@@ -470,13 +470,6 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
         url: "https://doi.org/10.1029/2023GL106540",
       },
       {
-        label: "Elminir et al. (2006), Energy Convers. Manag. 47, 3192",
-        detail:
-          "Light lost through solar glass against deposited dust in g/m², and how that changes with panel tilt. Read off the figure and table in the PDF, not from a text extraction.",
-        kind: "literature",
-        url: "https://doi.org/10.1016/j.enconman.2006.02.014",
-      },
-      {
         label: "Tian et al. (2018), Land Degrad. Dev. 29, 4271",
         detail:
           "Wind tunnel threshold for untreated aeolian sand, 5.73 m/s at 0.6 m. An independent check on the threshold this model computes from grain size.",
@@ -504,9 +497,9 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
         url: "https://open-meteo.com/en/docs/historical-weather-api",
       },
       {
-        label: "CAMS global dust, via Open-Meteo",
+        label: "Open-Meteo forecast API, current 10 m wind",
         detail:
-          "The live surface dust and wind feed. 0.4 degree, 3-hourly, updated twice a day. CC BY 4.0.",
+          "The live view's wind. We ask for one reading per point on a 9 by 10 grid over the Gulf and cache it for an hour, which keeps us inside the free non-commercial allowance however many people visit. CC BY 4.0.",
         kind: "model",
         url: "https://open-meteo.com/en/docs/air-quality-api",
       },
@@ -537,9 +530,9 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
         kind: "internal",
       },
       {
-        label: "Crust cohesion, and the gaps",
+        label: "The four numbers nobody has measured for us",
         detail:
-          "The cohesion the crust adds is ours to measure and is shown as an input until the wet lab returns it. Being unsourced and being influential are separate things and this number is the first without being the second: of the seven inputs it moves the amount of sand the least, but because nobody has measured it its plausible range is the widest here, and across that range the reduction we report runs from 45 to 100 percent. Four other numbers have no source and are left blank rather than guessed: the UAE tariff a generator actually earns, the utility PV capacity factor, the cost of clearing a cubic metre of sand in the Gulf, and any relation between blowing sand and glass wear.",
+          "How much of a hotspot is loose enough to blow away, how much ground a site counts as its own, how much hotspot ground we treat, and how much strength the crust adds. The first three are choices we made and can defend. The fourth is a lab result we are waiting on. All four are dials on the page rather than constants in the code, so you can see what each one does to the answer.",
         kind: "internal",
       },
     ],
