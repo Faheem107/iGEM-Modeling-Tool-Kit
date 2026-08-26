@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "@/components/theme-context";
-import { Fold, Note, Slider, SourcesToggle, StatCard } from "@/src/components/simulation/_shared";
+import { Note, Slider, SourcesToggle, StatCard } from "@/src/components/simulation/_shared";
 import WindValidation, { useWindValidation } from "./WindValidation";
 import ExposureMap, { sourceColor, type SourceFeature, type TargetSite } from "./ExposureMap";
 import MapLegend from "./MapLegend";
@@ -30,6 +30,12 @@ const GRAIN_D_FALLBACK_M = 2 ** -1.46 / 1000;
 
 /** u* is 3 percent of the 10 m wind over desert sand. AEOLIAN_CALIB.uStarRatio. */
 const U_STAR_RATIO = 0.03;
+
+/** Share of a hotspot's ground loose enough for wind to lift it. Assumed. */
+const ERODIBLE_FRACTION = 0.05;
+
+/** Ground a site counts as its own. We have a point per site, not an outline. */
+const SITE_AREA_M2 = 1e6;
 
 /** Days in each calendar month, for the length of a season. */
 const MONTH_DAYS = [31, 28.25, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -74,10 +80,9 @@ export default function ExposureWorkspace() {
   const [liveErr, setLiveErr] = useState<string | null>(null);
   const [liveLoading, setLiveLoading] = useState(false);
 
-  // The four assumptions. Each one is a number nobody has measured for us, so
-  // each one is a control the reader can move rather than a constant in code.
-  const [erodiblePct, setErodiblePct] = useState(5);
-  const [siteAreaKm2, setSiteAreaKm2] = useState(1);
+  // Four assumptions, none of them measured for us. The two that only set the
+  // scale of the answer are fixed and stated; the two that decide what the
+  // product does stay as dials.
   const [treatedLog10, setTreatedLog10] = useState(3);
   const [cohesion, setCohesion] = useState(0.002);
 
@@ -270,16 +275,13 @@ export default function ExposureWorkspace() {
       windRun: siteWind.windRun,
       transportWind: siteWind.speed,
       windowSeconds,
-      erodibleFraction: erodiblePct / 100,
-      siteAreaM2: siteAreaKm2 * 1e6,
+      erodibleFraction: ERODIBLE_FRACTION,
+      siteAreaM2: SITE_AREA_M2,
       utFreeUntreated: utFree0,
       utFreeTreated: utFreeT,
       treatedAreaM2: treatedAreaKm2 * 1e6,
     });
-  }, [
-    site, siteWind, hotspots, fluxAt, windowSeconds, erodiblePct, siteAreaKm2,
-    utFree0, utFreeT, treatedAreaKm2,
-  ]);
+  }, [site, siteWind, hotspots, fluxAt, windowSeconds, utFree0, utFreeT, treatedAreaKm2]);
 
   const windField = useMemo(() => {
     if (mode === "live") return liveField;
@@ -404,43 +406,17 @@ export default function ExposureWorkspace() {
                 ))}
               </select>
               <p className="caption">
-                {visible.length} sites in this market
+                {visible.length} sites
                 {mode === "live" && siteWind
-                  ? `. ${siteWind.speed.toFixed(1)} m/s here right now, from ${siteWind.from?.toFixed(0)}°`
+                  ? ` · ${siteWind.speed.toFixed(1)} m/s here now, from ${siteWind.from?.toFixed(0)}°`
                   : ""}
               </p>
             </div>
           </div>
 
-          <Fold
-            className="border-t border-border pt-5"
-            title="The four numbers we assume"
-            lede="Nobody has measured these for us, so each one is a dial rather than a constant. Move them and every figure below moves."
-            wide
-          >
+          <div className="border-t border-border pt-5">
+            <p className="caption mb-3">What we assume</p>
             <div className="space-y-5">
-              <Slider
-                label="Loose soil at each hotspot"
-                value={erodiblePct}
-                onChange={setErodiblePct}
-                min={0.5}
-                max={50}
-                step={0.5}
-                unit="%"
-                isLightMode={isLightMode}
-                hint="How much of the ground at a hotspot is loose enough for wind to lift. The rest is crusted, stony or held by plants."
-              />
-              <Slider
-                label="Ground the site covers"
-                value={siteAreaKm2}
-                onChange={setSiteAreaKm2}
-                min={0.1}
-                max={20}
-                step={0.1}
-                unit="km²"
-                isLightMode={isLightMode}
-                hint="How much land the dust has to fall on to count as landing here. We have a point for each site, not its outline."
-              />
               <Slider
                 label="Hotspot ground we treat"
                 value={treatedLog10}
@@ -451,7 +427,7 @@ export default function ExposureWorkspace() {
                 unit="km²"
                 format={(v) => (10 ** v).toLocaleString("en-US", { maximumFractionDigits: 0 })}
                 isLightMode={isLightMode}
-                hint="Treatment is spent on the hotspots that send this site the most, worst first."
+                hint="Spent on the hotspots that send this site the most, worst first."
               />
               <Slider
                 label="Strength the crust adds"
@@ -462,14 +438,14 @@ export default function ExposureWorkspace() {
                 step={0.0002}
                 unit="N m⁻¹"
                 isLightMode={isLightMode}
-                hint="How much harder the treated ground is to lift. We are waiting on the lab result, so for now this is a range to explore."
+                hint={`Waiting on the lab, so it is a range for now. Bare sand moves at about ${utFree0.toFixed(1)} m/s; treated, it holds to about ${utFreeT.toFixed(1)} m/s.`}
               />
-              <p className="caption">
-                Bare sand starts moving at about {utFree0.toFixed(1)} m/s. Treated, it
-                holds to about {utFreeT.toFixed(1)} m/s.
+              <p className="text-[length:var(--text-caption)] leading-snug text-muted-foreground">
+                Two more are fixed: a twentieth of each hotspot is loose enough to
+                blow away, and a site catches what falls on one square kilometre.
               </p>
             </div>
-          </Fold>
+          </div>
         </div>
       </div>
 
@@ -479,11 +455,6 @@ export default function ExposureWorkspace() {
         <div className="rail-row">
           <p className="caption pt-1">What reaches the site</p>
           <div className="space-y-5">
-            <p className="max-w-[62ch] text-[length:var(--text-micro)] leading-snug text-muted-foreground">
-              Wind lifts loose material at every hotspot and carries it downwind.
-              Some of it settles here, over {per}.
-            </p>
-
             {noWind ? (
               <p className="text-[length:var(--text-micro)] text-dune-rose">
                 Data pending. The live wind feed has not returned, so nothing here
@@ -510,7 +481,7 @@ export default function ExposureWorkspace() {
                     unit={massUnit(result.landedKg)}
                     accent="text-dune-orange"
                     isLightMode={isLightMode}
-                    sub={`${result.depositGm2.toFixed(3)} g per square metre`}
+                    sub={`${result.depositGm2.toFixed(3)} g per square metre, over ${per}`}
                     rule={false}
                   />
                   <StatCard
@@ -536,18 +507,17 @@ export default function ExposureWorkspace() {
                   />
                 </div>
 
-                <p className="max-w-[62ch] text-[length:var(--text-micro)] leading-snug text-muted-foreground">
-                  That is {(result.landingFraction * 1e6).toFixed(2)} kg of every
-                  million the hotspots release. They cover{" "}
+                <p className="text-[length:var(--text-micro)] text-muted-foreground">
+                  {(result.landingFraction * 1e6).toFixed(2)} kg of every million
+                  released across{" "}
                   {Math.round(result.hotspotAreaM2 / 1e6).toLocaleString("en-US")} km²
-                  between them.
+                  of hotspot.
                 </p>
 
                 <p className="max-w-[62ch] text-[length:var(--text-micro)] leading-relaxed text-dune-rose">
-                  The amount is a floor, not a measurement. The wind behind it is
-                  hourly averages on a 100 km grid, so it misses the gusts that do
-                  most of the lifting. Read the split between hotspots and the size
-                  of the cut, not the kilograms.
+                  Read the split and the cut, not the kilograms. The wind behind
+                  them is hourly averages on a 100 km grid, which misses the gusts
+                  that do most of the lifting, so the amount is a floor.
                 </p>
 
                 <Note label="What would make this wrong">
@@ -563,9 +533,8 @@ export default function ExposureWorkspace() {
         <div className="rail-row">
           <p className="caption pt-1">Where it comes from</p>
           <div className="space-y-4">
-            <p className="max-w-[62ch] text-[length:var(--text-micro)] leading-snug text-muted-foreground">
-              Every hotspot in range, ranked by how much of what lands here came
-              from it.
+            <p className="text-[length:var(--text-micro)] text-muted-foreground">
+              Ranked by how much of what lands here came from each.
             </p>
             {!result || result.shares.length === 0 ? (
               <p className="text-[length:var(--text-micro)] text-muted-foreground">
