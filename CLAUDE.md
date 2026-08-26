@@ -118,10 +118,18 @@ rules, a metadata rail, plain text link lists, and weight-on-hover. Concretely:
   filled, rounded, shadowed box. `.plate` is the only surface primitive.
 - **Banned:** gradient fills, drop shadows, pill badges, hover lifts,
   `rounded-xl` / `rounded-2xl`, decorative `animate-pulse`.
-- **Four utilities carry it** (`app/globals.css`): `.caption` for every label,
-  index and unit; `.wght-link` for links (weight thickens on hover, and
-  `data-active="true"` reuses that end state); `.wght-head` for headings;
+- **Five utilities carry it** (`app/globals.css`): `.caption` for every label,
+  index and unit; `.caption-head` for a panel title, the same uppercase register
+  one step up so a section reads apart from the units inside it; `.wght-link` for
+  links (weight thickens on hover, and `data-active="true"` reuses that end
+  state); `.wght-head` for headings, which carries heading leading because
+  several headings are spans or buttons that would otherwise inherit the body's;
   `.rule-link` for the underline that draws from the leading edge.
+- **`.caption` is not a reading size.** It is for a label, an index or a unit.
+  A sentence gets `--text-micro`, and a lede or a standalone paragraph gets
+  `--text-body`. The interface had drifted onto the label size everywhere, which
+  is what made the page read as an instrument panel rather than an explanation.
+  Anything set as a sentence is capped at `--measure` (68ch).
 - **`.rail-row`** is the signature layout: metadata right-aligned in a
   `--rail` (8.5rem) gutter, content in `1fr`.
 - **Colour comes from the dune tokens only.** No raw `slate-*` / `stone-*` /
