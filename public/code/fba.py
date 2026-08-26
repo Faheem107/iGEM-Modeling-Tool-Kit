@@ -87,7 +87,7 @@ def figures():
     colors = [ORANGE, TEAL, TEAL, MAROON, ROSE]
     ax1.bar(RXNS, r.x, color=colors, edgecolor=ASH)
     ax1.set_ylabel("Flux  (mmol gDCW$^{-1}$ h$^{-1}$)")
-    ax1.set_title("FBA optimal flux distribution (max growth)")
+    ax1.set_title("Flux distribution at maximum growth")
     ax1.tick_params(axis="x", rotation=20)
     fig1.tight_layout()
     figs.append((fig1, "fba-1.png"))
@@ -99,7 +99,7 @@ def figures():
     ax2.fill_between(mus, prec, color=ORANGE, alpha=0.28)
     ax2.set_xlabel("Growth flux  (h$^{-1}$)")
     ax2.set_ylabel("Max precursor flux  (mmol gDCW$^{-1}$ h$^{-1}$)")
-    ax2.set_title("Production envelope: growth vs precursor")
+    ax2.set_title("Growth against precursor production")
     ax2.annotate("carbon is split between\ngrowth and product",
                  xy=(mu_max * 0.5, prec[len(prec)//2]), xytext=(mu_max*0.12, prec.max()*0.35),
                  fontsize=9, color=ASH)

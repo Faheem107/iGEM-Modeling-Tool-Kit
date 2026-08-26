@@ -65,7 +65,7 @@ def figures():
              "half-suppression\n~1 mM Ca$^{2+}$", color=ROSE, fontsize=9)
     ax1.set_xlabel("local [Ca$^{2+}$]  (mM)")
     ax1.set_ylabel("Fisher front speed  (mm/day)")
-    ax1.set_title("Cross-linking calcium also limits colony spread")
+    ax1.set_title("Colony front speed against calcium")
     fig1.tight_layout()
     figs.append((fig1, "ecological-1.png"))
 
@@ -78,7 +78,7 @@ def figures():
     ax2.text(NIH_TARGET * 1.3, 1e-3, "NIH < 10$^{-8}$\ntarget", color=ORANGE, fontsize=9)
     ax2.set_xlabel("per-cell escape frequency p")
     ax2.set_ylabel(r"P($\geq$1 escapee) over 1 m$^2$")
-    ax2.set_title("Kill-switch containment at deployment scale")
+    ax2.set_title("Escape probability against per-cell escape rate")
     fig2.tight_layout()
     figs.append((fig2, "ecological-2.png"))
     return figs
