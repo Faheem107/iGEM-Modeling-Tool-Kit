@@ -2,7 +2,7 @@
  * Curing & Deployment Timeline, how the crust rises to strength and then weathers away
  * ====================================================================================
  * The macro modules all report the crust's MATURE cohesion, its strength once fully cured. But in
- * the field the crust is neither instant nor permanent (NYUAD Research Table, Study 5):
+ * the field the crust is neither instant nor permanent (NYUAD field protocol):
  *
  *   • MATURATION (hours). The biofilm is sprayed at 0/8/16/24/32 h to stay hydrated and keep the
  *     MICP substrate topped up; it is "fully mature" at 32 h. Each binder cures on its own

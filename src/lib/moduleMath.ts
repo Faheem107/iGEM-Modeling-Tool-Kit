@@ -282,7 +282,7 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
   curing: {
     title: "Curing & Deployment Timeline",
     intro:
-      "The crust is neither instant nor permanent. It cures over the 0/8/16/24/32 h spray protocol (Study 5) and then weathers over months until it must be re-applied. Each binder matures on its own time constant and weathers on its own half-life, so a fast-setting polymer buys early strength while the durable calcite floor extends the re-application interval.",
+      "The crust is neither instant nor permanent. It cures over the 0/8/16/24/32 h spray protocol and then weathers over months until it must be re-applied. Each binder matures on its own time constant and weathers on its own half-life, so a fast-setting polymer buys early strength while the durable calcite floor extends the re-application interval.",
     blocks: [
       {
         tex: "\\gamma_p(t) = \\gamma_p^{\\text{mature}}\\left(1 - e^{-t/\\tau_p}\\right)",

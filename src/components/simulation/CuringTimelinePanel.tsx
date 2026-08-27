@@ -3,7 +3,7 @@
 /**
  * Curing & Deployment Timeline, the crust's life story in one module.
  * The other macro modules report the MATURE cohesion; this one shows how the crust rises to that
- * strength over the 0/8/16/24/32 h spray protocol (Study 5) and then weathers over months until it
+ * strength over the 0/8/16/24/32 h spray protocol and then weathers over months until it
  * must be re-applied. The multi-prong pay-off is explicit: a fast-setting polymer buys early-age
  * strength while the durable calcite floor stretches the re-application interval.
  */
@@ -51,7 +51,7 @@ const PRONG_COLOR: Record<ProngId, string> = {
   2: DUNE.rose,
   3: DUNE.rose,
 };
-/** Protocol spray times over the maturation window (Study 5). */
+/** Protocol spray times over the maturation window. */
 const SPRAY_HOURS = [0, 8, 16, 24, 32];
 const mN = (n: number) => +(n * 1000).toFixed(2); // N/m → mN/m for readable axes
 

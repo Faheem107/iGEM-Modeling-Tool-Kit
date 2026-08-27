@@ -2,7 +2,7 @@
  * Grain-Size-Resolved Crust Performance (Prong-coverage across the UAE sand distribution)
  * =======================================================================================
  * The single biggest thing a uniform-cohesion model misses: sand is not one grain size, and no
- * single binder works at every grain size. Grounded in the NYUAD Research Table (Study 4) and the
+ * single binder works at every grain size. Grounded in Erdmann et al. (2024) and the
  * UAE dune-sand PSD:
  *
  *   • MICP / CaCO₃ (Prong 2) cements best at ~63–125 µm (UCS ≈ 3.1 MPa) and falls off for coarse
