@@ -250,6 +250,14 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
           "How crust cohesion enters the Bagnold threshold. UAE design winds 16–20 m/s.",
         kind: "internal",
       },
+      {
+        label:
+          "Abdelfattah (2009), Soil Survey Horizons 50:3, doi:10.2136/sh2009.1.0003",
+        detail:
+          "Measured in Abu Dhabi Emirate dune soils: 70 to 92 percent of sand movement is saltation and only 2 to 8 percent is suspension. This is the local evidence that the threshold is the right thing to model. Sand here hops; it mostly does not fly.",
+        kind: "literature",
+        url: "https://doi.org/10.2136/sh2009.1.0003",
+      },
     ],
   },
   wetlab: {
@@ -277,7 +285,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
         label:
           "Erdmann et al. (2024), Discover Materials, MICP vs particle size",
         detail:
-          "MICP UCS-vs-diameter sweet spot (~63–125 µm) and the coarse/fine fall-off (GRAINSIZE_CALIB).",
+          "Compressive strength peaks at 63 to 125 µm (about 3.1 and 2.9 MPa), falls to about 1.6 MPa at 250 µm and about 0.7 MPa at 500 µm. That curve is the whole shape of this module: coarse pores are too wide to bridge, fine ones too tight for cells to enter.",
         kind: "literature",
         url: "https://doi.org/10.1007/s43939-024-00108-3",
       },
@@ -285,6 +293,12 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
         label:
           "UAE dune-sand grain-size distribution (D₅₀ ≈ 200 µm, well-sorted)",
         detail: "The log-normal PSD coverage is integrated over.",
+        kind: "internal",
+      },
+      {
+        label: "This module and the exposure page do not use the same grain size",
+        detail:
+          "Here the median grain is 200 µm. The exposure page uses 364 µm, taken from Benaafi's measured Rub' al Khali sand. That is nearly a factor of two on the same desert, and it matters because strength falls steeply across exactly that interval. We have not resolved which is right for the ground we would treat, and until we measure our own sand both numbers stay as they are rather than being quietly averaged.",
         kind: "internal",
       },
     ],
@@ -326,10 +340,19 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
         kind: "internal",
       },
       {
-        label: "Optimised calcite crust survives ~30 m/s",
+        label: "Pisithkul et al. (2019), mBio 10:e00623-19",
         detail:
-          "The design-wind survival floor the weathering timeline is checked against.",
-        kind: "internal",
+          "B. subtilis NCIB3610 pellicles: fragile at about 12 h, mature between 20 and 32 h. This is where the 32 h maturation window comes from. It was measured in standing liquid culture at 37 °C on defined medium, not in sand and not in the heat, so it sets the shape of the curve rather than its timing in the field.",
+        kind: "literature",
+        url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC6529636/",
+      },
+      {
+        label:
+          "Ulan Buh Desert field trial, Geoderma, doi:10.1016/j.geoderma.2020.114723",
+        detail:
+          "Sprayed 0.2 M cementation solution at 4 L/m². The 12.5 mm crust it grew held a 30 m/s wind for 2 min and was still stable at 180 days, which is where the design wind and the six-month interval come from. The organism was Sporosarcina pasteurii, not B. subtilis, and 180 days is where they stopped looking rather than when the crust failed.",
+        kind: "literature",
+        url: "https://doi.org/10.1016/j.geoderma.2020.114723",
       },
       {
         label: "Per-binder maturation τ and field half-life H",
@@ -338,56 +361,73 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
         kind: "internal",
       },
       {
-        label: "Nothing here is anchored to published work",
+        label: "The two papers above are the wrong system, and the rest has none",
         detail:
-          "Every entry above is our own protocol or our own estimate. No weathering study, no field half-life, no published maturation curve stands behind the timeline. It is the least externally supported module on the site, and the months on its axis should be read that way.",
+          "One is a liquid culture, the other a different organism, so both are borrowed rather than measured here. Behind the per-binder time constants and the field half-lives there is nothing at all: no weathering study, no measured half-life. This is still the least externally supported module on the site, and the months on its axis should be read that way.",
         kind: "internal",
       },
     ],
   },
   economic: {
     intro:
-      "Bottom-up per-prong deployment cost, summed per combination and benchmarked against the published biocementation and carbon-market literature, every headline figure below is checked against a real study.",
+      "Bottom-up per-prong deployment cost, summed per combination and compared against conventional treatment. None of the prices below is a supplier quote yet, so read the comparison rather than the absolute figures.",
     sources: [
       {
-        label:
-          '"Strategies for cost-optimized biocement production" (2025), World J. Microbiol. Biotechnol. 41',
+        label: "None of the thirteen cost figures is a supplier quote",
         detail:
-          "Reagent/feedstock cost drivers (calcium source, cultivation, application) behind the Prong-2 MICP cost base (ECONOMIC_CALIB).",
+          "Every one of them is our own estimate, and each carries a wide range: the calcium and enzyme figure is 650 USD per hectare with a range of 200 to 1500, a factor of seven and a half. The verification note attached to each constant is written as a job still to do, not as a price already obtained.",
+        kind: "internal",
+      },
+      {
+        label:
+          "Yan, Nakashima, Takano & Kawasaki (2025), World J. Microbiol. Biotechnol. 41",
+        detail:
+          "Where the cost of biocement actually goes: cheaper media and lower-grade cementation chemicals cut it by large fractions. The paper reports those fractions, not prices, so it tells us which line items matter and cannot set any figure here.",
         kind: "literature",
         url: "https://doi.org/10.1007/s11274-025-04281-2",
       },
       {
         label:
-          "Plant-derived urease EICP field study (2025), PLOS One, doi:10.1371/journal.pone.0331241",
+          "Plant-derived urease EICP costing (2025), PLOS One, doi:10.1371/journal.pone.0331241, Table 3",
         detail:
-          "Carbonate-precipitation treatment at ≈ $52 m⁻³ vs ≈ $135 m⁻³ for microbial MICP, the order-of-magnitude reality check on caReagentCostPerHa.",
+          "Enzymatic carbonate precipitation at about $52 per m³ against about $135 per m³ for microbial MICP. Both are scaled estimates from a heavy-metal immobilisation study, not metered field spend, and they price a treated soil column rather than a thin surface crust. Read the ratio between the two routes, not either number against ours.",
         kind: "literature",
         url: "https://doi.org/10.1371/journal.pone.0331241",
       },
       {
-        label:
-          "Sodium-alginate market price, bulk ≈ $6–12 kg⁻¹ (IMARC / Procurement Resource price trend, 2024)",
+        label: "Why our per-hectare figure is so far under that $135 per m³",
         detail:
-          "Grounds alginateCostPerKg = 9 USD·kg⁻¹ (Prong-3 commodity binder).",
+          "Spread over the 120 m³ of crust in a hectare, 650 USD is about 5 USD per m³. The gap is mostly real: those studies cement a whole soil column to a load-bearing strength, we grow a thin crust to resist wind, and our route makes carbonate from CO₂ rather than urea so it skips roughly 480 kg of urea per hectare. What remains unresolved is that the calcite cost here does not change when the crust depth changes, and depth is exactly what the comparison turns on.",
+        kind: "internal",
+      },
+      {
+        label:
+          "Sodium-alginate market price, IMARC price trend (Sept 2025: US $13.2, Germany $10.6, Spain $8.9 kg⁻¹)",
+        detail:
+          "Our 9 USD per kg sits at the bottom of that spread and roughly 30 percent under the US price, so the alginate prong is costed optimistically.",
         kind: "literature",
         url: "https://www.imarcgroup.com/sodium-alginate-price-trend",
       },
       {
         label:
-          "State of the Voluntary Carbon Market 2024, average ≈ $6 tCO₂⁻¹; nature-based removals command a premium",
+          "State of the Voluntary Carbon Market 2025 (2024 average ≈ $6.3 tCO₂⁻¹)",
         detail:
-          "Sets the CO₂ credit subtracted from the CaCO₃ prong (co2CreditPerKg corrected from $50 to $10 tCO₂⁻¹).",
+          "We use $10 per tonne. Calcite is a durable mineral removal and those trade far higher, over $100 per tonne, so this is a deliberate floor. It makes almost no difference either way: the credit is worth a few dollars a hectare against a cost of over a thousand, so treat the tonnage as the result and not the money.",
         kind: "literature",
         url: "https://carboncredits.com/carbon-prices-today/",
       },
       {
-        label:
-          'Conventional baselines, USDA Forest Service, "Dust Palliative Selection and Application Guide" (9977-1207); commercial polymer emulsions (Soilworks Soiltac)',
+        label: "Conventional baselines, and how soft they are",
         detail:
-          "The petrochemical dust-suppressant and hard-engineering costs the biological treatment breaks even against.",
-        kind: "literature",
+          "Soilworks does not publish a price for Soiltac and gives its service life as anything from weeks to several years, so the 2800 USD per hectare chemical baseline is an estimate against a moving target. Published palliative costings land above it, which means the baseline is conservative and our break-even is if anything too long. The concrete blanket figure is weaker still and should be read as a placeholder.",
+        kind: "internal",
         url: "https://www.fs.usda.gov/t-d/pubs/pdf/99771207.pdf",
+      },
+      {
+        label: "The comparison is one treatment against one spray",
+        detail:
+          "There is no time in this model: no service life, no re-application interval, no discounting. Our own crust is resprayed about every six months and we have no figure for how long the chemical lasts, so the saving shown here is per application and must not be read as a saving per year.",
+        kind: "internal",
       },
     ],
   },
@@ -546,6 +586,35 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
         detail:
           "Holding a year back, checking the Weibull assumption, the airport comparison, and which input moves the answer. Each writes its failure criterion before it runs, and two of them exit non-zero because they found something. Their headline figures are collected into public/data/wind_validation.json and read by the section at the end of this page, so a number on screen and a number in a test cannot disagree.",
         kind: "internal",
+      },
+      {
+        label:
+          "Abdelfattah (2009), Soil Survey Horizons 50:3, doi:10.2136/sh2009.1.0003",
+        detail:
+          "Abu Dhabi Emirate dune soils: 70 to 92 percent of sand movement is saltation, 2 to 8 percent is suspension. The near-field case for treating ground rests on this split.",
+        kind: "literature",
+        url: "https://doi.org/10.2136/sh2009.1.0003",
+      },
+      {
+        label: "Filioglou et al. (2020), Atmos. Chem. Phys. 20, 8909",
+        detail:
+          "A year of lidar over the UAE. The country is both a source and a receptor of mineral dust, local emission is abundant, and the air also carries dust from Saudi Arabia, Iran and Iraq.",
+        kind: "literature",
+        url: "https://doi.org/10.5194/acp-20-8909-2020",
+      },
+      {
+        label:
+          "Alhebsi, Abuelgasim, Almurshidi, Al Hosani & Ramadan (2025), ISPRS Archives XLVIII-4/W17",
+        detail:
+          "Twenty Abu Dhabi stations, 2022. PM10 peaks near 218 µg/m³ in summer and the PM2.5/PM10 ratio stays under 0.5, which says the sources are natural. It names the UAE part of the Rub' al Khali as the primary PM10 source inland and west.",
+        kind: "literature",
+        url: "https://doi.org/10.5194/isprs-archives-XLVIII-4-W17-2025-13-2026",
+      },
+      {
+        label: "Most of the dust in the air over the UAE is not ours to treat",
+        detail:
+          "Published source attribution puts roughly 60 percent of it over Iraq, 25 percent over the Afghanistan, Pakistan and Iran border region, and 15 percent over the Empty Quarter. Treating a dune patch does nothing to that fraction. What it acts on is the sand that hops nearby and the dust knocked loose close to the treated ground, which is a smaller and more local claim than the numbers on this page might suggest.",
+        kind: "literature",
       },
       {
         label: "The four numbers nobody has measured for us",
