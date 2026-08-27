@@ -132,7 +132,7 @@ export default function EconomicScalabilityEngine({
 
   const takeawayNote = [
     "None of these prices is a supplier quote yet. They are our own estimates, and the calcium and enzyme cost is the one that moves the answer most.",
-    "The comparison is also one treatment against one spray, not the same length of service: our crust is resprayed about every six months, and we have no figure for how long the chemical lasts.",
+    "We are also comparing one treatment against one spray, which is not the same as comparing a year against a year: our crust is resprayed about every six months, and we do not know how long the chemical lasts.",
     selected.includes(3)
       ? "The alginate route is priced so it can be compared, not because it is carried forward."
       : "",
