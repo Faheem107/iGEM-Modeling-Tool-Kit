@@ -119,27 +119,40 @@ function Verdict({
   );
 }
 
-const GAPS: [string, string][] = [
-  [
-    "No measured sand has been weighed",
-    "We have never put a number we predicted next to a pile of sand somebody weighed. A field study in Kuwait measured about 20 cubic metres of sand crossing every metre of ground there each year, mostly between May and August, heading southeast. Our model gets the timing right and the direction right. Nobody has yet asked it for the amount.",
-  ],
-  [
-    "Nothing at the scale of one site",
-    "The weather record we use gives one wind for every 31 km square of ground, and this page reads one square every 100 km. So every number here is an average over an area far larger than a solar plant. Passing a test on a regional average is not the same as passing one at a site, and we have only run the first kind.",
-  ],
-  [
-    "The dune test is set up and unmeasured",
-    "Dunes line up with the wind that built them, so the way their ridge lines point is a record of the wind written into the ground. Our model says that direction turns by about 43 degrees across the Liwa dune belt. A turn that size either shows up in the ridges or it does not, so five crest bearings read off satellite images would settle it. The test refuses to print any result until somebody measures them.",
-  ],
-  [
-    "The crust strength is ours to measure",
-    "How much cohesion the treatment adds is a dial on this page because our own lab has not measured it yet. Until it does, the difference we report is a range, not a number.",
-  ],
-  [
-    "The browser has not been checked against the maths",
-    "We checked the sand equation against a slow, plodding version of itself and the two agreed. The copy running in your browser is a third piece of code, written separately, and nobody has checked it against either of them.",
-  ],
+interface Gap {
+  title: string;
+  body: string;
+  figure?: { src: string; alt: string; caption: string; credit: string };
+}
+
+const GAPS: Gap[] = [
+  {
+    title: "No measured sand has been weighed",
+    body: "We have never put a number we predicted next to a pile of sand somebody weighed. A field study in Kuwait measured about 20 cubic metres of sand crossing every metre of ground there each year, mostly between May and August, heading southeast. Our model gets the timing right and the direction right. Nobody has yet asked it for the amount.",
+  },
+  {
+    title: "Nothing at the scale of one site",
+    body: "The weather record we use gives one wind for every 31 km square of ground, and this page reads one square every 100 km. So every number here is an average over an area far larger than a solar plant. Passing a test on a regional average is not the same as passing one at a site, and we have only run the first kind.",
+  },
+  {
+    title: "The dune test is set up and unmeasured",
+    body: "Dunes line up with the wind that built them, so the way their ridge lines point is a record of the wind written into the ground. Our model says that direction turns by about 43 degrees across the Liwa dune belt. A turn that size either shows up in the ridges or it does not, so five crest bearings read off satellite images would settle it. The test refuses to print any result until somebody measures them.",
+    figure: {
+      src: "/exposure/dune-crests.jpg",
+      alt: "A dune field photographed from ground level, ridge lines running across the frame.",
+      caption:
+        "Dune ridges, from the ground. The test needs them from above, over the Liwa belt, where a bearing can be read off the image. This photograph is neither, so it shows what a ridge line is and not what we would measure.",
+      credit: "Source not yet confirmed. Replace this line before the page is published.",
+    },
+  },
+  {
+    title: "The crust strength is ours to measure",
+    body: "How much cohesion the treatment adds is a dial on this page because our own lab has not measured it yet. Until it does, the difference we report is a range, not a number.",
+  },
+  {
+    title: "The browser has not been checked against the maths",
+    body: "We checked the sand equation against a slow, plodding version of itself and the two agreed. The copy running in your browser is a third piece of code, written separately, and nobody has checked it against either of them.",
+  },
 ];
 
 export default function WindValidation({
@@ -412,12 +425,28 @@ export default function WindValidation({
                 {"The gaps, worst first. Every test in the other two tabs checks the wind, or checks the sand equation against its own inputs. Not one of them checks the sand against sand anybody has weighed."}
               </Para>
               <ul className="space-y-4">
-                {GAPS.map(([title, body]) => (
-                  <li key={title} className="border-t border-border pt-3">
-                    <p className="text-foreground">{title}</p>
+                {GAPS.map((gap) => (
+                  <li key={gap.title} className="border-t border-border pt-3">
+                    <p className="text-foreground">{gap.title}</p>
                     <p className="mt-1 max-w-[62ch] leading-relaxed text-muted-foreground">
-                      <GlossaryText max={4}>{body}</GlossaryText>
+                      <GlossaryText max={4}>{gap.body}</GlossaryText>
                     </p>
+                    {gap.figure && (
+                      <figure className="mt-4">
+                        <img
+                          src={gap.figure.src}
+                          alt={gap.figure.alt}
+                          loading="lazy"
+                          className="block w-full rounded-[4px]"
+                        />
+                        <figcaption className="mt-2 max-w-[62ch] text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
+                          {gap.figure.caption}
+                        </figcaption>
+                        <p className="mt-1 max-w-[62ch] text-[length:var(--text-micro)] leading-relaxed text-dune-rose">
+                          {gap.figure.credit}
+                        </p>
+                      </figure>
+                    )}
                   </li>
                 ))}
               </ul>
