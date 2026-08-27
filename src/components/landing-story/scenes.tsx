@@ -30,8 +30,9 @@ const frame = "absolute inset-0 h-full w-full";
 
 // The beats hold the left of the frame, so the subject of every scene is
 // carried into the right of it. A group transform rather than a viewBox offset,
-// so the full-bleed backgrounds still reach both edges.
-const SUBJECT = "translate(230 0)";
+// so the full-bleed backgrounds still reach both edges. The story sets
+// --subject to nothing on a narrow screen, where there is no side to move to.
+const SUBJECT: React.CSSProperties = { transform: "translateX(var(--subject, 230px))" };
 
 // The wind runs on its own clock; --wind is the only part of it the scroll
 // sets, so the same streaks carry the calm of the hero and the threshold of
@@ -211,7 +212,7 @@ export function GrainScene({
       <rect x="0" y="0" width="1200" height="800" fill="url(#ls-field)" />
       <rect x="0" y="0" width="1200" height="800" fill="url(#ls-bounce)" />
 
-      <g transform={SUBJECT}>
+      <g style={SUBJECT}>
       {/* Back ring: blurred and dimmed, it fills the voids the front cluster
           leaves so the scene has a floor. */}
       <g filter="url(#ls-far-blur)" opacity={isLightMode ? 0.42 : 0.3}>
@@ -388,20 +389,23 @@ export function EnzymeScene({ isLightMode }: { isLightMode: boolean }) {
   // first. Sizes and stand-off vary because an even row of equal squares reads
   // as a border drawn on the wall, not as mineral coming out of solution.
   const rhombs = useMemo(() => {
-    const spread = [
-      -472, -438, -400, -366, -338, -300, -268, -242, -208, -178, -150, -118,
-      -92, -64, -38, 40, 74, 112, 158, 206, 262,
-    ];
+    // Symmetric about the anchor, and thinning outward: the mineral nucleates
+    // where the enzyme is and spreads from there in both directions.
+    const spread: number[] = [];
+    for (let i = 0; i < 13; i++) {
+      const d = Math.round(34 + i * 34 + i * i * 0.8);
+      spread.push(-d, d);
+    }
     return spread.map((dx, i) => {
       const x = ENZYME_X + dx;
-      const r = 5 + ((i * 11) % 9);
+      const r = 4 + ((i * 11) % 8);
       const lift = ((i * 7) % 5) * 2.5;
       return {
         x,
         y: Math.round(wallY(x) - r * 0.5 - lift),
         r,
         tilt: -28 + ((i * 41) % 56),
-        start: 0.04 + Math.abs(dx) / 760,
+        start: 0.03 + Math.abs(dx) / 720,
       };
     });
   }, []);
@@ -434,7 +438,7 @@ export function EnzymeScene({ isLightMode }: { isLightMode: boolean }) {
 
       <path d="M -40 300 L 1240 300 L 1240 800 L -40 800 Z" fill="url(#ls-solution)" />
 
-      <g transform={SUBJECT}>
+      <g style={SUBJECT}>
       <path
         d={`${MEMBRANE} L 1720 900 L -520 900 Z`}
         fill="url(#ls-cyto)"
@@ -486,9 +490,9 @@ export function EnzymeScene({ isLightMode }: { isLightMode: boolean }) {
         <path d={body} fill="url(#ls-enzyme)" />
         <path d={core} fill={ink} opacity="0.18" />
         <path
-          d={`M ${ENZYME_X - 34} ${ENZYME_Y - ENZYME_R + 6}
-              Q ${ENZYME_X - 6} ${ENZYME_Y - 20} ${ENZYME_X} ${ENZYME_Y - 4}
-              Q ${ENZYME_X + 8} ${ENZYME_Y - 22} ${ENZYME_X + 30} ${ENZYME_Y - ENZYME_R + 2} Z`}
+          d={`M ${ENZYME_X - 24} ${ENZYME_Y - ENZYME_R + 4}
+              Q ${ENZYME_X - 8} ${ENZYME_Y - 26} ${ENZYME_X} ${ENZYME_Y - 6}
+              Q ${ENZYME_X + 9} ${ENZYME_Y - 28} ${ENZYME_X + 21} ${ENZYME_Y - ENZYME_R + 2} Z`}
           fill={isLightMode ? "#2c5f57" : "#0f332d"}
           opacity="0.55"
         />
