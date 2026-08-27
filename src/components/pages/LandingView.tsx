@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { useTheme } from "@/components/theme-context";
-import LandingCinematic from "@/src/components/LandingCinematic";
+import LandingStory from "@/src/components/landing-story/LandingStory";
 import DesignCycleStory from "@/src/components/DesignCycleStory";
 import ProngConstellation from "@/src/components/landing/ProngConstellation";
 import SandyxAdventure from "@/src/components/SandyxAdventure";
@@ -64,11 +64,10 @@ export default function LandingView() {
       animate={{ opacity: 1 }}
       className="relative w-full z-10 pb-12"
     >
-      {/* --- CINEMATIC DUNE STORY: hero title over the desert, then dive into a
-          grain + cell → carbonic-anhydrase 3D → polymer lock → stabilized crust.
-          The hero is beat 0 of this one pinned canvas, so there is no separate
-          hero section and no gap. --- */}
-      <LandingCinematic
+      {/* --- THE STORY: the hero, then five beats that scroll past one sticky
+          scene. Field → grain and cell → the enzyme on the wall → the polymer
+          mesh → the crust, and back out to where it started. --- */}
+      <LandingStory
         isLightMode={isLightMode}
         onOpenAdventure={() => setShowAdventure(true)}
       />

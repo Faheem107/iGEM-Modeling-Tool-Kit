@@ -12,9 +12,9 @@ import { curtainJumpTo, setCurtainInterrupt } from "./curtainJump";
  * the story sees ordinary scrolling and every beat renders exactly as it would
  * by hand.
  *
- * It rests on each beat instead of gliding through at a constant rate. The beat
- * boundaries live in LandingCinematic's renderFrame (p < 0.22 / 0.40 / 0.58 /
- * 0.78), so the rest points below are the centres of those five bands.
+ * It rests on each beat instead of gliding through at a constant rate. The
+ * story is seven blocks (a hero, five beats, a tail) over six viewports of
+ * travel, so block k is on screen at p = k / 6.
  *
  * Any real input from the reader cancels it. Programmatic scrolling raises no
  * wheel, touch or key event, so there is nothing to distinguish and no way for
@@ -25,8 +25,8 @@ import { curtainJumpTo, setCurtainInterrupt } from "./curtainJump";
 export const STORY_SECTION_ID = "cinematic";
 export const AUTOPLAY_EVENT = "dunelock:story-autoplay";
 
-/** Beat centres, then the end of the story. */
-const RESTS = [0.16, 0.34, 0.5, 0.7, 1];
+/** The five beat blocks, then the end of the story. */
+const RESTS = [1 / 6, 2 / 6, 3 / 6, 4 / 6, 5 / 6, 1];
 const MOVE = 2.0; // seconds easing into a beat
 const HOLD = 1.7; // seconds resting on it
 
