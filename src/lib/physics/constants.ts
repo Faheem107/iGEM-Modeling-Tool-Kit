@@ -344,7 +344,7 @@ export const ALGINATE_CALIB = {
 } as const;
 
 /**
- * Grain-size-resolved crust performance (Study 4, Erdmann et al. 2024, Discover Materials,
+ * Grain-size-resolved crust performance (Erdmann et al. 2024, Discover Materials,
  * doi:10.1007/s43939-024-00108-3, MICP vs particle size;
  * UAE dune-sand grain-size distribution). MICP cementation is NOT uniform across grain sizes:
  * it peaks for fine–medium sand (~63–125 µm), where pores are small enough for calcite bridging
@@ -358,7 +358,7 @@ export const GRAINSIZE_CALIB = {
   micpPeakDiameter: calib(
     90,
     "µm",
-    "Study 4: SP0063/SP0125 UCS≈3.1/2.9 MPa peak; SP0250≈1.6, SP0500≈0.7 MPa",
+    "Erdmann et al. (2024), Discover Materials 4, doi:10.1007/s43939-024-00108-3. MICP UCS peaks at SP0063/SP0125 (≈3.1/2.9 MPa), falling to ≈1.6 MPa at SP0250 and ≈0.7 MPa at SP0500",
     "UCS of MICP-treated cores sieved to several narrow size bands; locate the UCS-vs-d peak.",
     [63, 125],
   ),
@@ -366,7 +366,7 @@ export const GRAINSIZE_CALIB = {
   micpLogWidth: calib(
     0.85,
     "ln(µm) (dimensionless)",
-    "fit to Study 4 UCS(d): eff(250µm)≈0.52, eff(500µm)≈0.23 of peak",
+    "fit to the Erdmann (2024) UCS(d) curve: eff(250µm)≈0.52, eff(500µm)≈0.23 of peak",
     "Regress ln(UCS/UCS_peak) on (ln d)²; slope sets the width.",
     [0.5, 1.4],
   ),
@@ -374,7 +374,7 @@ export const GRAINSIZE_CALIB = {
   micpPenetrationD50: calib(
     40,
     "µm",
-    "Study 4: fine-size limit set by cells failing to penetrate low-permeability sand",
+    "Erdmann (2024): the fine-size limit is set by cells failing to penetrate low-permeability sand",
     "Colonisation depth vs grain size (thin-section / CFU-with-depth) on sieved packs.",
     [20, 63],
   ),
@@ -405,7 +405,7 @@ export const GRAINSIZE_CALIB = {
   alginateCoverFloor: calib(
     0.45,
     "fraction",
-    'Study 4: alginate coats grains & seeds nucleation "regardless of grain size"',
+    'Erdmann (2024): alginate coats grains & seeds nucleation "regardless of grain size"',
     "Cohesion of alginate-only bands across the full size range.",
     [0.2, 0.7],
   ),
@@ -444,7 +444,9 @@ export const GRAINSIZE_CALIB = {
 } as const;
 
 /**
- * Curing & deployment timeline (Study 5, NYUAD Research Table field protocol).
+ * Curing & deployment timeline. Maturation from Pisithkul et al. (2019), mBio
+ * 10:e00623-19; wind survival and the 180 day observation from the Ulan Buh
+ * Geoderma field trial; the spray times themselves are the NYUAD protocol.
  * The engineered crust is not instant and it is not permanent. It CURES over the first ~32 h
  * (sprayed at 0/8/16/24/32 h to keep the biofilm hydrated and the MICP substrate replenished),
  * then slowly WEATHERS over months until it must be re-applied (every ~6 months in the protocol).
@@ -456,11 +458,11 @@ export const GRAINSIZE_CALIB = {
  * strength while the durable calcite floor extends the re-application interval.
  */
 export const CURING_CALIB = {
-  /** Protocol spray times over the maturation window [h] (Study 5). */
+  /** Protocol spray times over the maturation window [h]. */
   sprayScheduleHours: calib(
     32,
     "h (last spray / full maturation)",
-    "Study 5: spray at 0/8/16/24/32 h; biofilm fully mature at 32 h",
+    "Pisithkul et al. (2019), mBio 10:e00623-19. B. subtilis NCIB3610 pellicles are fragile at ~12 h and mature between 20 and 32 h. Measured in standing liquid culture at 37 °C, not in sand",
     "Wind-tunnel/UCS of cores cured for 0/8/16/24/32 h; locate the maturation plateau.",
     [16, 48],
   ),
@@ -476,7 +478,7 @@ export const CURING_CALIB = {
   tauMatureCaCO3: calib(
     11,
     "h",
-    "Study 5: MICP crust matures over the 32 h protocol (~95% by 32 h)",
+    "Pisithkul (2019) maturation window, mapped onto the 32 h field protocol (~95% by 32 h)",
     "UCS of MICP cores vs cure time; fit τ to reach plateau by 32 h.",
     [6, 20],
   ),
@@ -516,7 +518,7 @@ export const CURING_CALIB = {
   designWindMs: calib(
     30,
     "m/s",
-    "Study 3: optimised calcite crust survives ~30 m/s (UAE winds 16–20 m/s)",
+    "Ulan Buh Desert field trial, Geoderma, doi:10.1016/j.geoderma.2020.114723. A 12.5 mm crust at 0.57% CaCO₃ held a 30 m/s wind for 2 min. The organism was Sporosarcina pasteurii, not B. subtilis. UAE winds run 16–20 m/s",
     "Wind-tunnel survival speed of the cured crust; set the design threshold below it.",
     [15, 40],
   ),
@@ -524,7 +526,7 @@ export const CURING_CALIB = {
   reapplyIntervalMonths: calib(
     6,
     "months",
-    "Study 5: repeat the spray cycle every 6 months",
+    "Same Geoderma field trial: the crust was still stable at 180 days, which is where observation stopped. Six months is the end of the evidence, not a measured service life",
     "Confirm crust still exceeds the survival threshold at the chosen cadence.",
     [3, 12],
   ),
