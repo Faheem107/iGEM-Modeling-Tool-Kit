@@ -44,6 +44,7 @@ const fieldLayer = shared.filter((m) => !CELL_SCALES.has(m.scale));
 export const INDEX_COLUMNS: IndexColumn[] = [
   {
     key: "prong-1",
+    eyebrow: "Prong one",
     title: PRONG_TITLES[1],
     lede: "The cells make more of a sticky chain, and the sand is held in it.",
     prongs: "1",
@@ -51,6 +52,7 @@ export const INDEX_COLUMNS: IndexColumn[] = [
   },
   {
     key: "prong-2",
+    eyebrow: "Prong two",
     title: PRONG_TITLES[2],
     lede: "An enzyme on the cell wall grows CaCO₃ cement, with no ammonia.",
     prongs: "2",
