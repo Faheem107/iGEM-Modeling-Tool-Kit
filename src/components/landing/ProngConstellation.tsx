@@ -22,11 +22,12 @@ import { PRONG_TITLES, PRONG_SHORTS } from "@/content/copy";
  * into the node. Below the figure sits the model index, so the reader goes
  * from "what is this project" to "open this simulation" in one click.
  *
- *   0 three   the fork branches to three labels
- *   1 strike  a hairline is drawn through Sodium Alginate
- *   2 wither  its branch retracts, the label leaves the row
- *   3 settle  the two survivors recentre, a branch grows down to the kill switch
- *   4 index   the model index resolves underneath
+ *   0 three    the fork branches to three labels
+ *   1 strike   a hairline is drawn through Sodium Alginate
+ *   2 wither   its branch retracts into the fork, the label fades in place
+ *   3 close    the label is popped out of flow, the survivors glide to centre
+ *   4 settle   a branch grows down to the kill switch
+ *   5 index    the model index resolves underneath
  *
  * The survivors recentre because removing the third flex item is enough; the
  * branches follow on their own because every endpoint is MEASURED from the
@@ -35,10 +36,10 @@ import { PRONG_TITLES, PRONG_SHORTS } from "@/content/copy";
  * fall short of their targets the way the old stretched-viewBox version did.
  */
 
-type Phase = 0 | 1 | 2 | 3 | 4;
+type Phase = 0 | 1 | 2 | 3 | 4 | 5;
 type ViewTarget = number | "killswitch";
 
-const HOLDS = [0.9, 0.75, 0.85, 0.6];
+const HOLDS = [0.85, 0.7, 0.75, 0.85, 0.55];
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 const LEAVES = [
@@ -103,7 +104,7 @@ export default function ProngConstellation({
       if (!m.matches) {
         armed.current = false;
         tlRef.current?.kill();
-        setPhase(4);
+        setPhase(5);
       }
     };
     apply();
@@ -130,7 +131,7 @@ export default function ProngConstellation({
     if ((!started && !nudge) || !armed.current) return;
     armed.current = false;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setPhase(4);
+      setPhase(5);
       return;
     }
     const tl = gsap.timeline();
@@ -146,9 +147,12 @@ export default function ProngConstellation({
   }, [started, nudge]);
 
   const struck = phase >= 1;
-  const withered = phase >= 2;
-  const settled = phase >= 3;
-  const indexed = phase >= 4;
+  // The branch withers on its own beat, before the row closes, so the line is
+  // seen to retract rather than to vanish with the label.
+  const retracting = phase === 2;
+  const withered = phase >= 3;
+  const settled = phase >= 4;
+  const indexed = phase >= 5;
 
   const connectors: ConnectorSpec[] = useMemo(
     () => [
@@ -173,13 +177,13 @@ export default function ProngConstellation({
     [phase],
   );
 
-  // The leaves move for ~700ms on each phase change, so a single remeasure at
-  // the change would leave the branches pointing at where the leaves were.
+  // The leaves glide for ~900ms when the row closes, so a single remeasure at
+  // the phase change would leave the branches pointing at where they were.
   // Track them every frame for the length of the transition, then stop.
   useEffect(() => {
     if (reduced) return;
     let raf = 0;
-    const until = performance.now() + 800;
+    const until = performance.now() + 1200;
     const tick = () => {
       remeasure();
       if (performance.now() < until) raf = requestAnimationFrame(tick);
@@ -214,8 +218,27 @@ export default function ProngConstellation({
         <div className="mb-4 flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="caption mb-4">The design, and every model in it</p>
-            <h2 className="text-[length:var(--text-h1)] text-foreground">
-              {settled ? "Two prongs and a kill switch" : "Three prongs"}
+            {/* Cross-faded in place. Swapping the string mid-sequence read as a
+                glitch rather than as the count changing. */}
+            <h2 className="relative text-[length:var(--text-h1)] text-foreground">
+              <span className="invisible" aria-hidden>
+                Two prongs and a kill switch
+              </span>
+              {["Three prongs", "Two prongs and a kill switch"].map((t, i) => (
+                <motion.span
+                  key={t}
+                  className="absolute inset-0"
+                  initial={false}
+                  animate={{
+                    opacity: (i === 1) === settled ? 1 : 0,
+                    y: (i === 1) === settled ? 0 : i === 1 ? 8 : -8,
+                  }}
+                  transition={{ duration: 0.5, ease: EASE }}
+                  aria-hidden={(i === 1) !== settled}
+                >
+                  {t}
+                </motion.span>
+              ))}
             </h2>
           </div>
           <div className="flex flex-wrap items-center gap-6">
@@ -249,7 +272,13 @@ export default function ProngConstellation({
           aria-hidden
         >
           {segments.map((s) => (
-            <Branch key={s.id} d={s.d} length={s.length} reduced={reduced} />
+            <Branch
+              key={s.id}
+              d={s.d}
+              length={s.length}
+              reduced={reduced}
+              exiting={s.id === "b3" && retracting}
+            />
           ))}
         </svg>
 
@@ -264,11 +293,12 @@ export default function ProngConstellation({
         {/* Leaves. Dropping the third item is what recentres the survivors, and
             the branches follow because they are measured, not positioned. */}
         <div className="flex items-start justify-around gap-6 pt-24">
-          <AnimatePresence onExitComplete={remeasure}>
+          {/* popLayout takes the leaving label out of flow on the frame it is
+              removed, so the two survivors glide across while it fades instead
+              of waiting for it to finish. */}
+          <AnimatePresence mode="popLayout" onExitComplete={remeasure}>
             {LEAVES.map((l) => {
               const isAlg = l.key === "alg";
-              // Removed from the DOM, not just faded: keeping the slot is what
-              // would stop the two survivors from recentring.
               if (isAlg && withered) return null;
               return (
                 <motion.div
@@ -277,8 +307,18 @@ export default function ProngConstellation({
                   className="max-w-[15rem] flex-1"
                   layout
                   initial={false}
-                  exit={{ opacity: 0, y: 12 }}
-                  transition={{ duration: 0.55, ease: EASE }}
+                  animate={{
+                    // Dimmed while its branch retracts, so by the time the row
+                    // closes there is almost nothing left to remove.
+                    opacity: isAlg && retracting ? 0.25 : 1,
+                    scale: isAlg && retracting ? 0.96 : 1,
+                  }}
+                  exit={{ opacity: 0, scale: 0.94, y: 10 }}
+                  transition={{
+                    layout: { duration: 0.9, ease: EASE },
+                    duration: 0.5,
+                    ease: EASE,
+                  }}
                   onLayoutAnimationComplete={remeasure}
                 >
                   <Leaf
@@ -363,57 +403,55 @@ function DuneRule({
 
 
 /**
- * One measured branch. The draw-in animates a dash offset derived from the
- * path's REAL length, never framer's normalised `pathLength`, and the dash is
- * cleared the moment it finishes so no later reflow can reopen a gap at the
- * tip. There is deliberately no `vectorEffect="non-scaling-stroke"` here: with
- * a 1:1 viewBox it buys nothing, and combined with a normalised dash it is the
- * exact defect this component was written to remove.
+ * One measured branch. The draw animates a dash offset derived from the path's
+ * REAL length, never framer's normalised `pathLength`. There is deliberately no
+ * `vectorEffect="non-scaling-stroke"` here: with a 1:1 viewBox it buys nothing,
+ * and combined with a normalised dash it is the exact defect this component was
+ * written to remove.
+ *
+ * `exiting` runs the same dash the other way. The visible run of the dash is
+ * always [0, length - offset], so raising the offset pulls the tip back along
+ * the curve and the branch withers into the node it grew from.
  */
 function Branch({
   d,
   length,
   reduced,
+  exiting,
 }: {
   d: string;
   length: number;
   reduced: boolean;
+  exiting?: boolean;
 }) {
-  const ref = useRef<SVGPathElement>(null);
-  const drawn = useRef(false);
+  // +2 so a dash measured a frame before the final layout can only ever
+  // over-draw. Under-drawing is what leaves a hairline gap at the tip.
+  const dash = length + 2;
 
-  // Only the first appearance animates. Later remeasures just move the line.
-  useEffect(() => {
-    if (!ref.current) return;
-    if (reduced) {
-      ref.current.style.strokeDasharray = "none";
-      drawn.current = true;
-      return;
-    }
-    if (drawn.current) {
-      ref.current.style.strokeDasharray = "none";
-      ref.current.style.strokeDashoffset = "0";
-    }
-  }, [d, reduced]);
-
+  // The dash is an ATTRIBUTE, not an inline style, and it is never cleared.
+  // motion owns whatever it is given in `style`, and does not re-apply a
+  // changed static value, so a dash set that way keeps the length the branch
+  // had when it was first drawn. When the row closes, the two survivors move
+  // and their branches get longer: a stale dash renders one of them well short
+  // of its label, which is the mid-air tip this component exists to avoid. As
+  // an attribute it re-renders with `d`, and the two come out of the same
+  // measure pass, so the dash is never a frame behind the path.
   return (
     <motion.path
-      ref={ref}
       d={d}
       fill="none"
       stroke="var(--dune-orange)"
       strokeWidth={1.25}
       strokeLinecap="round"
-      strokeOpacity={0.75}
-      // +2 so a dash measured a frame before the final layout can only ever
-      // over-draw. Under-drawing is what leaves a hairline gap at the tip.
-      initial={reduced ? false : { strokeDashoffset: length + 2 }}
-      animate={{ strokeDashoffset: 0 }}
-      style={{ strokeDasharray: drawn.current ? "none" : length + 2 }}
-      transition={{ duration: reduced ? 0 : 0.7, ease: EASE }}
-      onAnimationComplete={() => {
-        drawn.current = true;
-        if (ref.current) ref.current.style.strokeDasharray = "none";
+      strokeDasharray={dash}
+      initial={reduced ? false : { strokeDashoffset: dash }}
+      animate={{
+        strokeDashoffset: exiting ? dash : 0,
+        strokeOpacity: exiting ? 0.25 : 0.75,
+      }}
+      transition={{
+        duration: reduced ? 0 : exiting ? 0.6 : 0.7,
+        ease: EASE,
       }}
     />
   );
