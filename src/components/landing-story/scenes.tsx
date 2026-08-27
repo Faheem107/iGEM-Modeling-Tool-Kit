@@ -6,6 +6,9 @@ import {
   speckle,
   polymerBridges,
   blobPath,
+  blend,
+  crustBed,
+  CRUST_HORIZON,
   type Grain,
 } from "@/src/lib/dune-story/geometry";
 
@@ -507,35 +510,12 @@ export function EnzymeScene({ isLightMode }: { isLightMode: boolean }) {
 }
 
 export function CrustScene({ isLightMode }: { isLightMode: boolean }) {
-  const cols = 16;
-  const nodes = useMemo(() => {
-    const rows = 4;
-    const [x0, x1, y0, y1] = [120, 1080, 560, 700];
-    const out: { x: number; y: number }[] = [];
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        out.push({
-          x: Math.round(x0 + (c / (cols - 1)) * (x1 - x0)),
-          y: Math.round(y0 + (r / (rows - 1)) * (y1 - y0)),
-        });
-      }
-    }
-    return out;
-  }, []);
-  const sx = -LIGHT.x * 22;
-  const sy = -LIGHT.y * 18;
-
-  const lattice = (stroke: string, width: number) =>
-    nodes.map((n, i) => {
-      const right = i % cols < cols - 1 ? nodes[i + 1] : null;
-      const down = i + cols < nodes.length ? nodes[i + cols] : null;
-      return (
-        <g key={i} stroke={stroke} strokeWidth={width}>
-          {right && <line x1={n.x} y1={n.y} x2={right.x} y2={right.y} />}
-          {down && <line x1={n.x} y1={n.y} x2={down.x} y2={down.y} />}
-        </g>
-      );
-    });
+  const bed = useMemo(() => crustBed(), []);
+  // The two ridges the story opened on, now on the far side of the crust.
+  const far = useMemo(() => [dunePath(238, 15, 340, 1.1), dunePath(272, 11, 260, 3.4)], []);
+  const sx = -LIGHT.x * 16;
+  const sy = -LIGHT.y * 12;
+  const ground = isLightMode ? "#e6cb99" : "#2b1f15";
 
   return (
     <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" className={frame} aria-hidden>
@@ -544,57 +524,95 @@ export function CrustScene({ isLightMode }: { isLightMode: boolean }) {
           {isLightMode ? (
             <>
               <stop offset="0%" stopColor="#e4f0ec" />
-              <stop offset="42%" stopColor="#f3e6cd" />
-              <stop offset="70%" stopColor="#e6cb99" />
-              <stop offset="100%" stopColor="#cfa96e" />
+              <stop offset="62%" stopColor="#f3e6cd" />
+              <stop offset="100%" stopColor="#e6cb99" />
             </>
           ) : (
             <>
               <stop offset="0%" stopColor="#0c1815" />
-              <stop offset="42%" stopColor="#1d150f" />
-              <stop offset="70%" stopColor="#2b1f15" />
-              <stop offset="100%" stopColor="#3a291b" />
+              <stop offset="62%" stopColor="#1d150f" />
+              <stop offset="100%" stopColor="#2b1f15" />
             </>
           )}
         </linearGradient>
-        <radialGradient id="ls-sun" cx="26%" cy="62%" r="46%">
-          <stop offset="0%" stopColor={isLightMode ? "#fff2d2" : "#c98a45"} stopOpacity={isLightMode ? 0.7 : 0.3} />
+        <radialGradient id="ls-sun" cx="26%" cy="33%" r="42%">
+          <stop offset="0%" stopColor={isLightMode ? "#fff2d2" : "#c98a45"} stopOpacity={isLightMode ? 0.62 : 0.4} />
           <stop offset="100%" stopColor={isLightMode ? "#fff2d2" : "#c98a45"} stopOpacity="0" />
         </radialGradient>
-        {/* Haze thickening toward the horizon is what makes a flat plane read
-            as distance. */}
-        <linearGradient id="ls-horizon" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={C.cured} stopOpacity="0" />
-          <stop offset="60%" stopColor={C.cured} stopOpacity={isLightMode ? 0.18 : 0.12} />
-          <stop offset="100%" stopColor={C.cured} stopOpacity="0" />
+        <radialGradient id="ls-crust-grain" cx="33%" cy="27%" r="86%">
+          <stop offset="0%" stopColor="#f6d8a8" />
+          <stop offset="30%" stopColor="#e8b276" />
+          <stop offset="70%" stopColor={C.sand} />
+          <stop offset="100%" stopColor={C.sandDeep} />
+        </radialGradient>
+        <linearGradient id="ls-far-bed" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={blend(C.sand, ground, 0.94)} />
+          <stop offset="55%" stopColor={blend(C.sand, ground, 0.82)} />
+          <stop offset="100%" stopColor={blend(C.sand, ground, 0.72)} stopOpacity="0" />
         </linearGradient>
         <radialGradient id="ls-crust-vignette" cx="50%" cy="52%" r="74%">
           <stop offset="52%" stopColor="#000" stopOpacity="0" />
           <stop offset="100%" stopColor="#000" stopOpacity={isLightMode ? 0.14 : 0.48} />
         </radialGradient>
-        <filter id="ls-crust-shadow" x="-20%" y="-40%" width="140%" height="200%">
-          <feGaussianBlur stdDeviation="7" />
-        </filter>
       </defs>
 
       <rect x="0" y="0" width="1200" height="800" fill="url(#ls-sky)" />
       <rect x="0" y="0" width="1200" height="800" fill="url(#ls-sun)" />
-      <rect x="0" y="460" width="1200" height="160" fill="url(#ls-horizon)" />
-      <line x1="0" y1="540" x2="1200" y2="540" stroke={C.cured} strokeWidth="1.5" opacity="0.42" />
 
-      <g filter="url(#ls-crust-shadow)" opacity={isLightMode ? 0.2 : 0.42} transform={`translate(${sx} ${sy})`}>
-        {lattice("#1a0e05", 6)}
-      </g>
-      <g opacity="0.55">{lattice(C.cured, 2)}</g>
       <g>
-        {nodes.map((n, i) => (
-          <g key={i}>
-            <circle cx={n.x} cy={n.y} r="7" fill={C.cured} opacity="0.95" />
-            <circle cx={n.x - 2} cy={n.y - 2} r="3.2" fill="#e8f4f0" opacity="0.5" />
-          </g>
+        {far.map((d, i) => (
+          <path key={i} d={d} fill={blend(C.sand, ground, i ? 0.8 : 0.88)} />
         ))}
       </g>
-      <image href="/sandyx.png" x="786" y="410" width="110" height="130" preserveAspectRatio="xMidYMax meet" />
+
+      {/* Past the last row a grain is under a pixel, so the bed carries on as
+          a band rather than as shapes we cannot honestly draw. */}
+      <rect
+        x="0"
+        y={CRUST_HORIZON - 2}
+        width="1200"
+        height={bed[0].grains[0].cy - CRUST_HORIZON + 80}
+        fill="url(#ls-far-bed)"
+      />
+
+      {/* The same grains as the beat before, seen from far enough back that the
+          cluster has become ground. The front row is the size the cluster was
+          when the camera left it. */}
+      {bed.map((row, j) => {
+        const haze = Math.min(0.9, 1 - row.depth);
+        return (
+          <g key={j}>
+            {row.grains.map((g, i) =>
+              g.path ? (
+                <g key={i}>
+                  <path
+                    d={g.path}
+                    fill="#1a0e05"
+                    opacity={isLightMode ? 0.14 : 0.3}
+                    transform={`translate(${sx * row.depth} ${sy * row.depth})`}
+                  />
+                  <path d={g.path} fill="url(#ls-crust-grain)" />
+                  <path d={g.path} fill={ground} opacity={haze} />
+                </g>
+              ) : (
+                <circle
+                  key={i}
+                  cx={g.cx}
+                  cy={g.cy}
+                  r={g.r}
+                  fill={blend(C.sand, ground, haze)}
+                />
+              ),
+            )}
+            <g fill={C.cured} opacity={0.85 - haze * 0.5}>
+              {row.joins.map((n, i) => (
+                <circle key={i} cx={n.x} cy={n.y} r={n.r} />
+              ))}
+            </g>
+          </g>
+        );
+      })}
+
       <rect x="0" y="0" width="1200" height="800" fill="url(#ls-crust-vignette)" />
     </svg>
   );

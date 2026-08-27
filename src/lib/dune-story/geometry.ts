@@ -246,3 +246,88 @@ export function latticePoints(
   }
   return pts;
 }
+
+/** Where the crust's ground plane meets the sky. */
+export const CRUST_HORIZON = 296;
+
+export interface CrustGrain {
+  cx: number;
+  cy: number;
+  r: number;
+  /** A modelled outline near the camera; null where a circle is the same pixels. */
+  path: string | null;
+}
+
+export interface CrustRow {
+  /** Screen scale of this row: 1 near the camera, small at the horizon. */
+  depth: number;
+  r: number;
+  grains: CrustGrain[];
+  /** Where two neighbours touch, which is where a cross-link sits. */
+  joins: { x: number; y: number; r: number }[];
+}
+
+/**
+ * The grain cluster seen from far enough back to be ground.
+ *
+ * Screen y and screen scale are one linear relation, y = H + 464·depth, which
+ * is what makes this a plane rather than a stack of bands. Rows are stepped
+ * down the screen by a grain and a half at their own depth, so the bed stays
+ * packed all the way to the horizon instead of thinning out.
+ */
+export function crustBed(): CrustRow[] {
+  const rows: CrustRow[] = [];
+  const A = 464;
+  const radius = (d: number) => 3 + 34 * d;
+
+  for (let y = 900, j = 0; ; j++) {
+    const depth = r2((y - CRUST_HORIZON) / A);
+    const r = radius(depth);
+    if (r < 11) break;
+
+    const step = r * 2.45;
+    const count = Math.ceil(1560 / step) + 1;
+    const x0 = -160 + (j % 2 ? step / 2 : 0);
+    const modelled = r > 26;
+
+    const grains: CrustGrain[] = [];
+    for (let i = 0; i < count; i++) {
+      const seed = j * 97 + i * 13 + 5;
+      const cx = r2(x0 + i * step + (seeded(seed) - 0.5) * step * 0.24);
+      const cy = r2(y + (seeded(seed + 3) - 0.5) * r * 0.55);
+      const rr = r2(r * (0.8 + seeded(seed + 7) * 0.4));
+      grains.push({ cx, cy, r: rr, path: modelled ? blobPath(cx, cy, rr, seed, 12, 0.15) : null });
+    }
+
+    // At this scale the polymer itself is far under a pixel. What is left to
+    // draw is the fact that neighbours are locked, so only the contact takes a
+    // mark, and only where it is more than a dot.
+    const joins: CrustRow["joins"] = [];
+    if (r > 17) {
+      for (let i = 0; i + 1 < grains.length; i += 2) {
+        const a = grains[i];
+        const b = grains[i + 1];
+        joins.push({
+          x: r2((a.cx + a.r + b.cx - b.r) / 2),
+          y: r2((a.cy + b.cy) / 2),
+          r: r2(Math.max(1.4, r * 0.17)),
+        });
+      }
+    }
+
+    rows.push({ depth, r: r2(r), grains, joins });
+    y -= Math.max(8, r * 1.5);
+  }
+
+  // Painted far to near, so a nearer grain overlaps the one behind it.
+  return rows.reverse();
+}
+
+/** Mix two hex colours, for the haze a row picks up with distance. */
+export function blend(a: string, b: string, t: number): string {
+  const hex = (c: string) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16));
+  const [r1, g1, b1] = hex(a);
+  const [r2c, g2, b2] = hex(b);
+  const mix = (x: number, y: number) => Math.round(x + (y - x) * t).toString(16).padStart(2, "0");
+  return `#${mix(r1, r2c)}${mix(g1, g2)}${mix(b1, b2)}`;
+}

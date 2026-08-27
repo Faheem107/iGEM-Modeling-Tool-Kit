@@ -105,7 +105,9 @@ export default function LandingStory({
       const leave = smooth(s, 4.3, 4.8);
       place(
         grainRef.current,
-        `scale(${((2.4 - arrive * 1.4) * (1 + inCell * 1.1)).toFixed(4)})`,
+        // Shrinking on the way out, so the cluster is the size the crust's
+        // front row is when the crust takes over from it.
+        `scale(${((2.4 - arrive * 1.4) * (1 + inCell * 1.1) * (1 - leave * 0.62)).toFixed(4)})`,
         arrive * (1 - leave) * (1 - inCell),
       );
 
