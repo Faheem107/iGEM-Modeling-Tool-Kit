@@ -349,6 +349,59 @@ input[type="range"]::-moz-range-thumb {
   will-change: transform, opacity;
 }
 
+/* ---- Wind combing the surface, story beats 1 and 5 ----
+ * Keyed to its own clock, not to the scroll: the wind does not stop because
+ * the reader did. Opacity is scaled by --wind, which the scroll does set, so
+ * the same streaks carry the calm of the hero and the threshold of beat 1.
+ * Transform and opacity only, so it stays off the main thread. */
+@keyframes story-wind {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  22% {
+    opacity: 1;
+  }
+  74% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(var(--gust, 380px));
+  }
+}
+.story-wind {
+  animation: story-wind 5.5s linear infinite both;
+  will-change: transform, opacity;
+}
+
+/* ---- Saltation: a grain hops, lands, and knocks the next one on ----
+ * Two nested transforms, because a hop is a constant horizontal speed under a
+ * rising and falling height. One element cannot carry both curves. */
+@keyframes story-hop-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(var(--hop-x, 260px));
+  }
+}
+@keyframes story-hop-y {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(var(--hop-y, -54px));
+  }
+}
+.story-hop {
+  animation: story-hop-x 2.9s linear infinite both;
+}
+.story-hop > g {
+  animation: story-hop-y 2.9s ease-in-out infinite both;
+}
+
 /* Tabular numbers everywhere numbers are shown in the UI chrome */
 .tabular-nums, [class*="tabular"] {
   font-variant-numeric: tabular-nums;

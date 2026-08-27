@@ -331,3 +331,64 @@ export function blend(a: string, b: string, t: number): string {
   const mix = (x: number, y: number) => Math.round(x + (y - x) * t).toString(16).padStart(2, "0");
   return `#${mix(r1, r2c)}${mix(g1, g2)}${mix(b1, b2)}`;
 }
+
+/** The near ridge of the field scene, so the hops land on it. */
+export const RIDGE_Y = (x: number) => r2(656 + Math.sin(x / 175 + 1.2) * 58);
+
+export interface Hop {
+  x: number;
+  y: number;
+  r: number;
+  dx: number;
+  dy: number;
+  delay: string;
+}
+
+/**
+ * Grains hopping along the near ridge. Saltation: the wind carries a grain a
+ * short way, it lands, and the impact passes the energy on. Each one starts at
+ * a different point in the same cycle, so the surface is never in step.
+ */
+export function saltation(count = 22): Hop[] {
+  const hops: Hop[] = [];
+  for (let i = 0; i < count; i++) {
+    const x = r2(-120 + (i / count) * 1440 + seeded(i * 3.1) * 60);
+    const dx = r2(120 + seeded(i * 5.3) * 150);
+    hops.push({
+      x,
+      y: RIDGE_Y(x),
+      r: r2(2.4 + seeded(i * 7.7) * 2.6),
+      dx,
+      dy: r2(-(26 + seeded(i * 9.1) * 46)),
+      delay: (-seeded(i * 11.3) * 2.9).toFixed(2),
+    });
+  }
+  return hops;
+}
+
+export interface Streak {
+  d: string;
+  gust: number;
+  delay: string;
+  width: number;
+  fade: number;
+}
+
+/** Wind combing across the surface, drawn as tapering strokes. */
+export function windStreaks(y0: number, y1: number, count = 16): Streak[] {
+  const out: Streak[] = [];
+  for (let i = 0; i < count; i++) {
+    const t = seeded(i * 2.7);
+    const y = r2(y0 + ((y1 - y0) * i) / count + t * 26);
+    const x = r2(-300 + seeded(i * 4.9) * 1200);
+    const len = r2(110 + seeded(i * 6.1) * 220);
+    out.push({
+      d: `M${x} ${y} q${r2(len * 0.5)} ${r2(-6 - t * 8)} ${len} ${r2(-2 - t * 5)}`,
+      gust: Math.round(300 + t * 320),
+      delay: (-seeded(i * 8.3) * 5.5).toFixed(2),
+      width: r2(0.9 + t * 1.5),
+      fade: r2(0.22 + t * 0.34),
+    });
+  }
+  return out;
+}
