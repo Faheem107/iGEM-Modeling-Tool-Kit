@@ -162,7 +162,7 @@ export const agricultureYield = (): DamageResult =>
   unsourced(
     "% yield loss",
     "Lead to mine: Effects of inert dust on olive leaf physiological parameters, doi 10.1065/espr2006.08.327.",
-    "Business plan cites ~28% cotton yield loss, unverified against a primary source.",
+    "Business plan cites ~28% cotton yield loss, unverified against a primary source. The narrative doc adds a 20-40% UAE figure for Al Ain and Al Dhafra, attributed to Al-Hemoud et al. (2019), Weather and Climate Extremes, pii S0169809519304028. That paper is paywalled and we have not read it, so the figure stays out of the model until someone has.",
   );
 
 // ---------------------------------------------------------------------------

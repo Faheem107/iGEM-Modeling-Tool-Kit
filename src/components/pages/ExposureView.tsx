@@ -24,7 +24,7 @@ export default function ExposureView() {
         </h1>
         <p className="text-[length:var(--text-body)] leading-relaxed text-muted-foreground">
           <GlossaryText max={4}>
-            {"Wind picks sand up in one place and drops it in another. Pick a market and a site, and this page works out which sand hotspots feed that site, how much reaches it, and how much less would reach it if we treated the ground where the sand starts. One view runs on a wind climatology, what the wind usually does over three months. The other runs on the wind blowing right now."}
+            {"Wind picks sand up in one place and drops it in another. Pick a market and a site, and this page works out which sand hotspots feed that site, how much reaches it, and how much less would reach it if we treated the ground where the sand starts. One view runs on a wind climatology, what the wind usually does over three months. The other runs on the wind blowing right now. The fine part of that sand is what people end up breathing."}
           </GlossaryText>
         </p>
       </header>

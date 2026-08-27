@@ -67,8 +67,9 @@ export const BUSINESS_SECTIONS: BusinessSection[] = [
     label: "Limits",
     heading: "Where the model stops, including against us",
     body: [
-      "Treating ground reduces transport from that ground. It does not reduce dust arriving from elsewhere, and most of the fine dust settling on a UAE panel starts hundreds of kilometres upwind over clay-rich ground we are not treating.",
-      "That works against the receptor easiest to quantify. Soiling is driven by fine material, and the dune sand measured here is about 0.13 percent finer than 60 micrometres, so treating a dune patch removes very little of it. Sand encroachment and burial is the effect the physics supports best.",
+      "Treating ground reduces transport from that ground. It does not reduce dust arriving from elsewhere, and most of the fine dust settling on a UAE panel starts hundreds of kilometres upwind over clay-rich ground we are not treating. Published attribution puts roughly 60 percent of the dust in the air over the UAE above Iraq and 25 percent above the Afghanistan, Pakistan and Iran border region, against about 15 percent over the Empty Quarter. None of that first 85 percent is ours to treat.",
+      "What is ours is the sand that moves near the ground. In Abu Dhabi dune soils, 70 to 92 percent of sand movement is saltation and only 2 to 8 percent is suspension: the sand here hops, and it mostly does not fly. That is why the crust acts on encroachment and burial rather than on haze.",
+      "That works against the receptor easiest to quantify. Soiling is driven by fine material, and only about a tenth of a percent of the dune sand measured here is finer than 60 micrometres, so treating a dune patch removes very little of it. Sand encroachment and burial is the effect the physics supports best.",
       "Three inputs are still missing before this becomes a quotable price: the cost of clearing a cubic metre of sand in the Gulf, a relation between blowing sand and glass wear, and the fraction of arriving mass that stays on tilted glass. They are marked unsourced and left blank.",
     ],
   },
