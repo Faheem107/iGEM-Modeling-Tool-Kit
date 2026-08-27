@@ -14,60 +14,43 @@ import {
 } from "@/src/lib/designCycle";
 
 /**
- * DesignCycleStory: the scroll-scrubbed "Engineering Design Cycle" story.
- * =========================================================================
- * A pinned, full-screen stage. One large SVG fills the right (or the whole
- * background on mobile) and MORPHS live as you scroll, telling the story of the
- * model in five beats: loose sand -> the first three-prong design -> the pivot
- * to two prongs plus a kill switch -> the model linking cell to crust -> field
- * scale-up. A panel on the left and a dot rail track which beat you are on.
+ * DesignCycleStory: the scroll-scrubbed Engineering Design Cycle.
  *
- * Motion split (per the brief): a sticky stage holds the frame + scroll
- * progress; an anime.js timeline (autoplay off) owns the SVG choreography and is
- * scrubbed by seeking it to `progress * duration`. No image frames, so it stays
- * crisp at any size and reads in both themes. Under reduced motion / small
- * screens there is no pin: the finished crust is shown and the panel is a list.
+ * The stage is one full-width column: a caption rail, the beat headline with
+ * its paragraph beside it, then the figure spread across the whole width
+ * underneath. The figure is a laid-out band, not an overlay, so nothing has to
+ * be masked away from the words.
  */
 
-// Palette (Dunelock) picked to read on both the warm sand and dark ember stages.
 const C = {
-  loose: DUNE.orange, // dune-orange, loose grains
-  cured: DUNE.teal, // dune-teal, bound crust
-  mesh: DUNE.rose, // dune-rose, cross-links
+  loose: DUNE.orange,
+  cured: DUNE.teal,
+  mesh: DUNE.rose,
   node: DUNE.orange,
   shield: DUNE.teal,
   cross: "#c0392b",
 };
 
-// Deterministic layout so scatter/grid/mesh are stable across renders.
-//
-// Every x here lives in the right half of the 1200-wide viewBox, because the
-// text panel owns the left. The loose grains used to scatter from x=220, which
-// put them straight through the panel at any width; now they blow across the
-// same field the crust later forms in, so the scatter and the grid read as the
-// same sand. The grid also sits high enough to clear the progress rule that
-// StoryEscape draws along the bottom.
-const COLS = 9;
-const ROWS = 3;
-const GRID_X0 = 720;
-const GRID_X1 = 1160;
-const GRID_Y0 = 520;
-const GRID_Y1 = 630;
-/**
- * The left edge of the illustration field, in viewBox units. Nothing decorative
- * starts before it.
- *
- * 720 is not arbitrary. With preserveAspectRatio="meet" the viewBox is letterboxed
- * rather than cropped, so the plate's right edge lands at viewBox x ~704 at 1600
- * wide, ~717 at 1280 and lower still above that. Keeping every drawn element to
- * the right of 720 is what gives the panel and the figure a column each from
- * 1280 up. Below that they share the space, and the mask on the SVG is what
- * keeps the figure from reading through the words.
- */
-const FIELD_X0 = 720;
+// The figure field. Wide and short, because it sits under the text across the
+// full column rather than beside it.
+const VB_W = 1300;
+const VB_H = 400;
+const MID_X = VB_W / 2;
 
-// Rounded so the SSR and client renders are byte-identical (Math.sin can differ
-// in its last bit across engines, which would trip a hydration mismatch).
+// Each layer owns a horizontal band, so beats that are on screen together do
+// not stack on top of each other.
+const TILE_Y = 14;
+const TILE_H = 88;
+const TILE_W = 320;
+const TILE_CX = [210, 650, 1090];
+const GRID_X0 = 90;
+const GRID_X1 = 1210;
+const GRID_Y0 = 272;
+const GRID_Y1 = 340;
+const COLS = 16;
+const ROWS = 3;
+
+// Rounded so SSR and client render identically.
 const r2 = (n: number) => Math.round(n * 100) / 100;
 function seeded(n: number) {
   const x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
@@ -89,14 +72,13 @@ function buildLayout() {
     for (let c = 0; c < COLS; c++) {
       const gx = r2(GRID_X0 + (c / (COLS - 1)) * (GRID_X1 - GRID_X0));
       const gy = r2(GRID_Y0 + (r / (ROWS - 1)) * (GRID_Y1 - GRID_Y0));
-      // Loose: blown up into the open sky above the field, never over the panel.
-      const sx = r2(FIELD_X0 + seeded(i + 1) * 460);
-      const sy = r2(90 + seeded(i + 7) * 300);
-      grains.push({ gx, gy, sx, sy, r: r2(5 + seeded(i + 3) * 3) });
+      // Loose: drifting in the same bottom strip the crust later forms in.
+      const sx = r2(50 + seeded(i + 1) * 1200);
+      const sy = r2(268 + seeded(i + 7) * 104);
+      grains.push({ gx, gy, sx, sy, r: r2(3.6 + seeded(i + 3) * 2.4) });
       i++;
     }
   }
-  // Mesh: connect each grid node to its right and bottom neighbour.
   const line = (a: number, b: number) => {
     const A = grains[a];
     const B = grains[b];
@@ -133,8 +115,6 @@ export default function DesignCycleStory({
   const tlRef = useRef<Timeline | null>(null);
 
   const [active, setActive] = useState(0);
-  // On mobile / reduced motion there is no scrub, so the whole story is shown as
-  // a readable stacked list instead of the single cross-fading beat.
   const [staticMode, setStaticMode] = useState(false);
 
   useEffect(() => {
@@ -146,21 +126,20 @@ export default function DesignCycleStory({
     const wide = window.matchMedia("(min-width: 768px)").matches;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // Build the morph timeline (kept paused; we scrub it by seeking).
     const q = (sel: string) => scope.querySelectorAll(sel);
     const drawables = svg.createDrawable(q(".dcs-mesh") as never);
     const tl = createTimeline({
       autoplay: false,
       defaults: { ease: "inOutQuad", duration: 800 },
     });
-    // Beat 1 -> 2: wind dies down, the three prong nodes rise.
+    // Beat 1 -> 2: wind dies down, the three prong tiles rise.
     tl.add(windRef.current!, { opacity: [0.85, 0], duration: 700 }, 700);
     tl.add(
       q(".dcs-prong"),
       { opacity: [0, 1], scale: [0.5, 1], delay: stagger(140) },
       1000,
     );
-    // Beat 3: pivot. Alginate node crossed and dimmed, kill-switch shield rises.
+    // Beat 3: pivot. Alginate crossed and dimmed, kill-switch shield rises.
     tl.add(crossRef.current!, { opacity: [0, 1], duration: 500 }, 2000);
     tl.add(algRef.current!, { opacity: [1, 0.28], duration: 600 }, 2100);
     tl.add(
@@ -168,11 +147,11 @@ export default function DesignCycleStory({
       { opacity: [0, 1], translateY: [34, 0], duration: 700 },
       2150,
     );
-    // Beat 4: grains snap to the grid, warm to the cured colour, mesh draws.
+    // Beat 4: grains snap to the grid and cure, mesh draws. The bands above
+    // recede so the crust is the thing being read, not one more layer.
     tl.add(
       q(".dcs-grain"),
       {
-        // anime.js function values: (target) => value, per grain's grid coords.
         cx: ((el: SVGElement) => Number(el.dataset.gx)) as never,
         cy: ((el: SVGElement) => Number(el.dataset.gy)) as never,
         fill: C.cured,
@@ -182,17 +161,19 @@ export default function DesignCycleStory({
       3000,
     );
     tl.add(drawables, { draw: ["0 0", "0 1"], duration: 1000 }, 3100);
-    // Beat 5: the field/horizon and the glow open up.
+    tl.add(prongsRef.current!, { opacity: [1, 0.34], duration: 700 }, 3000);
+    tl.add(crossRef.current!, { opacity: [1, 0.34], duration: 700 }, 3000);
+    tl.add(shieldRef.current!, { opacity: [1, 0.34], duration: 700 }, 3000);
+    // Beat 5: the ground plane and the glow open up.
     tl.add(fieldRef.current!, { opacity: [0, 1], duration: 800 }, 4000);
     tl.add(
       glowRef.current!,
-      { opacity: [0.4, 0.85], scale: [0.9, 1.12], duration: 1000 },
+      { opacity: [0.4, 0.8], scale: [0.9, 1.1], duration: 1000 },
       4000,
     );
     tlRef.current = tl;
 
     if (!wide || reduce) {
-      // No pin: jump to the finished crust and show the panel as a static list.
       tl.seek(tl.duration);
       setStaticMode(true);
       return () => {
@@ -200,21 +181,15 @@ export default function DesignCycleStory({
       };
     }
 
-    // Sticky, not pinned. Same reasoning as the dune story: GSAP's pin swapped
-    // this stage to position: fixed inside a generated spacer, and crossing
-    // that boundary upward flipped it back on a frame the browser had already
-    // laid out. A sticky child of a tall section never swaps.
+    // Sticky, not pinned: a pin swaps the stage to position: fixed inside a
+    // generated spacer, and crossing that boundary upward flips it back on a
+    // frame the browser has already laid out.
     const TRAVEL = storyTravel(2700, 1200);
     const stageEl = stage;
     const sectionEl = section;
-    // Sized from the measured viewport, not from vh.
-    //
-    // `100vh` is the LARGE viewport height. It is not always the height the
-    // page is actually laid out in: browser chrome, a zoom level and a
-    // classic scrollbar all move one and not the other, and when they
-    // disagree the stage is a strip taller or shorter than the screen. That
-    // strip is the page ground showing through beside the scene, under the
-    // header and down the right edge. Measuring removes the disagreement.
+    // Sized from the measured viewport. 100vh is the large viewport height,
+    // which browser chrome and a classic scrollbar move independently of the
+    // height the page is actually laid out in.
     const sizeStage = () => {
       const vh = document.documentElement.clientHeight;
       stageEl.style.height = `${vh}px`;
@@ -225,15 +200,12 @@ export default function DesignCycleStory({
     stageEl.style.width = "100%";
     sizeStage();
 
-    // ScrollTrigger used to re-measure on resize. Nothing else does now, and a
-    // stage sized in pixels has to be told.
     let resizeTimer = 0;
     const onResize = () => {
       window.clearTimeout(resizeTimer);
       resizeTimer = window.setTimeout(sizeStage, 120);
     };
     window.addEventListener("resize", onResize);
-
 
     const SMOOTH = 5.5;
     let smoothP = 0;
@@ -266,8 +238,8 @@ export default function DesignCycleStory({
       if (Math.abs(targetP - smoothP) < 0.0002) smoothP = targetP;
       progressRef.current = smoothP;
       tl.seek(tl.duration * smoothP);
-      // setActive only when the band actually changes, so a scrolling reader is
-      // not re-rendering React on every frame of the story.
+      // Only on a band change, so a scrolling reader is not re-rendering React
+      // on every frame.
       const beat = Math.min(BEATS.length - 1, Math.floor(smoothP * BEATS.length));
       setActive((prev) => (prev === beat ? prev : beat));
     };
@@ -292,14 +264,10 @@ export default function DesignCycleStory({
     <section id="design-cycle" ref={sectionRef} className="relative w-full">
       <div
         ref={stageRef}
-        className="relative flex min-h-screen w-full flex-col overflow-hidden py-24 md:justify-center md:py-0"
+        className="relative flex min-h-screen w-full flex-col overflow-hidden"
       >
-        {/* Skip / Escape / progress rule, inside the sticky stage. */}
-        {!staticMode && (
-          <StoryEscape progressRef={progressRef} />
-        )}
+        {!staticMode && <StoryEscape progressRef={progressRef} />}
 
-        {/* Ambient drifting sand, consistent with the dune story. */}
         <SandParticles
           progressRef={progressRef}
           isLightMode={isLightMode}
@@ -307,17 +275,15 @@ export default function DesignCycleStory({
           className="pointer-events-none absolute inset-0 z-0"
         />
 
-        {/* Soft accent glow behind the SVG (scaled by the timeline). Offset into
-            the right field from md up, so it lights the illustration instead of
-            sitting behind the words. */}
+        {/* Accent glow, behind the figure band rather than behind the words. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 flex items-center justify-center"
+          className="pointer-events-none absolute inset-x-0 bottom-0 flex h-[62%] items-center justify-center"
         >
           <div
             ref={glowRef}
             style={{ opacity: 0.4 }}
-            className={`h-[70%] w-[70%] rounded-full blur-[120px] md:ml-[26%] md:w-[56%] ${
+            className={`h-[80%] w-[72%] rounded-full blur-[130px] ${
               isLightMode
                 ? "bg-[radial-gradient(circle,rgba(143,179,172,0.5),rgba(214,136,74,0.25),transparent_70%)]"
                 : "bg-[radial-gradient(circle,rgba(143,179,172,0.42),rgba(214,136,74,0.22),transparent_70%)]"
@@ -325,236 +291,62 @@ export default function DesignCycleStory({
           />
         </div>
 
-        {/* The morphing story SVG.
-            preserveAspectRatio is "meet", not "slice". Under "slice" a wider or
-            a narrower window CROPPED the composition and magnified what was
-            left, which is how the prong tiles ended up filling a phone and how
-            the loose grains ended up on top of the panel at 1440 and above. The
-            art is line work on transparent ground, so letterboxing it is
-            invisible, and the whole figure is now in frame at every width.
-
-            The mask is the second half of that: from md up, where the panel is
-            pinned to the left, the illustration fades out before it reaches the
-            words. Decoration that recedes, rather than decoration that has to
-            be dodged. */}
-        <svg
-          ref={svgRef}
-          viewBox="0 0 1200 800"
-          preserveAspectRatio="xMidYMid meet"
-          className="pointer-events-none absolute inset-0 h-full w-full opacity-90 md:opacity-55 xl:opacity-85 md:[-webkit-mask-image:linear-gradient(to_right,transparent_0%,transparent_34%,black_62%)] md:[mask-image:linear-gradient(to_right,transparent_0%,transparent_34%,black_62%)]"
-          aria-hidden
-        >
-          {/* wind streaks (beat 1) */}
-          <g ref={windRef} style={{ opacity: 0.85 }} stroke={C.loose} strokeWidth={2} strokeLinecap="round">
-            {[160, 250, 340, 430].map((y, i) => (
-              <path
-                key={i}
-                d={`M${FIELD_X0 + i * 30} ${y} q 90 -18 180 0 t 180 0`}
-                fill="none"
-                opacity={0.5 - i * 0.06}
+        <div className="relative z-10 mx-auto flex h-full w-full max-w-[1240px] flex-col px-6 pb-16 pt-28 md:px-10 md:pb-20 md:pt-32">
+          {/* Caption rail: what this section is, and where in the loop we are. */}
+          <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 border-b border-border pb-4">
+            <span className="caption-head">Engineering Design Cycle</span>
+            {!staticMode && (
+              <StageRail
+                stage={BEATS[active].stage}
+                turn={BEATS[active].turn}
+                isLightMode={isLightMode}
               />
-            ))}
-          </g>
-
-          {/* cross-link mesh (beat 4), drawn on scroll */}
-          <g fill="none" stroke={C.mesh} strokeWidth={2.2} strokeLinecap="round">
-            {mesh.map((d, i) => (
-              <path key={i} className="dcs-mesh" d={d} opacity={0.75} />
-            ))}
-          </g>
-
-          {/* grains: scatter -> grid */}
-          <g>
-            {grains.map((g, i) => (
-              <circle
-                key={i}
-                className="dcs-grain"
-                data-gx={g.gx}
-                data-gy={g.gy}
-                cx={g.sx}
-                cy={g.sy}
-                r={g.r}
-                fill={C.loose}
-              />
-            ))}
-          </g>
-
-          {/* three prong tiles (beat 2): clear, labelled cards so "three prongs"
-              actually reads as three named routes, not faint dots.
-
-              They sit in the top band of the field, which clears the plate both
-              across and down. They used to be a wider row starting at x=608,
-              where the first tile spent every wide viewport half hidden behind
-              the panel. */}
-          <g ref={prongsRef}>
-            {[
-              { x: 795, label: "γ-PGA" },
-              { x: 955, label: "CA · MICP" },
-            ].map((p, i) => (
-              <g
-                key={i}
-                className="dcs-prong"
-                style={{ opacity: 0, transformBox: "fill-box", transformOrigin: "center" }}
-              >
-                <rect
-                  x={p.x - 75}
-                  y={96}
-                  width={150}
-                  height={76}
-                  rx={12}
-                  fill="rgba(214,136,74,0.12)"
-                  stroke={C.node}
-                  strokeWidth={3}
-                />
-                <circle cx={p.x - 52} cy={134} r={14} fill={C.node} />
-                <text x={p.x - 52} y={140} textAnchor="middle" fontSize={17} fontWeight={800} fill="#1a120c">
-                  {i + 1}
-                </text>
-                <text x={p.x + 20} y={141} textAnchor="middle" fontSize={17} fontWeight={700} fill={C.node}>
-                  {p.label}
-                </text>
-              </g>
-            ))}
-            {/* alginate tile (crossed + dimmed at the pivot) */}
-            <g
-              ref={algRef}
-              className="dcs-prong"
-              style={{ opacity: 0, transformBox: "fill-box", transformOrigin: "center" }}
-            >
-              <rect
-                x={1115 - 75}
-                y={96}
-                width={150}
-                height={76}
-                rx={12}
-                fill="rgba(214,136,74,0.12)"
-                stroke={C.node}
-                strokeWidth={3}
-              />
-              <circle cx={1115 - 52} cy={134} r={14} fill={C.node} />
-              <text x={1115 - 52} y={140} textAnchor="middle" fontSize={17} fontWeight={800} fill="#1a120c">
-                3
-              </text>
-              <text x={1115 + 22} y={141} textAnchor="middle" fontSize={17} fontWeight={700} fill={C.node}>
-                Alginate
-              </text>
-            </g>
-          </g>
-
-          {/* cross over the alginate tile (beat 3), with the reason on it, so a
-              still frame cannot be read as "replaced by the shield below" */}
-          <g ref={crossRef} style={{ opacity: 0 }}>
-            <g stroke={C.cross} strokeWidth={5} strokeLinecap="round">
-              <path d="M1046 102 L1184 166" />
-              <path d="M1184 102 L1046 166" />
-            </g>
-            <text
-              x={1115}
-              y={198}
-              textAnchor="middle"
-              fontSize={15}
-              fontWeight={700}
-              letterSpacing={2}
-              fill={C.cross}
-            >
-              DROPPED
-            </text>
-          </g>
-
-          {/* kill-switch shield (beat 3), centred in the field under the tiles.
-              It is an addition over both prongs, not a stand-in for the tile
-              above. */}
-          <g ref={shieldRef} style={{ opacity: 0 }}>
-            <text
-              x={955}
-              y={412}
-              textAnchor="middle"
-              fontSize={15}
-              fontWeight={700}
-              letterSpacing={2}
-              fill={C.shield}
-            >
-              KILL SWITCH ADDED
-            </text>
-            <path
-              d="M955 288 L993 303 L993 335 Q993 369 955 386 Q917 369 917 335 L917 303 Z"
-              fill="none"
-              stroke={C.shield}
-              strokeWidth={4}
-              strokeLinejoin="round"
-            />
-            <path d="M938 336 L951 351 L974 318" fill="none" stroke={C.shield} strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" />
-          </g>
-
-          {/* field / horizon opening up (beat 5) */}
-          <g ref={fieldRef} style={{ opacity: 0 }} stroke={C.cured} strokeWidth={1.6} opacity={0.6}>
-            <path d="M720 676 L1180 676" />
-            {[708, 740, 772].map((y, i) => (
-              <path key={i} d={`M${716 - i * 5} ${y} L${1186 + i * 5} ${y}`} opacity={0.5 - i * 0.12} />
-            ))}
-            {[760, 870, 980, 1090].map((x, i) => (
-              <path key={`v${i}`} d={`M${x} 676 L${x + (x - 925) * 0.32} 796`} opacity={0.4} />
-            ))}
-          </g>
-        </svg>
-
-        {/* Panel + dots (left). Sits above the SVG. */}
-        <div className="relative z-10 mx-auto w-full max-w-6xl px-6 sm:px-6">
-          <div className="max-w-xl xl:max-w-2xl">
-            <div className="plate p-6 xl:p-8">
-              <span className="caption">Engineering Design Cycle</span>
-
-              {staticMode ? (
-                // Mobile / reduced motion: every turn of the loop as a list.
-                <ol className="mt-4 space-y-6">
-                  {BEATS.map((b, i) => (
-                    <li key={i}>
-                      <BeatBody beat={b} isLightMode={isLightMode} />
-                    </li>
-                  ))}
-                </ol>
-              ) : (
-                <>
-                  <CycleRing
-                    stage={BEATS[active].stage}
-                    turn={BEATS[active].turn}
-                    isLightMode={isLightMode}
-                  />
-                  {/* Cross-fade the active beat. Sized for the longest one so
-                      the text never spills onto the rule below it. Measured,
-                      not guessed: the tallest body renders at 266px in this
-                      column, so 280 leaves a line of slack. */}
-                  <div className="relative min-h-[280px]">
-                    {BEATS.map((b, i) => (
-                      <div
-                        key={i}
-                        className="absolute inset-0 transition-opacity duration-500"
-                        style={{
-                          opacity: i === active ? 1 : 0,
-                          pointerEvents: i === active ? "auto" : "none",
-                        }}
-                        aria-hidden={i !== active}
-                      >
-                        <BeatBody beat={b} isLightMode={isLightMode} />
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-4 flex items-center gap-2" aria-hidden>
-                    {BEATS.map((_, i) => (
-                      <span
-                        key={i}
-                        className={`h-px transition-all duration-300 ${
-                          i === active
-                            ? "w-10 bg-dune-orange"
-                            : "w-5 bg-dune-ash/40"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
+            )}
           </div>
+
+          {staticMode ? (
+            <ol className="mt-10 space-y-14">
+              {BEATS.map((b, i) => (
+                <li key={i}>
+                  <BeatBody beat={b} isLightMode={isLightMode} />
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <>
+              {/* The beat. Headline across the left, its paragraph beside it. */}
+              <div className="relative mt-9 min-h-[200px] shrink-0 md:mt-10 lg:min-h-[176px]">
+                {BEATS.map((b, i) => (
+                  <div
+                    key={i}
+                    className="absolute inset-0 transition-opacity duration-500"
+                    style={{
+                      opacity: i === active ? 1 : 0,
+                      pointerEvents: i === active ? "auto" : "none",
+                    }}
+                    aria-hidden={i !== active}
+                  >
+                    <BeatBody beat={b} isLightMode={isLightMode} />
+                  </div>
+                ))}
+              </div>
+
+              {/* The figure, across the full width. */}
+              <div className="relative mt-4 min-h-0 w-full flex-1">
+                <StoryFigure
+                  svgRef={svgRef}
+                  grains={grains}
+                  mesh={mesh}
+                  windRef={windRef}
+                  prongsRef={prongsRef}
+                  algRef={algRef}
+                  crossRef={crossRef}
+                  shieldRef={shieldRef}
+                  fieldRef={fieldRef}
+                />
+              </div>
+            </>
+          )}
         </div>
       </div>
     </section>
@@ -562,15 +354,7 @@ export default function DesignCycleStory({
 }
 
 /**
- * One beat: a title that states the claim, then the whole turn of the loop in
- * one paragraph. It used to be three blocks tagged Asked / Ran / Changed, which
- * labelled every sentence with the category it belonged to and read as a lab
- * report five times over. The paragraph carries the same three things in the
- * same order, without announcing each one.
- *
- * There is no "Evidence: X" link either. The model is one click away through
- * the index below, and citing it under every paragraph that mentions it was
- * over-citing (DESIGN_SYSTEM.md C.3b).
+ * One beat: the claim as a headline, the whole turn of the loop beside it.
  */
 function BeatBody({
   beat,
@@ -580,36 +364,24 @@ function BeatBody({
   isLightMode: boolean;
 }) {
   return (
-    <>
-      {/* The ring above already names the stage on its arc and the turn in its
-          centre, so an eyebrow repeating both was the label-everything instinct
-          again. The title is the claim, so it is set as one: same weight and
-          scale as the beat headline in the dune story, not the display face
-          shouting in caps. */}
+    <div className="grid gap-x-14 gap-y-5 lg:grid-cols-12">
       <h2
-        className={`mb-5 text-[length:var(--text-h3)] leading-snug ${
+        className={`wght-head text-[length:var(--text-beat)] lg:col-span-6 xl:col-span-5 ${
           isLightMode ? "text-dune-maroon" : "text-dune-paper"
         }`}
         style={{ fontVariationSettings: '"wght" 600' }}
       >
         {beat.title}
       </h2>
-      {/* Held to a reading measure and opened up. The plate is wide enough for
-          the illustration beside it to breathe, which left the body running to
-          about 78 characters a line in one unbroken block. The column is the
-          panel's, the measure is the paragraph's. */}
-      <p className="max-w-[58ch] text-[length:var(--text-body)] leading-[1.75] text-foreground">
+      <p className="max-w-[var(--measure)] text-[length:var(--text-micro)] leading-[1.75] text-foreground lg:col-span-6 xl:col-start-7 xl:col-span-6">
         <GlossaryText>{beat.body}</GlossaryText>
       </p>
-    </>
+    </div>
   );
 }
 
-/**
- * Where we are in the loop. Four arcs, the current one lit. A cycle that is
- * drawn as a cycle is checkable at a glance; a list of five paragraphs is not.
- */
-function CycleRing({
+/** Where we are in the loop, set on one line in the caption rail. */
+function StageRail({
   stage,
   turn,
   isLightMode,
@@ -619,12 +391,12 @@ function CycleRing({
   isLightMode: boolean;
 }) {
   const R = 26;
-  const C = 2 * Math.PI * R;
-  const seg = C / 4;
+  const CIRC = 2 * Math.PI * R;
+  const seg = CIRC / 4;
   const idx = CYCLE_STAGES.indexOf(stage as never);
   return (
-    <div className="mb-5 mt-3 flex items-center gap-4 border-b border-border pb-4">
-      <svg viewBox="0 0 64 64" className="h-12 w-12 shrink-0" aria-hidden>
+    <div className="flex items-center gap-4">
+      <svg viewBox="0 0 64 64" className="h-8 w-8 shrink-0" aria-hidden>
         <g transform="rotate(-90 32 32)">
           {CYCLE_STAGES.map((_, i) => (
             <circle
@@ -635,8 +407,8 @@ function CycleRing({
               fill="none"
               stroke={i === idx ? "var(--dune-orange)" : "var(--dune-ash)"}
               strokeOpacity={i === idx ? 1 : 0.3}
-              strokeWidth={i === idx ? 3 : 1}
-              strokeDasharray={`${seg - 5} ${C - seg + 5}`}
+              strokeWidth={i === idx ? 4 : 1.5}
+              strokeDasharray={`${seg - 5} ${CIRC - seg + 5}`}
               strokeDashoffset={-i * seg}
               strokeLinecap="round"
               className="transition-all duration-500"
@@ -645,21 +417,21 @@ function CycleRing({
         </g>
         <text
           x="32"
-          y="37"
+          y="39"
           textAnchor="middle"
-          fontSize="15"
+          fontSize="22"
           fontWeight="700"
           fill={isLightMode ? DUNE.maroon : DUNE.orange}
         >
           {turn}
         </text>
       </svg>
-      <div className="flex flex-wrap gap-x-4 gap-y-1">
+      <div className="flex flex-wrap gap-x-5 gap-y-1">
         {CYCLE_STAGES.map((st, i) => (
           <span
             key={st}
             className={`caption transition-colors duration-500 ${
-              i === idx ? "text-dune-orange" : "text-muted-foreground opacity-50"
+              i === idx ? "text-dune-orange" : "text-muted-foreground opacity-45"
             }`}
           >
             {st}
@@ -667,5 +439,217 @@ function CycleRing({
         ))}
       </div>
     </div>
+  );
+}
+
+/**
+ * The figure. Every layer gets its own horizontal band across the full width,
+ * so the beats that are on screen together sit side by side rather than piling
+ * into one corner.
+ */
+function StoryFigure({
+  svgRef,
+  grains,
+  mesh,
+  windRef,
+  prongsRef,
+  algRef,
+  crossRef,
+  shieldRef,
+  fieldRef,
+}: {
+  svgRef: React.RefObject<SVGSVGElement | null>;
+  grains: Grain[];
+  mesh: string[];
+  windRef: React.RefObject<SVGGElement | null>;
+  prongsRef: React.RefObject<SVGGElement | null>;
+  algRef: React.RefObject<SVGGElement | null>;
+  crossRef: React.RefObject<SVGGElement | null>;
+  shieldRef: React.RefObject<SVGGElement | null>;
+  fieldRef: React.RefObject<SVGGElement | null>;
+}) {
+  const tiles = [
+    { cx: TILE_CX[0], n: 1, label: "γ-PGA" },
+    { cx: TILE_CX[1], n: 2, label: "CA · MICP" },
+  ];
+  const algCx = TILE_CX[2];
+  return (
+    <svg
+      ref={svgRef}
+      viewBox={`0 0 ${VB_W} ${VB_H}`}
+      preserveAspectRatio="xMidYMid meet"
+      className="pointer-events-none absolute inset-0 h-full w-full"
+      aria-hidden
+    >
+      {/* wind, across the lane the shield later takes */}
+      <g
+        ref={windRef}
+        style={{ opacity: 0.85 }}
+        stroke={C.loose}
+        strokeWidth={2}
+        strokeLinecap="round"
+      >
+        {[152, 178, 204, 230].map((y, i) => (
+          <path
+            key={i}
+            d={`M${20 + i * 20} ${y} q 160 -18 320 0 t 320 0 t 320 0 t 320 0`}
+            fill="none"
+            opacity={0.5 - i * 0.07}
+          />
+        ))}
+      </g>
+
+      {/* cross-link mesh, drawn on scroll */}
+      <g fill="none" stroke={C.mesh} strokeWidth={1.8} strokeLinecap="round">
+        {mesh.map((d, i) => (
+          <path key={i} className="dcs-mesh" d={d} opacity={0.7} />
+        ))}
+      </g>
+
+      {/* grains: loose -> bound */}
+      <g>
+        {grains.map((g, i) => (
+          <circle
+            key={i}
+            className="dcs-grain"
+            data-gx={g.gx}
+            data-gy={g.gy}
+            cx={g.sx}
+            cy={g.sy}
+            r={g.r}
+            fill={C.loose}
+          />
+        ))}
+      </g>
+
+      {/* the three routes, one band, spread across the whole width */}
+      <g ref={prongsRef}>
+        {tiles.map((p) => (
+          <Tile key={p.n} cx={p.cx} n={p.n} label={p.label} />
+        ))}
+        <g
+          ref={algRef}
+          className="dcs-prong"
+          style={{ opacity: 0, transformBox: "fill-box", transformOrigin: "center" }}
+        >
+          <TileBody cx={algCx} n={3} label="Alginate" />
+        </g>
+      </g>
+
+      {/* the route that was dropped, and why it reads as dropped */}
+      <g ref={crossRef} style={{ opacity: 0 }}>
+        <g stroke={C.cross} strokeWidth={4.5} strokeLinecap="round">
+          <path d={`M${algCx - TILE_W / 2 + 22} ${TILE_Y + 18} L${algCx + TILE_W / 2 - 22} ${TILE_Y + TILE_H - 18}`} />
+          <path d={`M${algCx + TILE_W / 2 - 22} ${TILE_Y + 18} L${algCx - TILE_W / 2 + 22} ${TILE_Y + TILE_H - 18}`} />
+        </g>
+        <text
+          x={algCx}
+          y={TILE_Y + TILE_H + 30}
+          textAnchor="middle"
+          fontSize={14}
+          fontWeight={700}
+          letterSpacing={2.5}
+          fill={C.cross}
+        >
+          DROPPED
+        </text>
+      </g>
+
+      {/* the layer added over both survivors */}
+      <g ref={shieldRef} style={{ opacity: 0 }}>
+        <path
+          d={`M${MID_X} 132 L${MID_X + 40} 148 L${MID_X + 40} 182 Q${MID_X + 40} 216 ${MID_X} 232 Q${MID_X - 40} 216 ${MID_X - 40} 182 L${MID_X - 40} 148 Z`}
+          fill="none"
+          stroke={C.shield}
+          strokeWidth={3.5}
+          strokeLinejoin="round"
+        />
+        <path
+          d={`M${MID_X - 18} 183 L${MID_X - 4} 198 L${MID_X + 20} 163`}
+          fill="none"
+          stroke={C.shield}
+          strokeWidth={3.5}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <text
+          x={MID_X}
+          y={252}
+          textAnchor="middle"
+          fontSize={14}
+          fontWeight={700}
+          letterSpacing={2.5}
+          fill={C.shield}
+        >
+          KILL SWITCH ADDED
+        </text>
+      </g>
+
+      {/* the ground it ends up on */}
+      <g
+        ref={fieldRef}
+        style={{ opacity: 0 }}
+        stroke={C.cured}
+        strokeWidth={1.4}
+        opacity={0.55}
+      >
+        <path d="M50 362 L1250 362" />
+        {[374, 384, 392].map((y, i) => (
+          <path key={i} d={`M${40 - i * 12} ${y} L${1260 + i * 12} ${y}`} opacity={0.5 - i * 0.13} />
+        ))}
+        {[170, 410, 650, 890, 1130].map((x, i) => (
+          <path key={`v${i}`} d={`M${x} 362 L${x + (x - MID_X) * 0.2} 400`} opacity={0.35} />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+function Tile({ cx, n, label }: { cx: number; n: number; label: string }) {
+  return (
+    <g
+      className="dcs-prong"
+      style={{ opacity: 0, transformBox: "fill-box", transformOrigin: "center" }}
+    >
+      <TileBody cx={cx} n={n} label={label} />
+    </g>
+  );
+}
+
+function TileBody({ cx, n, label }: { cx: number; n: number; label: string }) {
+  return (
+    <>
+      <rect
+        x={cx - TILE_W / 2}
+        y={TILE_Y}
+        width={TILE_W}
+        height={TILE_H}
+        rx={6}
+        fill="rgba(214,136,74,0.08)"
+        stroke={C.node}
+        strokeWidth={2}
+      />
+      <circle cx={cx - TILE_W / 2 + 44} cy={TILE_Y + TILE_H / 2} r={17} fill={C.node} />
+      <text
+        x={cx - TILE_W / 2 + 44}
+        y={TILE_Y + TILE_H / 2 + 6}
+        textAnchor="middle"
+        fontSize={18}
+        fontWeight={800}
+        fill="#1a120c"
+      >
+        {n}
+      </text>
+      <text
+        x={cx + 24}
+        y={TILE_Y + TILE_H / 2 + 7}
+        textAnchor="middle"
+        fontSize={20}
+        fontWeight={700}
+        fill={C.node}
+      >
+        {label}
+      </text>
+    </>
   );
 }
