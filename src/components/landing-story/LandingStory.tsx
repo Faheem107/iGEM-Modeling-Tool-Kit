@@ -143,12 +143,16 @@ export default function LandingStory({
     const wide = window.matchMedia("(min-width: 768px)").matches;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    let heroH = hero.offsetHeight;
-    let beatH = beats.offsetHeight / BEATS.length;
+    let heroH = 0;
+    let beatH = 0;
     const measure = () => {
       heroH = hero.offsetHeight;
       beatH = beats.offsetHeight / BEATS.length;
+      // Nothing to move the subject aside for once the beats span the frame.
+      const room = window.matchMedia("(min-width: 768px)").matches;
+      section.style.setProperty("--subject", room ? "230px" : "0px");
     };
+    measure();
 
     // Block index straight off the section's own rect, measured rather than
     // assumed, so an unequal hero cannot drift the scene off the words.
@@ -342,7 +346,7 @@ export default function LandingStory({
           {BEATS.map((beat, i) => {
             const on = staticMode || active === i + 1;
             return (
-              <li key={beat.id} className="flex h-[100svh] items-center px-6">
+              <li key={beat.id} className="flex h-[82svh] items-center px-6 md:h-[100svh]">
                 <div className="mx-auto w-full max-w-6xl">
                   <div
                     className="relative max-w-[46rem] transition-[opacity,transform] duration-700 ease-out"
@@ -381,7 +385,7 @@ export default function LandingStory({
           })}
         </ol>
 
-        <div className="flex h-[100svh] items-center px-6">
+        <div className="flex h-[82svh] items-center px-6 md:h-[100svh]">
           <div className="mx-auto w-full max-w-6xl">
             <div
               className="relative max-w-[46rem] transition-opacity duration-700 ease-out"
