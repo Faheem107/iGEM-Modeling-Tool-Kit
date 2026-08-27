@@ -58,6 +58,12 @@ export default function MolstarViewer({
   // Brand colour kept in a ref so structure reloads re-apply it without a re-render.
   const colorRef = useRef(color);
   colorRef.current = color;
+  // Read once, at init. The effect below creates the WebGL context, so it must
+  // run exactly once; holding these in refs says so, rather than leaving them
+  // as stale closures the dependency array quietly drops.
+  const emphasisRef = useRef(emphasis);
+  const onReadyRef = useRef(onReady);
+  onReadyRef.current = onReady;
 
   // Apply an auto-rotation speed to the trackball; speed 0 turns it off. The spin params MUST carry
   // an `axis` (the animation loop reads axis[0..2]); omitting it crashes Mol*'s trackball each frame.
@@ -118,7 +124,7 @@ export default function MolstarViewer({
         // sites lean on depth, not hard lines) plus a faint edge so the structure
         // stays crisp against the glow. Guarded, if this Mol* build shapes the
         // params differently we skip it and the structure still renders normally.
-        if (emphasis) {
+        if (emphasisRef.current) {
           try {
             plugin.canvas3d?.setProps({
               postprocessing: {
@@ -168,7 +174,7 @@ export default function MolstarViewer({
 
         pluginRef.current = plugin;
         setReady(true);
-        onReady?.({
+        onReadyRef.current?.({
           setSpinSpeed: (speed: number) => {
             spinSpeedRef.current = speed;
             applySpin(speed);
