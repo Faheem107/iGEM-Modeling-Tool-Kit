@@ -390,7 +390,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
         label:
           "Plant-derived urease EICP costing (2025), PLOS One, doi:10.1371/journal.pone.0331241, Table 3",
         detail:
-          "Enzymatic carbonate precipitation at about $52 per m³ against about $135 per m³ for microbial MICP. Both are scaled estimates from a heavy-metal immobilisation study, not metered field spend, and they price a treated soil column rather than a thin surface crust. Read the ratio between the two routes, not either number against ours.",
+          "Enzymatic carbonate precipitation at about $52 per m³ against about $135 per m³ for microbial MICP. Both are worked-out estimates from a study about locking heavy metals into soil, not money anyone actually spent in a field, and they pay for treating a deep column of soil rather than a thin surface crust. Read the ratio between the two routes, not either number against ours.",
         kind: "literature",
         url: "https://doi.org/10.1371/journal.pone.0331241",
       },
@@ -419,7 +419,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label: "Conventional baselines, and how soft they are",
         detail:
-          "Soilworks does not publish a price for Soiltac and gives its service life as anything from weeks to several years, so the 2800 USD per hectare chemical baseline is an estimate against a moving target. Published palliative costings land above it, which means the baseline is conservative and our break-even is if anything too long. The concrete blanket figure is weaker still and should be read as a placeholder.",
+          "Soilworks does not publish a price for Soiltac and gives its service life as anything from weeks to several years, so the 2800 USD per hectare chemical baseline is an estimate against a moving target. Published costs for the same kind of product come out higher, so if anything we are being hard on ourselves and the break-even area shown here is too large rather than too small. The concrete blanket figure is weaker still and should be read as a placeholder.",
         kind: "internal",
         url: "https://www.fs.usda.gov/t-d/pubs/pdf/99771207.pdf",
       },
@@ -613,7 +613,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label: "Most of the dust in the air over the UAE is not ours to treat",
         detail:
-          "Published source attribution puts roughly 60 percent of it over Iraq, 25 percent over the Afghanistan, Pakistan and Iran border region, and 15 percent over the Empty Quarter. Treating a dune patch does nothing to that fraction. What it acts on is the sand that hops nearby and the dust knocked loose close to the treated ground, which is a smaller and more local claim than the numbers on this page might suggest.",
+          "Published work traces roughly 60 percent of it back to Iraq, 25 percent to the Afghanistan, Pakistan and Iran border region, and 15 percent to the Empty Quarter. Treating a dune patch does nothing to that fraction. What it acts on is the sand that hops nearby and the dust knocked loose close to the treated ground, which is a smaller and more local claim than the numbers on this page might suggest.",
         kind: "literature",
       },
       {
