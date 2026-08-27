@@ -876,6 +876,44 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   // A reader meets these three for the first time in the validation section,
   // where the whole point is that they can check our reasoning rather than
   // take a verdict on trust.
+  "bagnold-coefficient": {
+    title: "Bagnold coefficient A",
+    plain:
+      "A plain number, around 1.5 to 2.8, that sits in the sand-transport equation and sets how much sand a given wind actually carries. It is not derived from anything; it was fitted to wind-tunnel measurements in the 1940s and every model since has borrowed it. We take ours from published values rather than measuring it.",
+    category: "Wind Mechanics",
+  },
+  bias: {
+    title: "Reading high or low",
+    plain:
+      "An instrument or a model has a bias when it is wrong in the same direction every time, rather than scattering either side of the truth. A thermometer that always reads two degrees warm has a bias. Bias matters more than scatter here, because scatter averages out over thousands of hours and bias does not.",
+    category: "Method",
+  },
+  median: {
+    title: "The middle value",
+    plain:
+      "Line every result up smallest to largest and take the one in the middle. Half are better, half are worse. We report medians rather than averages because one very wrong month can drag an average a long way, and the median tells you what a typical month looked like.",
+    category: "Method",
+  },
+  "wind-tail": {
+    title: "The windiest hours",
+    plain:
+      "The small number of hours in a season when the wind is at its strongest. They are called the tail because they sit at the far end of the graph of how often each wind speed happens. Almost no sand moves on an ordinary day, so nearly all of a season's sand is carried in these few hours. Getting the tail slightly wrong gets the sand very wrong.",
+    category: "Wind and Exposure",
+    module: "Exposure and the commercial case",
+  },
+  anemometer: {
+    title: "Anemometer",
+    plain:
+      "The instrument that measures wind speed, usually spinning cups or a small propeller on a mast. Airports keep one on open ground and report what it reads about once an hour. It measures the wind at one point, which is why it does not agree exactly with a model that averages the wind over 31 kilometres.",
+    category: "Wind and Exposure",
+  },
+  "crest-bearing": {
+    title: "Which way a dune ridge points",
+    plain:
+      "A long dune has a ridge line running along the top of it. Its bearing is the compass direction that ridge runs in, measured in degrees from north. Dunes line up with the wind that built them, so the direction of the ridges is a record of the wind, written in the ground, that we can check our model against.",
+    category: "Wind and Exposure",
+    module: "Exposure and the commercial case",
+  },
   "held-out-test": {
     title: "Holding a year back",
     plain:
@@ -976,6 +1014,19 @@ export const ALIASES: Record<string, string> = {
   "sand seas": "sand-sea",
   "grid cell": "grid-cell",
   // How the model was tested.
+  "windiest few hours": "wind-tail",
+  "wind to surface shear ratio": "friction-velocity",
+  "bagnold coefficient a": "bagnold-coefficient",
+  "bagnold coefficient": "bagnold-coefficient",
+  "crust cohesion": "composite-cohesion",
+  "the tail": "wind-tail",
+  "windiest hours": "wind-tail",
+  tail: "wind-tail",
+  "crest bearing": "crest-bearing",
+  "crest bearings": "crest-bearing",
+  "ridge lines": "crest-bearing",
+  biased: "bias",
+  anemometers: "anemometer",
   "held-out": "held-out-test",
   "held out": "held-out-test",
   "holding a year back": "held-out-test",
