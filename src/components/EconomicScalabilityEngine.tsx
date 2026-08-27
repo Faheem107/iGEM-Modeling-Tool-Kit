@@ -33,6 +33,7 @@ import {
   Panel,
   Slider,
   StatCard,
+  Note,
   ModuleActions,
   chartColors,
   tooltipStyle,
@@ -108,6 +109,36 @@ export default function EconomicScalabilityEngine({
           conventionalCostPerHa.chemical) *
         100
       : 0;
+
+  // The closing read of the module: what the numbers above imply, in one place.
+  // Every figure is taken from `cost` so the sentence cannot drift from the chart.
+  const breakEvenHa = Number.isFinite(cost.breakEvenHaVsChemical)
+    ? Math.ceil(cost.breakEvenHaVsChemical)
+    : null;
+  const co2Tonnes = cost.co2Total < 0 ? Math.abs(cost.co2Total) / 1000 : 0;
+
+  const takeaway = [
+    `Treating one hectare costs about $${Math.round(cost.costPerHa).toLocaleString()}.`,
+    `Spraying the same hectare with the conventional chemical costs about $${Math.round(conventionalCostPerHa.chemical).toLocaleString()}.`,
+    breakEvenHa === null
+      ? "At these settings the treatment costs more per hectare than spraying does, however large the area, so there is no size at which it pays for itself."
+      : `The setup is bought once, so the treatment only works out cheaper past about ${breakEvenHa.toLocaleString()} hectares, and the area set here is ${targetArea >= breakEvenHa ? "past" : "below"} that point.`,
+    co2Tonnes > 0
+      ? `The calcite route also stores about ${co2Tonnes.toFixed(0)} tonnes of CO\u2082 over the ${targetArea.toLocaleString()} hectares set here.`
+      : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const takeawayNote = [
+    "None of these prices is a supplier quote yet. They are our own estimates, and the calcium and enzyme cost is the one that moves the answer most.",
+    "The comparison is also one treatment against one spray, not the same length of service: our crust is resprayed about every six months, and we have no figure for how long the chemical lasts.",
+    selected.includes(3)
+      ? "The alginate route is priced so it can be compared, not because it is carried forward."
+      : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const barColor = (kind: string) =>
     kind === "selected"
@@ -283,9 +314,8 @@ export default function EconomicScalabilityEngine({
           <p
             className={`mt-1 text-[length:var(--text-caption)] flex items-center gap-2 text-muted-foreground`}
           >
-            Indigo = your selected
-            combination. Every biological combination sits far below the
-            conventional chemical (blue) and concrete (red) baselines.
+            Each bar is one combination&apos;s cost for a hectare. The last two
+            are what the conventional options cost for the same hectare.
           </p>
         </Panel>
 
@@ -341,6 +371,20 @@ export default function EconomicScalabilityEngine({
                 ? `Break-even vs chemical spray at about ${Math.ceil(cost.breakEvenHaVsChemical)} ha.`
                 : "At these settings the treatment never breaks even against chemical spray, however large the area."}
             </p>
+          </div>
+        </Panel>
+
+        <Panel
+          title="What this adds up to"
+          isLightMode={isLightMode}
+        >
+          <div className="space-y-2">
+            <p
+              className={`text-[length:var(--text-micro)] leading-relaxed text-muted-foreground`}
+            >
+              {takeaway}
+            </p>
+            <Note label="What would make this wrong">{takeawayNote}</Note>
           </div>
         </Panel>
       </div>
