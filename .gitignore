@@ -45,6 +45,13 @@ Wind model for business, in plain terms.txt
 # transcribe it. Neither is code.
 Model Wiki Page.md
 beat1-transcription.png
+# The business/narrative subteam's working document, and the screenshots taken
+# while reviewing the landing animation. The sources it cites are recorded in
+# src/lib/moduleSources.ts, which is what a reader actually needs.
+Dune_ Stay at home.md
+*.png
+!public/**/*.png
+!app/icon.png
 skills-lock.json
 manim_videos/README.md
 project reframe/

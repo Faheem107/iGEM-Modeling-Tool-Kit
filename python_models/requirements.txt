@@ -1,0 +1,8 @@
+# What the scripts in this directory need. The versions are the ones they were
+# last run and their plots regenerated against; nearby versions are fine.
+#
+# Only fba.py needs scipy (linprog). Everything else runs on numpy + matplotlib.
+# damage.py, pv.py and wind_stats.py are pure standard library.
+numpy==1.26.4
+scipy==1.15.2
+matplotlib==3.10.1
