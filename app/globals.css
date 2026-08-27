@@ -59,24 +59,20 @@
   --plate: rgb(255 255 255 / 0.55);
   --plate-border: rgb(42 26 22 / 0.1);
 
-  /* ---- The type scale. Five sizes, floor at 13px. ----
+  /* ---- The type scale. Five sizes, floor at 12px. ----
    * Nothing on the site renders below --text-caption. --text-display is the one
-   * documented exception, used once, on the hero. --text-h2 and --text-lede were
-   * retired: h2 never had a consumer, and lede was --text-body with extra steps.
-   *
-   * The floor was 11px and the whole interface had settled onto it: on the model
-   * workspace, 509 elements rendered at 11px and only 49 at body size, and of the
-   * elements carrying a full sentence, 36 were at 11px against 7 at 13px. A label
-   * size was doing the work of a reading size. The scale moved up one step so the
-   * floor is a size a judge can read at arm's length, and body now sits at 18px,
-   * which is where a long-form page usually lands. Sizes stay relative, so this
+   * documented exception, used once, on the hero. Sizes stay relative, so this
    * is the one place to change them. */
-  --text-caption: 0.8125rem;
-  --text-micro: 0.9375rem;
-  --text-body: 1.125rem;
-  --text-h3: clamp(1.25rem, 1.8vw, 1.5rem);
-  --text-h1: clamp(2.125rem, 4.8vw, 3.5rem);
+  --text-caption: 0.75rem;
+  --text-micro: 0.875rem;
+  --text-body: 1.0625rem;
+  --text-h3: clamp(1.1875rem, 1.7vw, 1.4375rem);
+  --text-h1: clamp(2rem, 4.6vw, 3.25rem);
   --text-display: clamp(2.75rem, 8vw, 6rem);
+
+  /* The headline size for a landing beat: bigger than h1, one line of a
+   * sentence set as the thing you read first. */
+  --text-beat: clamp(1.75rem, 3.6vw, 3rem);
 
   /* The measure. Prose past about 70 characters loses the reader on the return
    * sweep, and several blocks were running to 150. Anything set as a sentence
