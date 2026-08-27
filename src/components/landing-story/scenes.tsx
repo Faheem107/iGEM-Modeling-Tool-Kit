@@ -8,6 +8,8 @@ import {
   blobPath,
   blend,
   crustBed,
+  saltation,
+  windStreaks,
   CRUST_HORIZON,
   type Grain,
 } from "@/src/lib/dune-story/geometry";
@@ -31,6 +33,32 @@ const frame = "absolute inset-0 h-full w-full";
 // so the full-bleed backgrounds still reach both edges.
 const SUBJECT = "translate(230 0)";
 
+// The wind runs on its own clock; --wind is the only part of it the scroll
+// sets, so the same streaks carry the calm of the hero and the threshold of
+// beat 1.
+function Wind({ y0, y1, colour }: { y0: number; y1: number; colour: string }) {
+  const streaks = useMemo(() => windStreaks(y0, y1), [y0, y1]);
+  return (
+    <g fill="none" stroke={colour} strokeLinecap="round" style={{ opacity: "var(--wind, 0)" }}>
+      {streaks.map((w, i) => (
+        <path
+          key={i}
+          className="story-wind"
+          d={w.d}
+          strokeWidth={w.width}
+          style={
+            {
+              "--gust": `${w.gust}px`,
+              animationDelay: `${w.delay}s`,
+              opacity: w.fade,
+            } as React.CSSProperties
+          }
+        />
+      ))}
+    </g>
+  );
+}
+
 export function FieldScene({ isLightMode }: { isLightMode: boolean }) {
   const ridges = useMemo(
     () =>
@@ -46,6 +74,7 @@ export function FieldScene({ isLightMode }: { isLightMode: boolean }) {
     ? ["#e3cba2", "#dfbe8c", "#d6ac72", "#c8965a"]
     : ["#241a12", "#2c2015", "#352618", "#3f2c1b"];
   const lit = isLightMode ? "#f7e6c4" : "#5c4025";
+  const hops = useMemo(() => saltation(), []);
 
   return (
     <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" className={frame} aria-hidden>
@@ -74,6 +103,24 @@ export function FieldScene({ isLightMode }: { isLightMode: boolean }) {
           <path d={d} fill="none" stroke={lit} strokeWidth="1.4" opacity={isLightMode ? 0.5 : 0.3} />
         </g>
       ))}
+
+      <Wind y0={300} y1={620} colour={lit} />
+
+      {/* Grains hopping along the near ridge. They are what the beat is about,
+          so they arrive with it rather than with the frame. */}
+      <g fill={isLightMode ? "#f7e6c4" : "#c99a5e"} style={{ opacity: "var(--lift, 0)" }}>
+        {hops.map((h, i) => (
+          <g
+            key={i}
+            className="story-hop"
+            style={{ "--hop-x": `${h.dx}px`, animationDelay: `${h.delay}s` } as React.CSSProperties}
+          >
+            <g style={{ "--hop-y": `${h.dy}px` } as React.CSSProperties}>
+              <circle cx={h.x} cy={h.y} r={h.r} />
+            </g>
+          </g>
+        ))}
+      </g>
     </svg>
   );
 }
@@ -612,6 +659,8 @@ export function CrustScene({ isLightMode }: { isLightMode: boolean }) {
           </g>
         );
       })}
+
+      <Wind y0={330} y1={640} colour={isLightMode ? "#fff2d2" : "#8a6a44"} />
 
       <rect x="0" y="0" width="1200" height="800" fill="url(#ls-crust-vignette)" />
     </svg>

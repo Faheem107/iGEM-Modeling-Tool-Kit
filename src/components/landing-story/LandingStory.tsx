@@ -92,6 +92,12 @@ export default function LandingStory({
     const render = (s: number) => {
       const dive = smooth(s, 0.9, 1.85);
       place(fieldRef.current, `scale(${(1 + dive * 4.5).toFixed(4)})`, 1 - smooth(s, 1.25, 1.8));
+      if (fieldRef.current) {
+        // The hero has wind; beat 1 is where it crosses the threshold and the
+        // surface starts to move.
+        fieldRef.current.style.setProperty("--wind", (0.3 + 0.7 * smooth(s, 0.4, 1.0)).toFixed(3));
+        fieldRef.current.style.setProperty("--lift", smooth(s, 0.55, 1.05).toFixed(3));
+      }
 
       if (descentRef.current)
         descentRef.current.style.opacity = (
@@ -121,6 +127,8 @@ export default function LandingStory({
 
       const crust = smooth(s, 4.25, 4.85);
       place(crustRef.current, `scale(${(1.35 - crust * 0.35).toFixed(4)})`, crust);
+      // The same wind as the opening, over ground that no longer answers it.
+      crustRef.current?.style.setProperty("--wind", crust.toFixed(3));
 
       if (heroRef.current) {
         const o = 1 - smooth(s, 0.08, 0.5);
