@@ -71,6 +71,7 @@ rebuilt.
 |---|---|---|
 | `era5_wind_climatology.json` | `fit_era5_weibull.py` | ERA5 hourly wind, via Open-Meteo |
 | `wind_validation.json` | `write_wind_validation.py` | ERA5 against airport METAR and Kuwait drift data |
+| `pv_site_drift.json` | `pv_site_drift.py` | ERA5 at the large Gulf solar sites in the Global Solar Power Tracker |
 | `uae_pv_climatology.json` | `fetch_pv_climatology.py` | ERA5 irradiance, via Open-Meteo |
 | `uae_target_sites.json`, `uae_emirates.geojson` | `fetch_target_sites.py` | OpenStreetMap, Natural Earth |
 | `ginoux_middle_east_mam.geojson` | `prepare_sources.py` | Ginoux et al. 2012 dust source map |
@@ -80,8 +81,9 @@ rebuilt.
 | `uae_parameters.json` | `link_uae_parameters.py` | literature values |
 
 Licences of the inputs: ERA5 under the Copernicus licence and Open-Meteo under
-CC BY 4.0; OpenStreetMap under ODbL 1.0; Natural Earth public domain; SoilGrids
-CC BY 4.0.
+CC BY 4.0; OpenStreetMap under ODbL 1.0; the Global Energy Monitor Global Solar
+Power Tracker (February 2026) under CC BY 4.0; Natural Earth public domain;
+SoilGrids CC BY 4.0.
 
 ## Videos
 
