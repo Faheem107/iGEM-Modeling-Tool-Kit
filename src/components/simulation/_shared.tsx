@@ -141,7 +141,7 @@ export function Slider({
 /**
  * A caption-size disclosure for one clarification.
  *
- * The rule it exists to enforce (CLAUDE.md, "Information order"): the number
+ * The rule it exists to enforce, the information order: the number
  * comes first, alone. A sentence explaining what a figure means goes behind
  * this, so a reader who has not yet looked at the figure is not reading about
  * it. Collapsed it is one muted line; open it is prose in place, with no

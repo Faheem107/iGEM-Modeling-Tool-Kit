@@ -3,7 +3,7 @@
  *
  * Written to match what the model can actually defend. Where a number is not
  * sourced the text says so rather than rounding to something plausible.
- * House style: see the "Writing style" and "Writing tone" sections of CLAUDE.md.
+ * House style: see the "House style" section of README.md.
  *
  * Kept short on purpose. This opens from a bookmark at the edge of /exposure,
  * next to the model it describes, so it is a short read that points at the

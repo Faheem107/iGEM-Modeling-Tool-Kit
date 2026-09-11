@@ -57,9 +57,10 @@ manim_videos/README.md
 project reframe/
 docs/
 
-# Machine-local assistant config. CLAUDE.md and the shared .claude/ files are
-# tracked, so they are re-included here against any global ignore rules.
-!CLAUDE.md
+# Machine-local assistant config, kept on disk. Only iGEM's
+# .claude/RESPONSIBLE_AI_USE.md is tracked.
+CLAUDE.md
+AGENTS.md
 .agents/
 !.claude/
 .claude/settings.local.json
@@ -113,3 +114,11 @@ model-wiki/
 
 # Resume cache for scripts/verify_wind_stations.py (METAR from the IEM archive)
 .metar_cache/
+
+# The unedited iGEM template README. README.md replaces it.
+README_igem_original.md
+
+# Business-team market sizing (GEM Global Solar Power Tracker via an R script
+# kept elsewhere). scripts/pv_site_drift.py reads drylab_sites_gcc.csv from here
+# and writes only the derived wind statistics to public/data/.
+Solar Panel output/

@@ -97,7 +97,7 @@ def fetch(station):
 
 
 def parse(text):
-    """{'YYYY-MM-DDTHH': (speed_ms, direction_deg)} plus the station position.
+    """{'2023-06-01T12': (speed_ms, direction_deg), ...} plus the station position.
 
     METAR can report several observations in an hour. The one on the hour wins,
     because that is what ERA5's hourly value is closest to.
