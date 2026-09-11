@@ -98,12 +98,6 @@ conda run -n manimenv python manim_videos/build.py killswitch   # one
 `build.py` writes `public/videos/<id>.mp4` and its subtitle track
 `public/videos/<id>.en.vtt`.
 
-## House style
-
-Text on the site is plain and short, with no em dashes, and nothing in the code
-or the content carries an AI signature or credit. `npm run audit:content` fails
-the build on either.
-
 ## Licence
 
 Apache License 2.0. See [LICENSE](LICENSE).
