@@ -759,9 +759,23 @@ export const ECONOMIC_CALIB = {
   caReagentCostPerHa: calib(
     650,
     "USD·ha⁻¹",
-    "enzyme induction + Ca dosing per hectare",
+    "enzyme induction + Ca dosing for one hectare of crust at the reference depth below. Cross-checked against the Ulan Buh field recipe: 4 L·m⁻² of 0.2 M solution is ≈888 kg CaCl₂ per hectare, ≈$133 at bulk price, leaving ≈$517 for enzyme and inducer",
     "Cost calcium + inducer dosing for one treated hectare.",
     [200, 1500],
+  ),
+  /**
+   * The crust depth `caReagentCostPerHa` was costed at. Reagent is sprayed onto
+   * the surface and soaks roughly one pore volume down, so the dose scales with
+   * depth. Without this the calcite prong cost the same for a 5 mm crust as for
+   * a 50 mm one, which is the axis the comparison against published per-m³ MICP
+   * costs turns on.
+   */
+  caReagentReferenceDepthMm: calib(
+    12.5,
+    "mm",
+    "the crust the Ulan Buh field trial grew at 4 L·m⁻² and 0.2 M, which is where the per-hectare dose above comes from",
+    "Record the crust depth the dosing was costed against.",
+    [5, 30],
   ),
   co2CreditPerKg: calib(
     0.01,
@@ -772,11 +786,11 @@ export const ECONOMIC_CALIB = {
   ),
   // --- Prong 3: sodium alginate (purchased commodity) ---
   alginateCostPerKg: calib(
-    9.0,
+    10.5,
     "USD·kg⁻¹",
-    "food/technical-grade sodium alginate; within the 2024 bulk market band ≈ $6–12/kg (IMARC / Procurement Resource price trend)",
+    "food/technical-grade sodium alginate. IMARC price trend, Sept 2025: US $13.2, Germany $10.6, France $10.2, Spain $8.9 per kg. 10.5 is the middle of that spread; the earlier 9.0 sat at its floor",
     "Quote alginate + CaCl₂ crosslinker per kg applied.",
-    [4, 20],
+    [8, 20],
   ),
   alginateDoseKgPerHa: calib(
     400,
@@ -803,16 +817,16 @@ export const ECONOMIC_CALIB = {
   chemicalSprayCostPerHa: calib(
     2800,
     "USD·ha⁻¹",
-    'petrochemical dust-suppressant (polymer emulsion class; cf. USDA FS "Dust Palliative Selection and Application Guide", commercial Soiltac/Soilworks)',
+    "petrochemical dust suppressant. Published costs span a wide band: a light copolymer blend at ≈$490/acre (≈$1,200/ha), magnesium chloride at 0.3–0.5 gal/yd² and $0.80–1.50/gal (≈$2,900–9,000/ha), and chemical suppressants generally quoted at $0.50–2.00/yd² (≈$6,000–24,000/ha). 2800 is a deliberately low pick inside that band, so the comparison does not flatter us",
     "Vendor quote for conventional chemical stabiliser.",
-    [1500, 4000],
+    [1200, 24000],
   ),
   concreteBlanketCostPerHa: calib(
-    18500,
+    300000,
     "USD·ha⁻¹",
-    "hard-engineering blanket",
+    "hard-engineering blanket, priced off sprayed concrete at $30–50 m⁻² (Angi / HomeAdvisor 2025 contractor data, rising to $65 m⁻² in dense regions). 300000 USD·ha⁻¹ is $30 m⁻², the bottom of that range. The previous 18500 worked out at $1.85 m⁻², which no concrete surface can be laid for",
     "Contractor quote for concrete/aggregate matting.",
-    [10000, 30000],
+    [200000, 650000],
   ),
 } as const;
 

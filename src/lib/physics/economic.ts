@@ -79,13 +79,22 @@ export function prongTreatmentCost(
 
   if (prong === 2) {
     // CaCO₃ / MICP: calcium + enzyme dosing, minus a CO₂ credit.
+    // The reagent is sprayed on and soaks about one pore volume down, so the
+    // dose goes with depth. Costing it flat made a 50 mm crust as cheap as a
+    // 5 mm one, and depth is exactly what separates this from the per-m³ figures
+    // published for full-depth biocementation.
+    const depthScale =
+      ctx.crustThicknessMm / cval(E.caReagentReferenceDepthMm);
     const co2KgPerHa =
       ((ctx.co2SequesteredGPerL ?? 0) / 1000) * (volumePerHa * 1000); // g/L × L(=m³·1000) → kg
     const credit = co2KgPerHa * cval(E.co2CreditPerKg);
     return {
       prong: 2,
       capex: cval(E.bacterialSetupCapex),
-      opexPerHa: Math.max(0, cval(E.caReagentCostPerHa) - credit),
+      opexPerHa: Math.max(
+        0,
+        cval(E.caReagentCostPerHa) * depthScale - credit,
+      ),
       co2PerHa: -co2KgPerHa, // sequestered
     };
   }

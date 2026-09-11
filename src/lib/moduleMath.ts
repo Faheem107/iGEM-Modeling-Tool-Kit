@@ -307,14 +307,19 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
       "Cost is built bottom-up per prong (fermentation for γ-PGA, feedstock + enzyme for CaCO₃, commodity purchase for alginate) then summed for the chosen combination and compared against conventional stabilisers.",
     blocks: [
       {
-        tex: "C_{\\text{combo}} = \\sum_{p \\in \\text{prongs}} C_p^{\\text{capex}} + A \\sum_{p} C_p^{\\text{opex/ha}}",
+        tex: "C_{\\text{combo}} = C^{\\text{capex}} + A \\left( \\sum_{p} C_p^{\\text{opex/ha}} + C^{\\text{app/ha}} \\right)",
         caption:
-          "Total cost of a combination: per-prong capital plus per-hectare operating cost over area A.",
+          "Total cost over area A. The two bacterial prongs share one bioprocess capex, and the field application pass is paid once per hectare whatever the combination.",
       },
       {
-        tex: "A_{\\text{break-even}} = \\frac{C^{\\text{capex}}}{C_{\\text{conv}}^{\\text{/ha}} - C^{\\text{opex/ha}}}",
+        tex: "C_2^{\\text{opex/ha}} = C_{\\text{Ca}}^{\\text{/ha}} \\, \\frac{h}{h_{\\text{ref}}} - p_{\\text{CO}_2} m_{\\text{CO}_2}",
         caption:
-          "Area at which the biological treatment undercuts the conventional chemical/concrete baseline.",
+          "The CaCO₃ dose soaks about one pore volume down, so it scales with crust depth h against the 12.5 mm depth it was costed at, less a small CO₂ credit.",
+      },
+      {
+        tex: "A_{\\text{break-even}} = \\frac{C^{\\text{capex}}}{C_{\\text{chem}}^{\\text{/ha}} - \\left( C^{\\text{opex/ha}} + C^{\\text{app/ha}} \\right)}",
+        caption:
+          "Area above which the treatment costs less than the chemical spray baseline. If the recurring cost is above the spray's, there is no break-even.",
       },
     ],
   },

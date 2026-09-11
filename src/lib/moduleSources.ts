@@ -397,14 +397,14 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label: "Why our per-hectare figure is so far under that $135 per m³",
         detail:
-          "Spread over the 120 m³ of crust in a hectare, 650 USD is about 5 USD per m³. The gap is mostly real: those studies cement a whole soil column to a load-bearing strength, we grow a thin crust to resist wind, and our route makes carbonate from CO₂ rather than urea so it skips roughly 480 kg of urea per hectare. What remains unresolved is that the calcite cost here does not change when the crust depth changes, and depth is exactly what the comparison turns on.",
+          "650 USD buys the dose for a 12.5 mm crust, which is 125 m³ of soil in a hectare, so about 5 USD per m³. The dose scales with depth, so that per-m³ figure holds at any depth. The gap is mostly real: those studies cement a whole soil column to a load-bearing strength, we grow a thin crust to resist wind, and our route makes carbonate from CO₂ rather than urea so it skips roughly 480 kg of urea per hectare. The part we cannot yet check is whether one pore volume of reagent is really enough at depths well beyond the 12.5 mm field trial.",
         kind: "internal",
       },
       {
         label:
-          "Sodium-alginate market price, IMARC price trend (Sept 2025: US $13.2, Germany $10.6, Spain $8.9 kg⁻¹)",
+          "Sodium-alginate market price, IMARC price trend (Sept 2025: US $13.2, Germany $10.6, France $10.2, Spain $8.9 kg⁻¹)",
         detail:
-          "Our 9 USD per kg sits at the bottom of that spread and roughly 30 percent under the US price, so the alginate prong is costed optimistically.",
+          "We use 10.5 USD per kg, the middle of that spread. It is about 20 percent under the US price, so the alginate route is still costed slightly in its favour.",
         kind: "literature",
         url: "https://www.imarcgroup.com/sodium-alginate-price-trend",
       },
@@ -419,7 +419,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label: "Conventional baselines, and how soft they are",
         detail:
-          "Soilworks does not publish a price for Soiltac and gives its service life as anything from weeks to several years, so the 2800 USD per hectare chemical baseline is an estimate against a moving target. Published costs for the same kind of product come out higher, so if anything we are being hard on ourselves and the break-even area shown here is too large rather than too small. The concrete blanket figure is weaker still and should be read as a placeholder.",
+          "Soilworks does not publish a price for Soiltac and gives its service life as anything from weeks to several years, so the 2800 USD per hectare chemical baseline is an estimate against a moving target. Published costs for dust suppressants run from about 1,200 USD per hectare for a light copolymer blend to over 20,000 for heavier products. 2800 sits near the low end, so the break-even area shown here is more likely too large than too small. The concrete figure is sprayed concrete at 30 USD per m², the bottom of 2025 US contractor prices of 30 to 50 USD per m². It is a permanent surface rather than a treatment, so it sits on the chart for scale.",
         kind: "internal",
         url: "https://www.fs.usda.gov/t-d/pubs/pdf/99771207.pdf",
       },

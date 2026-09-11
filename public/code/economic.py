@@ -7,12 +7,13 @@ carbon-market literature, plus break-even area vs a conventional chemical spray.
 
 Exact port of src/lib/physics/economic.ts.
   Prong 1 (gamma-PGA)  : fermentation (glucose + salts + utilities), scaled by broth yield
-  Prong 2 (CaCO3/MICP) : calcium + enzyme dosing, minus a CO2 credit
+  Prong 2 (CaCO3/MICP) : calcium + enzyme dosing, scaled by crust depth, minus a CO2 credit
   Prong 3 (alginate)   : purchased commodity biopolymer + crosslinker
   Bacterial prongs (1,2) share one bioprocess capex; alginate needs none.
 
 Constants from ECONOMIC_CALIB (constants.ts): capex 25000 USD, application 180 USD/ha,
-chemical baseline 2800 USD/ha, caReagent 650 USD/ha, alginate 9 USD/kg x 400 kg/ha, etc.
+chemical baseline 2800 USD/ha, concrete 300000 USD/ha (30 USD/m2), caReagent 650 USD/ha
+for a 12.5 mm crust, alginate 10.5 USD/kg x 400 kg/ha, etc.
 Every figure is checked against a cited study (see moduleSources). Run:  python economic.py
 """
 
@@ -30,9 +31,10 @@ plt.rcParams.update({
 # ECONOMIC_CALIB
 GLUCOSE_KG, MEDIA_L, UTIL_L, GLUC_FRAC = 0.4, 0.08, 0.04, 0.03
 CA_REAGENT_HA, CO2_CREDIT_KG = 650.0, 0.01
-ALG_KG, ALG_DOSE_HA = 9.0, 400.0
+CA_REAGENT_REF_MM = 12.5          # crust depth the reagent dose was costed at
+ALG_KG, ALG_DOSE_HA = 10.5, 400.0
 CAPEX, APPLICATION_HA = 25000.0, 180.0
-CHEM_HA, CONCRETE_HA = 2800.0, 18500.0
+CHEM_HA, CONCRETE_HA = 2800.0, 300000.0
 
 CTX = dict(crust_mm=5.0, pga_yield_g_per_L=25.0, pga_demand_kg_per_m3=2.0,
            co2_g_per_L=8.0)
@@ -50,8 +52,10 @@ def prong_opex(prong, ctx=CTX):
         per_liter = GLUC_FRAC * GLUCOSE_KG + MEDIA_L + UTIL_L
         return liters * per_liter
     if prong == 2:
+        # The reagent soaks about one pore volume down, so the dose scales with depth.
+        depth_scale = ctx["crust_mm"] / CA_REAGENT_REF_MM
         co2_kg = (ctx["co2_g_per_L"] / 1000.0) * (vol * 1000.0)
-        return max(0.0, CA_REAGENT_HA - co2_kg * CO2_CREDIT_KG)
+        return max(0.0, CA_REAGENT_HA * depth_scale - co2_kg * CO2_CREDIT_KG)
     return ALG_DOSE_HA * ALG_KG
 
 
@@ -80,8 +84,8 @@ def figures():
     ax1.set_xlabel("treated area (ha)")
     ax1.set_ylabel("all-in cost  (USD/ha)")
     ax1.set_title("Cost per hectare against treated area")
-    ax1.set_ylim(0, 4000)
-    ax1.legend(frameon=False, fontsize=9)
+    ax1.set_ylim(0, 5000)
+    ax1.legend(frameon=False, fontsize=9, loc="upper right", bbox_to_anchor=(1.0, 0.84))
     fig1.tight_layout()
     figs.append((fig1, "economic-1.png"))
 
