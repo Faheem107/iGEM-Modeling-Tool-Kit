@@ -79,12 +79,14 @@ export const saltationTravelDistance = (
 ): number => (windSpeed * releaseH) / settlingVelocity(d);
 
 /**
- * Fraction of the SALTATING mass emitted at a source still airborne after
- * travelling `distanceM` downwind. This is the brief's "fraction of sand reaching
- * the target site", for the addressable mass.
+ * Fraction of the SALTATING mass emitted at a source whose single hop carries it
+ * past `distanceM` downwind.
  *
- * Deliberately an UPPER BOUND: it ignores repeated re-launch, which extends net
- * transport, and it ignores turbulence. Say so in the UI.
+ * An upper bound on one hop, because every grain is released from the top of the
+ * saltation layer. It is not how far sand travels: a grain that lands is thrown
+ * up again by the wind and by impacts, so net transport goes on hop after hop
+ * while the wind stays above the impact threshold. It must not be read as the
+ * width of ground that supplies a site, or as a belt depth.
  */
 export function nearFieldCaptureFraction(
   distanceM: number,

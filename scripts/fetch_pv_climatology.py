@@ -235,7 +235,7 @@ def main():
                       "as the wind climatology.",
             "period": f"{START} to {END}",
             "grid": f"{STEP} deg over {LON_MIN} to {LON_MAX} E, {LAT_MIN} to {LAT_MAX} N",
-            "model": "python_models/pv.py and src/lib/physics/pv.ts. HDKR transposition "
+            "model": "python_models/pv.py. HDKR transposition "
                      "(Reindl, Beckman and Duffie 1990), Sandia module temperature "
                      "(King, Boyson and Kratochvil 2004), crystalline silicon at "
                      f"{pv.GAMMA_PMP_PER_C} per degree C.",

@@ -59,7 +59,7 @@ export const BUSINESS_SECTIONS: BusinessSection[] = [
     heading: "Why a flat rate per hectare loses the information",
     body: [
       "Two hectares of the same size can differ by an order of magnitude in what they deliver to a particular asset, because delivery depends on the wind distribution, the distance and the grain size, and transport goes roughly as the cube of friction velocity above a threshold. A flat price treats them as equivalent, which discards the part the model is for.",
-      "So the basis is the modelled difference: sand arriving now, against sand arriving after treatment. It is only as good as the transport model behind it, and the near-field figure is deliberately an upper bound.",
+      "So the basis is the modelled difference: sand arriving now, against sand arriving after treatment. It is only as good as the transport model behind it. The part nearest the asset, how sand from the ground just upwind reaches it, is the least developed: the code gives the length of one hop, not how far sand travels over many.",
     ],
   },
   {

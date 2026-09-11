@@ -100,9 +100,9 @@ conda run -n manimenv python manim_videos/build.py killswitch   # one
 
 ## House style
 
-Text on the site is plain and short, with no em dashes. Nothing in the code,
-the content or the commit history carries an AI signature or credit.
-`npm run audit:content` fails the build on either.
+Text on the site is plain and short, with no em dashes, and nothing in the code
+or the content carries an AI signature or credit. `npm run audit:content` fails
+the build on either.
 
 ## Licence
 

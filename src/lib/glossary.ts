@@ -698,7 +698,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "capture-fraction": {
     title: "Capture Fraction",
     plain:
-      "The share of sand leaving a patch of ground that is still in the air by the time it reaches a given distance downwind. It drops away fast: at 10 m/s about 8 percent of the sand is still airborne after 10 metres, and essentially none after 50.",
+      "The share of hopping sand whose single hop carries it past a given distance downwind. At 10 m/s about 8 percent of hops pass 10 metres and almost none pass 50. A grain that lands is usually thrown up again by the wind and by other grains, so this is the length of one hop, not how far sand travels. Sand keeps moving downwind, hop after hop, while the wind stays above the impact threshold.",
     category: "Wind and Exposure",
     module: "Exposure and the commercial case",
   },

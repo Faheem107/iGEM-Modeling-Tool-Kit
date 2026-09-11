@@ -94,18 +94,19 @@ def lognormal_mass_fraction(d_small, d_large, mean_phi, sorting_phi):
 
 def saltation_travel_distance(d, wind_speed, release_h=SALTATION_LAYER_H_M):
     """Ballistic settling range. x = U * h / w_s.
-    An upper bound: it ignores the fact that a saltating grain is repeatedly
-    re-launched, which extends net downwind transport, and ignores turbulence."""
+    An upper bound on ONE hop, since the grain starts at the top of the layer.
+    It is not net transport: a grain that lands is re-launched by the wind and by
+    impacts, and keeps moving downwind hop after hop above the impact threshold."""
     return wind_speed * release_h / settling_velocity(d)
 
 
 def near_field_capture_fraction(distance_m, wind_speed, mean_phi, sorting_phi,
                                 n_bins=200):
-    """Fraction of the SALTATING mass emitted at a source that is still airborne
-    (that is, has not yet settled) after travelling `distance_m` downwind.
+    """Fraction of the SALTATING mass emitted at a source whose single hop carries
+    it past `distance_m` downwind.
 
-    This is the quantity the brief calls 'fraction of sand reaching the target'.
-    It is computed by integrating the grain size distribution and asking, per
+    This is the length of one hop, not the fraction of sand that reaches a target
+    that far away, because grains are re-launched after they land. It is computed by integrating the grain size distribution and asking, per
     size bin, whether that grain's ballistic range exceeds the distance.
     """
     lo_phi = -math.log2(SALTATION_MAX_M * 1000.0)
@@ -191,7 +192,7 @@ def report():
               f"   (sums to {tot*100:.2f}%)")
 
     print("\nFraction of saltating mass still airborne after distance x")
-    print("(this is the 'fraction reaching the target site', for the addressable mass)")
+    print("(one hop only; grains that land are re-launched, so sand travels further)")
     g = GRAIN["Rub al Khali"]
     dists = [1, 5, 10, 25, 50, 100, 500, 1000]
     for U in (5.0, 10.0, 15.0):

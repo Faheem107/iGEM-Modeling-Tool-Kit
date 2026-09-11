@@ -13,7 +13,8 @@ computes; applying it here too would count it twice.
 A yield model, not a plant model: no module type, row spacing, inverter loading,
 curtailment or outages.
 
-Mirror of src/lib/physics/pv.ts. Keep the two in step.
+Python only, with no website version. scripts/fetch_pv_climatology.py runs it
+to write public/data/uae_pv_climatology.json.
 
 Sources: Duffie & Beckman for solar position and extraterrestrial irradiance;
 Reindl, Beckman & Duffie (1990) for HDKR transposition; King, Boyson &
