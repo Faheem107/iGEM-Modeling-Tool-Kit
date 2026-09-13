@@ -1,0 +1,86 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:03.494
+Xanthan gum is the thickener that carries a lot of what we spray. So
+
+2
+00:00:03.594 --> 00:00:06.561
+a fair question is, how hard is it to push through a tube?
+
+3
+00:00:07.333 --> 00:00:10.950
+Its behaviour is one line. Shear stress equals a constant K times the
+
+4
+00:00:11.050 --> 00:00:14.021
+strain rate raised to a power n. For xanthan n is about a
+
+5
+00:00:14.121 --> 00:00:17.577
+quarter, well below one, and that is what makes it shear-thinning.
+
+6
+00:00:17.666 --> 00:00:20.557
+In plain terms, the faster you push it, the thinner
+
+7
+00:00:20.657 --> 00:00:22.902
+it gets. At rest it is thick, so it does
+
+8
+00:00:23.002 --> 00:00:25.951
+not drip or run off. Under pressure it flows freely.
+
+9
+00:00:26.733 --> 00:00:29.819
+Put that law into steady laminar flow down a straight tube, and
+
+10
+00:00:29.919 --> 00:00:33.814
+you get the generalized Hagen-Poiseuille result. It ties the pressure you apply
+
+11
+00:00:33.914 --> 00:00:36.089
+at one end to the flow you get out the other.
+
+12
+00:00:37.166 --> 00:00:40.340
+That is the equation the page solves, forwards and backwards,
+
+13
+00:00:40.440 --> 00:00:42.702
+so it can report either the flow for a given
+
+14
+00:00:42.802 --> 00:00:44.903
+push or the push needed for a given flow.
+
+15
+00:00:45.700 --> 00:00:48.922
+Water it down and the exponent n climbs back toward one, so
+
+16
+00:00:49.022 --> 00:00:52.694
+it behaves more like plain water, and the consistency K drops. Both
+
+17
+00:00:52.794 --> 00:00:55.735
+mean it thins out and needs far less pressure to move.
+
+18
+00:00:57.733 --> 00:01:01.187
+Two honest limits. Every number on the page comes straight from
+
+19
+00:01:01.287 --> 00:01:04.459
+these equations, so it cannot drift from the model. But it
+
+20
+00:01:04.559 --> 00:01:08.464
+is one straight, smooth, isothermal tube in laminar flow. Real delivery
+
+21
+00:01:08.564 --> 00:01:12.131
+has bends, fittings and temperature swings this does not capture.
+

@@ -1,5 +1,5 @@
 """
-CaCO3 module explainer — "Turning CO2 and calcium into rock".
+CaCO3 module explainer, "Turning CO2 and calcium into rock".
 Renders one narrated scene: Caco3Explainer.
 """
 
@@ -86,7 +86,7 @@ class Caco3Explainer(IGemScene):
         # --- 4. Supersaturation -> crystals glue grains ---------------------
         omega = self.eqn("Ω = [Ca²⁺][CO₃²⁻] / Ksp   >  1", color=CYAN, size=24).to_edge(UP, buff=0.7)
         self.say(
-            "Once the water is over-saturated — when this ratio climbs above one — the calcium "
+            "Once the water is over-saturated, when this ratio climbs above one, the calcium "
             "carbonate can no longer stay dissolved. It crystallises.",
             AnimationGroup(FadeOut(unit), FadeOut(enzyme, shift=UP * 0.3), Write(omega)), hold=0.5,
         )
@@ -127,7 +127,7 @@ class Caco3Explainer(IGemScene):
 
         clab = Text("calcite (strong)", font_size=18, color=EMERALD).move_to(vlab)
         self.say(
-            "Over the following hours vaterite slowly rearranges into strong, durable calcite — so "
+            "Over the following hours vaterite slowly rearranges into strong, durable calcite, so "
             "the crust literally keeps getting harder as it ages.",
             AnimationGroup(
                 bar.animate.stretch_to_fit_height(2.6).move_to(axis.get_bottom() + UP * 0.2 + RIGHT * 0.5, aligned_edge=DOWN).set_color(EMERALD),

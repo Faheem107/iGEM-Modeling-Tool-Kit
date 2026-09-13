@@ -13,12 +13,21 @@
 
 import type { ModuleId } from "./prongs";
 
+/**
+ * The keys the video registry accepts. Every simulation module, plus the two
+ * standalone pages that also have an explainer video: the exposure model already
+ * uses its ModuleId "exposure", and the Xanthan Flow page is not a ModuleId, so
+ * it is added here. Keeping this separate from ModuleId means MODULE_MATH and
+ * MODULE_SOURCES, which are per-module, do not need a Xanthan entry.
+ */
+export type VideoId = ModuleId | "xanthan-flow";
+
 export interface ModuleVideo {
   /** Window heading. */
   title: string;
   /** Layman, spoken-style explanation shown beside/under the video (mirrors the narration). */
   plain: string;
-  /** 45–75 s. Human-readable length label. */
+  /** Human-readable length label, matching the rendered duration. */
   length: string;
   /** Whether the rendered mp4 exists in /public/videos yet. */
   ready: boolean;
@@ -27,11 +36,11 @@ export interface ModuleVideo {
 const VIDEO_DIR = "/videos";
 
 /** Absolute public path to a module's rendered mp4. */
-export const videoSrc = (id: ModuleId) => `${VIDEO_DIR}/${id}.mp4`;
+export const videoSrc = (id: VideoId) => `${VIDEO_DIR}/${id}.mp4`;
 /** Absolute public path to a module's WebVTT subtitle track. */
-export const videoVtt = (id: ModuleId) => `${VIDEO_DIR}/${id}.en.vtt`;
+export const videoVtt = (id: VideoId) => `${VIDEO_DIR}/${id}.en.vtt`;
 
-export const MODULE_VIDEOS: Record<ModuleId, ModuleVideo> = {
+export const MODULE_VIDEOS: Record<VideoId, ModuleVideo> = {
   fba: {
     title: "How the cell decides where carbon goes",
     plain:
@@ -43,7 +52,7 @@ export const MODULE_VIDEOS: Record<ModuleId, ModuleVideo> = {
     title: "From gene to glue, step by step",
     plain:
       'A gene is a recipe. First it is copied into a short-lived message (mRNA), that message is read to build the enzyme, and the enzyme then stitches glutamate into long γ-PGA chains. We follow all three in time, and show how knocking out the "scissors" genes that chew γ-PGA back up lets it pile up instead.',
-    length: "~55 s",
+    length: "~54 s",
     ready: true,
   },
   crosslink: {
@@ -57,28 +66,28 @@ export const MODULE_VIDEOS: Record<ModuleId, ModuleVideo> = {
     title: "Bolting an enzyme to the cell wall",
     plain:
       "To speed up cementing, we put the enzyme carbonic anhydrase on the OUTSIDE of the bacterium. Getting it there is a relay: export it, fold it, and staple it down. Each step only works part of the time, so the final active fraction is those chances multiplied together, and the enzyme itself speeds the key reaction about a million-fold.",
-    length: "~55 s",
+    length: "~40 s",
     ready: true,
   },
   caco3: {
     title: "Turning CO₂ and calcium into rock",
     plain:
       "The enzyme grabs CO₂ from the air and turns it into carbonate. Carbonate meets calcium in the sand and, once the water is over-saturated, they crystallise into solid calcium carbonate that glues grains together. The twist: it does not become hard limestone instantly. It first forms a softer crystal called vaterite, which slowly rearranges into strong calcite, so the crust literally gets stronger as it ages.",
-    length: "~85 s",
+    length: "~63 s",
     ready: true,
   },
   alginate: {
     title: "The egg-box that holds sand together",
     plain:
       "Alginate is seaweed sugar. Certain stretches of the chain (the G-blocks) line up in pairs and cradle calcium ions between them, it looks exactly like eggs sitting in an egg carton. Those junctions lock the gel together. The honest catch: alginate is water-soluble, so every rain shower washes a little away.",
-    length: "~50 s",
+    length: "~45 s",
     ready: true,
   },
   thermal: {
     title: "Why heat can switch a protein off",
     plain:
       'A protein is only useful when it is folded into the right shape. Heat is a tug-of-war between order and disorder; past a certain temperature the disorder wins and the protein unfolds. We track the folded fraction, the "how alive is this enzyme" dial that gates every downstream rate.',
-    length: "~50 s",
+    length: "~40 s",
     ready: true,
   },
   "protein-3d": {
@@ -92,63 +101,70 @@ export const MODULE_VIDEOS: Record<ModuleId, ModuleVideo> = {
     title: "Spreading safely, the kill switch",
     plain:
       "A living crust keeps repairing itself, which is the point, and also the risk. The bacteria grow and diffuse across the sand like ink in water, but we engineer a kill switch: cross an environmental trigger and a toxin gene shuts the colony down. We watch growth and containment fight it out on a resource grid.",
-    length: "~55 s",
+    length: "~36 s",
     ready: true,
   },
   aeolian: {
     title: "What it takes to stop sand from blowing",
     plain:
       "Wind only moves sand once it blows harder than a threshold. Below it, nothing happens. Just above it, sand transport climbs as the cube of the wind speed. Our crust adds stickiness between grains, which raises that threshold, so the same wind that used to strip bare sand now slides harmlessly over the treated surface.",
-    length: "~60 s",
+    length: "~45 s",
     ready: true,
   },
   wetlab: {
     title: "From the bench to the dune",
     plain:
       "This connects real lab numbers, how dense the culture is, how much glutamate we feed, how salty the water is, straight into the same wind-erosion physics. Change a bench dial and watch the virtual dune hold or erode, so an experiment on Monday becomes a field prediction on Tuesday.",
-    length: "~50 s",
+    length: "~39 s",
     ready: true,
   },
   grainsize: {
     title: "No single glue fits every grain",
     plain:
-      "Sand is a mixture of grain sizes, and each binder has a size it is good at. Cementing (CaCO₃) works on fine-to-medium grains and fails on coarse and ultra-fine ones. γ-PGA and alginate cover the sizes it misses. Overlap all three and every grain size gets held, that is the whole point of using three prongs.",
-    length: "~60 s",
+      "Sand is a mixture of grain sizes, and each binder has a size it is good at. Cementing (CaCO₃) peaks on fine-to-medium grains and fails on the coarsest and the very finest ones. γ-PGA gel is strongest at the fine end, exactly where cementing cannot reach. Overlap the two and fine through medium sand is held; the coarse tail is the honest weak point they share.",
+    length: "~51 s",
     ready: true,
   },
   composite: {
-    title: "Why three prongs beat one",
+    title: "Why two prongs beat one",
     plain:
-      "Combining prongs is not simple addition. They fight over the same calcium, they share one cell's energy budget, but their chemistries can also help each other, and if one mechanism fails a storm, another still holds. We add up the cooperation, subtract the competition, and show why the team is tougher than any single prong alone.",
-    length: "~82 s",
+      "Combining the two prongs is not simple addition. They compete for the same calcium, and because calcite is the greedier sink, γ-PGA loses most. They share one cell's energy budget, so each titre drops. But the polymer's acidic groups also seed tougher calcite, a real synergy. Add the cooperation, subtract the competition and burden, and the combined crust still beats either prong, and each covers the other's failure modes.",
+    length: "~72 s",
     ready: true,
   },
   curing: {
     title: "How the crust sets, ages, and is renewed",
     plain:
-      "Spray the crust and it does not harden all at once: alginate gels in minutes, γ-PGA in hours, and calcite ripens over the full 32-hour protocol. Then months of sun and wind slowly wear it down. Because each binder sets and fades on its own clock, the fast polymers give early strength while the durable calcite floor stretches out how long until you must re-spray.",
-    length: "~65 s",
+      "Spray the crust and it does not harden all at once. γ-PGA firms up within hours for early grip, while calcite ripens over the full 32-hour protocol and ends up stronger. Over months the polymer biodegrades first, then the calcite slowly wears. Because the calcite lasts longest, it sets the re-application cadence, roughly six months, which is where the field trial stopped observing rather than a measured service life.",
+    length: "~45 s",
     ready: true,
   },
   economic: {
     title: "Does it actually pencil out?",
     plain:
-      "We build the cost from the ground up for each prong, fermentation for γ-PGA, feedstock plus enzyme for cementing, purchased alginate, then compare against conventional chemical sprays and concrete matting. The crossover point is the treated area where the biological option becomes the cheaper one, carbon credit included.",
-    length: "~55 s",
+      "We build the cost from the ground up: fermentation for γ-PGA, feedstock plus enzyme for cementing, and one shared bioprocess setup. Chemical spray is a flat rate per hectare; our crust carries an upfront cost that spreads out as the treated area grows, so past a break-even of a few tens of hectares it is the cheaper option. Concrete matting sits far above, for scale. The CO₂ credit is real but only a few dollars a hectare, so the captured tonnage is the result, not what pays for the crust.",
+    length: "~64 s",
     ready: true,
   },
   killswitch: {
-    title: "How the bacteria are switched off",
+    title: "A switch that fails safe",
     plain:
-      "Every engineered cell makes two proteins: a toxin (MazF) that shreds its own RNA, and a short-lived antitoxin (MazE) that keeps the toxin in check. While the colony is working, antitoxin wins. Add the aTc trigger, or wait for the antitoxin-carrying plasmid to dilute away over generations, and the toxin wins, so the cells self-limit. A second copy borrowed from E. coli kills any wild microbe that steals the genes, because the stolen toxin has no matching antitoxin.",
-    length: "~60 s",
-    ready: false,
+      "Each engineered cell carries a stable toxin (MazF) that chops up its own RNA, held in check by a fragile antidote (MazE) it must keep remaking. A cell that leaves the patch dilutes away the antidote, on a plasmid, over about twenty generations and shuts down; an inducer can force the toxin too. One switch escapes in about one cell in a hundred million, which meets the target per cell, but a hectare holds around 10¹⁵ cells, so that still leaves about 10⁷ escapees. Two independent switches multiply, 10⁻¹⁶, dropping expected escapees below one. The open gap: the toxin cannot kill a dormant spore until it wakes.",
+    length: "~102 s",
+    ready: true,
   },
   exposure: {
-    title: "Where the sand comes from, and what reaches a site",
+    title: "Where the sand comes from",
     plain:
-      "Wind does not move sand at an average speed. It moves almost all of it on the few days it blows hardest, because transport climbs as the cube of the wind. This walks through how a season's wind distribution becomes a mass of sand arriving at a solar farm, and what treating the ground upwind takes off that number.",
-    length: "~75 s",
-    ready: false,
+      "A solar plant loses output to sand and dust; the model asks which of it a crust can stop. We fit three years of wind and integrate the sand flux over the whole spread, because flux climbs as the cube of wind speed and a few strong days do most of the work. Summing drift over sixteen sectors gives the direction sand moves. Then the split that matters: hopping sand travels metres and a crust holds it, while fine dust rides hundreds of kilometres from sources over Iraq and Iran and no local crust touches it. So the crust addresses encroachment and burial, not haze. The weakest link, blowing sand to lost power, has no measured coefficient yet.",
+    length: "~77 s",
+    ready: true,
+  },
+  "xanthan-flow": {
+    title: "Thick until it moves",
+    plain:
+      "Xanthan gum is a shear-thinning fluid: stress equals a constant times the strain rate raised to a power n of about a quarter, so the faster you push it, the thinner it gets. At rest it is thick and does not drip; under pressure it flows. For a straight tube we solve the generalized Hagen-Poiseuille law to get the pressure a given flow needs. Dilute it and n climbs toward one, so it thins and needs far less pressure. Every number on the page comes from these equations. The limit: one straight, smooth, isothermal tube in laminar flow, with no bends, fittings or temperature swings.",
+    length: "~74 s",
+    ready: true,
   },
 };

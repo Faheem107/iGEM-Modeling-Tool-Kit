@@ -1,5 +1,5 @@
 """
-Metabolic module explainer — "From gene to glue, step by step".
+Metabolic module explainer, "From gene to glue, step by step".
 Renders one narrated scene: MetabolicExplainer.
 
 Honest to src/lib/physics (central-dogma kinetics): gene -> mRNA -> enzyme -> γ-PGA, with the
@@ -30,13 +30,13 @@ class MetabolicExplainer(IGemScene):
         mrna = VMobject(stroke_color=CYAN, stroke_width=5)
         mrna.set_points_smoothly([[-1.2, 0, 0], [-0.4, 0.25, 0], [0.4, -0.25, 0], [1.2, 0, 0]])
         mrna.next_to(gene_grp, DOWN, buff=1.0)
-        mrna_l = Text("mRNA — a short-lived copy", font_size=20, color=CYAN).next_to(mrna, DOWN, buff=0.2)
+        mrna_l = Text("mRNA, a short-lived copy", font_size=20, color=CYAN).next_to(mrna, DOWN, buff=0.2)
         arrow1 = Arrow(gene_grp.get_bottom(), mrna.get_top() + UP * 0.1, color=MUTED, stroke_width=4, buff=0.15)
         tx = Text("transcription", font_size=16, color=MUTED).next_to(arrow1, RIGHT, buff=0.15)
 
         self.say(
             "First, the gene is copied into a short-lived message called messenger R-N-A. "
-            "This copy does not last — it is made and destroyed constantly.",
+            "This copy does not last. it is made and destroyed constantly.",
             LaggedStart(FadeIn(gene_grp, shift=RIGHT * 0.2),
                         GrowArrow(arrow1), FadeIn(tx),
                         Create(mrna), FadeIn(mrna_l), lag_ratio=0.35),
@@ -48,7 +48,7 @@ class MetabolicExplainer(IGemScene):
         arrow2 = Arrow(mrna.get_right(), enzyme.get_left(), color=MUTED, stroke_width=4, buff=0.2)
         tl = Text("translation", font_size=16, color=MUTED).next_to(arrow2, UP, buff=0.1)
         self.say(
-            "That message is then read to build the enzyme — the molecular machine "
+            "That message is then read to build the enzyme, the molecular machine "
             "that does the real work.",
             LaggedStart(GrowArrow(arrow2), FadeIn(tl), FadeIn(enzyme, shift=LEFT * 0.2), lag_ratio=0.3),
             hold=0.5,
@@ -65,17 +65,17 @@ class MetabolicExplainer(IGemScene):
             b.move_to([-2.2 + i * 0.55, 0.2, 0])
         links = VGroup(*[Line(beads[i].get_right(), beads[i + 1].get_left(), color=AMBER, stroke_width=3)
                          for i in range(len(beads) - 1)])
-        chain_l = Text("γ-PGA chain — glutamate, stitched long", font_size=20, color=AMBER).next_to(beads, DOWN, buff=0.6)
+        chain_l = Text("γ-PGA chain, glutamate, stitched long", font_size=20, color=AMBER).next_to(beads, DOWN, buff=0.6)
         self.say(
             "The enzyme grabs glutamate units, one after another, and stitches them into a long "
-            "chain — gamma-P-G-A. This is the polymer that becomes our crust.",
+            "chain, gamma-P-G-A. This is the polymer that becomes our crust.",
             LaggedStart(*[GrowFromCenter(b) for b in beads], lag_ratio=0.12),
             hold=0.2,
         )
         self.play(LaggedStart(*[Create(l) for l in links], lag_ratio=0.15), FadeIn(chain_l), run_time=1.2)
 
         # --- 5. Knock out the "scissors" so it piles up ---------------------
-        scissors = Text("✂ ggt / pgdS — the scissors", font_size=22, color=ROSE, weight="BOLD").to_edge(UP, buff=0.8)
+        scissors = Text("✂ ggt / pgdS, the scissors", font_size=22, color=ROSE, weight="BOLD").to_edge(UP, buff=0.8)
         cut = Cross(scale_factor=0.5, stroke_color=ROSE, stroke_width=8).move_to(scissors.get_left() + LEFT * 0.3)
         self.say(
             "But the cell also carries genes whose enzymes chew that chain back up. "
@@ -89,7 +89,7 @@ class MetabolicExplainer(IGemScene):
         bar.move_to(bar_axis.get_bottom(), aligned_edge=DOWN)
         blab = Text("γ-PGA builds up", font_size=18, color=AMBER).next_to(bar_axis, UP, buff=0.15)
         self.say(
-            "With no scissors, the gamma-P-G-A no longer gets cut back — so it piles up, and the "
+            "With no scissors, the gamma-P-G-A no longer gets cut back, so it piles up, and the "
             "crust gets what it needs.",
             AnimationGroup(Create(bar_axis), FadeIn(bar), FadeIn(blab)), hold=0.2,
         )
@@ -98,7 +98,7 @@ class MetabolicExplainer(IGemScene):
 
         # --- 6. Payoff ------------------------------------------------------
         self.say(
-            "Gene, message, enzyme, polymer — four steps, tracked in time. That is how a line of "
+            "Gene, message, enzyme, polymer, four steps, tracked in time. That is how a line of "
             "code in the DNA turns into glue in the sand.",
             Flash(bar.get_top(), color=AMBER, line_length=0.4, num_lines=16, flash_radius=0.9),
             hold=0.5,

@@ -4,7 +4,7 @@ Shared visual language for the NYUAD iGEM 2026 module explainer videos.
 Every module video is a single narrated VoiceoverScene (Samantha + subtitles) that matches the
 toolkit's dark UI: near-black background, teal/cyan primary, amber/rose/fuchsia prong accents.
 
-Typography: there is no TeX install on this machine, so MathTex is unavailable — but to get the
+Typography: there is no TeX install on this machine, so MathTex is unavailable, but to get the
 LaTeX *look*, all text is set in **Latin Modern** (the OpenType descendant of Computer Modern,
 i.e. the exact serif LaTeX renders with). `Text.set_default(font=SERIF)` below routes every Text
 through it; "equations" are unicode Text in Latin Modern Mono. So the videos read like LaTeX
@@ -47,7 +47,7 @@ class MacSayService(SpeechService):
     Narrate with a macOS system voice (offline, free) instead of the flat gTTS robot.
 
     Shells out to `say` to synthesise an AIFF, then transcodes to mp3 with ffmpeg. Samantha
-    inflects on commas, em-dashes and question marks, so well-punctuated scripts read with far
+    inflects on commas and question marks, so well-punctuated scripts read with far
     more life than gTTS. Subtitles are still produced automatically by VoiceoverScene at the
     voiceover-block level (no whisper needed).
     """
@@ -101,9 +101,9 @@ MUTED = "#94a3b8"
 TEAL = "#2dd4bf"
 CYAN = "#22d3ee"
 INDIGO = "#818cf8"
-AMBER = "#fbbf24"      # Prong 1 — γ-PGA
-EMERALD = "#34d399"    # Prong 2 — CaCO3
-ROSE = "#fb7185"       # Prong 3 — alginate
+AMBER = "#fbbf24"      # Prong 1, γ-PGA
+EMERALD = "#34d399"    # Prong 2, CaCO3
+ROSE = "#fb7185"       # Prong 3, alginate
 FUCHSIA = "#e879f9"
 GRID = "#16233a"
 
@@ -208,7 +208,7 @@ def load_ca_trace(pdb_filename, chain=None, target_height=4.4, return_resids=Fal
     """
     Parse the Cα backbone out of a real .pdb file (ATOM … CA … records) and return an ordered
     (N,3) array of points, centred on the origin and scaled to `target_height`. No PyMOL / Biopython
-    needed — we read the fixed-column ATOM records directly. If `chain` is None the first chain seen
+    needed, we read the fixed-column ATOM records directly. If `chain` is None the first chain seen
     is used (keeps single-domain reveals clean). With `return_resids=True` also returns the list of
     integer residue numbers, so callers can honestly locate real active-site residues on the trace.
     """

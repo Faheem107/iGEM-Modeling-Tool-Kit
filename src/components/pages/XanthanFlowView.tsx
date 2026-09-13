@@ -41,6 +41,7 @@ import {
   Slider,
   StatCard,
   MathDisclosure,
+  VideoExplanationToggle,
   chartColors,
   tooltipStyle,
 } from "@/src/components/simulation/_shared";
@@ -232,6 +233,13 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
             sub="power-law fluid"
             accent="text-dune-teal"
           />
+        </div>
+      </div>
+
+      {/* The narrated walk-through of the flow model. */}
+      <div className="flex justify-end">
+        <div className="w-full sm:w-64">
+          <VideoExplanationToggle moduleId="xanthan-flow" isLightMode={isLightMode} />
         </div>
       </div>
 

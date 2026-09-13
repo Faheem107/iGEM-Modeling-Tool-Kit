@@ -1,0 +1,118 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:03.244
+A living crust is useful because it grows. That is also the
+
+2
+00:00:03.344 --> 00:00:06.475
+risk. It must not survive outside the patch we put it on.
+
+3
+00:00:06.575 --> 00:00:08.572
+So we build in a way to shut it down.
+
+4
+00:00:09.366 --> 00:00:13.586
+The cell carries a toxin, MazF, that chops up its own messenger R-N-A,
+
+5
+00:00:13.686 --> 00:00:17.535
+so it can no longer build protein and it dies. Alongside it sits
+
+6
+00:00:17.635 --> 00:00:21.361
+an antidote, MazE, that binds the toxin and holds it harmless.
+
+7
+00:00:22.133 --> 00:00:25.002
+The trick is that the antidote is fragile and must be made
+
+8
+00:00:25.102 --> 00:00:28.431
+constantly, while the toxin is stable. So the cell only stays alive
+
+9
+00:00:28.531 --> 00:00:30.888
+as long as it is healthy and where it should be.
+
+10
+00:00:31.666 --> 00:00:34.735
+There are two ways to trip it. A chemical signal can force
+
+11
+00:00:34.835 --> 00:00:38.340
+extra toxin on demand. And because the antidote rides on a plasmid
+
+12
+00:00:38.440 --> 00:00:41.727
+that is slowly lost, a cell that escapes the patch dilutes its
+
+13
+00:00:41.827 --> 00:00:45.333
+antidote away over about twenty generations and shuts itself down.
+
+14
+00:00:45.400 --> 00:00:48.699
+There is a bonus. The antidote only neutralises its own
+
+15
+00:00:48.799 --> 00:00:51.604
+species' toxin, so if the DNA ever jumps into a
+
+16
+00:00:51.704 --> 00:00:54.756
+wild microbe, that toxin simply kills the new host.
+
+17
+00:00:55.533 --> 00:00:58.613
+Now the honest arithmetic. One switch fails in about one
+
+18
+00:00:58.713 --> 00:01:01.851
+cell in a hundred million per generation, which meets the
+
+19
+00:01:01.951 --> 00:01:05.202
+standard target. But a single hectare of crust holds around
+
+20
+00:01:05.302 --> 00:01:08.212
+ten to the fifteen cells. Multiply, and that is still
+
+21
+00:01:08.312 --> 00:01:11.733
+ten million escapees per hectare. One switch is not contained.
+
+22
+00:01:12.533 --> 00:01:16.485
+The fix is redundancy. Two independent switches must both fail in the
+
+23
+00:01:16.585 --> 00:01:20.830
+same cell, so their escape frequencies multiply, ten to the minus sixteen.
+
+24
+00:01:20.930 --> 00:01:24.648
+Now the expected number of escapees on a hectare drops below one.
+
+25
+00:01:24.748 --> 00:01:27.584
+That is what crosses the line at deployment scale.
+
+26
+00:01:28.366 --> 00:01:31.404
+One caveat we do not paper over. The toxin only works
+
+27
+00:01:31.504 --> 00:01:34.542
+in an active cell, so it cannot kill a dormant spore.
+
+28
+00:01:34.642 --> 00:01:37.857
+The spore has to be woken first, and a stubborn fraction
+
+29
+00:01:37.957 --> 00:01:40.936
+resists waking. Closing that gap is still open work.
+

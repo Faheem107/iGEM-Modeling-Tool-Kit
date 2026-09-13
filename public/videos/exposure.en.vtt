@@ -1,0 +1,98 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:02.713
+A solar plant in the desert loses output to sand and
+
+2
+00:00:02.813 --> 00:00:06.121
+dust. The question this model asks is narrower and more useful.
+
+3
+00:00:06.221 --> 00:00:09.042
+Which of that can a crust on the ground actually stop?
+
+4
+00:00:09.833 --> 00:00:13.166
+Start with the wind. We take three years of hourly wind and fit
+
+5
+00:00:13.266 --> 00:00:16.762
+the spread of speeds. The reason we keep the whole spread, not the
+
+6
+00:00:16.862 --> 00:00:20.413
+average, is that sand flux climbs as roughly the cube of wind speed
+
+7
+00:00:20.513 --> 00:00:23.682
+above a threshold. A few strong days do almost all the work.
+
+8
+00:00:24.666 --> 00:00:26.856
+Only this shaded tail, the hours above
+
+9
+00:00:26.956 --> 00:00:29.085
+the threshold, moves any sand at all.
+
+10
+00:00:29.866 --> 00:00:32.782
+Next, direction. We sum the drift over sixteen compass
+
+11
+00:00:32.882 --> 00:00:35.910
+sectors, the Fryberger method, to get the direction sand
+
+12
+00:00:36.010 --> 00:00:38.758
+actually moves and how one-sided it is. That points
+
+13
+00:00:38.858 --> 00:00:41.495
+straight at the edge of the plant worth treating.
+
+14
+00:00:43.266 --> 00:00:46.354
+Now the key split. Sand near the ground hops in short
+
+15
+00:00:46.454 --> 00:00:49.482
+arcs, metres at a time. That is saltation, and it is
+
+16
+00:00:49.582 --> 00:00:52.309
+exactly what a crust on the surface holds down.
+
+17
+00:00:52.400 --> 00:00:55.044
+The fine dust is a different animal. It rides the
+
+18
+00:00:55.144 --> 00:00:58.404
+wind hundreds of kilometres from sources over Iraq and Iran.
+
+19
+00:00:58.504 --> 00:01:00.476
+No crust on a UAE plant touches that.
+
+20
+00:01:01.266 --> 00:01:03.450
+So the crust addresses sand piling up and
+
+21
+00:01:03.550 --> 00:01:05.790
+burying things, not the haze on the glass.
+
+22
+00:01:05.866 --> 00:01:09.137
+And the honest weak link is the last step: turning blowing sand
+
+23
+00:01:09.237 --> 00:01:12.989
+into lost power. We have no measured coefficient for glass abrasion yet,
+
+24
+00:01:13.089 --> 00:01:15.771
+so we leave that number blank rather than invent it.
+

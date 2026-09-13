@@ -1,5 +1,5 @@
 """
-Aeolian module explainer — "What it takes to stop sand from blowing".
+Aeolian module explainer, "What it takes to stop sand from blowing".
 Renders one narrated scene: AeolianExplainer.
 
 Honest to the aeolian model: below a threshold friction velocity nothing moves; above it, saltation
@@ -35,7 +35,7 @@ class AeolianExplainer(IGemScene):
         thr_line = DashedLine(ax.c2p(u0, 0), ax.c2p(u0, 9.5), color=ROSE, stroke_width=3)
         thr_lab = Text("threshold", font_size=20, color=ROSE).next_to(ax.c2p(u0, 9.5), UP, buff=0.1)
         self.say(
-            "Here is bare sand. Below the threshold, the curve is flat — dead calm on the ground. "
+            "Here is bare sand. Below the threshold, the curve is flat, dead calm on the ground. "
             "Above it, transport explodes as roughly the cube of the wind speed.",
             AnimationGroup(Create(ax), FadeIn(lab)), hold=0.2,
         )
@@ -49,7 +49,7 @@ class AeolianExplainer(IGemScene):
         thr_lab2 = Text("with crust", font_size=20, color=TEAL).next_to(ax.c2p(u1, 9.5), UP, buff=0.1)
         self.say(
             "Now add our living crust. The stickiness between grains means the wind has to blow much "
-            "harder before anything lifts — the whole threshold slides to the right.",
+            "harder before anything lifts, the whole threshold slides to the right.",
             AnimationGroup(Create(crust), Create(thr_line2), FadeIn(thr_lab2)), hold=0.4,
         )
 
@@ -61,7 +61,7 @@ class AeolianExplainer(IGemScene):
         d_crust = Dot(color=TEAL, radius=0.11).move_to(ax.c2p(wind_x, flux(wind_x, u1)))
         self.say(
             "Take a wind that used to strip the bare surface. On the treated sand, that exact same "
-            "wind now sits below threshold — it slides harmlessly over the top.",
+            "wind now sits below threshold, it slides harmlessly over the top.",
             AnimationGroup(Create(wind_line), FadeIn(wind_lab), GrowFromCenter(d_bare), GrowFromCenter(d_crust)),
             hold=0.4,
         )

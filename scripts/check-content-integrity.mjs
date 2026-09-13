@@ -5,8 +5,8 @@ import path from "node:path";
  * Refuses to build if the source carries scaffolding, an em dash, or an AI
  * credit.
  *
- * The first two sections of CLAUDE.md and .claude/RESPONSIBLE_AI_USE.md are
- * rules a reader has to remember. This makes three of them mechanical, so a
+ * The house style in README.md and .claude/RESPONSIBLE_AI_USE.md are rules a
+ * reader has to remember. This makes three of them mechanical, so a
  * judge never opens a page that says "coming soon" and nobody has to notice an
  * em dash by eye.
  *
@@ -17,9 +17,40 @@ import path from "node:path";
  */
 
 const projectRoot = process.cwd();
-const scanTargets = ["app", "components", "src", "lib"];
-const ignoredDirectories = new Set([".git", ".next", "node_modules", "out"]);
-const textExtensions = new Set([".css", ".js", ".jsx", ".mjs", ".ts", ".tsx"]);
+// Everything a reader of the repository sees as text: the site, the model
+// code, the scripts, the video scenes and the subtitles the videos show.
+const scanTargets = [
+  "app",
+  "components",
+  "src",
+  "lib",
+  "content",
+  "python_models",
+  "scripts",
+  "manim_videos",
+  "public/code",
+  "public/videos",
+];
+const ignoredDirectories = new Set([
+  ".git",
+  ".next",
+  "node_modules",
+  "out",
+  "__pycache__",
+  "media",
+  "pdb",
+]);
+const textExtensions = new Set([
+  ".css",
+  ".js",
+  ".jsx",
+  ".mjs",
+  ".ts",
+  ".tsx",
+  ".py",
+  ".vtt",
+  ".json",
+]);
 
 const rules = [
   {
@@ -70,16 +101,15 @@ const rules = [
     pattern: /\bplaceholder\s+(?:copy|content|data|date|description|figure|image|link|number|result|text|value)s?\b/giu,
   },
   {
-    // CLAUDE.md, "Writing style": never an em dash, anywhere, including the
-    // Sandyx flavour text. Zero when this rule was written.
+    // House style: never an em dash, anywhere, including the Sandyx flavour
+    // text and the video subtitles. Written as an escape so this file passes.
     id: "em-dash",
     label: "em dash",
-    pattern: /—/gu,
+    pattern: /\u2014/gu,
   },
   {
-    // .claude/RESPONSIBLE_AI_USE.md and CLAUDE.md: no AI signature or credit in
-    // committed content. A path like CLAUDE.md is a filename, not a credit, so
-    // the rule matches the credit forms rather than the bare word.
+    // .claude/RESPONSIBLE_AI_USE.md: no AI signature or credit in committed
+    // content. The rule matches the credit forms rather than a bare name.
     id: "ai-credit",
     label: "AI signature or credit",
     pattern: /(?:Co-Authored-By:\s*\S*(?:Claude|GPT|Copilot)|Claude-Session|\b(?:generated|written|created|authored)\s+(?:by|with|using)\s+(?:Claude|ChatGPT|GPT-\d|Copilot|an?\s+(?:AI|LLM))\b)/giu,
@@ -96,7 +126,7 @@ const legitimateProse = [
   "Replace placeholder names before the final attribution freeze.",
   "Draft calibration entries are not evaluated.",
   "The assay data are pending independent review.",
-  "House style: see the Writing style section of CLAUDE.md.",
+  "House style: see the House style section of README.md.",
   "Every CALIBRATION entry is mirrored in WETLAB_TODO.md.",
   "Read the value as a range, not a fixed number.",
 ];
@@ -139,7 +169,12 @@ function sourceLocation(content, index) {
   return { line: before.split("\n").length, column: index - before.lastIndexOf("\n") };
 }
 
-const files = scanTargets.flatMap((target) => walk(path.join(projectRoot, target)));
+// This file spells out the patterns it looks for, so it is the one file it
+// cannot scan.
+const self = path.join(projectRoot, "scripts", "check-content-integrity.mjs");
+const files = scanTargets
+  .flatMap((target) => walk(path.join(projectRoot, target)))
+  .filter((filePath) => filePath !== self);
 const findings = [];
 
 for (const filePath of files) {

@@ -1,5 +1,5 @@
 """
-Wet-lab module explainer — "From the bench to the dune".
+Wet-lab module explainer, "From the bench to the dune".
 Renders one narrated scene: WetlabExplainer.
 
 Honest to the sandbox: measurable bench inputs (culture density OD, glutamate feed, salinity)
@@ -46,7 +46,7 @@ class WetlabExplainer(IGemScene):
         arrows = VGroup(*[Arrow(d.get_right(), physics.get_left(), color=MUTED, stroke_width=3, buff=0.2) for d in dials])
         self.say(
             "Every one of those bench inputs feeds the exact same wind-erosion model the other "
-            "modules use — no separate, hand-waved lab version.",
+            "modules use, no separate, hand-waved lab version.",
             LaggedStart(*[GrowArrow(a) for a in arrows], FadeIn(physics, scale=0.9), lag_ratio=0.2),
             hold=0.4,
         )
@@ -58,7 +58,7 @@ class WetlabExplainer(IGemScene):
         dune.add_points_as_corners([[6.5, -1.6, 0], [3.3, -1.6, 0]])
         arrow2 = Arrow(physics.get_right(), base.get_left() + UP * 0.3, color=TEAL, stroke_width=4, buff=0.2)
         self.say(
-            "And the answer shows up as a virtual dune — hold the settings that give a strong crust, "
+            "And the answer shows up as a virtual dune, hold the settings that give a strong crust, "
             "and it stands firm.",
             AnimationGroup(GrowArrow(arrow2), Create(base), FadeIn(dune)), hold=0.4,
         )
@@ -68,7 +68,7 @@ class WetlabExplainer(IGemScene):
         eroded.set_points_smoothly([[3.3, -1.6, 0], [4.1, -1.0, 0], [5.0, -0.7, 0], [5.9, -1.1, 0], [6.5, -1.6, 0]])
         eroded.add_points_as_corners([[6.5, -1.6, 0], [3.3, -1.6, 0]])
         self.say(
-            "Turn a dial the wrong way — too much salt, too little feed — and you watch the same "
+            "Turn a dial the wrong way, too much salt, too little feed, and you watch the same "
             "dune wear down. An experiment on Monday becomes a field prediction on Tuesday.",
             AnimationGroup(k3.animate.move_to(t3.get_end()),
                            Transform(dune, eroded)),

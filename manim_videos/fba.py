@@ -1,5 +1,5 @@
 """
-FBA module explainer — "How the cell decides where carbon goes".
+FBA module explainer, "How the cell decides where carbon goes".
 Renders one narrated scene: FbaExplainer.
 """
 
@@ -89,7 +89,7 @@ class FbaExplainer(IGemScene):
         # --- 5. The objective: maximise product -----------------------------
         obj = self.eqn("maximise  →  Product", color=AMBER, size=30).to_edge(UP, buff=0.7)
         self.say(
-            "Flux Balance Analysis picks the routing that maximises our objective — here, the "
+            "Flux Balance Analysis picks the routing that maximises our objective, here, the "
             "precursor that feeds the rest of the toolkit.",
             AnimationGroup(
                 Write(obj),
@@ -109,7 +109,7 @@ class FbaExplainer(IGemScene):
                       font_size=24, color=INK).to_edge(DOWN, buff=0.7)
         self.play(FadeOut(rule), FadeIn(payoff, shift=UP * 0.2), run_time=0.8)
         self.say(
-            "No new chemistry is invented — it is simply the best traffic plan on a fixed road "
+            "No new chemistry is invented. it is simply the best traffic plan on a fixed road "
             "network. That single number sets the stage for everything downstream.",
             Flash(product.get_center(), color=AMBER, line_length=0.4, num_lines=16, flash_radius=0.9),
             hold=0.6,

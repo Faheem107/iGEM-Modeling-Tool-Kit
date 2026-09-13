@@ -12,6 +12,7 @@ import { useGlossary, GlossaryText } from "../GlossaryTerm";
 import { CaptionText } from "../CaptionText";
 import { MODULE_CODE } from "../../lib/moduleCode";
 import type { ModuleId } from "../../lib/prongs";
+import type { VideoId } from "../../lib/moduleVideos";
 import { NAV } from "@/content/copy";
 import { DUNE, HAIRLINE, INK, MUTED_INK, SURFACE } from "@/src/lib/palette";
 
@@ -431,7 +432,7 @@ function ModuleToggle({
   hovered,
   className = "",
 }: Themed & {
-  moduleId: ModuleId;
+  moduleId: VideoId;
   dropAttr:
     | "data-sandyx-math"
     | "data-sandyx-video"
@@ -492,7 +493,7 @@ export function VideoExplanationToggle({
   moduleId,
   isLightMode,
   className = "",
-}: Themed & { moduleId: ModuleId; className?: string }) {
+}: Themed & { moduleId: VideoId; className?: string }) {
   const { openVideo, hoverId } = useGlossary();
   return (
     <ModuleToggle

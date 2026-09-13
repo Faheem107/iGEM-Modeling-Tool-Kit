@@ -38,6 +38,9 @@ MODULES = {
     "grainsize": ("grainsize.py", "GrainsizeExplainer"),
     "curing": ("curing.py", "CuringExplainer"),
     "economic": ("economic.py", "EconomicExplainer"),
+    "killswitch": ("killswitch.py", "KillswitchExplainer"),
+    "exposure": ("exposure.py", "ExposureExplainer"),
+    "xanthan-flow": ("xanthan.py", "XanthanExplainer"),
 }
 
 QUALITY_DIR = {"l": "480p15", "m": "720p30", "h": "1080p60"}

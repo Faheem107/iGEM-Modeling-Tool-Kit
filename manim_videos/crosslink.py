@@ -1,5 +1,5 @@
 """
-Cross-linking module explainer — "Why calcium turns goo into gel".
+Cross-linking module explainer, "Why calcium turns goo into gel".
 Renders one narrated scene: CrosslinkExplainer.
 
 Honest to the biophysics model: divalent Ca²⁺ bridges pairs of negatively-charged γ-PGA chains;
@@ -17,7 +17,7 @@ class CrosslinkExplainer(IGemScene):
         # --- 1. Title -------------------------------------------------------
         g, head, sub = self.title_card("Goo into gel", "Calcium cross-linking", accent=INDIGO)
         self.say(
-            "On its own, gamma-P-G-A is a floppy tangle of chains that all carry a negative charge — "
+            "On its own, gamma-P-G-A is a floppy tangle of chains that all carry a negative charge, "
             "so they repel and slide past each other. How do you turn that into a solid?",
             FadeIn(head, shift=UP * 0.3), Write(sub), hold=0.6,
         )
@@ -29,7 +29,7 @@ class CrosslinkExplainer(IGemScene):
         minus = VGroup(*[Text("–", font_size=22, color=CYAN).move_to([x, y, 0])
                          for x in np.linspace(-2.6, 2.6, 6) for y in (1.15, -1.15)])
         self.say(
-            "Calcium is the answer. Each calcium ion carries two positive charges — so it can grab a "
+            "Calcium is the answer. Each calcium ion carries two positive charges, so it can grab a "
             "negative site on one chain and a negative site on the next, at the same time.",
             LaggedStart(Create(c1), Create(c2), FadeIn(minus), lag_ratio=0.25), hold=0.3,
         )
@@ -65,7 +65,7 @@ class CrosslinkExplainer(IGemScene):
         bar.move_to(axis.get_bottom(), aligned_edge=DOWN)
         blab = Text("stiffness (G)", font_size=20, color=INDIGO).next_to(axis, UP, buff=0.15)
         self.say(
-            "And bridge count is what sets stiffness. More clamps means a denser network — and a "
+            "And bridge count is what sets stiffness. More clamps means a denser network, and a "
             "denser network is a stiffer, stronger gel.",
             AnimationGroup(Create(axis), FadeIn(bar), FadeIn(blab)), hold=0.2,
         )

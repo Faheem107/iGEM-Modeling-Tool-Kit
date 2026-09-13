@@ -1,70 +1,86 @@
 WEBVTT
 
 1
-00:00:00.000 --> 00:00:03.441
-We have three ways to hold sand together. The obvious question:
+00:00:00.000 --> 00:00:04.159
+We have two engineered ways to hold sand together. The obvious question, if
 
 2
-00:00:03.541 --> 00:00:06.195
-if we combine them, do the strengths just add up?
+00:00:04.259 --> 00:00:07.397
+we run both in one crust, do the strengths simply add up?
 
 3
-00:00:06.866 --> 00:00:10.610
-A sticky bio-polymer, cement grown from carbon dioxide, and a
+00:00:08.066 --> 00:00:11.504
+A sticky bio-polymer, and cement grown from carbon dioxide.
 
 4
-00:00:10.710 --> 00:00:13.950
-seaweed gel. Each adds its own cohesion to the crust.
+00:00:11.604 --> 00:00:14.262
+Each adds its own cohesion between the grains.
 
 5
-00:00:14.033 --> 00:00:15.972
-Naively you would just stack them. But
+00:00:14.333 --> 00:00:18.073
+Naively you just stack them. But three real effects bend that answer.
 
 6
-00:00:16.072 --> 00:00:17.903
-three real effects bend that answer.
+00:00:18.566 --> 00:00:21.919
+First, competition. Both bind the same soil calcium, but
 
 7
-00:00:18.400 --> 00:00:22.274
-First, competition. All three fight over the same calcium — and the
+00:00:22.019 --> 00:00:25.679
+calcite is a high-affinity sink and out-competes the polymer.
 
 8
-00:00:22.374 --> 00:00:26.188
-cement is the greediest sink, so it starves the polymers a little.
+00:00:25.779 --> 00:00:29.501
+So the calcium shortfall costs gamma-P-G-A about sixty percent
 
 9
-00:00:27.966 --> 00:00:31.722
-Second, burden. When one cell makes two products at once, they
+00:00:29.601 --> 00:00:32.337
+of its binding, and the cement almost nothing.
 
 10
-00:00:31.822 --> 00:00:34.893
-share one energy budget, so each yields a bit less.
+00:00:34.133 --> 00:00:37.063
+Second, burden. One cell making both products shares
 
 11
-00:00:34.966 --> 00:00:39.196
-Third, synergy. Some pairs help each other — the polymer's acidic groups
+00:00:37.163 --> 00:00:39.569
+a single energy budget, so each titre falls
 
 12
-00:00:39.296 --> 00:00:42.625
-template better crystals — so a bonus term is added back.
+00:00:39.669 --> 00:00:42.366
+to roughly four-fifths of what it reaches alone.
 
 13
-00:00:42.700 --> 00:00:46.091
-Add the cooperation, subtract the competition, and the combined
+00:00:42.433 --> 00:00:45.444
+Third, synergy, and it pushes back the other way.
 
 14
-00:00:46.191 --> 00:00:48.973
-crust still comes out tougher than any single prong.
+00:00:45.544 --> 00:00:49.253
+The polymer's acidic groups organise calcium and seed finer,
 
 15
-00:00:49.066 --> 00:00:51.176
-And there is a safety bonus: if a storm
+00:00:49.353 --> 00:00:51.920
+tougher calcite, so a bonus is added back.
 
 16
-00:00:51.276 --> 00:00:54.518
-defeats one mechanism, the others still hold. Redundancy is
+00:00:52.000 --> 00:00:55.649
+Add the synergy, subtract the competition and the burden, and the combined
 
 17
-00:00:54.618 --> 00:00:57.691
-why the team survives conditions that break any soloist.
+00:00:55.749 --> 00:00:58.639
+crust still comes out tougher than either prong on its own.
+
+18
+00:00:58.733 --> 00:01:00.922
+And there is a safety reason to run both.
+
+19
+00:01:01.022 --> 00:01:04.216
+If a rainstorm dissolves the polymer, the insoluble calcite
+
+20
+00:01:04.316 --> 00:01:07.008
+still holds. Two prongs fail in different ways, so
+
+21
+00:01:07.108 --> 00:01:10.414
+together they survive conditions that break either one alone.
 

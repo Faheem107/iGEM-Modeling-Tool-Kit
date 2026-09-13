@@ -11,6 +11,7 @@ import {
 import { useScrollLock } from "@/src/lib/scrollLock";
 import { MODULE_MATH } from "../lib/moduleMath";
 import { MODULE_VIDEOS, videoSrc, videoVtt } from "../lib/moduleVideos";
+import type { VideoId } from "../lib/moduleVideos";
 import { MODULE_SOURCES, type SourceRef } from "../lib/moduleSources";
 import { MODULE_CODE } from "../lib/moduleCode";
 import type { ModuleId } from "../lib/prongs";
@@ -46,9 +47,9 @@ interface GlossaryContextValue {
   activeMathId: ModuleId | null;
   openMath: (id: ModuleId) => void;
   closeMath: () => void;
-  /** Module id whose "Video Explanation" window is open, or null. */
-  activeVideoId: ModuleId | null;
-  openVideo: (id: ModuleId) => void;
+  /** Video id whose "Video Explanation" window is open, or null. */
+  activeVideoId: VideoId | null;
+  openVideo: (id: VideoId) => void;
   closeVideo: () => void;
   /** Module id whose "Sources" window is open, or null. */
   activeSourcesId: ModuleId | null;
@@ -111,7 +112,7 @@ export function useGlossary(): GlossaryContextValue {
 function VideoPanel({
   id,
 }: {
-  id: ModuleId;
+  id: VideoId;
   isLightMode: boolean;
 }) {
   const [ready, setReady] = React.useState(false);
@@ -388,7 +389,7 @@ export const GlossaryProvider: React.FC<{
 }> = ({ children, isLightMode = false }) => {
   const [activeId, setActiveId] = React.useState<string | null>(null);
   const [activeMathId, setActiveMathId] = React.useState<ModuleId | null>(null);
-  const [activeVideoId, setActiveVideoId] = React.useState<ModuleId | null>(
+  const [activeVideoId, setActiveVideoId] = React.useState<VideoId | null>(
     null,
   );
   const [activeSourcesId, setActiveSourcesId] = React.useState<ModuleId | null>(
@@ -423,7 +424,7 @@ export const GlossaryProvider: React.FC<{
   );
   const closeMath = React.useCallback(() => setActiveMathId(null), []);
   const openVideo = React.useCallback(
-    (id: ModuleId) => {
+    (id: VideoId) => {
       closeAll();
       setActiveVideoId(id);
     },

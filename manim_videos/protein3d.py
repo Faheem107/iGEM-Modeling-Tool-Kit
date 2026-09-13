@@ -1,8 +1,8 @@
 """
-Protein explorer explainer — "A look inside the real enzymes".
+Protein explorer explainer, "A look inside the real enzymes".
 Renders one narrated 3-D scene: Protein3dExplainer.
 
-The two backbones are traced from REAL structures (no PyMOL needed — Cα records are read directly):
+The two backbones are traced from REAL structures (no PyMOL needed, Cα records are read directly):
   - Carbonic anhydrase II  → 1CA2.pdb  (crystal structure; Zn²⁺ site = His94/His96/His119).
   - γ-PGA synthase PgsB     → AF-O34899-F1-model_v6.pdb  (AlphaFold model, honestly labelled).
 Nothing here invents data; the visuals only trace deposited / predicted coordinates.
@@ -26,7 +26,7 @@ class Protein3dExplainer(IGemScene, ThreeDScene):
         card.set_opacity(0)
         self.add_fixed_in_frame_mobjects(card)
         self.say(
-            "The models talk about proteins — but what do they actually look like? "
+            "The models talk about proteins, but what do they actually look like? "
             "Let's trace two of them, atom by atom, from real structures.",
             card.animate.set_opacity(1), hold=0.6,
         )
@@ -44,7 +44,7 @@ class Protein3dExplainer(IGemScene, ThreeDScene):
         self.add_fixed_in_frame_mobjects(label_ca)
 
         self.say(
-            "This is carbonic anhydrase — the enzyme we bolt onto the cell to turn carbon "
+            "This is carbonic anhydrase, the enzyme we bolt onto the cell to turn carbon "
             "dioxide into carbonate. Every twist is its real, folded backbone.",
             AnimationGroup(Create(ca, run_time=3.0), label_ca.animate.set_opacity(1)),
             hold=0.5,
@@ -66,7 +66,7 @@ class Protein3dExplainer(IGemScene, ThreeDScene):
         pocket = Circle(radius=0.55, color=AMBER, stroke_width=4).move_to(centre)
         pocket.rotate(PI / 2, axis=RIGHT)
 
-        site_label = Text("Zn²⁺ active site — His94 · His96 · His119",
+        site_label = Text("Zn²⁺ active site, His94 · His96 · His119",
                           font_size=22, color=AMBER, weight="BOLD")
         site_label.to_edge(DOWN, buff=0.6)
         site_label.set_opacity(0)
@@ -105,7 +105,7 @@ class Protein3dExplainer(IGemScene, ThreeDScene):
 
         self.begin_ambient_camera_rotation(rate=0.12)
         self.say(
-            "And this is the other one — the synthase that stitches glutamate into long "
+            "And this is the other one, the synthase that stitches glutamate into long "
             "gamma-P-G-A chains. This fold is AlphaFold's prediction, not a crystal, so we "
             "flag it honestly.",
             AnimationGroup(Create(pgs, run_time=3.0), label_pgs.animate.set_opacity(1)),
@@ -115,13 +115,13 @@ class Protein3dExplainer(IGemScene, ThreeDScene):
 
         # --- 5. Payoff -------------------------------------------------------
         self.stop_ambient_camera_rotation()
-        payoff = Text("Real shapes — where every reaction in the toolkit begins",
+        payoff = Text("Real shapes, where every reaction in the toolkit begins",
                       font_size=24, color=INK, weight="MEDIUM")
         payoff.to_edge(DOWN, buff=0.6)
         payoff.set_opacity(0)
         self.add_fixed_in_frame_mobjects(payoff)
         self.say(
-            "Two real enzymes, two real shapes — and the pocket on each one is where every "
+            "Two real enzymes, two real shapes, and the pocket on each one is where every "
             "downstream number in this toolkit is born.",
             payoff.animate.set_opacity(1), hold=0.6,
         )

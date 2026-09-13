@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "@/components/theme-context";
-import { CodePlotsToggle, Fold, Note, Slider, SourcesToggle, StatCard } from "@/src/components/simulation/_shared";
+import { CodePlotsToggle, Fold, Note, Slider, SourcesToggle, StatCard, VideoExplanationToggle } from "@/src/components/simulation/_shared";
 import WindValidation, { useWindValidation } from "./WindValidation";
 import ExposureMap, { sourceColor, type SourceFeature, type TargetSite } from "./ExposureMap";
 import MapLegend from "./MapLegend";
@@ -589,8 +589,8 @@ export default function ExposureWorkspace() {
         </div>
       </section>
 
-      {/* The working, the code and the references. One row, one click each. */}
-      <div className="grid grid-cols-1 items-stretch gap-2 border-t border-border pt-6 sm:grid-cols-3">
+      {/* The video, the working, the code and the references. One row, one click each. */}
+      <div className="grid grid-cols-1 items-stretch gap-2 border-t border-border pt-6 sm:grid-cols-2 lg:grid-cols-4">
         <button
           type="button"
           {...hl}
@@ -599,6 +599,7 @@ export default function ExposureWorkspace() {
         >
           <span className="text-center leading-tight">How well is this tested</span>
         </button>
+        <VideoExplanationToggle moduleId="exposure" isLightMode={isLightMode} />
         <CodePlotsToggle moduleId="exposure" isLightMode={isLightMode} />
         <SourcesToggle moduleId="exposure" isLightMode={isLightMode} />
       </div>

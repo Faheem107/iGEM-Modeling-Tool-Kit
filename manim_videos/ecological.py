@@ -1,5 +1,5 @@
 """
-Ecological module explainer — "Spreading safely: the kill switch".
+Ecological module explainer, "Spreading safely: the kill switch".
 Renders one narrated scene: EcologicalExplainer.
 
 Honest to the reaction–diffusion + biosafety model: the colony grows and diffuses across the sand
@@ -18,7 +18,7 @@ class EcologicalExplainer(IGemScene):
         g, head, sub = self.title_card("Spreading safely", "Growth + the kill switch", accent=EMERALD)
         self.say(
             "A living crust is powerful precisely because it grows and spreads on its own. But that "
-            "is also the danger — it must never spread where it should not.",
+            "is also the danger, it must never spread where it should not.",
             FadeIn(head, shift=UP * 0.3), Write(sub), hold=0.6,
         )
         self.smooth_clear(run_time=0.7)
@@ -44,7 +44,7 @@ class EcologicalExplainer(IGemScene):
             d = max(abs(i - c), abs(j - c))
             rings.setdefault(d, []).append(sq)
         self.say(
-            "Drop the bacteria in one spot. They multiply and diffuse outward across the sand — "
+            "Drop the bacteria in one spot. They multiply and diffuse outward across the sand, "
             "like a drop of ink spreading through water.",
             AnimationGroup(*[cells[(c, c)].animate.set_fill(EMERALD, opacity=0.9)]), hold=0.1,
         )
@@ -57,7 +57,7 @@ class EcologicalExplainer(IGemScene):
         trig_lab = Text("environmental trigger", font_size=20, color=ROSE).next_to(trigger, UP, buff=0.15)
         toxin = self.chip("kill-switch → toxin", ROSE, width=3.4).to_edge(RIGHT, buff=1.0)
         self.say(
-            "So we engineer a kill switch. Cross an environmental line — leave the target zone — and "
+            "So we engineer a kill switch. Cross an environmental line, leave the target zone, and "
             "a toxin gene switches on and shuts the colony down.",
             LaggedStart(Create(trigger), FadeIn(trig_lab), FadeIn(toxin, shift=LEFT * 0.2), lag_ratio=0.3),
             hold=0.4,
@@ -70,7 +70,7 @@ class EcologicalExplainer(IGemScene):
         # --- 5. Payoff: growth vs containment ------------------------------
         self.say(
             "So two forces are always in balance: growth that builds the crust, and containment that "
-            "keeps it exactly where we want it — and nowhere else.",
+            "keeps it exactly where we want it, and nowhere else.",
             AnimationGroup(Indicate(toxin, color=ROSE, scale_factor=1.05)), hold=0.6,
         )
         self.wait(0.3)

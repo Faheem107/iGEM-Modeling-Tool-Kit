@@ -1,5 +1,5 @@
 """
-Alginate module explainer — "The egg-box that holds sand together".
+Alginate module explainer, "The egg-box that holds sand together".
 Renders one narrated scene: AlginateExplainer.
 
 Honest to the egg-box model: G-blocks pair up and chelate Ca²⁺ (the classic "egg-box" junction),
@@ -27,7 +27,7 @@ class AlginateExplainer(IGemScene):
         # --- 1. Title -------------------------------------------------------
         g, head, sub = self.title_card("The egg-box gel", "Alginate + calcium", accent=ROSE)
         self.say(
-            "Alginate is a sugar from seaweed. On its own it is just a floppy chain — but add "
+            "Alginate is a sugar from seaweed. On its own it is just a floppy chain, but add "
             "calcium, and it snaps into a gel. The way it does that has a lovely shape.",
             FadeIn(head, shift=UP * 0.3), Write(sub), hold=0.6,
         )
@@ -36,9 +36,9 @@ class AlginateExplainer(IGemScene):
         # --- 2. Two chains line up -----------------------------------------
         top = wavy(-2.5, 1.1, color=ROSE)
         bot = wavy(-2.5, -1.1, color=ROSE)
-        gblk = Text("G-blocks — the buckled stretches", font_size=20, color=ROSE).to_edge(UP, buff=0.7)
+        gblk = Text("G-blocks, the buckled stretches", font_size=20, color=ROSE).to_edge(UP, buff=0.7)
         self.say(
-            "Certain stretches of the chain, the G-blocks, are buckled — and two of them line up "
+            "Certain stretches of the chain, the G-blocks, are buckled, and two of them line up "
             "face to face.",
             LaggedStart(Create(top), Create(bot), FadeIn(gblk), lag_ratio=0.3), hold=0.4,
         )
@@ -50,9 +50,9 @@ class AlginateExplainer(IGemScene):
             ion = Circle(radius=0.2, stroke_color=WHITE, stroke_width=1.5, fill_color=AMBER, fill_opacity=1.0).move_to([x, 0, 0])
             lab = Text("Ca", font_size=14, color=BG, weight="BOLD").move_to(ion)
             ca_ions.add(VGroup(ion, lab))
-        eggbox = Text('like eggs in a carton — the "egg-box"', font_size=20, color=AMBER).to_edge(DOWN, buff=0.9)
+        eggbox = Text('like eggs in a carton, the "egg-box"', font_size=20, color=AMBER).to_edge(DOWN, buff=0.9)
         self.say(
-            "Between them sit calcium ions, each cradled by the buckles above and below — exactly "
+            "Between them sit calcium ions, each cradled by the buckles above and below, exactly "
             "like eggs nestled in an egg carton. Those junctions lock the gel together.",
             LaggedStart(*[GrowFromCenter(c) for c in ca_ions], lag_ratio=0.15), hold=0.2,
         )
@@ -78,7 +78,7 @@ class AlginateExplainer(IGemScene):
         drops = VGroup(*[Line([x, 3.0, 0], [x, 2.4, 0], color=CYAN, stroke_width=4)
                          for x in np.linspace(-3, 3, 9)])
         self.say(
-            "There is an honest catch. Alginate dissolves in water — so every rain shower washes a "
+            "There is an honest catch. Alginate dissolves in water, so every rain shower washes a "
             "little of the gel away. That is why it is one prong of three, not the whole answer.",
             AnimationGroup(FadeIn(caveat, shift=DOWN * 0.2),
                            LaggedStart(*[Create(d) for d in drops], lag_ratio=0.05)),

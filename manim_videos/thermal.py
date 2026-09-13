@@ -1,5 +1,5 @@
 """
-Thermal module explainer — "Why heat can switch a protein off".
+Thermal module explainer, "Why heat can switch a protein off".
 Renders one narrated scene: ThermalExplainer.
 
 Honest to the two-state model: folded fraction follows a sigmoid in temperature that collapses
@@ -31,15 +31,15 @@ class ThermalExplainer(IGemScene):
 
         # --- 2. Tug of war: order vs disorder ------------------------------
         folded = folded_glyph(TEAL).scale(1.6).to_edge(LEFT, buff=2.0)
-        flab = Text("folded — active", font_size=20, color=TEAL).next_to(folded, DOWN, buff=0.4)
+        flab = Text("folded, active", font_size=20, color=TEAL).next_to(folded, DOWN, buff=0.4)
         unfolded = VMobject(stroke_color=ROSE, stroke_width=5)
         unfolded.set_points_as_corners([[-0.9, 0.3, 0], [-0.4, -0.4, 0], [0.1, 0.5, 0], [0.5, -0.3, 0], [1.0, 0.4, 0], [1.4, -0.2, 0]])
         unfolded.scale(1.2).to_edge(RIGHT, buff=2.0)
-        ulab = Text("unfolded — dead", font_size=20, color=ROSE).next_to(unfolded, DOWN, buff=0.4)
+        ulab = Text("unfolded, dead", font_size=20, color=ROSE).next_to(unfolded, DOWN, buff=0.4)
         arrow = Arrow(folded.get_right() + RIGHT * 0.3, unfolded.get_left() + LEFT * 0.3, color=MUTED, stroke_width=4)
         heat = Text("heat", font_size=22, color=AMBER, weight="BOLD").next_to(arrow, UP, buff=0.2)
         self.say(
-            "Folding is a tug of war between order and disorder. Add heat, and the disorder wins — "
+            "Folding is a tug of war between order and disorder. Add heat, and the disorder wins, "
             "the chain shakes loose and falls apart into a useless tangle.",
             LaggedStart(Create(folded), FadeIn(flab),
                         GrowArrow(arrow), FadeIn(heat),
@@ -55,13 +55,13 @@ class ThermalExplainer(IGemScene):
         curve = ax.plot(lambda T: 1 / (1 + np.exp((T - Tm) * k)), x_range=[0, 10], color=CYAN, stroke_width=6)
         self.say(
             "We track the folded fraction as temperature climbs. It holds steady while the protein "
-            "is comfortable — then, past a melting point, it collapses.",
+            "is comfortable, then, past a melting point, it collapses.",
             AnimationGroup(Create(ax), FadeIn(lab)), hold=0.2,
         )
         self.play(Create(curve), run_time=1.8, rate_func=smooth)
 
         tm_line = DashedLine(ax.c2p(Tm, 0), ax.c2p(Tm, 0.55), color=ROSE, stroke_width=3)
-        tm_lab = Text("Tm — melting point", font_size=20, color=ROSE).next_to(ax.c2p(Tm, 0), DOWN, buff=0.3)
+        tm_lab = Text("Tm, melting point", font_size=20, color=ROSE).next_to(ax.c2p(Tm, 0), DOWN, buff=0.3)
         self.say(
             "That tipping point is the melting temperature. Cross it, and half the enzyme is already "
             "gone.",

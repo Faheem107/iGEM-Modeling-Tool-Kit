@@ -1,5 +1,5 @@
 """
-CA-anchoring module explainer — "Bolting an enzyme to the cell wall".
+CA-anchoring module explainer, "Bolting an enzyme to the cell wall".
 Renders one narrated scene: CaAnchoringExplainer.
 
 Honest to the surface-display model: display efficiency = product of per-step success
@@ -62,7 +62,7 @@ class CaAnchoringExplainer(IGemScene):
         eq = self.eqn("efficiency = 0.90 × 0.85 × 0.80 ≈ 0.61", color=CYAN, size=26).to_edge(DOWN, buff=1.4)
         self.say(
             "So the fraction that ends up active on the surface is those chances multiplied "
-            "together — never all of them, but enough to matter.",
+            "together, never all of them, but enough to matter.",
             AnimationGroup(Write(eq),
                            *[Indicate(pl, color=AMBER, scale_factor=1.2) for pl in probs]),
             hold=0.6,
@@ -76,8 +76,8 @@ class CaAnchoringExplainer(IGemScene):
         speed = self.eqn("≈ 1,000,000 × faster", color=AMBER, size=32).next_to(arrow, UP, buff=0.5)
         enz2 = self.chip("carbonic anhydrase", EMERALD, width=3.4).next_to(arrow, DOWN, buff=0.5)
         self.say(
-            "Why go to all this trouble? Because carbonic anhydrase speeds the key reaction — carbon "
-            "dioxide into bicarbonate — about a million-fold. On the surface, that is where the "
+            "Why go to all this trouble? Because carbonic anhydrase speeds the key reaction, carbon "
+            "dioxide into bicarbonate, about a million-fold. On the surface, that is where the "
             "cementing happens.",
             LaggedStart(FadeIn(co2), GrowArrow(arrow), FadeIn(carb),
                         FadeIn(enz2, shift=UP * 0.2), Write(speed), lag_ratio=0.3),

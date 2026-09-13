@@ -9,50 +9,50 @@ Every cell is a tiny chemical factory. Feed it sugar, and
 it has to decide where all that carbon should flow.
 
 3
-00:00:06.900 --> 00:00:09.384
+00:00:06.879 --> 00:00:09.364
 Think of its metabolism as a network of pipes.
 
 4
-00:00:09.484 --> 00:00:12.531
+00:00:09.464 --> 00:00:12.510
 Sugar enters here, and splits between building new cells
 
 5
-00:00:12.631 --> 00:00:14.610
+00:00:12.610 --> 00:00:14.589
 and making the product we care about.
 
 6
-00:00:14.700 --> 00:00:17.946
+00:00:14.689 --> 00:00:17.936
 The key rule is balance. At steady state nothing is allowed to
 
 7
-00:00:18.046 --> 00:00:21.130
+00:00:18.036 --> 00:00:21.120
 pile up: whatever flows into a junction must flow back out.
 
 8
-00:00:22.200 --> 00:00:25.228
+00:00:22.220 --> 00:00:25.249
 So the cell is really solving a routing puzzle: given a
 
 9
-00:00:25.328 --> 00:00:28.186
+00:00:25.349 --> 00:00:28.207
 fixed sugar supply, which split of the flow is best?
 
 10
-00:00:28.266 --> 00:00:32.087
-Flux Balance Analysis picks the routing that maximises our objective —
+00:00:28.273 --> 00:00:32.069
+Flux Balance Analysis picks the routing that maximises our objective,
 
 11
-00:00:32.187 --> 00:00:35.167
+00:00:32.169 --> 00:00:35.174
 here, the precursor that feeds the rest of the toolkit.
 
 12
-00:00:38.066 --> 00:00:40.311
-No new chemistry is invented — it is simply
+00:00:38.074 --> 00:00:40.410
+No new chemistry is invented. it is simply the
 
 13
-00:00:40.411 --> 00:00:42.819
-the best traffic plan on a fixed road network.
+00:00:40.510 --> 00:00:42.898
+best traffic plan on a fixed road network. That
 
 14
-00:00:42.919 --> 00:00:46.090
-That single number sets the stage for everything downstream.
+00:00:42.998 --> 00:00:45.811
+single number sets the stage for everything downstream.
 
