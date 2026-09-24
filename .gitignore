@@ -122,3 +122,6 @@ README_igem_original.md
 # kept elsewhere). scripts/pv_site_drift.py reads drylab_sites_gcc.csv from here
 # and writes only the derived wind statistics to public/data/.
 Solar Panel output/
+
+# Compiled output from the model validators
+.validate-tmp/

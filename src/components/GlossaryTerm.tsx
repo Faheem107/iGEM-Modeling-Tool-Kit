@@ -700,10 +700,30 @@ export const GlossaryProvider: React.FC<{
                           className={`mt-2 text-[length:var(--text-micro)] leading-relaxed text-muted-foreground`}
                         >
                           {b.caption}
+                          {b.cites && b.cites.length > 0 && (
+                            <sup className="ml-0.5 font-bold text-dune-orange">
+                              {b.cites.map((n, k) => (
+                                <span key={n}>
+                                  {k > 0 && ","}
+                                  {n}
+                                </span>
+                              ))}
+                            </sup>
+                          )}
                         </p>
                       </div>
                     ))}
                   </div>
+
+                  {math.blocks.some((b) => b.cites?.length) && (
+                    <p
+                      className={`mt-4 pt-4 border-t text-[length:var(--text-micro)] leading-relaxed ${isLightMode ? "border-border text-muted-foreground" : "border-white/10 text-muted-foreground"}`}
+                    >
+                      Superscripts after a caption are the numbered entries in
+                      this model&apos;s Sources, so each equation says what it
+                      rests on. Open Sources from the same toolbar to read them.
+                    </p>
+                  )}
                 </div>
               </SandyxOverlay>
             )}
@@ -864,12 +884,21 @@ export const GlossaryProvider: React.FC<{
                     {sources.sources.map((s, i) => (
                       <li
                         key={i}
+                        id={`source-${activeSourcesId}-${i + 1}`}
                         className={`rounded-[6px] border p-4 flex gap-4 ${
                           isLightMode
                             ? "bg-white/70 border-border"
                             : "bg-dune-basalt/50 border-white/10"
                         }`}
                       >
+                        {/* Numbered, so the maths captions can cite one by number. */}
+                        <span
+                          className={`shrink-0 text-[length:var(--text-caption)] font-bold tabular-nums ${
+                            isLightMode ? "text-dune-orange" : "text-dune-orange"
+                          }`}
+                        >
+                          ({i + 1})
+                        </span>
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
                             <a
@@ -882,7 +911,7 @@ export const GlossaryProvider: React.FC<{
                                   : "text-dune-orange hover:text-dune-orange decoration-dune-orange/60"
                               }`}
                             >
-                              <span>{s.label}</span>
+                              <span>{s.citation ?? s.label}</span>
                               </a>
                             <span
                               className={`text-[length:var(--text-caption)] font-black uppercase tracking-wider px-2 py-1 rounded-full ${

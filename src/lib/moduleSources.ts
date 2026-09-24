@@ -21,6 +21,12 @@ import type { ModuleId } from "./prongs";
 export interface SourceRef {
   /** The reference, as it should be displayed (authors/short-title + year). */
   label: string;
+  /**
+   * The full reference in ACS style, which is what the wiki and the report have
+   * to print. Present for published work we can cite exactly; absent for an
+   * internal protocol or a standard framework, where `label` is the reference.
+   */
+  citation?: string;
   /** What this source grounds in the model (one line). */
   detail: string;
   /** 'literature' = external published work; 'internal' = wet-lab / field protocol; 'model' = standard modelling framework. */
@@ -43,6 +49,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label:
           'Orth, Thiele & Palsson (2010), "What is flux balance analysis?", Nat. Biotechnol. 28:245',
+        citation:
+          "Orth, J. D.; Thiele, I.; Palsson, B. Ø. What Is Flux Balance Analysis? Nat. Biotechnol. 2010, 28 (3), 245–248.",
         detail:
           "The canonical statement of the FBA linear program (max cᵀv s.t. S·v = 0) this module solves.",
         kind: "model",
@@ -63,6 +71,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label:
           "Michaelis–Menten enzyme kinetics; standard transcription/translation ODE cascade",
+        citation:
+          "Michaelis, L.; Menten, M. L. Die Kinetik der Invertinwirkung. Biochem. Z. 1913, 49, 333–369.",
         detail: "The governing dM/dt, dE/dt, dP/dt balances (moduleMath.ts).",
         kind: "model",
       },
@@ -81,6 +91,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label:
           "Langmuir adsorption isotherm; affine rubber-elasticity theory (G = νRT)",
+        citation:
+          "Langmuir, I. The Adsorption of Gases on Plane Surfaces of Glass, Mica and Platinum. J. Am. Chem. Soc. 1918, 40 (9), 1361–1403. Flory, P. J. Principles of Polymer Chemistry; Cornell University Press: Ithaca, NY, 1953.",
         detail: "The two-step binding→modulus framework (CROSSLINK_CALIB).",
         kind: "model",
       },
@@ -98,6 +110,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
     sources: [
       {
         label: "Sortase-mediated vs binding-motif cell-wall display",
+        citation:
+          "Mazmanian, S. K.; Liu, G.; Ton-That, H.; Schneewind, O. Staphylococcus aureus Sortase, an Enzyme That Anchors Surface Proteins to the Cell Wall. Science 1999, 285 (5428), 760–763.",
         detail:
           "The two anchoring routes multiplied in η_display (moduleMath.ts).",
         kind: "literature",
@@ -130,12 +144,16 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label:
           "Rodriguez-Blanco et al. (2011), ACC → vaterite → calcite crystallisation",
+        citation:
+          "Rodriguez-Blanco, J. D.; Shaw, S.; Benning, L. G. The Kinetics and Mechanisms of Amorphous Calcium Carbonate (ACC) Crystallization to Calcite, via Vaterite. Nanoscale 2011, 3 (1), 265–271.",
         detail:
           "The vaterite fraction, its slow solution-mediated ripening, and its reduced strength (CACO3_CALIB).",
         kind: "literature",
       },
       {
         label: "Plummer & Busenberg (1982); Brečević & Nielsen (1989)",
+        citation:
+          "Plummer, L. N.; Busenberg, E. The Solubilities of Calcite, Aragonite and Vaterite in CO₂–H₂O Solutions between 0 and 90 °C. Geochim. Cosmochim. Acta 1982, 46 (6), 1011–1040.",
         detail:
           "Calcite and amorphous-CaCO₃ solubility products (pKsp) used for the saturation index.",
         kind: "literature",
@@ -150,6 +168,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
         label: 'Grant et al., "egg-box" model of alginate gelation',
         detail:
           "Guluronate-weighted junction density (ALGINATE_CALIB, moduleMath.ts).",
+        citation:
+          "Grant, G. T.; Morris, E. R.; Rees, D. A.; Smith, P. J. C.; Thom, D. Biological Interactions between Polysaccharides and Divalent Cations: The Egg-Box Model. FEBS Lett. 1973, 32 (1), 195–198.",
         kind: "model",
       },
       {
@@ -234,6 +254,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
     sources: [
       {
         label: "Bagnold (1941), The Physics of Blown Sand and Desert Dunes",
+        citation:
+          "Bagnold, R. A. The Physics of Blown Sand and Desert Dunes; Methuen: London, 1941.",
         detail:
           "Threshold friction velocity and the cubic saltation mass-flux law (Eqs. 7–9, AEOLIAN_CALIB).",
         kind: "literature",
@@ -241,6 +263,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label:
           "Shao & Lu (2000), threshold friction velocity parameterisation",
+        citation:
+          "Shao, Y.; Lu, H. A Simple Expression for Wind Erosion Threshold Friction Velocity. J. Geophys. Res. Atmos. 2000, 105 (D17), 22437–22443.",
         detail: "The threshold parameter A fit on untreated sand.",
         kind: "literature",
       },
@@ -253,6 +277,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label:
           "Abdelfattah (2009), Soil Survey Horizons 50:3, doi:10.2136/sh2009.1.0003",
+        citation:
+          "Abdelfattah, M. A. Land Degradation Indicators and Management Options in the Desert Environment of Abu Dhabi. Soil Surv. Horiz. 2009, 50 (1), 3–10.",
         detail:
           "Measured in Abu Dhabi Emirate dune soils: 70 to 92 percent of sand movement is saltation and only 2 to 8 percent is suspension. This is the local evidence that the threshold is the right thing to model. Sand here hops; it mostly does not fly.",
         kind: "literature",
@@ -272,6 +298,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       },
       {
         label: "Bagnold (1941) threshold physics",
+        citation:
+          "Bagnold, R. A. The Physics of Blown Sand and Desert Dunes; Methuen: London, 1941.",
         detail: "The dune-erosion assay the lab parameters drive.",
         kind: "literature",
       },
@@ -284,6 +312,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label:
           "Erdmann et al. (2024), Discover Materials, MICP vs particle size",
+        citation:
+          "Erdmann, N.; et al. Influence of Particle Size on Microbially Induced Calcite Precipitation. Discovery Mater. 2024, 4, 34.",
         detail:
           "Compressive strength peaks at 63 to 125 µm (about 3.1 and 2.9 MPa), falls to about 1.6 MPa at 250 µm and about 0.7 MPa at 500 µm. That curve is the whole shape of this module: coarse pores are too wide to bridge, fine ones too tight for cells to enter.",
         kind: "literature",
@@ -316,6 +346,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label:
           "Ceroni (2015); Borkowski (2016), metabolic burden of dual heterologous expression",
+        citation:
+          "Ceroni, F.; Algar, R.; Stan, G.-B.; Ellis, T. Quantifying Cellular Capacity Identifies Gene Expression Designs with Reduced Burden. Nat. Methods 2015, 12 (5), 415–418.",
         detail:
           "The co-expression burden knock-down when γ-PGA synthase and CA share one cell (INTERACTION_CALIB).",
         kind: "literature",
@@ -341,6 +373,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       },
       {
         label: "Pisithkul et al. (2019), mBio 10:e00623-19",
+        citation:
+          "Pisithkul, T.; Schroeder, J. W.; Trujillo, E. A.; et al. Metabolic Remodeling during Biofilm Development of Bacillus subtilis. mBio 2019, 10 (3), e00623-19.",
         detail:
           "B. subtilis NCIB3610 pellicles: fragile at about 12 h, mature between 20 and 32 h. This is where the 32 h maturation window comes from. It was measured in standing liquid culture at 37 °C on defined medium, not in sand and not in the heat, so it sets the shape of the curve rather than its timing in the field.",
         kind: "literature",
@@ -349,6 +383,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label:
           "Ulan Buh Desert field trial, Geoderma, doi:10.1016/j.geoderma.2020.114723",
+        citation:
+          "Meng, H.; Gao, Y.; He, J.; Qi, Y.; Hang, L. Microbially Induced Carbonate Precipitation for Wind Erosion Control of Desert Soil: Field-Scale Tests. Geoderma 2021, 383, 114723.",
         detail:
           "Sprayed 0.2 M cementation solution at 4 L/m². The 12.5 mm crust it grew held a 30 m/s wind for 2 min and was still stable at 180 days, which is where the design wind and the six-month interval come from. The organism was Sporosarcina pasteurii, not B. subtilis, and 180 days is where they stopped looking rather than when the crust failed.",
         kind: "literature",
@@ -381,6 +417,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label:
           "Yan, Nakashima, Takano & Kawasaki (2025), World J. Microbiol. Biotechnol. 41",
+        citation:
+          "Yan, X.; Nakashima, K.; Takano, C.; Kawasaki, S. Cost Reduction Strategies for Microbially Induced Carbonate Precipitation. World J. Microbiol. Biotechnol. 2025, 41, 96.",
         detail:
           "Where the cost of biocement actually goes: cheaper media and lower-grade cementation chemicals cut it by large fractions. The paper reports those fractions, not prices, so it tells us which line items matter and cannot set any figure here.",
         kind: "literature",
@@ -438,6 +476,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label:
           'Kamada, Hanaoka & Burley (2003), "Crystal structure of the MazE/MazF complex", Mol. Cell 11:875',
+        citation:
+          "Kamada, K.; Hanaoka, F.; Burley, S. K. Crystal Structure of the MazE/MazF Complex: Molecular Bases of Antidote–Toxin Recognition. Mol. Cell 2003, 11 (4), 875–884.",
         detail:
           "The E. coli MazE·MazF complex (PDB 1UB4) that grounds the antitoxin-neutralises-toxin mechanism and the 3D viewer.",
         kind: "literature",
@@ -454,6 +494,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label:
           "Yamaguchi, Park & Inouye (2011), Toxin–antitoxin systems in bacteria and archaea, Annu. Rev. Genet. 45:61",
+        citation:
+          "Yamaguchi, Y.; Park, J.-H.; Inouye, M. Toxin–Antitoxin Systems in Bacteria and Archaea. Annu. Rev. Genet. 2011, 45, 61–79.",
         detail:
           "Cognate specificity: an antitoxin does not neutralise a toxin from a different species/family, why E. coli MazF kills a B. subtilis recipient lacking E. coli MazE.",
         kind: "literature",
@@ -488,12 +530,16 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
     sources: [
       {
         label: "Fryberger (1979), Dune forms and wind regime",
+        citation:
+          "Fryberger, S. G.; Dean, G. Dune Forms and Wind Regime. In A Study of Global Sand Seas; McKee, E. D., Ed.; USGS Professional Paper 1052; U.S. Government Printing Office: Washington, DC, 1979; pp 137–169.",
         detail:
           "Drift potential, the resultant direction, and the unidirectionality index. Chapter 5 of A Study of Global Sand Seas, USGS Professional Paper 1052.",
         kind: "literature",
       },
       {
         label: "Khalaf & Al-Ajmi (1993), Geomorphology 6, 111-134",
+        citation:
+          "Khalaf, F. I.; Al-Ajmi, D. Aeolian Processes and Sand Encroachment Problems in Kuwait. Geomorphology 1993, 6 (2), 111–134.",
         detail:
           "Kuwait: saltation begins near 5.4 m/s at 10 m, and about 20 m³ of sand drifts per metre of width per year, mostly May to August, toward the southeast. The two numbers the climatology is validated against.",
         kind: "literature",
@@ -501,6 +547,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       },
       {
         label: "Marticorena & Bergametti (1995), J. Geophys. Res. 100, 16415",
+        citation:
+          "Marticorena, B.; Bergametti, G. Modeling the Atmospheric Dust Cycle: 1. Design of a Soil-Derived Dust Emission Scheme. J. Geophys. Res. Atmos. 1995, 100 (D8), 16415–16430.",
         detail:
           "The size bands that separate creep, saltation and suspension, and the 1 m saltation layer height. This is why regional dust and local sand are different problems.",
         kind: "literature",
@@ -508,6 +556,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       },
       {
         label: "Ferguson & Church (2004), J. Sediment. Res. 74, 933",
+        citation:
+          "Ferguson, R. I.; Church, M. A Simple Universal Equation for Grain Settling Velocity. J. Sediment. Res. 2004, 74 (6), 933–937.",
         detail:
           "Settling velocity across the Stokes and turbulent regimes, which sets how far a grain released from the saltation layer travels before it lands.",
         kind: "literature",
@@ -515,6 +565,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       },
       {
         label: "Benaafi et al. (2016), Arab. J. Geosci. 9, 1970, Table 1",
+        citation:
+          "Benaafi, M.; Al-Shaibani, A.; Abdullatif, O. Sedimentological and Geochemical Characterisation of the Dune Sands in Saudi Arabia. Arab. J. Geosci. 2016, 9, 1970.",
         detail:
           "Measured grain size for Saudi dune fields, including the Rub' al-Khali, which the paper itself states resembles eastern UAE dune sand. 99.7 percent of that mass is in the saltation band.",
         kind: "literature",
@@ -522,6 +574,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       },
       {
         label: "Chappell et al. (2024), Geophys. Res. Lett. 51, e2023GL106540, Eq 3",
+        citation:
+          "Chappell, A.; Webb, N. P.; Hennen, M.; et al. Evaluating Aeolian Dust Emission from a Land Surface Model. Geophys. Res. Lett. 2024, 51, e2023GL106540.",
         detail:
           "Sandblasting efficiency against soil clay content: how much fine dust saltating grains knock loose.",
         kind: "literature",
@@ -529,6 +583,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       },
       {
         label: "Tian et al. (2018), Land Degrad. Dev. 29, 4271",
+        citation:
+          "Tian, J.; Dong, Z.; Shi, Z.; et al. Aeolian Sand Transport over a Wind-Eroded Surface. Land Degrad. Dev. 2018, 29 (11), 4271–4281.",
         detail:
           "Wind tunnel threshold for untreated aeolian sand, 5.73 m/s at 0.6 m. An independent check on the threshold this model computes from grain size.",
         kind: "literature",
@@ -536,6 +592,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       },
       {
         label: "Ginoux et al. (2012), Rev. Geophys. 50, RG3005",
+        citation:
+          "Ginoux, P.; Prospero, J. M.; Gill, T. E.; Hsu, N. C.; Zhao, M. Global-Scale Attribution of Anthropogenic and Natural Dust Sources. Rev. Geophys. 2012, 50, RG3005.",
         detail:
           "The mapped dust source areas, by how often dust is seen over them. 0.1 degree grid, March to May only for this region.",
         kind: "literature",
@@ -597,6 +655,8 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       },
       {
         label: "Filioglou et al. (2020), Atmos. Chem. Phys. 20, 8909",
+        citation:
+          "Filioglou, M.; Giannakaki, E.; Backman, J.; et al. Optical and Geometrical Aerosol Particle Properties over the United Arab Emirates. Atmos. Chem. Phys. 2020, 20, 8909–8922.",
         detail:
           "A year of lidar over the UAE. The country is both a source and a receptor of mineral dust, local emission is abundant, and the air also carries dust from Saudi Arabia, Iran and Iraq.",
         kind: "literature",

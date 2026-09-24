@@ -19,6 +19,8 @@ export default tseslint.config(
       "next-env.d.ts",
       "node_modules/**",
       "out/**",
+      // Compiled output from the model validators, regenerated on every run.
+      ".validate-tmp/**",
       "public/code/**",
       "manim_videos/**",
       "cobrapy/**",
