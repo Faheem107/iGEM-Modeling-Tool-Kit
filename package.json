@@ -9,7 +9,9 @@
     "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit && eslint .",
     "audit:content": "node scripts/check-content-integrity.mjs",
-    "verify": "npm run lint && npm run build && npm run audit:content"
+    "verify": "npm run lint && npm run build && npm run audit:content",
+    "validate:models": "tsx scripts/validate-models.ts",
+    "validate:tiers": "python3 python_models/validate_models.py"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "1.2.2",
