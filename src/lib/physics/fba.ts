@@ -6,7 +6,11 @@
  * on a stoichiometric network. Built on top are the analyses that make FBA a meaningful
  * dry-lab tool, not a single point solve:
  *
- *   • solveFBA, optimal flux distribution + objective + shadow prices
+ *   • solveFBA, optimal flux distribution + objective value. It does NOT return duals:
+ *     FbaSolution has no field for them, and the metabolite duals of this network are
+ *     degenerate because alternative optima of equal objective value exist. Sensitivity to
+ *     an uptake bound is obtained instead by perturbing that bound and re-solving, which is
+ *     what solveDetailedFBA reports as a reduced cost.
  *   • parsimoniousFBA, unique min-Σ|v| flux map at the optimum (pFBA)
  *   • fluxVariability, per-reaction [min,max] flux at (near-)optimal growth (FVA)
  *   • productionEnvelope, growth ↔ product Pareto front (phenotype phase plane)
@@ -379,7 +383,12 @@ export function fluxVariability(
   };
   const constraints = [...base.constraints, floor];
 
-  const ids = rxnIds ?? net.reactions.map((r) => r.id);
+  // A caller can ask about a reaction this network does not carry, either because
+  // it was knocked out or because the id is stale. Skip those rather than indexing
+  // past the end of the array, which used to throw and take the whole module down.
+  const ids = (rxnIds ?? net.reactions.map((r) => r.id)).filter((id) =>
+    net.reactions.some((r) => r.id === id),
+  );
   const out: Record<string, FvaRange> = {};
   for (const id of ids) {
     const j = net.reactions.findIndex((r) => r.id === id);

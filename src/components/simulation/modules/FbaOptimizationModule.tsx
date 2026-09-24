@@ -116,14 +116,14 @@ function PathwayFlowMap({
 }) {
   const edges: FlowEdge[] = [
     {
-      id: "GLT",
+      id: "PTS",
       rxn: "Glucose uptake, PTS (ptsG)",
       from: [NODE.glc.x, NODE.glc.y],
       to: [NODE.G6P.x, NODE.G6P.y],
       color: "spine",
     },
     {
-      id: "GLY",
+      id: "PFK",
       rxn: "Glycolysis (pfkA)",
       from: [NODE.G6P.x, NODE.G6P.y],
       to: [NODE.PEP.x, NODE.PEP.y],
@@ -451,7 +451,7 @@ export default function FbaOptimizationModule({
   const fluxDisplay = useMemo(() => {
     const base = [
       "EX_GLC",
-      "GLY",
+      "PFK",
       "ZWF",
       "PDH",
       "PYC",
@@ -491,7 +491,7 @@ export default function FbaOptimizationModule({
     const caMax = has2 ? solveFBA(network, OBJ_CA).objectiveValue : 0;
     const envelope = productionEnvelope(network, OBJ_GROWTH, productObj, 12);
     const fva = fluxVariability(network, objId, 0.999, [
-      "GLY",
+      "GAPD",
       "ZWF",
       "ICDH",
       "AKGD",
