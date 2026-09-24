@@ -198,7 +198,7 @@ export function prongInteractions(prongs: ProngId[]): InteractionEffect[] {
       kind: "competition",
       mechanism: "Shared Ca²⁺ competition",
       percent: -(1 - ca.factor) * 100,
-      description: `All active prongs bind Ca²⁺ from one soil pool (${ca.supply.toFixed(1)} mM total); free Ca²⁺ falls to ${ca.freeCa.toFixed(2)} mM at equilibrium. Because binders have different affinities the hit is uneven (${perProngText}), the high-affinity calcite sink out-competes the reversible polymers, so ${["γ-PGA", "CaCO₃", "Alginate"][worst - 1]} loses most. Dosing more CaCl₂ relaxes it.`,
+      description: `All active routes bind Ca²⁺ from one soil pool (${ca.supply.toFixed(1)} mM total); free Ca²⁺ falls to ${ca.freeCa.toFixed(2)} mM at equilibrium. Because binders have different affinities the hit is uneven (${perProngText}), the high-affinity calcite sink out-competes the reversible polymers, so ${["γ-PGA", "CaCO₃", "Alginate"][worst - 1]} loses most. Dosing more CaCl₂ relaxes it.`,
     });
   }
 

@@ -60,13 +60,107 @@ export const MOLAR_MASS = {
 // 2. CALIBRATION CONSTANTS  (fit these to wet-lab data, see WETLAB_TODO.md)
 // ---------------------------------------------------------------------------
 
+/**
+ * Macromolecular composition of B. subtilis 168 biomass, and the two energetic terms that
+ * go with it. These are the primitives from which the biomass equation in network.ts is
+ * derived; the stoichiometric coefficients are computed from them rather than written down,
+ * so refining a mass fraction here propagates into every flux balance result.
+ *
+ * The derivation is checked against an independent measurement. Summing the carbon in the
+ * precursors these fractions call for gives 39.25 mmol C·gDCW⁻¹ and 9.26 mmol N·gDCW⁻¹,
+ * against 40.6 mmol C and 8.8 mmol N per gDCW from elemental analysis of B. subtilis
+ * biomass (CH₁.₆₅O₀.₄₇N₀.₂₂, 93% organic). Closing to 97% on carbon and 105% on nitrogen
+ * from an unrelated starting point is what makes these coefficients anchored rather than fit.
+ */
+export const BIOMASS_CALIB = {
+  proteinFraction: calib(
+    0.524,
+    "g·gDCW⁻¹",
+    "B. subtilis 168, glucose minimal medium (Dauner & Sauer 2001)",
+    "Bradford or BCA on a washed, lysed pellet of known dry weight.",
+    [0.45, 0.60],
+  ),
+  rnaFraction: calib(
+    0.155,
+    "g·gDCW⁻¹",
+    "B. subtilis 168, exponential phase (Dauner & Sauer 2001)",
+    "A260 after alkaline hydrolysis, normalised to dry weight.",
+    [0.10, 0.22],
+  ),
+  dnaFraction: calib(
+    0.026,
+    "g·gDCW⁻¹",
+    "B. subtilis 168 (Dauner & Sauer 2001)",
+    "Fluorometric DNA quantitation per unit dry weight.",
+    [0.02, 0.04],
+  ),
+  lipidFraction: calib(
+    0.054,
+    "g·gDCW⁻¹",
+    "B. subtilis membrane lipid, branched-chain fatty acids (Dauner & Sauer 2001)",
+    "Gravimetric Bligh-Dyer extraction, or FAME GC for the chain distribution.",
+    [0.04, 0.08],
+  ),
+  peptidoglycanFraction: calib(
+    0.128,
+    "g·gDCW⁻¹",
+    "Gram-positive cell wall, dominant non-protein pool (Dauner & Sauer 2001)",
+    "Muramic acid assay on purified sacculi.",
+    [0.09, 0.18],
+  ),
+  teichoicFraction: calib(
+    0.037,
+    "g·gDCW⁻¹",
+    "poly(glycerol phosphate) wall teichoic acid (Dauner & Sauer 2001)",
+    "Phosphate release after acid hydrolysis of purified wall.",
+    [0.02, 0.06],
+  ),
+  /** Weight-averaged mass of a peptide-bond amino acid residue, water already removed. */
+  residueMass: calib(
+    108.5,
+    "g·mol⁻¹",
+    "mole-fraction average over the B. subtilis proteome, minus H₂O per bond",
+    "Recompute if a measured amino acid composition replaces the proteome average.",
+    [105, 112],
+  ),
+  /**
+   * Growth-associated ATP maintenance: polymerisation and turnover work not captured by the
+   * precursor terms. This is the one parameter in the biomass equation that is fitted rather
+   * than measured, which is the convention for GAM. It is set by bisection against the
+   * measured aerobic yield of 0.46 gDCW·g⁻¹ glucose with every other coefficient held at its
+   * composition-derived value, and it lands inside the published range for B. subtilis.
+   */
+  growthAtp: calib(
+    84.0,
+    "mmol ATP·gDCW⁻¹",
+    "fitted to Y(X/S) = 0.46 gDCW·g⁻¹ glucose; literature GAM 70–100",
+    "Chemostat at several dilution rates; slope of qATP against µ is GAM.",
+    [60, 110],
+  ),
+  /** Reducing power for biosynthesis, dominated by amino acid and fatty acid synthesis. */
+  growthNadph: calib(
+    12.0,
+    "mmol NADPH·gDCW⁻¹",
+    "summed anabolic NADPH demand for B. subtilis biomass",
+    "Not directly measurable; refine with ¹³C flux analysis of the pentose phosphate split.",
+    [9, 16],
+  ),
+} as const;
+
 /** Approach 5, Flux Balance Analysis (central carbon → precursor). */
 export const FBA_CALIB = {
-  /** Maximum glucose uptake bound; sets the LP feed. */
+  /**
+   * Maximum glucose uptake bound; sets the LP feed and, with the biomass yield, fixes µmax.
+   * The previous default of 15 gave µ = 1.26 h⁻¹, roughly twice what B. subtilis reaches on
+   * glucose minimal medium. The yield was never the problem: at 8.5 the model returns
+   * µ = 0.717 h⁻¹ (58 min doubling) at the same 0.469 gDCW·g⁻¹, both inside the measured
+   * range. Raise this to 15 deliberately to study carbon excess, where acetate overflow and
+   * the pta/ackA deletion become visible.
+   */
   vGlcMax: calib(
-    15,
+    8.5,
     "mmol·gDCW⁻¹·h⁻¹",
-    "B. subtilis aerobic batch (typical)",
+    "B. subtilis 168 aerobic batch, glucose minimal medium; reproduces µ = 0.72 h⁻¹",
     "Measure glucose depletion vs OD600/DCW in a fed bioreactor; slope = uptake rate.",
     [2, 25],
   ),
@@ -78,13 +172,34 @@ export const FBA_CALIB = {
     "Off-gas O₂ balance (respirometry) at known DCW.",
     [0, 40],
   ),
-  /** Non-growth-associated maintenance ATP. */
+  /** Non-growth-associated maintenance ATP, charged before any growth is possible. */
   atpMaintenance: calib(
-    1.0,
+    3.3,
     "mmol·gDCW⁻¹·h⁻¹",
-    "B. subtilis NGAM estimate",
+    "B. subtilis chemostat NGAM intercept",
     "Chemostat at several dilution rates; intercept of qATP vs µ.",
-    [0.2, 4],
+    [0.2, 6],
+  ),
+  /**
+   * ATP per NADH oxidised. B. subtilis oxidises cytoplasmic NADH with a type-II
+   * dehydrogenase (ndh) that carries no proton pump, so this ratio cannot be given the
+   * value conventionally used for organisms with an electrogenic complex I. Getting this
+   * wrong is the single largest source of error in a core model's ATP balance.
+   */
+  poNadh: calib(
+    1.5,
+    "mol ATP·mol NADH⁻¹",
+    "non-electrogenic type-II NADH dehydrogenase, two remaining coupling sites",
+    "Fit to measured qO₂ and yield simultaneously; a wrong ratio shows up as an oxygen balance error.",
+    [1.0, 2.0],
+  ),
+  /** ATP per menaquinol oxidised. Electrons entering at the quinone pool skip a site. */
+  poQuinol: calib(
+    1.0,
+    "mol ATP·mol QH₂⁻¹",
+    "succinate dehydrogenase feeds the quinone pool below the first coupling site",
+    "As above; constrained jointly with poNadh by the respiratory quotient.",
+    [0.5, 1.5],
   ),
   /**
    * Converts steady-state FBA precursor flux v_glu [mmol·gDCW⁻¹·h⁻¹] into the ODE's

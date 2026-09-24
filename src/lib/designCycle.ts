@@ -41,7 +41,7 @@ export const CYCLE_BEATS: CycleBeat[] = [
   {
     stage: "Build",
     turn: 1,
-    title: "Three prongs",
+    title: "Three routes",
     body:
       "With a target to hit, the question became which biological route could reach it. We built three of them separately: γ-PGA overexpression as a sticky matrix, carbonic anhydrase for calcium-carbonate cement, and sodium alginate as an applied binder. Modelling them apart is what made them comparable, because no route was flattered by being averaged with another.",
   },
@@ -50,14 +50,14 @@ export const CYCLE_BEATS: CycleBeat[] = [
     turn: 1,
     title: "One route drops out, one layer goes on",
     body:
-      "Running all three did not leave all three standing. Alginate absorbs water the cells need and depends on a calcium supply the site does not guarantee, so it stopped being a prong. Separately we worked out what releasing a live engineered strain would take to be reversible, and added a MazE/MazF kill switch over both remaining prongs. The deployment can now be ended, not only started.",
+      "Running all three did not leave all three standing. Alginate absorbs water the cells need and depends on a calcium supply the site does not guarantee, so it stopped being a route. Separately we worked out what releasing a live engineered strain would take to be reversible, and added a MazE/MazF kill switch over both remaining routes. The deployment can now be ended, not only started.",
   },
   {
     stage: "Learn",
     turn: 1,
     title: "From cell to crust",
     body:
-      "Next we checked whether a change inside the cell reaches the surface. Flux balance analysis feeds polymer kinetics, kinetics feeds cross-linking, and cross-linking feeds the cohesion the wind model reads, so one grain can be traced from metabolism to cured crust. The two prongs turned out to be complementary rather than redundant. Calcite covers the 63 to 125 µm band well and γ-PGA closes the coarse and fine gaps, which is why they are deployed together.",
+      "Next we checked whether a change inside the cell reaches the surface. Flux balance analysis feeds polymer kinetics, kinetics feeds cross-linking, and cross-linking feeds the cohesion the wind model reads, so one grain can be traced from metabolism to cured crust. The two routes turned out to be complementary rather than redundant. Calcite covers the 63 to 125 µm band well and γ-PGA closes the coarse and fine gaps, which is why they are deployed together.",
   },
   {
     stage: "Design",

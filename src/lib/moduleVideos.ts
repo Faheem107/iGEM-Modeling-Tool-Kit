@@ -93,7 +93,7 @@ export const MODULE_VIDEOS: Record<VideoId, ModuleVideo> = {
   "protein-3d": {
     title: "A look inside the real enzymes",
     plain:
-      "These are the actual 3-D shapes of the two proteins we engineer, γ-PGA synthase for Prong 1 and carbonic anhydrase for Prong 2, traced from real deposited structures. Following the backbone shows where the chemistry happens: the active-site pocket that does all the work.",
+      "These are the actual 3-D shapes of the two proteins we engineer, γ-PGA synthase for Route 1 and carbonic anhydrase for Route 2, traced from real deposited structures. Following the backbone shows where the chemistry happens: the active-site pocket that does all the work.",
     length: "~46 s",
     ready: true,
   },
@@ -126,9 +126,9 @@ export const MODULE_VIDEOS: Record<VideoId, ModuleVideo> = {
     ready: true,
   },
   composite: {
-    title: "Why two prongs beat one",
+    title: "Why two routes beat one",
     plain:
-      "Combining the two prongs is not simple addition. They compete for the same calcium, and because calcite is the greedier sink, γ-PGA loses most. They share one cell's energy budget, so each titre drops. But the polymer's acidic groups also seed tougher calcite, a real synergy. Add the cooperation, subtract the competition and burden, and the combined crust still beats either prong, and each covers the other's failure modes.",
+      "Combining the two routes is not simple addition. They compete for the same calcium, and because calcite is the greedier sink, γ-PGA loses most. They share one cell's energy budget, so each titre drops. But the polymer's acidic groups also seed tougher calcite, a real synergy. Add the cooperation, subtract the competition and burden, and the combined crust still beats either route, and each covers the other's failure modes.",
     length: "~72 s",
     ready: true,
   },

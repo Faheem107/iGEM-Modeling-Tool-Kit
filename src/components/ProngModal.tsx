@@ -25,7 +25,7 @@ export default function ProngModal({
 }: {
   viewing: ProngTarget | null;
   onClose: () => void;
-  /** Where "Simulate this prong" goes. The landing restores scroll, the index does not. */
+  /** Where "Simulate this route" goes. The landing restores scroll, the index does not. */
   onOpenModel: (target: ProngTarget) => void;
 }) {
   const activeProng =
@@ -72,7 +72,7 @@ export default function ProngModal({
           ? KILL_SWITCH_ROLE
           : activeProng?.whyDropped
             ? ALGINATE_STATUS
-            : "Prong"
+            : "Route"
       }
       title={showingKill ? KILL_SWITCH.title : (activeProng?.title ?? "")}
       tabs={tabs}
@@ -84,7 +84,7 @@ export default function ProngModal({
           }}
           className="caption w-full border border-border py-4 text-center text-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
         >
-          {showingKill ? "Open the kill switch model" : "Simulate this prong"}
+          {showingKill ? "Open the kill switch model" : "Simulate this route"}
         </button>
       }
     />

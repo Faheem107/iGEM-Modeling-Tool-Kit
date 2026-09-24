@@ -1,30 +1,38 @@
 /**
- * Detailed B. subtilis central-carbon network for the Advanced FBA Portal.
- * =======================================================================
- * This is the SAME data the portal displays (glycolysis, PPP, TCA, overflow, PGA synthesis,
- * respiration, biomass, exchanges), moved into the physics layer so the portal solves it with
- * the shared, verified two-phase simplex in `fba.ts` instead of a hand-coded flux cascade.
+ * Adapter between the canonical network and the Advanced FBA Portal.
+ * ==================================================================
+ * This file used to hold a second copy of the stoichiometry, and the portal held a third for
+ * display. The three disagreed: on the ATP yield of NADH oxidation (2.5 against 1.5), on the
+ * cost of a gamma-PGA residue (1 ATP against 2), on whether succinate dehydrogenase reduces
+ * NAD or the quinone pool, and on the biomass equation, where the display copy drew 0.1 mmol
+ * of each precursor per gDCW, about a fortieth of the carbon a cell actually contains. The
+ * portal displayed one set of equations and reported numbers from another.
  *
- * Two corrections make it a genuine, mass-balanced FBA:
- *   1. CO₂ and lactate were dead-end products (produced, never drained) → add EX_co2 / EX_lac
- *      sinks so a strict S·v=0 solve doesn't force their producers to zero.
- *   2. Uptake exchanges are written "-> metabolite" (coef +1); a genuine supply is therefore a
- *      POSITIVE flux bounded [0, cap]. `buildDetailedFbaNetwork` sets those bounds from the
- *      glucose/oxygen sliders (the legacy cascade ignored the stored bounds entirely).
+ * There is now one stoichiometry, in network.ts. This file only renames it.
+ *
+ * WHY THE PORTAL HAS MORE ARROWS THAN THE NETWORK HAS REACTIONS
+ *   The portal draws individual enzymatic steps: phosphofructokinase, aldolase and triose
+ *   phosphate isomerase as three arrows, aconitase separately from isocitrate dehydrogenase,
+ *   and so on. The canonical network lumps each of those linear chains into one reaction,
+ *   which is standard practice and changes nothing: a chain with no branch point carries the
+ *   same flux at every step by mass balance. PORTAL_ALIAS therefore maps several display
+ *   arrows onto one canonical reaction, and each arrow shows the flux that genuinely passes
+ *   through it. No arrow shows a number that was not solved for.
  */
 
-import type { FbaReaction, MetabolicNetwork } from "./fba";
+import type { MetabolicNetwork } from "./fba";
 import { solveFBA, type FbaSolution } from "./fba";
+import {
+  buildCoreNetwork,
+  CORE_REACTIONS,
+  METABOLITE_INFO,
+  OBJ_GROWTH,
+  OBJ_PGA,
+  type CoreReactionMeta,
+  type Subsystem as CoreSubsystem,
+} from "./network";
 
-export type Subsystem =
-  | "glycolysis"
-  | "ppp"
-  | "tca"
-  | "overflow"
-  | "biomass"
-  | "pga_synthesis"
-  | "respiration"
-  | "exchanges";
+export type Subsystem = CoreSubsystem;
 
 export interface DetailedReaction {
   id: string;
@@ -45,557 +53,146 @@ export interface DetailedMetabolite {
   compartment: "cytosol" | "extracellular";
 }
 
-export const DETAILED_METABOLITES: DetailedMetabolite[] = [
-  { id: "glc_ext", name: "Glucose (Ext)", compartment: "extracellular" },
-  { id: "g6p", name: "Glucose-6-Phosphate", compartment: "cytosol" },
-  { id: "f6p", name: "Fructose-6-Phosphate", compartment: "cytosol" },
-  { id: "fbp", name: "Fructose-1,6-Bisphosphate", compartment: "cytosol" },
-  { id: "gap", name: "Glyceraldehyde-3-Phosphate", compartment: "cytosol" },
-  { id: "dhap", name: "Dihydroxyacetone Phosphate", compartment: "cytosol" },
-  { id: "pep", name: "Phosphoenolpyruvate", compartment: "cytosol" },
-  { id: "pyr", name: "Pyruvate", compartment: "cytosol" },
-  { id: "accoa", name: "Acetyl-CoA", compartment: "cytosol" },
-  { id: "cit", name: "Citrate", compartment: "cytosol" },
-  { id: "icit", name: "Isocitrate", compartment: "cytosol" },
-  { id: "akg", name: "Alpha-Ketoglutarate", compartment: "cytosol" },
-  { id: "succoa", name: "Succinyl-CoA", compartment: "cytosol" },
-  { id: "succ", name: "Succinate", compartment: "cytosol" },
-  { id: "oaa", name: "Oxaloacetate", compartment: "cytosol" },
-  { id: "6pgc", name: "6-Phosphogluconate", compartment: "cytosol" },
-  { id: "ru5p", name: "Ribulose-5-Phosphate", compartment: "cytosol" },
-  { id: "ac_ext", name: "Acetate (Ext)", compartment: "extracellular" },
-  { id: "lac_ext", name: "Lactate (Ext)", compartment: "extracellular" },
-  { id: "l_glu", name: "L-Glutamate", compartment: "cytosol" },
-  { id: "pga_ext", name: "PGA Biopolymer (Ext)", compartment: "extracellular" },
-  { id: "nh3", name: "Ammonia", compartment: "cytosol" },
-  { id: "o2", name: "Oxygen", compartment: "cytosol" },
-  { id: "co2", name: "Carbon Dioxide", compartment: "cytosol" },
-  { id: "atp", name: "ATP", compartment: "cytosol" },
-  { id: "nadh", name: "NADH", compartment: "cytosol" },
-  { id: "nadph", name: "NADPH", compartment: "cytosol" },
-  { id: "biomass", name: "Biomass Portfolio", compartment: "cytosol" },
-];
+export const DETAILED_METABOLITES: DetailedMetabolite[] = Object.values(
+  METABOLITE_INFO,
+).map((m) => ({ id: m.id, name: m.name, compartment: m.compartment }));
 
-export const DETAILED_REACTIONS: DetailedReaction[] = [
-  // Glycolysis
-  {
-    id: "R_GLCpts",
-    name: "Glucose Transport (PTS)",
-    gene: "ptsG",
-    formula: "glc_ext + pep -> g6p + pyr",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 15,
-    subsystem: "glycolysis",
-    description:
-      "B. subtilis phosphotransferase system consuming PEP to phosphorylate imported glucose.",
-    stoich: { glc_ext: -1, pep: -1, g6p: 1, pyr: 1 },
-  },
-  {
-    id: "R_PGI",
-    name: "Phosphoglucose Isomerase",
-    gene: "pgi",
-    formula: "g6p <=> f6p",
-    reversible: true,
-    defaultLb: -100,
-    defaultUb: 100,
-    subsystem: "glycolysis",
-    description:
-      "Interconverts G6P to F6P. Major glycolysis–PPP bifurcation checkpoint.",
-    stoich: { g6p: -1, f6p: 1 },
-  },
-  {
-    id: "R_PFK",
-    name: "Phosphofructokinase",
-    gene: "pfkA",
-    formula: "f6p + atp -> fbp",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "glycolysis",
-    description:
-      "Irreversible gateway step committing carbon to lower glycolysis via ATP phosphorylation.",
-    stoich: { f6p: -1, atp: -1, fbp: 1 },
-  },
-  {
-    id: "R_FBA",
-    name: "Fructose-Bisphosphate Aldolase",
-    gene: "fbaA",
-    formula: "fbp <=> gap + dhap",
-    reversible: true,
-    defaultLb: -100,
-    defaultUb: 100,
-    subsystem: "glycolysis",
-    description: "Splits 6C fructose to 3C glyceraldehyde & dihydroxyacetone.",
-    stoich: { fbp: -1, gap: 1, dhap: 1 },
-  },
-  {
-    id: "R_TPI",
-    name: "Triosephosphate Isomerase",
-    gene: "tpiA",
-    formula: "dhap <=> gap",
-    reversible: true,
-    defaultLb: -100,
-    defaultUb: 100,
-    subsystem: "glycolysis",
-    description:
-      "Equilibrates the split triose pools for downstream phosphorylation.",
-    stoich: { dhap: -1, gap: 1 },
-  },
-  {
-    id: "R_GAPDH_PGK",
-    name: "Lower Glycolysis Oxidation Cascade",
-    gene: "gapA",
-    formula: "gap -> pep + nadh + atp",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "glycolysis",
-    description:
-      "Oxidizes GAP to PEP, capturing reducing power as NADH and generating ATP.",
-    stoich: { gap: -1, pep: 1, nadh: 1, atp: 1 },
-  },
-  {
-    id: "R_PYK",
-    name: "Pyruvate Kinase",
-    gene: "pyk",
-    formula: "pep -> pyr + atp",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "glycolysis",
-    description:
-      "Final glycolysis step generating pyruvate and ATP via substrate-level phosphorylation.",
-    stoich: { pep: -1, pyr: 1, atp: 1 },
-  },
-  // Pentose phosphate pathway
-  {
-    id: "R_G6PDH",
-    name: "G6P Dehydrogenase",
-    gene: "zwf",
-    formula: "g6p -> 6pgc + nadph",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "ppp",
-    description:
-      "Primary pathway diversion producing initial NADPH required for biopolymer synthesis.",
-    stoich: { g6p: -1, "6pgc": 1, nadph: 1 },
-  },
-  {
-    id: "R_GND",
-    name: "6PG Dehydrogenase",
-    gene: "gnd",
-    formula: "6pgc -> ru5p + nadph + co2",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "ppp",
-    description:
-      "Oxidatively decarboxylates 6-phosphogluconate, yielding a second NADPH and pentose sugars.",
-    stoich: { "6pgc": -1, ru5p: 1, nadph: 1, co2: 1 },
-  },
-  {
-    id: "R_PPP_to_Glyc",
-    name: "Pentose Recycle Cascade",
-    gene: "tkt",
-    formula: "3 ru5p <=> gap + 2 f6p",
-    reversible: true,
-    defaultLb: -100,
-    defaultUb: 100,
-    subsystem: "ppp",
-    description:
-      "Transketolase/transaldolase cascade routing intermediate pentoses back into glycolysis pools.",
-    stoich: { ru5p: -3, gap: 1, f6p: 2 },
-  },
-  // TCA / PDH
-  {
-    id: "R_PDH",
-    name: "Pyruvate Dehydrogenase",
-    gene: "pdhA",
-    formula: "pyr -> accoa + nadh + co2",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "tca",
-    description:
-      "Decarboxylates pyruvate, committing carbon into Acetyl-CoA and synthesizing 1 NADH.",
-    stoich: { pyr: -1, accoa: 1, nadh: 1, co2: 1 },
-  },
-  {
-    id: "R_CS",
-    name: "Citrate Synthase",
-    gene: "gltA",
-    formula: "accoa + oaa -> cit",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "tca",
-    description:
-      "Condenses Acetyl-CoA with Oxaloacetate to initiate the TCA cycle.",
-    stoich: { accoa: -1, oaa: -1, cit: 1 },
-  },
-  {
-    id: "R_ACONT",
-    name: "Aconitase",
-    gene: "citB",
-    formula: "cit <=> icit",
-    reversible: true,
-    defaultLb: -100,
-    defaultUb: 100,
-    subsystem: "tca",
-    description:
-      "Isomerizes citrate to isocitrate to set up oxidative decarboxylations.",
-    stoich: { cit: -1, icit: 1 },
-  },
-  {
-    id: "R_ICDH",
-    name: "Isocitrate Dehydrogenase",
-    gene: "citC",
-    formula: "icit -> akg + nadph + co2",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "tca",
-    description:
-      "Major metabolic fork. Generates NADPH and alpha-ketoglutarate, the precursor for PGA polymer.",
-    stoich: { icit: -1, akg: 1, nadph: 1, co2: 1 },
-  },
-  {
-    id: "R_AKGDH",
-    name: "Alpha-Ketoglutarate Dehydrogenase",
-    gene: "odhA",
-    formula: "akg -> succoa + nadh + co2",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "tca",
-    description:
-      "Competes directly with PGA synthesis by draining AKG to Succinyl-CoA.",
-    stoich: { akg: -1, succoa: 1, nadh: 1, co2: 1 },
-  },
-  {
-    id: "R_SUCOAS",
-    name: "Succinyl-CoA Synthetase",
-    gene: "sucC",
-    formula: "succoa -> succ + atp",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "tca",
-    description:
-      "Substrate-level phosphorylation in the TCA cycle yielding Succinate and ATP.",
-    stoich: { succoa: -1, succ: 1, atp: 1 },
-  },
-  {
-    id: "R_SDH_FUM_MDH",
-    name: "Malate & Oxaloacetate Regeneration",
-    gene: "sdhA",
-    formula: "succ -> oaa + 2 nadh",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "tca",
-    description:
-      "Lumped SDH+fumarase+MDH converting succinate back to oxaloacetate, synthesizing 2 NADH.",
-    stoich: { succ: -1, oaa: 1, nadh: 2 },
-  },
-  {
-    id: "R_PYC",
-    name: "Pyruvate Carboxylase (anaplerosis)",
-    gene: "pycA",
-    formula: "pyr + atp + co2 -> oaa",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "tca",
-    description:
-      "Anaplerotic replenishment of oxaloacetate, refills the TCA cycle when α-ketoglutarate is drained to glutamate for PGA. Without it the cycle cannot sustain product synthesis.",
-    stoich: { pyr: -1, atp: -1, co2: -1, oaa: 1 },
-  },
-  // Overflow
-  {
-    id: "R_PTA_ACK",
-    name: "Acetate Overflow (PTA-ACK)",
-    gene: "pta",
-    formula: "accoa -> ac_ext + atp",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "overflow",
-    description:
-      "Overflow shunt used when carbon load exceeds respiratory capacity. Fast ATP but wastes acetate.",
-    stoich: { accoa: -1, ac_ext: 1, atp: 1 },
-  },
-  {
-    id: "R_LDH",
-    name: "Lactate Dehydrogenase",
-    gene: "ldh",
-    formula: "pyr + nadh <=> lac_ext",
-    reversible: true,
-    defaultLb: -100,
-    defaultUb: 100,
-    subsystem: "overflow",
-    description:
-      "Acidic overflow during hypoxia, reoxidizing NADH pools rapidly.",
-    stoich: { pyr: -1, nadh: -1, lac_ext: 1 },
-  },
-  // PGA synthesis
-  {
-    id: "R_GLUsyn",
-    name: "Glutamate Synthase (transaminase)",
-    gene: "gltD",
-    formula: "akg + nadph + nh3 -> l_glu",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "pga_synthesis",
-    description:
-      "Synthesizes L-glutamate precursor by trapping ammonia. Crucial consumer of TCA α-ketoglutarate.",
-    stoich: { akg: -1, nadph: -1, nh3: -1, l_glu: 1 },
-  },
-  {
-    id: "R_PGAsyn",
-    name: "PGA Synthase (Polymerizer)",
-    gene: "pgas",
-    formula: "l_glu + atp -> pga_ext",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "pga_synthesis",
-    description:
-      "Active iGEM operon. Polymerizes glutamate into extracellular poly-γ-glutamate, using ATP.",
-    stoich: { l_glu: -1, atp: -1, pga_ext: 1 },
-  },
-  // Respiration & maintenance
-  {
-    id: "R_RESP",
-    name: "Respiratory Phosphorylation (ETC)",
-    gene: "ctaA",
-    formula: "nadh + 0.5 o2 -> 2.5 atp",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "respiration",
-    description:
-      "Consumes oxygen to oxidize NADH, generating 2.5 ATP per NADH oxidized.",
-    stoich: { nadh: -1, o2: -0.5, atp: 2.5 },
-  },
-  {
-    id: "R_ATPM",
-    name: "ATP Maintenance Requirement",
-    gene: "maint",
-    formula: "atp ->",
-    reversible: false,
-    defaultLb: 1.0,
-    defaultUb: 100,
-    subsystem: "respiration",
-    description:
-      "Forced base cellular energy demand to maintain viability and osmotic pressure.",
-    stoich: { atp: -1 },
-  },
-  // Biomass
-  {
-    id: "R_Biomass",
-    name: "Biomass Portfolio Synthesis",
-    gene: "growth",
-    formula:
-      "0.1 g6p + 0.1 pep + 0.1 pyr + 0.1 accoa + 0.1 akg + 0.1 oaa + 2 atp + 1 nadph -> biomass",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 10,
-    subsystem: "biomass",
-    description:
-      "Cell growth draining key precursors, energy, and reducing power.",
-    stoich: {
-      g6p: -0.1,
-      pep: -0.1,
-      pyr: -0.1,
-      accoa: -0.1,
-      akg: -0.1,
-      oaa: -0.1,
-      atp: -2.0,
-      nadph: -1.0,
-      biomass: 1,
-    },
-  },
-  // Exchanges (uptake exchanges are re-bounded in buildDetailedFbaNetwork)
-  {
-    id: "EX_glc",
-    name: "Glucose Uptake Exchange",
-    gene: "exchange",
-    formula: "-> glc_ext",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 15,
-    subsystem: "exchanges",
-    description: "Glucose supply from the surrounding soil interface.",
-    stoich: { glc_ext: 1 },
-  },
-  {
-    id: "EX_o2",
-    name: "Oxygen Intake Exchange",
-    gene: "exchange",
-    formula: "-> o2",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 15,
-    subsystem: "exchanges",
-    description: "Regulates aerobic vs anaerobic soil-interface conditions.",
-    stoich: { o2: 1 },
-  },
-  {
-    id: "EX_nh3",
-    name: "Ammonia Intake Exchange",
-    gene: "exchange",
-    formula: "-> nh3",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 1000,
-    subsystem: "exchanges",
-    description: "Nitrogen source for L-glutamate biosynthesis.",
-    stoich: { nh3: 1 },
-  },
-  {
-    id: "EX_ac",
-    name: "Acetate Output Exchange",
-    gene: "exchange",
-    formula: "ac_ext ->",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 1000,
-    subsystem: "exchanges",
-    description: "Allows acetate overflow excretion.",
-    stoich: { ac_ext: -1 },
-  },
-  {
-    id: "EX_lac",
-    name: "Lactate Output Exchange",
-    gene: "exchange",
-    formula: "lac_ext ->",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 1000,
-    subsystem: "exchanges",
-    description: "Drains fermentative lactate under hypoxia.",
-    stoich: { lac_ext: -1 },
-  },
-  {
-    id: "EX_co2",
-    name: "CO₂ Release Exchange",
-    gene: "exchange",
-    formula: "co2 ->",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 1000,
-    subsystem: "exchanges",
-    description: "Releases respiratory/decarboxylation CO₂.",
-    stoich: { co2: -1 },
-  },
-  {
-    id: "EX_pga",
-    name: "PGA Export Exchange",
-    gene: "exchange",
-    formula: "pga_ext ->",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 1000,
-    subsystem: "exchanges",
-    description:
-      "Deposition of protective structural polymer onto surrounding sand.",
-    stoich: { pga_ext: -1 },
-  },
-  {
-    id: "EX_biomass",
-    name: "Biomass Dilution Exchange",
-    gene: "exchange",
-    formula: "biomass ->",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 1000,
-    subsystem: "exchanges",
-    description: "Growth dilution / loss-rate drain.",
-    stoich: { biomass: -1 },
-  },
-];
+/**
+ * Display arrow id to canonical reaction id. Several arrows may share a target when they are
+ * consecutive steps of a lumped linear chain; in that case they all carry the same flux,
+ * which is the correct thing to show.
+ */
+export const PORTAL_ALIAS: Record<string, string> = {
+  EX_glc: "EX_GLC",
+  EX_o2: "EX_O2",
+  EX_nh3: "EX_NH3",
+  EX_co2: "EX_CO2",
+  EX_ac: "EX_AC",
+  EX_lac: "EX_LAC",
+  EX_pga: "EX_PGA",
+  EX_biomass: "EX_BIOM",
+  R_GLCpts: "PTS",
+  R_PGI: "PGI",
+  R_PFK: "PFK",
+  R_FBA: "PFK", // aldolase, same chain as phosphofructokinase
+  R_TPI: "PFK", // triose phosphate isomerase, same chain
+  R_FBP: "FBP",
+  R_GAPDH_PGK: "GAPD",
+  R_PYK: "PYK",
+  R_PCK: "PCK",
+  R_G6PDH: "ZWF",
+  R_GND: "ZWF", // 6-phosphogluconate dehydrogenase, same chain as zwf
+  R_PPP_to_Glyc: "TKT",
+  R_PDH: "PDH",
+  R_PYC: "PYC",
+  R_CS: "CS",
+  R_ACONT: "ICDH", // aconitase, same chain as isocitrate dehydrogenase
+  R_ICDH: "ICDH",
+  R_AKGDH: "AKGD",
+  R_SUCOAS: "AKGD", // succinyl-CoA synthetase, same chain as odhAB
+  R_SDH_FUM_MDH: "SDH",
+  R_MDH: "MDH",
+  R_ME: "ME",
+  R_GLUsyn: "GOGAT",
+  R_PGAsyn: "PGS",
+  R_CAsyn: "CAS",
+  R_RESP: "RESP",
+  R_RESPQ: "RESPQ",
+  R_ATPM: "ATPM",
+  R_PTA_ACK: "OVF",
+  R_LDH: "LDH",
+  R_Biomass: "BIO",
+};
 
-export const DETAILED_OBJ_PGA = "EX_PGA_OBJ_ALIAS"; // not used; objectives below
-export const OBJECTIVE_PGA = "R_PGAsyn";
-export const OBJECTIVE_BIOMASS = "R_Biomass";
+const CANON_BY_ID: Record<string, CoreReactionMeta> = Object.fromEntries(
+  CORE_REACTIONS.map((r) => [r.id, r]),
+);
 
-/** gene → reaction id, so UI knockout toggles map onto reactions. */
-export const GENE_TO_REACTION: Record<string, string> =
-  DETAILED_REACTIONS.reduce(
-    (m, r) => {
-      m[r.gene] = r.id;
-      return m;
-    },
-    {} as Record<string, string>,
-  );
+/** The canonical catalogue, presented under the portal's display ids. */
+export const DETAILED_REACTIONS: DetailedReaction[] = Object.entries(PORTAL_ALIAS)
+  .map(([displayId, canonId]) => {
+    const c = CANON_BY_ID[canonId];
+    if (!c) throw new Error(`PORTAL_ALIAS points at unknown reaction ${canonId}`);
+    return {
+      id: displayId,
+      name: c.name,
+      gene: c.gene ?? "exchange",
+      formula: c.formula,
+      reversible: c.reversible,
+      defaultLb: c.lb,
+      defaultUb: c.ub,
+      subsystem: c.subsystem,
+      description: c.description,
+      stoich: c.stoich,
+    };
+  })
+  .filter((r, i, all) => all.findIndex((x) => x.id === r.id) === i);
+
+export const OBJECTIVE_PGA = OBJ_PGA;
+export const OBJECTIVE_BIOMASS = OBJ_GROWTH;
+
+/**
+ * Gene name to canonical reaction id. Lumped reactions carry several gene names separated by
+ * a slash, and each is registered, so deleting sucCD and deleting odhAB both clamp the
+ * 2-oxoglutarate dehydrogenase lump.
+ */
+export const GENE_TO_REACTION: Record<string, string> = (() => {
+  const map: Record<string, string> = {};
+  for (const r of CORE_REACTIONS) {
+    if (!r.gene) continue;
+    for (const g of r.gene.split("/")) map[g] = r.id;
+  }
+  return map;
+})();
 
 export interface DetailedFbaOptions {
-  glucose: number; // max uptake (mmol/gDCW/h)
-  oxygen: number; // max uptake
-  /** gene → knocked-out? */
-  knockouts?: Record<string, boolean>;
+  glucose: number;
+  oxygen: number;
+  knockouts?: { [gene: string]: boolean };
 }
 
-/** Assemble a genuine, mass-balanced MetabolicNetwork from the detailed catalogue. */
-export function buildDetailedFbaNetwork(
-  opts: DetailedFbaOptions,
-): MetabolicNetwork {
-  const koGenes = new Set(
-    Object.entries(opts.knockouts ?? {})
-      .filter(([, v]) => v)
-      .map(([g]) => g),
-  );
-  const glc = Math.max(0, opts.glucose);
-  const o2 = Math.max(0, opts.oxygen);
-
-  const reactions: FbaReaction[] = DETAILED_REACTIONS.map((r) => {
-    let lb = r.defaultLb;
-    let ub = r.defaultUb;
-    if (r.id === "EX_glc") {
-      lb = 0;
-      ub = glc;
-    } else if (r.id === "EX_o2") {
-      lb = 0;
-      ub = o2;
-    }
-    // Knockout by gene → clamp flux to zero.
-    if (koGenes.has(r.gene)) {
-      lb = 0;
-      ub = 0;
-    }
-    return { id: r.id, stoich: r.stoich, lb, ub };
-  });
-
-  return { metabolites: DETAILED_METABOLITES.map((m) => m.id), reactions };
+export function buildDetailedFbaNetwork(opts: DetailedFbaOptions): MetabolicNetwork {
+  const ko: string[] = [];
+  for (const [gene, off] of Object.entries(opts.knockouts ?? {})) {
+    if (!off) continue;
+    const rxn = GENE_TO_REACTION[gene] ?? (CANON_BY_ID[gene] ? gene : undefined);
+    if (rxn) ko.push(rxn);
+  }
+  return buildCoreNetwork({
+    glucoseUb: opts.glucose,
+    o2Ub: opts.oxygen,
+    knockouts: ko,
+  }).network;
 }
 
 export interface DetailedFbaResult {
   status: FbaSolution["status"];
+  /** Keyed by canonical id AND by every display alias, so either lookup works. */
   fluxMap: Record<string, number>;
   objectiveValue: number;
-  /** Finite-difference shadow prices: d(objective)/d(uptake cap). */
+  /**
+   * Sensitivity of the objective to the uptake bound, obtained by perturbing the bound and
+   * re-solving. This is the reduced cost on that bound, which is the quantity a bottleneck
+   * plot should show. It is NOT a metabolite shadow price: the metabolite duals of this
+   * network are degenerate, because several reactions form alternative optima of equal
+   * objective value, so any single dual vector the solver reports is one of many.
+   */
   glucoseShadowPrice: number;
   oxygenShadowPrice: number;
 }
 
-/** Solve the detailed network for a chosen objective, with rigorous finite-difference duals. */
 export function solveDetailedFBA(
   opts: DetailedFbaOptions,
   objective: string = OBJECTIVE_PGA,
 ): DetailedFbaResult {
-  const net = buildDetailedFbaNetwork(opts);
-  const sol = solveFBA(net, objective, true);
+  const canonicalObjective = PORTAL_ALIAS[objective] ?? objective;
+  const sol = solveFBA(buildDetailedFbaNetwork(opts), canonicalObjective, true);
 
-  // Shadow prices via a small perturbation of each uptake cap (only if that resource is used).
   const eps = 0.5;
   const objAt = (glucose: number, oxygen: number) =>
     solveFBA(
       buildDetailedFbaNetwork({ ...opts, glucose, oxygen }),
-      objective,
+      canonicalObjective,
       true,
     ).objectiveValue;
   const base = sol.objectiveValue;
@@ -608,10 +205,13 @@ export function solveDetailedFBA(
       ? Math.max(0, (objAt(opts.glucose, opts.oxygen + eps) - base) / eps)
       : 0;
 
-  // Clean tiny numerical noise to zero for display stability.
   const fluxMap: Record<string, number> = {};
   for (const [id, v] of Object.entries(sol.fluxes)) {
     fluxMap[id] = Math.abs(v) < 1e-7 ? 0 : v;
+  }
+  // Mirror each canonical flux onto its display aliases.
+  for (const [displayId, canonId] of Object.entries(PORTAL_ALIAS)) {
+    if (canonId in fluxMap) fluxMap[displayId] = fluxMap[canonId];
   }
 
   return {

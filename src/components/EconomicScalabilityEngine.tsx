@@ -181,7 +181,7 @@ export default function EconomicScalabilityEngine({
               step={0.1}
               unit="kg/m³"
               onChange={setPgaDensity}
-              hint="Polymer mass per m³ of treated soil (Prong 1 only)."
+              hint="Polymer mass per m³ of treated soil (Route 1 only)."
             />
           )}
         </div>
@@ -320,7 +320,7 @@ export default function EconomicScalabilityEngine({
         </Panel>
 
         <Panel
-          title="Per-Prong Cost Basis"
+          title="Per-Route Cost Basis"
           isLightMode={isLightMode}
         >
           <div className="space-y-2">

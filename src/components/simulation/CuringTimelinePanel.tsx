@@ -387,7 +387,7 @@ export default function CuringTimelinePanel({
               {timeline.scheduledReapplyMonths.toFixed(0)}-month cadence.
               {hasCalcite
                 ? " Boost the calcite recipe (more Ca²⁺ / CA activity in the CaCO₃ module) to raise the durable floor and extend the interval."
-                : " Adding the durable CaCO₃ prong would raise the long-term floor and stretch the interval."}
+                : " Adding the durable CaCO₃ route would raise the long-term floor and stretch the interval."}
             </>
           )}
         </span>

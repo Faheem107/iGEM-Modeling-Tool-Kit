@@ -51,28 +51,28 @@ function buildEntries(): Entry[] {
       id: "prong-1",
       label: PRONG_TITLES[1],
       hint: PRONG_SHORTS[1],
-      group: "Prongs",
+      group: "Routes",
       href: "/model?prongs=1",
     },
     {
       id: "prong-2",
       label: PRONG_TITLES[2],
       hint: PRONG_SHORTS[2],
-      group: "Prongs",
+      group: "Routes",
       href: "/model?prongs=2",
     },
     {
       id: "prong-both",
-      label: "Both prongs together",
+      label: "Both routes together",
       hint: "The full combined simulation",
-      group: "Prongs",
+      group: "Routes",
       href: "/model?prongs=1,2",
     },
     {
       id: "killswitch",
       label: KILL_SWITCH.title,
       hint: KILL_SWITCH.short,
-      group: "Prongs",
+      group: "Routes",
       href: "/model?view=killswitch",
     },
   );
@@ -226,7 +226,7 @@ export default function CommandPalette() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               onKeyDown={onInputKey}
-              placeholder="Search models, prongs and portals"
+              placeholder="Search models, routes and portals"
               // text-[length:var(--text-body)] so iOS Safari does not zoom the page on focus.
               className="w-full border-b border-border bg-transparent px-6 py-4 text-[length:var(--text-body)] text-foreground outline-none placeholder:text-muted-foreground"
             />

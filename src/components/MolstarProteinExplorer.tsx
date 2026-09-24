@@ -33,7 +33,7 @@ const STRUCTURES: Structure[] = [
     file: "/pdb/AF-P96736.pdb",
     prong: 1,
     description:
-      "The catalytic amide-ligase subunit of the B. subtilis γ-PGA synthase complex (pgsBCA). It builds the poly-γ-glutamate chains that form Prong 1's bio-adhesive matrix.",
+      "The catalytic amide-ligase subunit of the B. subtilis γ-PGA synthase complex (pgsBCA). It builds the poly-γ-glutamate chains that form Route 1's bio-adhesive matrix.",
   },
   {
     id: "capC",
@@ -60,7 +60,7 @@ const STRUCTURES: Structure[] = [
     file: "/pdb/1CA2.pdb",
     prong: 2,
     description:
-      "The canonical carbonic-anhydrase fold. Prong 2 displays a bacterial CA that catalyses CO₂ + H₂O ⇌ HCO₃⁻ + H⁺, seeding the carbonate that cements sand grains in MICP biomineralisation.",
+      "The canonical carbonic-anhydrase fold. Route 2 displays a bacterial CA that catalyses CO₂ + H₂O ⇌ HCO₃⁻ + H⁺, seeding the carbonate that cements sand grains in MICP biomineralisation.",
   },
 ];
 

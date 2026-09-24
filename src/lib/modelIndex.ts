@@ -10,7 +10,7 @@ import { PRONG_TITLES } from "@/content/copy";
 
 export interface IndexColumn {
   key: string;
-  /** Rail label, e.g. "Prong 1". */
+  /** Rail label, e.g. "Route 1". */
   /** Only where the group is not a prong, e.g. "Shared biology". */
   eyebrow?: string;
   title: string;
@@ -44,7 +44,7 @@ const fieldLayer = shared.filter((m) => !CELL_SCALES.has(m.scale));
 export const INDEX_COLUMNS: IndexColumn[] = [
   {
     key: "prong-1",
-    eyebrow: "Prong one",
+    eyebrow: "Route one",
     title: PRONG_TITLES[1],
     lede: "The cells make more of a sticky chain, and the sand is held in it.",
     prongs: "1",
@@ -52,7 +52,7 @@ export const INDEX_COLUMNS: IndexColumn[] = [
   },
   {
     key: "prong-2",
-    eyebrow: "Prong two",
+    eyebrow: "Route two",
     title: PRONG_TITLES[2],
     lede: "An enzyme on the cell wall grows CaCO₃ cement, with no ammonia.",
     prongs: "2",

@@ -7,487 +7,29 @@ import {
   solveDetailedFBA,
   OBJECTIVE_PGA,
   OBJECTIVE_BIOMASS,
+  DETAILED_METABOLITES,
+  DETAILED_REACTIONS,
+  type DetailedMetabolite,
+  type DetailedReaction,
 } from "../lib/physics/fbaDetailed";
+import { FBA_CALIB, cval } from "@/src/lib/physics/constants";
+import { KNOCKOUTS } from "@/src/lib/physics/network";
 
 // -------------------------------------------------------------
-// METABOLIC MODEL DEFINITION FOR BACILLUS SUBTILIS CENTRAL METABOLISM
+// METABOLIC MODEL, imported rather than redeclared
 // -------------------------------------------------------------
+// The network shown here is the one that is solved. Both come from src/lib/physics/network.ts
+// through the adapter in fbaDetailed.ts, so a displayed equation and the coefficient the
+// simplex uses are the same object. This file previously carried its own reaction table,
+// which had drifted from the solved network on the ATP yield of respiration, the cost of a
+// PGA residue, the redox partner of succinate dehydrogenase, and the biomass equation.
 
-interface Reaction {
-  id: string;
-  name: string;
-  gene: string;
-  formula: string;
-  reversible: boolean;
-  defaultLb: number;
-  defaultUb: number;
-  subsystem:
-    | "glycolysis"
-    | "ppp"
-    | "tca"
-    | "overflow"
-    | "biomass"
-    | "pga_synthesis"
-    | "respiration"
-    | "exchanges";
-  description: string;
-  leftToRightMap: { [metabolite: string]: number };
-}
+type Reaction = DetailedReaction;
+type Metabolite = DetailedMetabolite;
 
-interface Metabolite {
-  id: string;
-  name: string;
-  compartment: "cytosol" | "extracellular";
-}
+const METABOLITES: Metabolite[] = DETAILED_METABOLITES;
+const REACTIONS: Reaction[] = DETAILED_REACTIONS;
 
-const METABOLITES: Metabolite[] = [
-  { id: "glc_ext", name: "Glucose (Ext)", compartment: "extracellular" },
-  { id: "glc", name: "Glucose (Cyt)", compartment: "cytosol" },
-  { id: "g6p", name: "Glucose-6-Phosphate", compartment: "cytosol" },
-  { id: "f6p", name: "Fructose-6-Phosphate", compartment: "cytosol" },
-  { id: "fbp", name: "Fructose-1,6-Bisphosphate", compartment: "cytosol" },
-  { id: "gap", name: "Glyceraldehyde-3-Phosphate", compartment: "cytosol" },
-  { id: "dhap", name: "Dihydroxyacetone Phosphate", compartment: "cytosol" },
-  { id: "pep", name: "Phosphoenolpyruvate", compartment: "cytosol" },
-  { id: "pyr", name: "Pyruvate", compartment: "cytosol" },
-  { id: "accoa", name: "Acetyl-CoA", compartment: "cytosol" },
-  { id: "cit", name: "Citrate", compartment: "cytosol" },
-  { id: "icit", name: "Isocitrate", compartment: "cytosol" },
-  { id: "akg", name: "Alpha-Ketoglutarate", compartment: "cytosol" },
-  { id: "succoa", name: "Succinyl-CoA", compartment: "cytosol" },
-  { id: "succ", name: "Succinate", compartment: "cytosol" },
-  { id: "fum", name: "Fumarate", compartment: "cytosol" },
-  { id: "mal", name: "Malate", compartment: "cytosol" },
-  { id: "oaa", name: "Oxaloacetate", compartment: "cytosol" },
-  { id: "6pgc", name: "6-Phosphogluconate", compartment: "cytosol" },
-  { id: "ru5p", name: "Ribulose-5-Phosphate", compartment: "cytosol" },
-  { id: "actp", name: "Acetyl-Phosphate", compartment: "cytosol" },
-  { id: "ac_ext", name: "Acetate (Ext)", compartment: "extracellular" },
-  { id: "lac_ext", name: "Lactate (Ext)", compartment: "extracellular" },
-  { id: "l_glu", name: "L-Glutamate", compartment: "cytosol" },
-  { id: "pga_ext", name: "PGA Biopolymer (Ext)", compartment: "extracellular" },
-  { id: "nh3", name: "Ammonia", compartment: "cytosol" },
-  { id: "o2", name: "Oxygen", compartment: "cytosol" },
-  { id: "co2", name: "Carbon Dioxide", compartment: "cytosol" },
-  { id: "atp", name: "ATP", compartment: "cytosol" },
-  { id: "nadh", name: "NADH", compartment: "cytosol" },
-  { id: "nadph", name: "NADPH", compartment: "cytosol" },
-  { id: "biomass", name: "Biomass Portfolio", compartment: "cytosol" },
-];
-
-const REACTIONS: Reaction[] = [
-  // GLYCOLYSIS
-  {
-    id: "R_GLCpts",
-    name: "Glucose Transport (PTS)",
-    gene: "ptsG",
-    formula: "glc_ext + pep -> g6p + pyr",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 15,
-    subsystem: "glycolysis",
-    description:
-      "B. subtilis phosphotransferase system consuming PEP to phosphorylate import glucose.",
-    leftToRightMap: { glc_ext: -1, pep: -1, g6p: 1, pyr: 1 },
-  },
-  {
-    id: "R_PGI",
-    name: "Phosphoglucose Isomerase",
-    gene: "pgi",
-    formula: "g6p <=> f6p",
-    reversible: true,
-    defaultLb: -100,
-    defaultUb: 100,
-    subsystem: "glycolysis",
-    description:
-      "Interconverts G6P to F6P. Major glycolysis-PPP bifurcation checkpoint.",
-    leftToRightMap: { g6p: -1, f6p: 1 },
-  },
-  {
-    id: "R_PFK",
-    name: "Phosphofructokinase",
-    gene: "pfkA",
-    formula: "f6p + atp -> fbp",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "glycolysis",
-    description:
-      "Irreversible gateway step committing carbon to lower glycolysis via ATP phosphorylation.",
-    leftToRightMap: { f6p: -1, atp: -1, fbp: 1 },
-  },
-  {
-    id: "R_FBA",
-    name: "Fructose-Bisphosphate Aldolase",
-    gene: "fbaA",
-    formula: "fbp <=> gap + dhap",
-    reversible: true,
-    defaultLb: -100,
-    defaultUb: 100,
-    subsystem: "glycolysis",
-    description: "Splits 6C fructose to 3C glyceraldehyde & dihydroxyacetone.",
-    leftToRightMap: { fbp: -1, gap: 1, dhap: 1 },
-  },
-  {
-    id: "R_TPI",
-    name: "Triosephosphate Isomerase",
-    gene: "tpiA",
-    formula: "dhap <=> gap",
-    reversible: true,
-    defaultLb: -100,
-    defaultUb: 100,
-    subsystem: "glycolysis",
-    description:
-      "Equilibrates the split triose pools for downstream phosphorylation.",
-    leftToRightMap: { dhap: -1, gap: 1 },
-  },
-  {
-    id: "R_GAPDH_PGK",
-    name: "Lower Glycolysis Oxidation Cascade",
-    gene: "gapA",
-    formula: "gap + atp -> pep + nadh + atp", // Simplified step: overall GAP -> PEP creates 1 NADH and yields ATP
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "glycolysis",
-    description:
-      "Oxidizes GAP to PEP, capturing reducing power as NADH and generating redundant ATP.",
-    leftToRightMap: { gap: -1, pep: 1, nadh: 1, atp: 1 },
-  },
-  {
-    id: "R_PYK",
-    name: "Pyruvate Kinase",
-    gene: "pyk",
-    formula: "pep -> pyr + atp",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "glycolysis",
-    description:
-      "Final glycolysis step generating pyruvate and ATP via substrate-level phosphorylation.",
-    leftToRightMap: { pep: -1, pyr: 1, atp: 1 },
-  },
-
-  // PENTOSE PHOSPHATE PATHWAY (PPP)
-  {
-    id: "R_G6PDH",
-    name: "G6P Dehydrogenase",
-    gene: "zwf",
-    formula: "g6p -> 6pgc + nadph",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "ppp",
-    description:
-      "Primary pathway diversion producing initial NADPH required for biopolymer synthesis.",
-    leftToRightMap: { g6p: -1, "6pgc": 1, nadph: 1 },
-  },
-  {
-    id: "R_GND",
-    name: "6PG Dehydrogenase",
-    gene: "gnd",
-    formula: "6pgc -> ru5p + nadph + co2",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "ppp",
-    description:
-      "Oxidatively decarboxylates 6-phosphogluconate, yielding crucial second NADPH and pentose sugars.",
-    leftToRightMap: { "6pgc": -1, ru5p: 1, nadph: 1, co2: 1 },
-  },
-  {
-    id: "R_PPP_to_Glyc",
-    name: "Pentose Recycle Cascade",
-    gene: "tkt",
-    formula: "ru5p -> gap + f6p", // Simplified Pentose recycling: 3 Ru5P <=> 2 F6P + GAP
-    reversible: true,
-    defaultLb: -100,
-    defaultUb: 100,
-    subsystem: "ppp",
-    description:
-      "Transketolase and transaldolase cascade routing intermediate pentoses back into glycolysis pools.",
-    leftToRightMap: { ru5p: -3, gap: 1, f6p: 2 },
-  },
-
-  // TCA / PYRUVATE DEHYDROGENASE
-  {
-    id: "R_PDH",
-    name: "Pyruvate Dehydrogenase",
-    gene: "pdhA",
-    formula: "pyr -> accoa + nadh + co2",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "tca",
-    description:
-      "Decarboxylates pyruvate, committing cellular carbon into Acetyl-CoA and synthesizing 1 NADH.",
-    leftToRightMap: { pyr: -1, accoa: 1, nadh: 1, co2: 1 },
-  },
-  {
-    id: "R_CS",
-    name: "Citrate Synthase",
-    gene: "gltA",
-    formula: "accoa + oaa -> cit",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "tca",
-    description:
-      "Condenses Acetyl-CoA with Oxaloacetate to initiate the TCA cycle spiral.",
-    leftToRightMap: { accoa: -1, oaa: -1, cit: 1 },
-  },
-  {
-    id: "R_ACONT",
-    name: "Aconitase",
-    gene: "citB",
-    formula: "cit <=> icit",
-    reversible: true,
-    defaultLb: -100,
-    defaultUb: 100,
-    subsystem: "tca",
-    description:
-      "Isomerizes citrate to isocitrate to set up oxidative decarboxylations.",
-    leftToRightMap: { cit: -1, icit: 1 },
-  },
-  {
-    id: "R_ICDH",
-    name: "Isocitrate Dehydrogenase",
-    gene: "citC",
-    formula: "icit -> akg + nadph + co2",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "tca",
-    description:
-      "Major metabolic fork. Generates NADPH and alpha-ketoglutarate, which is transaminated to the L-glutamate monomer that PGA is polymerised from.",
-    leftToRightMap: { icit: -1, akg: 1, nadph: 1, co2: 1 },
-  },
-  {
-    id: "R_AKGDH",
-    name: "Alpha-Ketoglutarate Dehydrogenase",
-    gene: "odhA",
-    formula: "akg -> succoa + nadh + co2",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "tca",
-    description:
-      "Competes directly with PGA synthesis channels by draining AKG to Succinyl-CoA.",
-    leftToRightMap: { akg: -1, succoa: 1, nadh: 1, co2: 1 },
-  },
-  {
-    id: "R_SUCOAS",
-    name: "Succinyl-CoA Synthetase",
-    gene: "sucC",
-    formula: "succoa -> succ + atp",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "tca",
-    description:
-      "Substrate level phosphorylation in TCA cycle yielding Succinate and ATP.",
-    leftToRightMap: { succoa: -1, succ: 1, atp: 1 },
-  },
-  {
-    id: "R_SDH_FUM_MDH",
-    name: "Malate & Oxaloacetate Regeneration",
-    gene: "sdhA",
-    formula: "succ -> oaa + 2 nadh", // Combine SDH + fumarase + MDH for simpler model topology
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "tca",
-    description:
-      "Converts succinate back to oxaloacetate to balance the cycle, synthesizing 2 reducing NADH.",
-    leftToRightMap: { succ: -1, oaa: 1, nadh: 2 },
-  },
-
-  // OVERFLOW METABOLISM
-  {
-    id: "R_PTA_ACK",
-    name: "Acetate Overflow (PTA-ACK)",
-    gene: "pta",
-    formula: "accoa -> actp -> ac_ext + atp", // Combined Acetate synthesis
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "overflow",
-    description:
-      "Overflow shunt used when carbon load exceeds respiratory capacity. Generates fast ATP but wastes acetate.",
-    leftToRightMap: { accoa: -1, ac_ext: 1, atp: 1 },
-  },
-  {
-    id: "R_LDH",
-    name: "Lactate Dehydrogenase",
-    gene: "ldh",
-    formula: "pyr + nadh <=> lac_ext",
-    reversible: true,
-    defaultLb: -100,
-    defaultUb: 100,
-    subsystem: "overflow",
-    description:
-      "Acidic overflow during hypoxia, reoxidizing NADH pools rapidly.",
-    leftToRightMap: { pyr: -1, nadh: -1, lac_ext: 1 },
-  },
-
-  // SPECIFIC iGEM POLY-γ-GLUTAMATE (PGA) SYNTHESIS
-  {
-    id: "R_GLUsyn",
-    name: "Glutamate Synthase (Glt), transaminase",
-    gene: "gltD",
-    formula: "akg + nadph + nh3 -> l_glu",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "pga_synthesis",
-    description:
-      "Synthesizes L-glutamate precursor by trapping ammonia. Crucial consumer of TCA alpha-ketoglutarate.",
-    leftToRightMap: { akg: -1, nadph: -1, nh3: -1, l_glu: 1 },
-  },
-  {
-    id: "R_PGAsyn",
-    name: "PGA Synthase (Polymerizer)",
-    gene: "pgas",
-    formula: "l_glu + atp -> pga_ext",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "pga_synthesis",
-    description:
-      "Active iGEM custom operon. Polymerizes glutamate into extracellular Poly-γ-glutamate biopolymer, utilizing ATP energy.",
-    leftToRightMap: { l_glu: -1, atp: -1, pga_ext: 1 },
-  },
-
-  // RESPIRATION & MAINTENANCE
-  {
-    id: "R_RESP",
-    name: "Respiratory Phosphorylation (ETC)",
-    gene: "ctaA",
-    formula: "nadh + 0.5 o2 -> 2.5 atp",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "respiration",
-    description:
-      "Consumes oxygen to oxidize NADH. Generates 2.5 equivalent ATP molecules per NADH oxidized.",
-    leftToRightMap: { nadh: -1, o2: -0.5, atp: 2.5 },
-  },
-  {
-    id: "R_ATPM",
-    name: "ATP Maintenance Requirement",
-    gene: "maint",
-    formula: "atp -> ",
-    reversible: false,
-    defaultLb: 1.0, // Forced maintenance load
-    defaultUb: 100,
-    subsystem: "respiration",
-    description:
-      "Forced base cellular energy demand to maintain cell viability and osmotic pressure.",
-    leftToRightMap: { atp: -1 },
-  },
-
-  // BIOMASS SYNTHESIS
-  {
-    id: "R_Biomass",
-    name: "Biomass Portfolio Synthesis",
-    gene: "growth",
-    formula:
-      "0.1 g6p + 0.1 pep + 0.1 pyr + 0.1 accoa + 0.1 akg + 0.1 oaa + 2 atp + 1 nadph -> biomass",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 10,
-    subsystem: "biomass",
-    description:
-      "Standard model for cell growth draining key metabolic precursors, energy, and reducing power.",
-    leftToRightMap: {
-      g6p: -0.1,
-      pep: -0.1,
-      pyr: -0.1,
-      accoa: -0.1,
-      akg: -0.1,
-      oaa: -0.1,
-      atp: -2.0,
-      nadph: -1.0,
-      biomass: 1,
-    },
-  },
-
-  // EXCHANGES
-  {
-    id: "EX_glc",
-    name: "Glucose Uptake Exchange",
-    gene: "exchange",
-    formula: "-> glc_ext",
-    reversible: true,
-    defaultLb: -10, // Max 10 mmol/gDCW/hr uptake
-    defaultUb: 0,
-    subsystem: "exchanges",
-    description:
-      "Matches the surrounding bio-mineralizing soil glucose concentration bounds.",
-    leftToRightMap: { glc_ext: 1 },
-  },
-  {
-    id: "EX_o2",
-    name: "Oxygen Intake Exchange",
-    gene: "exchange",
-    formula: "-> o2",
-    reversible: true,
-    defaultLb: -15, // Oxygen limit
-    defaultUb: 0,
-    subsystem: "exchanges",
-    description: "Regulates aerobic vs anaerobic soil interface conditions.",
-    leftToRightMap: { o2: 1 },
-  },
-  {
-    id: "EX_nh3",
-    name: "Ammonia Intake Exchange",
-    gene: "exchange",
-    formula: "-> nh3",
-    reversible: true,
-    defaultLb: -100,
-    defaultUb: 100,
-    subsystem: "exchanges",
-    description: "Source nitrogen for L-glutamate biosynthesis pathways.",
-    leftToRightMap: { nh3: 1 },
-  },
-  {
-    id: "EX_ac",
-    name: "Acetate Output Exchange",
-    gene: "exchange",
-    formula: "ac_ext ->",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 100,
-    subsystem: "exchanges",
-    description: "Allows acetate overflow excretion out of target cells.",
-    leftToRightMap: { ac_ext: -1 },
-  },
-  {
-    id: "EX_pga",
-    name: "PGA Export Exchange",
-    gene: "exchange",
-    formula: "pga_ext ->",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 1000,
-    subsystem: "exchanges",
-    description:
-      "Precipitation/deposition of protective structural polymer on surrounding sand coordinates.",
-    leftToRightMap: { pga_ext: -1 },
-  },
-  {
-    id: "EX_biomass",
-    name: "Biomass Dilution Exchange",
-    gene: "exchange",
-    formula: "biomass ->",
-    reversible: false,
-    defaultLb: 0,
-    defaultUb: 1000,
-    subsystem: "exchanges",
-    description: "Growth dilution/loss rate mapping.",
-    leftToRightMap: { biomass: -1 },
-  },
-];
 
 // -------------------------------------------------------------
 // FBA SOLVE, delegated to the shared, mass-balanced physics core
@@ -561,8 +103,14 @@ export default function AdvancedFbaPortal({
   onUpdatePrecursorFlux?: (val: number) => void;
 }) {
   // Simulator operational parameters
-  const [substrateGlucoseSl, setSubstrateGlucoseSl] = useState<number>(12.0);
-  const [dissolvedOxygenSl, setDissolvedOxygenSl] = useState<number>(10.0);
+  // Open at the calibrated operating point, so the first numbers a visitor sees are the ones
+  // validated against measured B. subtilis batch culture rather than arbitrary slider positions.
+  const [substrateGlucoseSl, setSubstrateGlucoseSl] = useState<number>(
+    cval(FBA_CALIB.vGlcMax),
+  );
+  const [dissolvedOxygenSl, setDissolvedOxygenSl] = useState<number>(
+    cval(FBA_CALIB.vO2Max),
+  );
   const [hypoxiaMode, setHypoxiaMode] = useState<boolean>(false);
   const [currentObjective, setCurrentObjective] = useState<string>("R_PGAsyn"); // default maximizes visual iGEM biopolymer
 
@@ -572,19 +120,13 @@ export default function AdvancedFbaPortal({
   const [pulseMetric, setPulseMetric] = useState<boolean>(false);
 
   // Custom gene knockouts state
-  const [knockoutList, setKnockoutList] = useState<{ [gene: string]: boolean }>(
-    {
-      ptsG: false,
-      pgi: false,
-      pfkA: false,
-      zwf: false,
-      pdhA: false,
-      gltA: false,
-      sucC: false,
-      pta: false,
-      pgas: false,
-    },
-  );
+  // Keyed by canonical reaction id. The previous list used gene names that did not exist in
+  // the solved network (gltA and sucC are E. coli names; B. subtilis uses citZ and sucCD), so
+  // toggling them silently clamped nothing and the panel reported a phenotype for a deletion
+  // that had not been applied.
+  const KO_INITIAL = Object.fromEntries(KNOCKOUTS.map((k) => [k.id, false]));
+  const [knockoutList, setKnockoutList] =
+    useState<{ [gene: string]: boolean }>(KO_INITIAL);
 
   // Calculate outputs dynamically using useMemo with an EXHAUSTIVE dependency array under Directive 2
   const glucoseInput = substrateGlucoseSl;
@@ -633,7 +175,7 @@ export default function AdvancedFbaPortal({
     // PFK consumes 1, PYK generates 1, Respiratory ETC generates 2.5 per NADH, lower glyco oxidation generates 1
     if (metabolicFlux["R_PYK"]) prod += metabolicFlux["R_PYK"];
     if (metabolicFlux["R_GAPDH_PGK"]) prod += metabolicFlux["R_GAPDH_PGK"];
-    if (metabolicFlux["R_RESP"]) prod += metabolicFlux["R_RESP"] * 2.5;
+    if (metabolicFlux["R_RESP"]) prod += metabolicFlux["R_RESP"] * cval(FBA_CALIB.poNadh);
     if (metabolicFlux["R_PTA_ACK"]) prod += metabolicFlux["R_PTA_ACK"];
     if (metabolicFlux["R_SUCOAS"]) prod += metabolicFlux["R_SUCOAS"];
     return prod;
@@ -746,17 +288,7 @@ export default function AdvancedFbaPortal({
     setSubstrateGlucoseSl(12.0);
     setDissolvedOxygenSl(10.0);
     setHypoxiaMode(false);
-    setKnockoutList({
-      ptsG: false,
-      pgi: false,
-      pfkA: false,
-      zwf: false,
-      pdhA: false,
-      gltA: false,
-      sucC: false,
-      pta: false,
-      pgas: false,
-    });
+    setKnockoutList({ ...KO_INITIAL });
   };
 
   return (
@@ -1009,19 +541,14 @@ export default function AdvancedFbaPortal({
             </div>
 
             <div className="grid grid-cols-2 gap-2 text-[length:var(--text-caption)] font-mono">
-              {[
-                { gene: "ptsG", label: "∆ptsG (Glucose Transport)" },
-                { gene: "pgi", label: "∆pgi (Glycolysis check)" },
-                { gene: "pfkA", label: "∆pfkA (Forces PPP redirection)" },
-                { gene: "zwf", label: "∆zwf (Halves NADPH generator)" },
-                { gene: "pdhA", label: "∆pdhA (Decarboxylase blockage)" },
-                { gene: "gltA", label: "∆gltA (Blocks TCA cycles)" },
-                { gene: "sucC", label: "∆sucC (Succinyl pathways)" },
-                { gene: "pta", label: "∆pta (Eliminates Acetate wasting)" },
-                { gene: "pgas", label: "∆pgas (iGEM Polymerase off)" },
-              ].map((item) => (
+              {KNOCKOUTS.map((k) => ({
+                gene: k.id,
+                label: `\u0394${k.gene}`,
+                title: `${k.condition}. ${k.prediction}`,
+              })).map((item) => (
                 <button
                   key={item.gene}
+                  title={item.title}
                   onClick={() => handleToggleKnockout(item.gene)}
                   className={`p-2 rounded-[4px] border text-left cursor-pointer transition-all flex items-center justify-between ${
                     knockoutList[item.gene]
@@ -1997,7 +1524,7 @@ export default function AdvancedFbaPortal({
                       </div>
 
                       {REACTIONS.slice(0, 16).map((rxn) => {
-                        const coeff = rxn.leftToRightMap[met.id] || 0;
+                        const coeff = rxn.stoich[met.id] || 0;
                         let bgClass = isLightMode
                           ? "bg-muted text-foreground"
                           : "bg-dune-basalt/40 text-foreground";

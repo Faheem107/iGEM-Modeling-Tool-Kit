@@ -171,7 +171,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
     id: "protein-3d",
     title: PORTAL_NAMES.protein,
     blurb:
-      "The actual structures, in 3D: the γ-PGA synthetase complex for Prong 1, carbonic anhydrase for Prong 2.",
+      "The actual structures, in 3D: the γ-PGA synthetase complex for Route 1, carbonic anhydrase for Route 2.",
     scale: "protein",
     appliesTo: anyBacterial,
   },
@@ -240,7 +240,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
   {
     id: "economic",
     title: "Economic Scalability",
-    blurb: "What a hectare costs per prong, and the point at which that beats spraying conventional stabilizer.",
+    blurb: "What a hectare costs per route, and the point at which that beats spraying conventional stabilizer.",
     scale: "economic",
     appliesTo: (s) => s.length > 0,
   },

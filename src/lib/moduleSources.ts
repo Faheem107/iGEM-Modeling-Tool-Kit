@@ -69,7 +69,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label: "γ-PGA degradation knockouts Δggt / ΔpgcA",
         detail:
-          "Drive the loss term k_deg → 0. The biological basis of the overexpression prong.",
+          "Drive the loss term k_deg → 0. The biological basis of the overexpression route.",
         kind: "literature",
       },
     ],
@@ -191,7 +191,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
   },
   "protein-3d": {
     intro:
-      "A structural view of the key enzymes, PgsBCA (γ-PGA synthase, Prong 1) and carbonic anhydrase (Prong 2).",
+      "A structural view of the key enzymes, PgsBCA (γ-PGA synthase, Route 1) and carbonic anhydrase (Route 2).",
     sources: [
       {
         label: "RCSB Protein Data Bank, deposited structures (uploaded .pdb)",
@@ -202,7 +202,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       },
       {
         label:
-          "Carbonic anhydrase II (PDB 1CA2) as the Prong-2 catalytic reference",
+          "Carbonic anhydrase II (PDB 1CA2) as the Route 2 catalytic reference",
         detail: "Representative fold for the displayed CA enzyme.",
         kind: "literature",
         url: "https://www.rcsb.org/structure/1CA2",
@@ -279,7 +279,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
   },
   grainsize: {
     intro:
-      "Grain-size-resolved coverage: no single binder holds every grain size. The three prongs are complementary.",
+      "Grain-size-resolved coverage: no single binder holds every grain size. The three routes are complementary.",
     sources: [
       {
         label:
@@ -305,7 +305,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
   },
   composite: {
     intro:
-      "Multi-prong cohesion combination: competitive Ca²⁺ partition + co-expression burden + constructive synergy + failure-mode redundancy.",
+      "Multi-route cohesion combination: competitive Ca²⁺ partition + co-expression burden + constructive synergy + failure-mode redundancy.",
     sources: [
       {
         label: "Wei (2015); acidic-polymer CaCO₃ nucleation",
@@ -357,7 +357,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label: "Per-binder maturation τ and field half-life H",
         detail:
-          "Alginate fast/short, γ-PGA intermediate, calcite slow/durable, the multi-prong timing advantage.",
+          "Alginate fast/short, γ-PGA intermediate, calcite slow/durable, the advantage of running both.",
         kind: "internal",
       },
       {
@@ -370,7 +370,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
   },
   economic: {
     intro:
-      "Bottom-up per-prong deployment cost, summed per combination and compared against conventional treatment. None of the prices below is a supplier quote yet, so read the comparison rather than the absolute figures.",
+      "Bottom-up per-route deployment cost, summed per combination and compared against conventional treatment. None of the prices below is a supplier quote yet, so read the comparison rather than the absolute figures.",
     sources: [
       {
         label: "None of the thirteen cost figures is a supplier quote",

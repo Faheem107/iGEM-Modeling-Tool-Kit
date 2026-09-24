@@ -125,7 +125,7 @@ export function buildModelIntro(prongIds: number[]): PortalIntroContent {
       {
         body:
           chosen.length === 0
-            ? "A workspace built around the prongs you picked."
+            ? "A workspace built around the routes you picked."
             : `A simulation workspace tailored to ${namesJoined}.`,
       },
       {
@@ -138,7 +138,7 @@ export function buildModelIntro(prongIds: number[]): PortalIntroContent {
       {
         body:
           chosen.length > 1
-            ? "It reports how the selected prongs combine: the total crust strength, CO₂ captured, and wind resistance you get when they work together."
+            ? "It reports how the selected routes combine: the total crust strength, CO₂ captured, and wind resistance you get when they work together."
             : (chosen[0]?.impact ??
               "The strength the crust reaches, and how long it holds."),
       },

@@ -98,7 +98,7 @@ export const KILL_SWITCH_TITLE = "Biocontainment Kill Switch";
 export const KILL_SWITCH_SHORT = "A toxin the cells hold in check, until they cannot";
 
 /** How the kill switch is framed relative to the prongs. Was five phrasings. */
-export const KILL_SWITCH_ROLE = "Biosafety layer over both prongs";
+export const KILL_SWITCH_ROLE = "Biosafety layer over both routes";
 
 // ---------------------------------------------------------------------------
 // Alginate
@@ -108,7 +108,7 @@ export const KILL_SWITCH_ROLE = "Biosafety layer over both prongs";
 export const ALGINATE_STATUS = "Modelled for comparison, not carried forward";
 
 export const ALGINATE_RATIONALE =
-  "Dropped as a prong on the evidence, still modelled in full so its trade-offs against the engineered pair stay quantifiable.";
+  "Dropped as a route on the evidence, still modelled in full so its trade-offs against the engineered pair stay quantifiable.";
 
 // ---------------------------------------------------------------------------
 // Portals

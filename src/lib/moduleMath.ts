@@ -172,7 +172,7 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
   "protein-3d": {
     title: PORTAL_NAMES.protein,
     intro:
-      "A structural view of the key enzymes, PgsBCA (γ-PGA synthase, Prong 1) or carbonic anhydrase (Prong 2). The backbone is drawn from residue coordinates, with no free parameters.",
+      "A structural view of the key enzymes, PgsBCA (γ-PGA synthase, Route 1) or carbonic anhydrase (Route 2). The backbone is drawn from residue coordinates, with no free parameters.",
     blocks: [
       {
         tex: "\\mathbf{r}_i = (x_i, y_i, z_i)",
@@ -243,7 +243,7 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
       {
         tex: "C(d) = 1 - \\prod_{p}\\big(1 - e_p(d)\\big)",
         caption:
-          "A grain of size d is held if AT LEAST ONE active binder covers it (probabilistic union of per-prong effectiveness eₚ).",
+          "A grain of size d is held if AT LEAST ONE active binder covers it (probabilistic union of per-route effectiveness eₚ).",
       },
       {
         tex: "f_{\\text{bound}} = \\int C(d)\\,\\phi(\\ln d)\\,\\mathrm{d}\\ln d,\\qquad \\phi \\sim \\mathrm{LogNormal}(D_{50},\\sigma_g)",
@@ -255,17 +255,17 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
   composite: {
     title: "Composite Strength Synthesis",
     intro:
-      "When two or more prongs act together, their cohesions combine (rule of mixtures plus a labelled synergy term), and the design survives a failure scenario if at least one mechanism survives it.",
+      "When two or more routes act together, their cohesions combine (rule of mixtures plus a labelled synergy term), and the design survives a failure scenario if at least one mechanism survives it.",
     blocks: [
       {
         tex: "S_{\\mathrm{Ca}} = c_f + \\sum_p B_p\\,\\frac{c_f}{K_{d,p}+c_f},\\qquad \\phi_{\\mathrm{Ca},p} = \\frac{c_f/(K_{d,p}+c_f)}{c_f^{\\,\\text{alone}}/(K_{d,p}+c_f^{\\,\\text{alone}})}",
         caption:
-          "Competitive Langmuir Ca²⁺ partition: free calcium c_f solves the shared mass balance, and each prong keeps φ_Ca of its standalone binding, so the high-affinity calcite sink wins. Plus co-expression burden β for γ-PGA & CA.",
+          "Competitive Langmuir Ca²⁺ partition: free calcium c_f solves the shared mass balance, and each route keeps φ_Ca of its standalone binding, so the high-affinity calcite sink wins. Plus co-expression burden β for γ-PGA & CA.",
       },
       {
         tex: "\\tilde\\gamma_i = \\gamma_i\\,\\phi_{\\mathrm{Ca}}\\,\\phi_{\\text{burden},i}",
         caption:
-          "Each prong’s cohesion is knocked down by the interactions it takes part in, before combining.",
+          "Each route’s cohesion is knocked down by the interactions it takes part in, before combining.",
       },
       {
         tex: "\\gamma_{\\text{total}} = \\sum_i \\tilde\\gamma_i + \\sum_{i<j} \\eta_{ij}\\sqrt{\\tilde\\gamma_i \\tilde\\gamma_j}",
@@ -275,7 +275,7 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
       {
         tex: "r_{\\text{combined}} = 1 - \\prod_i (1 - r_i)",
         caption:
-          "Redundancy: the combination fails a scenario only if every prong fails it.",
+          "Redundancy: the combination fails a scenario only if every route fails it.",
       },
     ],
   },
@@ -287,7 +287,7 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
       {
         tex: "\\gamma_p(t) = \\gamma_p^{\\text{mature}}\\left(1 - e^{-t/\\tau_p}\\right)",
         caption:
-          "Maturation: each prong approaches its mature cohesion on a per-binder time constant τ_p (alginate fast, MICP slow).",
+          "Maturation: each route approaches its mature cohesion on a per-binder time constant τ_p (alginate fast, MICP slow).",
       },
       {
         tex: "\\gamma_p(m) = \\gamma_p^{\\text{mature}}\\,2^{-m/H_p}",
@@ -304,12 +304,12 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
   economic: {
     title: "Economic Scalability",
     intro:
-      "Cost is built bottom-up per prong (fermentation for γ-PGA, feedstock + enzyme for CaCO₃, commodity purchase for alginate) then summed for the chosen combination and compared against conventional stabilisers.",
+      "Cost is built bottom-up per route (fermentation for γ-PGA, feedstock + enzyme for CaCO₃, commodity purchase for alginate) then summed for the chosen combination and compared against conventional stabilisers.",
     blocks: [
       {
         tex: "C_{\\text{combo}} = C^{\\text{capex}} + A \\left( \\sum_{p} C_p^{\\text{opex/ha}} + C^{\\text{app/ha}} \\right)",
         caption:
-          "Total cost over area A. The two bacterial prongs share one bioprocess capex, and the field application pass is paid once per hectare whatever the combination.",
+          "Total cost over area A. The two bacterial routes share one bioprocess capex, and the field application pass is paid once per hectare whatever the combination.",
       },
       {
         tex: "C_2^{\\text{opex/ha}} = C_{\\text{Ca}}^{\\text{/ha}} \\, \\frac{h}{h_{\\text{ref}}} - p_{\\text{CO}_2} m_{\\text{CO}_2}",

@@ -153,19 +153,19 @@ export const MODULE_CODE: Partial<Record<ModuleId, ModuleCode>> = {
   grainsize: entry(
     "grainsize",
     "Grain-Size Coverage",
-    "Per-prong binding vs grain diameter and the probabilistic union, integrated over the UAE dune-sand log-normal distribution.",
+    "Per-route binding vs grain diameter and the probabilistic union, integrated over the UAE dune-sand log-normal distribution.",
     [
-      p("grainsize", 1, "Per-prong binding against grain diameter, with the site size distribution behind it. No single binder covers every size. The heavy dashed line is the union of the two deployed prongs."),
-      p("grainsize", 2, "Site sand held, by mass, per prong combination. Combining prongs covers more of the distribution. Bars marked with a star include alginate, which is modelled for comparison and not deployed."),
+      p("grainsize", 1, "Per-route binding against grain diameter, with the site size distribution behind it. No single binder covers every size. The heavy dashed line is the union of the two deployed routes."),
+      p("grainsize", 2, "Site sand held, by mass, per route combination. Combining routes covers more of the distribution. Bars marked with a star include alginate, which is modelled for comparison and not deployed."),
     ],
   ),
   composite: entry(
     "composite",
     "Composite Strength Synthesis",
-    "Competitive-Langmuir Ca²⁺ partition and co-expression burden knock each prong down before the synergy combination, plus the redundancy matrix.",
+    "Competitive-Langmuir Ca²⁺ partition and co-expression burden knock each route down before the synergy combination, plus the redundancy matrix.",
     [
-      p("composite", 1, "Additive against composite cohesion across prong combinations. Two binders in one crust do not simply add."),
-      p("composite", 2, "Per-scenario resilience: the best single prong against the two deployed prongs together. Combining assumes they fail independently, which is what Bacterial Death breaks."),
+      p("composite", 1, "Additive against composite cohesion across route combinations. Two binders in one crust do not simply add."),
+      p("composite", 2, "Per-scenario resilience: the best single route against the two deployed routes together. Combining assumes they fail independently, which is what Bacterial Death breaks."),
     ],
   ),
   curing: entry(
@@ -173,14 +173,14 @@ export const MODULE_CODE: Partial<Record<ModuleId, ModuleCode>> = {
     "Curing & Deployment Timeline",
     "Per-binder maturation γ(t) = γ_mature(1−e^(−t/τ)) over the spray protocol and field weathering γ(m) = γ_mature·2^(−m/H).",
     [
-      p("curing", 1, "Maturation over the 0 to 48 h spray protocol, per prong and total. Alginate sets fast, calcite ripens slowly."),
+      p("curing", 1, "Maturation over the 0 to 48 h spray protocol, per route and total. Alginate sets fast, calcite ripens slowly."),
       p("curing", 2, "Field weathering over months with the re-application cadence. Calcite persists, the polymers weather."),
     ],
   ),
   economic: entry(
     "economic",
     "Economic Scalability",
-    "Bottom-up per-prong deployment cost summed per combination, with capex amortisation and break-even against a conventional chemical spray.",
+    "Bottom-up per-route deployment cost summed per combination, with capex amortisation and break-even against a conventional chemical spray.",
     [
       p("economic", 1, "All-in cost per hectare against treated area, with baselines. The per-hectare cost falls as the capex amortises."),
       p("economic", 2, "Deployment cost breakdown per combination at 100 ha. Bars marked with a star include alginate, which is modelled for comparison and not deployed."),

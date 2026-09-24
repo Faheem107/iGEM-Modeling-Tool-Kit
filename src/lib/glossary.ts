@@ -113,7 +113,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "bacillus-subtilis": {
     title: "Bacillus subtilis",
     plain:
-      "A soil bacterium that survives heat and drought. It is a Risk Group 1 organism, non-pathogenic and long used in industrial fermentation. We engineer its pathways so a glucose and glutamate feed comes out as γ-PGA (Prong 1) or as carbonic anhydrase held on the cell wall (Prong 2).",
+      "A soil bacterium that survives heat and drought. It is a Risk Group 1 organism, non-pathogenic and long used in industrial fermentation. We engineer its pathways so a glucose and glutamate feed comes out as γ-PGA (Route 1) or as carbonic anhydrase held on the cell wall (Route 2).",
     category: "Microorganism",
   },
 
@@ -327,7 +327,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
     plain:
       "The wind speed the engineered crust withstands before grains move. The gap above the untreated threshold is exactly what the bacteria buy you.",
     derivation:
-      "Cohesion-modified threshold (Eq 8): u*t = A·√[((ρs−ρa)/ρa)·g·d + γ/(ρa·d)]. The extra γ/(ρa·d) term is the interparticle cohesion the binder adds. γ is the composite cohesion (built from the active prong's binder, the Ca²⁺-crosslinked γ-PGA gel modulus at 10 mM Ca²⁺, the calcite UCS, or the alginate egg-box modulus), converted here into a survivable wind speed.",
+      "Cohesion-modified threshold (Eq 8): u*t = A·√[((ρs−ρa)/ρa)·g·d + γ/(ρa·d)]. The extra γ/(ρa·d) term is the interparticle cohesion the binder adds. γ is the composite cohesion (built from the active route's binder, the Ca²⁺-crosslinked γ-PGA gel modulus at 10 mM Ca²⁺, the calcite UCS, or the alginate egg-box modulus), converted here into a survivable wind speed.",
     category: "Wind Mechanics",
     jumpTo: ["aeolian"],
     jumpLabel: "Open the Aeolian Wind Tunnel",
@@ -405,9 +405,9 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
     category: "Biosafety",
   },
   "prong-interaction": {
-    title: "Inter-Prong Interaction",
+    title: "Interaction Between Routes",
     plain:
-      "The prongs are not independent. Combined, they interact: all three compete for the same soil calcium, γ-PGA and carbonic anhydrase compete for the same cell’s energy budget when co-expressed, and some pairs help each other, since γ-PGA seeds calcite and alginate keeps things damp. The model accounts for both the competition and the cooperation.",
+      "The routes are not independent. Combined, they interact: all three compete for the same soil calcium, γ-PGA and carbonic anhydrase compete for the same cell’s energy budget when co-expressed, and some pairs help each other, since γ-PGA seeds calcite and alginate keeps things damp. The model accounts for both the competition and the cooperation.",
     category: "Systems",
   },
   "chemical-spray": {
@@ -453,9 +453,9 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "composite-cohesion": {
     title: "Composite Cohesion",
     plain:
-      "The single number for how strongly the engineered crust holds sand grains together, the interparticle cohesion γ (in mN/m) that every prong ultimately feeds into the wind-erosion result.",
+      "The single number for how strongly the engineered crust holds sand grains together, the interparticle cohesion γ (in mN/m) that every route ultimately feeds into the wind-erosion result.",
     derivation:
-      "Each active prong's binder is first converted to a standalone cohesion: γ-PGA and alginate through their Ca²⁺-crosslinked gel shear modulus G (10 mM Ca²⁺ default), and CaCO₃ through the calcite unconfined compressive strength (UCS). Each is then knocked down by inter-prong competition (shared Ca²⁺ + co-expression metabolic burden) and its yield factor, and finally combined with a physicochemical synergy term into one composite γ. That γ is what raises the treated wind threshold.",
+      "Each active route's binder is first converted to a standalone cohesion: γ-PGA and alginate through their Ca²⁺-crosslinked gel shear modulus G (10 mM Ca²⁺ default), and CaCO₃ through the calcite unconfined compressive strength (UCS). Each is then knocked down by inter-prong competition (shared Ca²⁺ + co-expression metabolic burden) and its yield factor, and finally combined with a physicochemical synergy term into one composite γ. That γ is what raises the treated wind threshold.",
     category: "Composite Mechanics",
     jumpTo: ["composite", "crosslink", "caco3", "alginate"],
     jumpLabel: "Open the module that computes it",
@@ -469,7 +469,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "failure-mode": {
     title: "Failure-Mode Robustness",
     plain:
-      "How well each strategy holds up against different stresses, drought/heat, flood/rain, bacterial death, high wind, and long-term wear. Combining prongs covers each other's weak points.",
+      "How well each strategy holds up against different stresses, drought/heat, flood/rain, bacterial death, high wind, and long-term wear. Combining routes covers each other's weak points.",
     category: "Reliability",
   },
   lca: {

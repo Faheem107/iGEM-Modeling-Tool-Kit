@@ -55,17 +55,17 @@ export const PRONGS: Prong[] = [
     title: PRONG_TITLES[3],
     short: PRONG_SHORTS[3],
     whatItIs:
-      "Sodium alginate comes from seaweed and is sold by the tonne for food. Add calcium and the chains clamp around it in a shape called an egg-box, and the liquid sets to a gel. It was scoped as a third prong, an applied binder rather than anything the bacteria make, and later dropped.",
+      "Sodium alginate comes from seaweed and is sold by the tonne for food. Add calcium and the chains clamp around it in a shape called an egg-box, and the liquid sets to a gel. It was scoped as a third route, an applied binder rather than anything the bacteria make, and later dropped.",
     modelDoes:
-      "Still modelled in full: how the gel sets, how much water it holds, and how many egg-box junctions form at desert temperature and salinity. Dropping it as a prong is not a reason to stop being able to compare it.",
+      "Still modelled in full: how the gel sets, how much water it holds, and how many egg-box junctions form at desert temperature and salinity. Dropping it as a route is not a reason to stop being able to compare it.",
     impact:
-      "Kept as a modelled comparison rather than a deployed prong. It was dropped on the three findings below, each of which stands on its own. The deployed design is the two engineered prongs, which are what the crust is actually built from.",
+      "Kept as a modelled comparison rather than a deployed route. It was dropped on the three findings below, each of which stands on its own. The deployed design is the two engineered routes, which are what the crust is actually built from.",
     inDesert:
       "The calcium already in desert dust sets it on contact, so the surface binds at once. Nothing living is involved, which is both why it is fast and why it does not repair itself.",
     whyDropped: [
-      "It takes the water. A hydrogel holds water tightly, which leaves less of it free for the cells and slows the nutrients that reach them by diffusion. Prong 2 needs those cells working.",
+      "It takes the water. A hydrogel holds water tightly, which leaves less of it free for the cells and slows the nutrients that reach them by diffusion. Route 2 needs those cells working.",
       "It needs calcium we cannot promise. Below a certain supply, what precipitates is not calcite but a weaker form of calcium carbonate, or loose aggregate that binds nothing.",
-      "Nothing about it is engineered. It is a material you buy and spread, so it demonstrates no genetic design and it cannot be improved by changing the strain. The two remaining prongs can.",
+      "Nothing about it is engineered. It is a material you buy and spread, so it demonstrates no genetic design and it cannot be improved by changing the strain. The two remaining routes can.",
     ],
   },
 ];
@@ -83,7 +83,7 @@ export const KILL_SWITCH = {
   title: KILL_SWITCH_TITLE,
   short: KILL_SWITCH_SHORT,
   whatItIs:
-    "A genetically-encoded control layer that limits the engineered B. subtilis population and, when needed, eliminates it. It runs over both engineered prongs rather than standing in for one. It binds nothing and adds no strength to the crust. What it adds is the ability to end the deployment.",
+    "A genetically-encoded control layer that limits the engineered B. subtilis population and, when needed, eliminates it. It runs over both engineered routes rather than standing in for one. It binds nothing and adds no strength to the crust. What it adds is the ability to end the deployment.",
   modelDoes:
     "Runs the MazE/MazF pair. MazF cuts the cell's own RNA and kills it. MazE binds MazF and stops that, but MazE breaks down quickly, so the cell has to keep making more. Three ways out follow from that: add aTc and MazF wins, let the plasmid dilute out over generations and MazF wins, or let the genes jump to a wild microbe with no matching antitoxin and MazF wins there too.",
   impact:

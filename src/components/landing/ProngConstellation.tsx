@@ -14,7 +14,7 @@ import { KILL_SWITCH_ROLE } from "@/content/copy";
 import { PRONG_TITLES, PRONG_SHORTS } from "@/content/copy";
 
 /**
- * ProngConstellation: "three prongs became two prongs plus a kill switch",
+ * ProngConstellation: "three routes became two routes plus a kill switch",
  * told in type and hairlines.
  * ==========================================================================
  * There are no cards here. The three options are labels under a fork; the
@@ -224,7 +224,7 @@ export default function ProngConstellation({
               <span className="invisible" aria-hidden>
                 Two prongs and a kill switch
               </span>
-              {["Three prongs", "Two prongs and a kill switch"].map((t, i) => (
+              {["Three routes", "Two routes and a kill switch"].map((t, i) => (
                 <motion.span
                   key={t}
                   className="absolute inset-0"

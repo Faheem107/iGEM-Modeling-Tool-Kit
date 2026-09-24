@@ -144,7 +144,7 @@ export default function CompositeSynthesisPanel({
               ? "text-dune-teal"
               : "text-dune-rose"
           }
-          sub={hasSynergy ? "against the two prongs added up separately" : "no prong is contributing yet"}
+          sub={hasSynergy ? "against the two routes added up separately" : "no route is contributing yet"}
         />
       </div>
 
@@ -152,7 +152,7 @@ export default function CompositeSynthesisPanel({
         title={
           <>
             <GlossaryTerm term="prong-interaction">
-              Inter-Prong Interactions
+              Interaction Between Routess
             </GlossaryTerm>: what happens when they share a chassis & soil
           </>
         }
@@ -269,7 +269,7 @@ export default function CompositeSynthesisPanel({
         </Panel>
 
         <Panel
-          title="Cohesion Contribution by Prong"
+          title="Cohesion Contribution by Route"
           isLightMode={isLightMode}
         >
           <ResponsiveContainer width="100%" height={200}>
