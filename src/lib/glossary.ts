@@ -455,7 +455,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
     plain:
       "The single number for how strongly the engineered crust holds sand grains together, the interparticle cohesion γ (in mN/m) that every route ultimately feeds into the wind-erosion result.",
     derivation:
-      "Each active route's binder is first converted to a standalone cohesion: γ-PGA and alginate through their Ca²⁺-crosslinked gel shear modulus G (10 mM Ca²⁺ default), and CaCO₃ through the calcite unconfined compressive strength (UCS). Each is then knocked down by inter-prong competition (shared Ca²⁺ + co-expression metabolic burden) and its yield factor, and finally combined with a physicochemical synergy term into one composite γ. That γ is what raises the treated wind threshold.",
+      "Each active route's binder is first converted to a standalone cohesion: γ-PGA and alginate through their Ca²⁺-crosslinked gel shear modulus G (10 mM Ca²⁺ default), and CaCO₃ through the calcite unconfined compressive strength (UCS). Each is then knocked down by competition between the routes (shared Ca²⁺ + co-expression metabolic burden) and its yield factor, and finally combined with a physicochemical synergy term into one composite γ. That γ is what raises the treated wind threshold.",
     category: "Composite Mechanics",
     jumpTo: ["composite", "crosslink", "caco3", "alginate"],
     jumpLabel: "Open the module that computes it",
