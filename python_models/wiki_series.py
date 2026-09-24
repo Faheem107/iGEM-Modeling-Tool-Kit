@@ -103,10 +103,19 @@ out["ucs_vs_carbonate"] = series(wt, caco3.calcite_to_ucs(wt))
 out["_ucs_at"] = {str(w): round(float(caco3.calcite_to_ucs(w)), 1) for w in (1, 2, 4, 6)}
 
 # -- what is true whichever route runs -----------------------------------
+fba = load("fba")
 thermal = load("thermal")
 killswitch = load("killswitch")
 curing = load("curing")
 composite = load("composite")
+
+growth, product, mu_max = fba.production_envelope(n=41)
+out["production_envelope"] = series(growth, product)
+out["_envelope"] = {
+    "mu_max": round(float(mu_max), 4),
+    "product_at_zero_growth": round(float(product[0]), 3),
+    "doubling_min": round(60 * 0.693147 / float(mu_max), 1),
+}
 
 temps = np.linspace(20, 80, 241)
 out["folded_fraction"] = series(temps, thermal.folded_fraction(temps))
