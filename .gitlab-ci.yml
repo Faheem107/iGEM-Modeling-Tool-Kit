@@ -1,8 +1,13 @@
 # Same shape as the wiki repo's pipeline. This is the software tool rather than
 # a Pages site, so it verifies rather than deploying.
+#
+# Split into two jobs because one job running the whole chain was killed at the
+# runner's ten minute limit every time. The install is fast, so what did not fit
+# was lint and the Next build back to back on a shared runner. Run them side by
+# side and each one has the full budget.
 image: node:22
 
-verify:
+.node:
   stage: build
   cache:
     key:
@@ -12,10 +17,21 @@ verify:
       - .npm/
   before_script:
     - npm ci --cache .npm --prefer-offline
-  script:
-    - npm run verify
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: always
     - if: $CI_MERGE_REQUEST_IID
       when: always
+
+# Types, lint and the content audits. Seconds of work once the install is done.
+lint:
+  extends: .node
+  script:
+    - npm run lint
+    - npm run audit:content
+
+# The production build on its own, which is the slow half.
+build:
+  extends: .node
+  script:
+    - npm run build
