@@ -54,7 +54,7 @@ export const INDEX_COLUMNS: IndexColumn[] = [
     key: "prong-2",
     eyebrow: "Route two",
     title: PRONG_TITLES[2],
-    lede: "An enzyme on the cell wall grows CaCO₃ cement, with no ammonia.",
+    lede: "An enzyme on the cell wall grows CaCO₃ between grains, with no ammonia.",
     prongs: "2",
     modules: p2Only,
   },
