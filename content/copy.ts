@@ -70,7 +70,7 @@ export const MECHANISM =
  * reached it from.
  */
 export const PRONG_TITLES = {
-  1: "Polymer Overexpression",
+  1: "γ-PGA Overexpression",
   2: "Carbonic Anhydrase & Sortase",
   3: "Sodium Alginate",
 } as const;
