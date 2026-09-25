@@ -399,8 +399,8 @@ export default function LandingStory({
                   }`}
                   style={{ textShadow: shadow }}
                 >
-                  None of those numbers is measured yet. What follows is how the models
-                  that produce them were built, and what each one assumes.
+                  Curious where those numbers come from? Keep scrolling. Next up is how we
+                  built each model, and what each one assumes.
                 </p>
               </div>
             </div>
