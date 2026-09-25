@@ -29,7 +29,7 @@ export const PRONGS: Prong[] = [
     title: PRONG_TITLES[1],
     short: PRONG_SHORTS[1],
     whatItIs:
-      "Bacillus subtilis already makes poly-γ-glutamic acid, a long sticky chain it secretes to hold water. We raise how much of it the cells make, so the sand around them is held in a mesh of the stuff rather than lying loose.",
+      "Bacillus subtilis carries the genes for poly-γ-glutamic acid, a long sticky chain that holds water, but in the strain we use they are silent. We switch them back on and raise how much of it the cells make, so the sand around them is held in a mesh of the stuff rather than lying loose.",
     modelDoes:
       "Follows the carbon from glucose to polymer, then the polymer to a number. Calcium ions bridge neighbouring chains. The bridges set the network density, and the network density sets the shear modulus, which is the stiffness the crust actually has.",
     impact:
