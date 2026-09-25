@@ -95,7 +95,7 @@ export const PRONG_MOLECULES = {
 
 export const KILL_SWITCH_TITLE = "Biocontainment Kill Switch";
 
-export const KILL_SWITCH_SHORT = "A toxin the cells hold in check, until they cannot";
+export const KILL_SWITCH_SHORT = "A toxin that the cells hold in check, until they cannot";
 
 /** How the kill switch is framed relative to the prongs. Was five phrasings. */
 export const KILL_SWITCH_ROLE = "Biosafety layer over both routes";
