@@ -268,6 +268,21 @@ export default function DesignCycleStory({
       >
         {!staticMode && <StoryEscape progressRef={progressRef} />}
 
+        {/* The beats change in place, so without this it is not obvious that
+            scrolling is what moves the loop on. */}
+        {!staticMode && (
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 bottom-14 z-[45] flex justify-center px-6"
+          >
+            <span className="caption rounded-[4px] border border-border bg-background/70 px-3 py-1.5 backdrop-blur-sm">
+              {active < BEATS.length - 1
+                ? "Scroll down for the next step \u2193"
+                : "Scroll down to keep going \u2193"}
+            </span>
+          </div>
+        )}
+
         <SandParticles
           progressRef={progressRef}
           isLightMode={isLightMode}
