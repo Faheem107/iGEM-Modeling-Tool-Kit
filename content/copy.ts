@@ -78,7 +78,7 @@ export const PRONG_TITLES = {
 /** One lede per prong. Previously four to five phrasings each. */
 export const PRONG_SHORTS = {
   1: "γ-PGA, a sticky biopolymer. The genes are there but silent, so we switch them on",
-  2: "Cement grown between grains, without ammonia",
+  2: "Calcium carbonate formed between grains, without ammonia",
   3: "A gel you spread on. Modelled, not deployed",
 } as const;
 

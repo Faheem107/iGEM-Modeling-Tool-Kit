@@ -46,7 +46,7 @@ export const PRONGS: Prong[] = [
     modelDoes:
       "Counts how many enzymes actually reach the cell surface and stay there, through the signal peptide, the sortase reaction and the pairing of the enzyme with itself. That count sets how fast calcium carbonate precipitates.",
     impact:
-      "Cement between grains, with no ammonia released into the sand. The precipitation rate feeds the strength estimate for the crust.",
+      "Calcium carbonate between grains, with no ammonia released into the sand. The precipitation rate feeds the strength estimate for the crust.",
     inDesert:
       "Out in the sand the enzyme sits on the cell wall, turning CO₂ into bicarbonate. Desert dust carries calcium. Where the two meet, calcium carbonate grows in the gaps between grains and the surface sets hard.",
   },
