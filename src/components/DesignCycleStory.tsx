@@ -4,7 +4,6 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createTimeline, svg, stagger, type Timeline } from "animejs";
 import StoryEscape from "@/src/components/landing/StoryEscape";
 import { storyTravel } from "@/src/lib/scrollRestore";
-import SandParticles from "./dune-story/SandParticles";
 import { GlossaryText } from "@/src/components/GlossaryTerm";
 import { DUNE } from "@/src/lib/palette";
 import {
@@ -28,14 +27,15 @@ const C = {
   mesh: DUNE.rose,
   node: DUNE.orange,
   shield: DUNE.teal,
-  cross: "#c0392b",
+  line: "var(--border)",
+  ink: "var(--foreground)",
+  muted: "var(--muted-foreground)",
 };
 
 // The figure field. Wide and short, because it sits under the text across the
 // full column rather than beside it.
 const VB_W = 1300;
 const VB_H = 400;
-const MID_X = VB_W / 2;
 
 // Each layer owns a horizontal band, so beats that are on screen together do
 // not stack on top of each other.
@@ -105,7 +105,6 @@ export default function DesignCycleStory({
   const stageRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const progressRef = useRef(0);
-  const glowRef = useRef<HTMLDivElement>(null);
   const windRef = useRef<SVGGElement>(null);
   const prongsRef = useRef<SVGGElement>(null);
   const algRef = useRef<SVGGElement>(null);
@@ -164,13 +163,8 @@ export default function DesignCycleStory({
     tl.add(prongsRef.current!, { opacity: [1, 0.34], duration: 700 }, 3000);
     tl.add(crossRef.current!, { opacity: [1, 0.34], duration: 700 }, 3000);
     tl.add(shieldRef.current!, { opacity: [1, 0.34], duration: 700 }, 3000);
-    // Beat 5: the ground plane and the glow open up.
+    // Beat 5: the ground line under the crust.
     tl.add(fieldRef.current!, { opacity: [0, 1], duration: 800 }, 4000);
-    tl.add(
-      glowRef.current!,
-      { opacity: [0.4, 0.8], scale: [0.9, 1.1], duration: 1000 },
-      4000,
-    );
     tlRef.current = tl;
 
     if (!wide || reduce) {
@@ -283,39 +277,12 @@ export default function DesignCycleStory({
           </div>
         )}
 
-        <SandParticles
-          progressRef={progressRef}
-          isLightMode={isLightMode}
-          densityScale={0.6}
-          className="pointer-events-none absolute inset-0 z-0"
-        />
-
-        {/* Accent glow, behind the figure band rather than behind the words. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 flex h-[62%] items-center justify-center"
-        >
-          <div
-            ref={glowRef}
-            style={{ opacity: 0.4 }}
-            className={`h-[80%] w-[72%] rounded-full blur-[130px] ${
-              isLightMode
-                ? "bg-[radial-gradient(circle,rgba(143,179,172,0.5),rgba(214,136,74,0.25),transparent_70%)]"
-                : "bg-[radial-gradient(circle,rgba(143,179,172,0.42),rgba(214,136,74,0.22),transparent_70%)]"
-            }`}
-          />
-        </div>
-
         <div className="relative z-10 mx-auto flex h-full w-full max-w-[1240px] flex-col px-6 pb-16 pt-28 md:px-10 md:pb-20 md:pt-32">
           {/* Caption rail: what this section is, and where in the loop we are. */}
           <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3 border-b border-border pb-4">
             <span className="caption-head">Engineering Design Cycle</span>
             {!staticMode && (
-              <StageRail
-                stage={BEATS[active].stage}
-                turn={BEATS[active].turn}
-                isLightMode={isLightMode}
-              />
+              <StageRail stage={BEATS[active].stage} turn={BEATS[active].turn} />
             )}
           </div>
 
@@ -399,54 +366,20 @@ function BeatBody({
 function StageRail({
   stage,
   turn,
-  isLightMode,
 }: {
   stage: string;
   turn: number;
-  isLightMode: boolean;
 }) {
-  const R = 26;
-  const CIRC = 2 * Math.PI * R;
-  const seg = CIRC / 4;
   const idx = CYCLE_STAGES.indexOf(stage as never);
   return (
-    <div className="flex items-center gap-4">
-      <svg viewBox="0 0 64 64" className="h-8 w-8 shrink-0" aria-hidden>
-        <g transform="rotate(-90 32 32)">
-          {CYCLE_STAGES.map((_, i) => (
-            <circle
-              key={i}
-              cx="32"
-              cy="32"
-              r={R}
-              fill="none"
-              stroke={i === idx ? "var(--dune-orange)" : "var(--dune-ash)"}
-              strokeOpacity={i === idx ? 1 : 0.3}
-              strokeWidth={i === idx ? 4 : 1.5}
-              strokeDasharray={`${seg - 5} ${CIRC - seg + 5}`}
-              strokeDashoffset={-i * seg}
-              strokeLinecap="round"
-              className="transition-all duration-500"
-            />
-          ))}
-        </g>
-        <text
-          x="32"
-          y="39"
-          textAnchor="middle"
-          fontSize="22"
-          fontWeight="700"
-          fill={isLightMode ? DUNE.maroon : DUNE.orange}
-        >
-          {turn}
-        </text>
-      </svg>
+    <div className="flex items-baseline gap-5">
+      <span className="caption text-muted-foreground">Turn {turn}</span>
       <div className="flex flex-wrap gap-x-5 gap-y-1">
         {CYCLE_STAGES.map((st, i) => (
           <span
             key={st}
             className={`caption transition-colors duration-500 ${
-              i === idx ? "text-dune-orange" : "text-muted-foreground opacity-45"
+              i === idx ? "text-foreground" : "text-muted-foreground opacity-45"
             }`}
           >
             {st}
@@ -501,7 +434,7 @@ function StoryFigure({
         ref={windRef}
         style={{ opacity: 0.85 }}
         stroke={C.loose}
-        strokeWidth={2}
+        strokeWidth={1.2}
         strokeLinecap="round"
       >
         {[152, 178, 204, 230].map((y, i) => (
@@ -515,7 +448,7 @@ function StoryFigure({
       </g>
 
       {/* cross-link mesh, drawn on scroll */}
-      <g fill="none" stroke={C.mesh} strokeWidth={1.8} strokeLinecap="round">
+      <g fill="none" stroke={C.mesh} strokeWidth={1} strokeLinecap="round">
         {mesh.map((d, i) => (
           <path key={i} className="dcs-mesh" d={d} opacity={0.7} />
         ))}
@@ -551,70 +484,46 @@ function StoryFigure({
         </g>
       </g>
 
-      {/* the route that was dropped, and why it reads as dropped */}
+      {/* the route that was dropped: struck through, with a plain caption */}
       <g ref={crossRef} style={{ opacity: 0 }}>
-        <g stroke={C.cross} strokeWidth={4.5} strokeLinecap="round">
-          <path d={`M${algCx - TILE_W / 2 + 22} ${TILE_Y + 18} L${algCx + TILE_W / 2 - 22} ${TILE_Y + TILE_H - 18}`} />
-          <path d={`M${algCx + TILE_W / 2 - 22} ${TILE_Y + 18} L${algCx - TILE_W / 2 + 22} ${TILE_Y + TILE_H - 18}`} />
-        </g>
+        <path
+          d={`M${algCx - 64} ${TILE_Y + TILE_H / 2} L${algCx + 64} ${TILE_Y + TILE_H / 2}`}
+          stroke={C.ink}
+          strokeWidth={1.2}
+        />
         <text
           x={algCx}
-          y={TILE_Y + TILE_H + 30}
+          y={TILE_Y + TILE_H + 28}
           textAnchor="middle"
-          fontSize={14}
-          fontWeight={700}
-          letterSpacing={2.5}
-          fill={C.cross}
+          fontSize={13}
+          letterSpacing={2}
+          fill={C.muted}
         >
           DROPPED
         </text>
       </g>
 
-      {/* the layer added over both survivors */}
-      <g ref={shieldRef} style={{ opacity: 0 }}>
+      {/* the layer added over both remaining routes, drawn as a bracket under them */}
+      <g ref={shieldRef} style={{ opacity: 0 }} fill="none" stroke={C.muted} strokeOpacity={0.7} strokeWidth={1}>
         <path
-          d={`M${MID_X} 132 L${MID_X + 40} 148 L${MID_X + 40} 182 Q${MID_X + 40} 216 ${MID_X} 232 Q${MID_X - 40} 216 ${MID_X - 40} 182 L${MID_X - 40} 148 Z`}
-          fill="none"
-          stroke={C.shield}
-          strokeWidth={3.5}
-          strokeLinejoin="round"
-        />
-        <path
-          d={`M${MID_X - 18} 183 L${MID_X - 4} 198 L${MID_X + 20} 163`}
-          fill="none"
-          stroke={C.shield}
-          strokeWidth={3.5}
-          strokeLinecap="round"
-          strokeLinejoin="round"
+          d={`M${TILE_CX[0] - TILE_W / 2} 136 L${TILE_CX[0] - TILE_W / 2} 148 L${TILE_CX[1] + TILE_W / 2} 148 L${TILE_CX[1] + TILE_W / 2} 136`}
         />
         <text
-          x={MID_X}
-          y={252}
+          x={(TILE_CX[0] + TILE_CX[1]) / 2}
+          y={176}
           textAnchor="middle"
-          fontSize={14}
-          fontWeight={700}
-          letterSpacing={2.5}
-          fill={C.shield}
+          fontSize={13}
+          letterSpacing={2}
+          fill={C.muted}
+          stroke="none"
         >
-          KILL SWITCH ADDED
+          KILL SWITCH OVER BOTH
         </text>
       </g>
 
       {/* the ground it ends up on */}
-      <g
-        ref={fieldRef}
-        style={{ opacity: 0 }}
-        stroke={C.cured}
-        strokeWidth={1.4}
-        opacity={0.55}
-      >
-        <path d="M50 362 L1250 362" />
-        {[374, 384, 392].map((y, i) => (
-          <path key={i} d={`M${40 - i * 12} ${y} L${1260 + i * 12} ${y}`} opacity={0.5 - i * 0.13} />
-        ))}
-        {[170, 410, 650, 890, 1130].map((x, i) => (
-          <path key={`v${i}`} d={`M${x} 362 L${x + (x - MID_X) * 0.2} 400`} opacity={0.35} />
-        ))}
+      <g ref={fieldRef} style={{ opacity: 0 }} stroke={C.line} strokeWidth={1}>
+        <path d={`M${GRID_X0 - 40} 362 L${GRID_X1 + 40} 362`} />
       </g>
     </svg>
   );
@@ -639,29 +548,27 @@ function TileBody({ cx, n, label }: { cx: number; n: number; label: string }) {
         y={TILE_Y}
         width={TILE_W}
         height={TILE_H}
-        rx={6}
-        fill="rgba(214,136,74,0.08)"
-        stroke={C.node}
-        strokeWidth={2}
+        rx={4}
+        fill="none"
+        stroke={C.line}
+        strokeWidth={1}
       />
-      <circle cx={cx - TILE_W / 2 + 44} cy={TILE_Y + TILE_H / 2} r={17} fill={C.node} />
       <text
-        x={cx - TILE_W / 2 + 44}
-        y={TILE_Y + TILE_H / 2 + 6}
-        textAnchor="middle"
-        fontSize={18}
-        fontWeight={800}
-        fill="#1a120c"
+        x={cx - TILE_W / 2 + 24}
+        y={TILE_Y + TILE_H / 2 + 5}
+        fontSize={13}
+        letterSpacing={2}
+        fill={C.muted}
       >
-        {n}
+        {String(n).padStart(2, "0")}
       </text>
       <text
-        x={cx + 24}
+        x={cx}
         y={TILE_Y + TILE_H / 2 + 7}
         textAnchor="middle"
         fontSize={20}
-        fontWeight={700}
-        fill={C.node}
+        fontWeight={500}
+        fill={C.ink}
       >
         {label}
       </text>
