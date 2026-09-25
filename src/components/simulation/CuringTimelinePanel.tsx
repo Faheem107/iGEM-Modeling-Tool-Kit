@@ -249,7 +249,7 @@ export default function CuringTimelinePanel({
         </Panel>
 
         <Panel
-          title="Field weathering &amp; re-application"
+          title="Field weathering and re-application"
           isLightMode={isLightMode}
           right={
             <span

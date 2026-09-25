@@ -62,8 +62,8 @@ export const CYCLE_BEATS: CycleBeat[] = [
   {
     stage: "Design",
     turn: 2,
-    title: "From bench to field",
+    title: "From the wet lab to the field",
     body:
-      "The second turn asks which experiment is worth doing next. We ran the same chain backwards: the wind target sets the cohesion needed, cohesion sets the polymer yield, and yield sets the glutamate and OD600 the bench has to hit. The model names the assay instead of waiting for one, and when a measurement comes back it replaces an assumed parameter and the loop runs again.",
+      "The second turn asks which experiment is worth doing next. We ran the same chain backwards: the wind target sets the cohesion needed, cohesion sets the polymer yield, and yield sets the glutamate and OD600 our wet lab has to hit. The model names the assay instead of waiting for one, and when a measurement comes back it replaces an assumed parameter and the loop runs again.",
   },
 ];

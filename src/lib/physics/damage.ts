@@ -142,7 +142,7 @@ export const solarAbrasion = (): DamageResult =>
   unsourced(
     "% power loss per year",
     "No published relation found linking saltation flux to PV glass haze.",
-    "Physics is sound and the length scale is right. Candidate for own bench work.",
+    "Physics is sound and the length scale is right. Worth measuring ourselves.",
   );
 
 export const roadEncroachment = (): DamageResult =>

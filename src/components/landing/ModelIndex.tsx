@@ -91,7 +91,7 @@ export default function ModelIndex({
               Where the sand comes from
             </span>
             <span className="mt-2 block max-w-[62ch] text-[length:var(--text-micro)] leading-snug text-muted-foreground">
-              The prongs set how well a treated surface holds. This takes that
+              The routes set how well a treated surface holds. This takes that
               outward: which sand hotspots feed a given site, how much reaches
               it, and how much less would reach it if we treated the ground.
             </span>

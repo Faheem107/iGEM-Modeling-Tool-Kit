@@ -112,9 +112,9 @@ export const MODULE_VIDEOS: Record<VideoId, ModuleVideo> = {
     ready: true,
   },
   wetlab: {
-    title: "From the bench to the dune",
+    title: "From the wet lab to the dune",
     plain:
-      "This connects real lab numbers, how dense the culture is, how much glutamate we feed, how salty the water is, straight into the same wind-erosion physics. Change a bench dial and watch the virtual dune hold or erode, so an experiment on Monday becomes a field prediction on Tuesday.",
+      "This connects real lab numbers, how dense the culture is, how much glutamate we feed, how salty the water is, straight into the same wind-erosion physics. Change a wet lab dial and watch the virtual dune hold or erode, so an experiment on Monday becomes a field prediction on Tuesday.",
     length: "~39 s",
     ready: true,
   },

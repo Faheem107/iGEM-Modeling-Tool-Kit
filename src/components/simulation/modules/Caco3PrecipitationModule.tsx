@@ -149,7 +149,7 @@ export default function Caco3PrecipitationModule({
   const controls = (
     <>
       <Panel
-        title="Geochemical Reactor Controls"
+        title="Reactor controls"
         isLightMode={isLightMode}
       >
         <div className="space-y-4">
@@ -405,7 +405,7 @@ export default function Caco3PrecipitationModule({
         </Panel>
 
         <Panel
-          title="Biocement Strength Curve"
+          title="Strength against cement content"
           isLightMode={isLightMode}
         >
           <ResponsiveContainer width="100%" height={150}>

@@ -288,12 +288,12 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
   },
   wetlab: {
     intro:
-      "Real bench inputs (OD₆₀₀, glutamate, salinity) mapped into the same erosion physics as the wind tunnel.",
+      "Real wet lab inputs (OD₆₀₀, glutamate, salinity) mapped into the same erosion physics as the wind tunnel.",
     sources: [
       {
         label: "NYUAD wet-lab γ-PGA protocol (OD₆₀₀ / glutamate / salinity)",
         detail:
-          "Bench measurements feeding cohesion → the shared Bagnold threshold.",
+          "Wet lab measurements feeding cohesion → the shared Bagnold threshold.",
         kind: "internal",
       },
       {

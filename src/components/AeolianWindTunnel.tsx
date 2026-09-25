@@ -1080,7 +1080,7 @@ export default function AeolianWindTunnel({
                 Wet-lab directives
               </span>
               <p className="text-[length:var(--text-micro)] text-muted-foreground leading-normal mb-4">
-                Settings for the bench to aim at. Only the survival rating comes
+                Settings for our wet lab to aim at. Only the survival rating comes
                 out of the model above. The cultivation period and the spray
                 density are rules of thumb we wrote down, not results.
               </p>

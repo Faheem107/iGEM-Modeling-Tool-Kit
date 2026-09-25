@@ -105,7 +105,7 @@ export const PORTAL_CARDS: PortalCard[] = [
     id: "wetlab-sandbox",
     href: "/portal/wet-lab",
     title: PORTAL_NAMES.wetlab,
-    desc: "Set the bench conditions, then watch how far the polymer spreads and how much dune survives the wind.",
+    desc: "Set the wet lab conditions, then watch how far the polymer spreads and how much dune survives the wind.",
     ring: "text-dune-orange",
   },
   {

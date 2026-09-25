@@ -154,7 +154,7 @@ export default function EconomicScalabilityEngine({
   const controls = (
     <>
       <Panel
-        title="Scale Specifications"
+        title="Area and dose"
         isLightMode={isLightMode}
       >
         <div className="space-y-4">
@@ -257,7 +257,7 @@ export default function EconomicScalabilityEngine({
 
       <div className="lg:col-span-7 space-y-6">
         <Panel
-          title="Cost per Hectare, Combination Comparison"
+          title="Cost per hectare, by combination"
           isLightMode={isLightMode}
           right={
             <span
@@ -320,7 +320,7 @@ export default function EconomicScalabilityEngine({
         </Panel>
 
         <Panel
-          title="Per-Route Cost Basis"
+          title="What each route costs"
           isLightMode={isLightMode}
         >
           <div className="space-y-2">

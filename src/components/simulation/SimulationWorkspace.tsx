@@ -566,8 +566,8 @@ function AlginateRationaleBanner() {
         <h2 className="caption text-dune-rose">{ALGINATE_STATUS}</h2>
       </div>
       <p className="mb-4 max-w-[var(--measure)] text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
-        Alginate was scoped as a third prong, a binder you spread on rather
-        than one the cells make. Three findings took it out, each of which
+        We scoped alginate as a third prong, a binder you spread on rather
+        than one the cells make. Three findings took it out, and each one
         stands on its own:
       </p>
       <ol className="max-w-[70ch] list-decimal space-y-2 pl-6 text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">

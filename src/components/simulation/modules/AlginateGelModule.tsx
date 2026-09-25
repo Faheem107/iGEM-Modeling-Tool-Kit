@@ -120,7 +120,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
   const controls = (
     <>
       <Panel
-        title="Applied Alginate Treatment"
+        title="Applied alginate treatment"
         isLightMode={isLightMode}
       >
         <div className="space-y-4">

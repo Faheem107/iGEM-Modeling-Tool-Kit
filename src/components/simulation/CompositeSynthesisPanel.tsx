@@ -269,7 +269,7 @@ export default function CompositeSynthesisPanel({
         </Panel>
 
         <Panel
-          title="Cohesion Contribution by Route"
+          title="What each route contributes"
           isLightMode={isLightMode}
         >
           <ResponsiveContainer width="100%" height={200}>

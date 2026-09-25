@@ -1049,10 +1049,10 @@ export default function FbaOptimizationModule({
                     </span>
                   </div>
                   <div
-                    className={`h-2 rounded-full relative ${isLightMode ? "bg-secondary" : "bg-card"}`}
+                    className={`h-2 rounded-[2px] relative ${isLightMode ? "bg-secondary" : "bg-card"}`}
                   >
                     <div
-                      className="absolute h-2 rounded-full bg-gradient-to-r from-dune-teal to-dune-orange"
+                      className="absolute h-2 rounded-[2px] bg-dune-teal"
                       style={{
                         left: `${(lo / span) * 100}%`,
                         width: `${Math.max(2, ((hi - lo) / span) * 100)}%`,

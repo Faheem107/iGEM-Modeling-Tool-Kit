@@ -257,8 +257,7 @@ export default function ProngConstellation({
           </div>
         </div>
 
-        {/* The rule under the head is a dune profile, not a straight line. */}
-        <DuneRule className="mb-12" />
+        <div className="mb-12 border-t border-border" />
 
       {/* ---- The figure. Desktop only; below md the index speaks for itself. ---- */}
       <div ref={hostRef} className="relative mb-24 hidden md:block">
@@ -353,51 +352,13 @@ export default function ProngConstellation({
         </div>
       </div>
 
-        {/* Where the figure meets the list: the same ridge, mirrored, so the
-            index reads as the layer under the surface. */}
-        <DuneRule className="mb-12" flip />
+        {/* The boundary between the figure and the index. */}
+        <div className="mb-12 border-t border-border" />
 
         {/* ---- The index. Everything, grouped and folded. ---- */}
         <ModelIndex show={indexed || reduced} onView={onView} />
       </div>
     </section>
-  );
-}
-
-/**
- * A hairline in the shape of a dune profile, with a second crest behind it. It
- * does the job the border-b did, and it says desert without a photograph, a
- * gradient or a filled shape.
- */
-function DuneRule({
-  className = "",
-  flip,
-}: {
-  className?: string;
-  flip?: boolean;
-}) {
-  return (
-    <svg
-      viewBox="0 0 1200 44"
-      preserveAspectRatio="none"
-      aria-hidden
-      className={`block h-[44px] w-full ${flip ? "scale-y-[-1]" : ""} ${className}`}
-    >
-      <path
-        d="M0 34 C 150 34, 250 10, 420 12 C 560 14, 640 33, 800 31 C 940 29, 1050 15, 1200 17"
-        fill="none"
-        stroke="var(--dune-orange)"
-        strokeWidth="1"
-        strokeOpacity="0.5"
-      />
-      <path
-        d="M0 42 C 190 42, 300 26, 470 28 C 640 30, 720 41, 900 39 C 1030 38, 1100 30, 1200 31"
-        fill="none"
-        stroke="var(--dune-rose)"
-        strokeWidth="1"
-        strokeOpacity="0.25"
-      />
-    </svg>
   );
 }
 

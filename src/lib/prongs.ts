@@ -199,12 +199,12 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
     scale: "macro",
     appliesTo: (s) => s.length > 0,
   },
-  // The bench assay is glutamate substrate → γ-PGA yield → dune crust, a Prong-1 protocol.
+  // The wet lab assay is glutamate substrate → γ-PGA yield → dune crust, a Prong-1 protocol.
   {
     id: "wetlab",
     title: PORTAL_NAMES.wetlab,
     blurb:
-      "Put real bench numbers in, cell density, glutamate, salinity, and erode a dune with them.",
+      "Put real wet lab numbers in, cell density, glutamate, salinity, and erode a dune with them.",
     scale: "macro",
     appliesTo: (s) => has(s, 1),
   },

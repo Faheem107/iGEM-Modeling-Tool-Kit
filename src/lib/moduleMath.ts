@@ -253,7 +253,7 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
   wetlab: {
     title: "Wet-Lab Sandbox",
     intro:
-      "Real lab inputs (OD₆₀₀, glutamate, salinity) are mapped into the same erosion physics as the wind tunnel, so a bench measurement can be pushed straight into a 2D dune-erosion assay.",
+      "Real lab inputs (OD₆₀₀, glutamate, salinity) are mapped into the same erosion physics as the wind tunnel, so a wet lab measurement can be pushed straight into a 2D dune-erosion assay.",
     blocks: [
       {
         tex: "u_{*t} = A\\sqrt{\\frac{\\rho_s - \\rho_a}{\\rho_a}\\,g\\,d + \\frac{\\gamma(\\text{OD}_{600},\\,[\\text{Glu}])}{\\rho_a d}}",

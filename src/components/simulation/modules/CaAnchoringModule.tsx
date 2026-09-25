@@ -93,7 +93,7 @@ export default function CaAnchoringModule({ isLightMode, onUpdate }: Props) {
   const controls = (
     <>
       <Panel
-        title="Anchoring & Display Efficiencies"
+        title="How much enzyme stays put"
         isLightMode={isLightMode}
       >
         <div className="space-y-4">

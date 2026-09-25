@@ -51,7 +51,7 @@ interface KsSection {
 const SECTIONS: KsSection[] = [
   {
     id: "dynamics",
-    title: "TA Dynamics & Kill",
+    title: "Toxin, antitoxin and kill",
     blurb:
       "MazE/MazF toxin and antitoxin ODE. The aTc trigger over-produces the toxin on demand, and plasmid dilution removes the antitoxin so the strain self-limits.",
     scale: "genetic",
@@ -59,7 +59,7 @@ const SECTIONS: KsSection[] = [
   },
   {
     id: "hgt",
-    title: "HGT Containment",
+    title: "Containment after gene transfer",
     blurb:
       "The E. coli MazEF split. A wild recipient gets the toxin but not the cognate antitoxin, so it self-eliminates after gene transfer.",
     scale: "ecology",
@@ -67,7 +67,7 @@ const SECTIONS: KsSection[] = [
   },
   {
     id: "spore",
-    title: "Spore Clearance",
+    title: "Spore clearance",
     blurb:
       "Germinate-then-kill over rounds. Enhanced germination wakes dormant spores so the toxin can clear them, down to a superdormant floor.",
     scale: "ecology",
@@ -75,7 +75,7 @@ const SECTIONS: KsSection[] = [
   },
   {
     id: "structures",
-    title: "3D Structures",
+    title: "The real structures",
     blurb:
       "Real toxin and antitoxin coordinates from the PDB, showing the neutralised complex and why the lock-and-key pairing contains gene transfer.",
     scale: "protein",
