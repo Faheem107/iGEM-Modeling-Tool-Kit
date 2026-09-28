@@ -94,13 +94,19 @@ export default function SimulationWorkspace({
     ggtKnockout: true,
     pgcAKnockout: true,
   });
+  // Mx and Mn match the defaults in python_models/crosslink.py so the site and the mirror
+  // report the same modulus. Mx sat at 350 g/mol here, which is under three glutamate
+  // residues between junctions and so close to every residue taking part in a calcium
+  // bridge. That looked more like the top of the plausible range than a default, and it was
+  // also below the minimum this module's own Mx field accepts. 2000 g/mol is roughly fifteen
+  // residues, which we can defend more easily, though we have not measured it either.
   const [crosslinkParams, setCrosslinkParams] = useState<BiophysicsParams>({
     ion_conc: 10.0,
     Kd: 4.0,
     rho_polymer: 3.5,
     temperature: 298.15,
-    Mx: 350,
-    Mn: 25000,
+    Mx: 2000,
+    Mn: 100000,
   });
   const [aeolianParams, setAeolianParams] = useState<AeolianParams>({
     sand_diameter: 0.00025,
