@@ -66,16 +66,18 @@ export function saturationIndex(
 }
 
 /**
- * Normalized CA activity 0–1 from the fraction of maximal rate enhancement realized.
- *   activity = log₁₀(1 + f·enhancement) / log₁₀(1 + enhancement)
- * (log scaling because CA enhancement spans orders of magnitude).
+ * Realised CA activity 0–1, as a straight fraction of the maximal rate enhancement.
+ *
+ * This used to compress the input logarithmically, log₁₀(1 + f·E) / log₁₀(1 + E), on the
+ * reasoning that CA enhancement spans orders of magnitude. The trouble is that the input is
+ * already a fraction of the maximum rather than a fold-change, so the compression read 1 % of
+ * maximal activity back as two thirds of it. The conversion belongs wherever a fold-enhancement
+ * is turned into a fraction, not here, so this is now a clamp.
  */
 export function caActivityFraction(
   realizedEnhancementFraction: number,
 ): number {
-  const E = cval(CACO3_CALIB.caRateEnhancement);
-  const f = Math.max(0, Math.min(1, realizedEnhancementFraction));
-  return Math.log10(1 + f * E) / Math.log10(1 + E);
+  return Math.max(0, Math.min(1, realizedEnhancementFraction));
 }
 
 export interface PrecipitationInputs {
@@ -155,10 +157,24 @@ export function simulatePrecipitation(
   const pH = Math.max(8.5, Math.min(10.5, inp.pH));
   const { alpha2 } = carbonateSpeciation(pH);
 
-  // Quasi-equilibrium DIC scales with CA activity (more enzyme ⇒ more bicarbonate captured).
-  const dicTargetM =
-    (inp.dicMaxMillimolar * Math.max(0, Math.min(1, inp.caActivity))) / 1000;
-  const kDic = 0.6; // DIC relaxation toward target [h⁻¹] (fast CO₂ hydration once CA present)
+  // Carbonic anhydrase is a catalyst, so it should not be able to move where the equilibrium
+  // sits. The DIC the pore water is heading for is set by pH and by how much CO₂ the source can
+  // supply, and the enzyme only changes how quickly that point is reached. So the activity term
+  // belongs in the rate constant and not in the target.
+  const dicTargetM = inp.dicMaxMillimolar / 1000;
+
+  // Two steps in series get CO₂ into solution as bicarbonate: delivery into the pore film, then
+  // hydration. CA speeds up the second one only, so the rates add as reciprocals. Because the
+  // un-catalysed hydration step is already fast compared with delivery, this form tends to say
+  // that supply rather than enzyme sets the pace. That is a result rather than an assumption,
+  // and it is the main thing we would like a column experiment to check.
+  const activity = Math.max(0, Math.min(1, inp.caActivity));
+  const enhancement = cval(CACO3_CALIB.caRateEnhancement);
+  const kHydration =
+    cval(CACO3_CALIB.kHydrationUncatalysed) *
+    (1 + activity * (enhancement - 1));
+  const kTransfer = cval(CACO3_CALIB.kCo2Transfer);
+  const kDic = 1 / (1 / kTransfer + 1 / kHydration); // effective DIC supply rate [h⁻¹]
 
   let ca = inp.calciumMillimolar / 1000; // mol/L
   let dic = 0;

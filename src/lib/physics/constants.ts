@@ -349,6 +349,32 @@ export const CACO3_CALIB = {
     "pNPA esterase assay or pH-drop (phenol red) on displayed-CA cells vs blank.",
     [1e3, 1e7],
   ),
+  /**
+   * Un-catalysed CO₂ hydration rate constant, the step carbonic anhydrase speeds up.
+   * Worth noting how fast this already is: a half-life near 20 s is short against a cure
+   * measured in days, which is why the model treats CO₂ delivery rather than hydration as
+   * the thing that sets the pace (see kCo2Transfer).
+   */
+  kHydrationUncatalysed: calib(
+    140,
+    "h⁻¹",
+    "kuncat ≈ 0.04 s⁻¹ for CO₂ + H₂O (Stumm & Morgan 1996)",
+    "pH-drop (phenol red) on a cell-free blank; fit the first-order rise.",
+    [70, 280],
+  ),
+  /**
+   * Effective first-order rate at which CO₂ reaches the pore water and becomes available as
+   * dissolved inorganic carbon. This is the value the module used to carry as a single lumped
+   * DIC relaxation constant, so it is an in-house estimate rather than a measured transfer
+   * coefficient, and it is the number we would want a column experiment to replace first.
+   */
+  kCo2Transfer: calib(
+    0.6,
+    "h⁻¹",
+    "in-house estimate; previously the module's lumped DIC relaxation rate",
+    "Track DIC in a sand column open to air; fit the approach to equilibrium.",
+    [0.05, 5.0],
+  ),
   /** Surface-reaction precipitation rate constant (TST): r = kPrecip·(Ω−1). */
   kPrecip: calib(
     0.12,

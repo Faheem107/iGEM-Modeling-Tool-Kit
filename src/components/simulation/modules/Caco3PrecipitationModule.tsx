@@ -64,8 +64,10 @@ export default function Caco3PrecipitationModule({
   const [p, setP] = useState<Caco3Params>(DEFAULTS);
   const c = chartColors(isLightMode);
 
-  // Realised activity = intrinsic CO₂-hydration enhancement × the fraction of enzyme actually
-  // displayed on the surface (fed from the anchoring module when both are active).
+  // Realised activity = the share of maximal CO₂-hydration rate reached × the fraction of enzyme
+  // actually displayed on the surface (fed from the anchoring module when both are active).
+  // This feeds the rate constant in simulatePrecipitation, not the DIC target, because a
+  // catalyst should not be able to shift the equilibrium it is working toward.
   const caActivity = useMemo(
     () =>
       caActivityFraction(p.caEnhancement) *
@@ -198,7 +200,7 @@ export default function Caco3PrecipitationModule({
             step={0.02}
             format={(v) => `${(v * 100).toFixed(0)}%`}
             onChange={(v) => setP((s) => ({ ...s, caEnhancement: v }))}
-            hint={`Realized fold-enhancement of CO₂ hydration → effective activity ${(caActivity * 100).toFixed(0)}%.`}
+            hint={`Share of the maximal CO₂-hydration rate actually realised, ${(caActivity * 100).toFixed(0)}% after display losses. This feeds the rate, not the target, because a catalyst should not move the equilibrium it works toward. Moving it barely changes the carbonate, and that is the model's answer rather than a stuck control: even un-catalysed, hydration runs far faster than CO₂ reaches the pore water, so the enzyme is speeding up a step that was not the slow one. Getting CO₂ in, and having calcium left to pair it with, is what limits the crust here. Whether that survives a thin film drying out in hours is the case we have not modelled.`}
           />
         </div>
       </Panel>
