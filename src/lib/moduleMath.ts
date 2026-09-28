@@ -90,9 +90,9 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
         cites: [1, 2],
       },
       {
-        tex: "\\nu = \\rho_{\\text{polymer}}\\,\\theta\\left(1 - \\frac{2 M_x}{M_n}\\right)",
+        tex: "\\nu = \\frac{\\rho_{\\text{polymer}}\\,\\theta}{M_x}\\left(1 - \\frac{2 M_x}{M_n}\\right)",
         caption:
-          "Effective cross-link density, with the finite-chain end correction.",
+          "Density of elastically effective strands [mol·m⁻³]. Dividing by the mass between cross-links is what turns a mass of polymer into a count of load-bearing strands, and it is what makes the modulus below come out as a stress.",
         cites: [1],
       },
       {
@@ -164,9 +164,9 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
       'Sodium alginate gels when Ca²⁺ bridges guluronate (G) blocks of neighbouring chains into "egg-box" junctions. Only G-blocks bear load, so junction density scales with the guluronate fraction F_G.',
     blocks: [
       {
-        tex: "\\nu = \\rho_{\\text{polymer}}\\,\\theta\\,F_G\\left(1 - \\frac{2 M_x}{M_n}\\right),\\qquad G = \\nu R T",
+        tex: "\\nu = \\frac{\\rho_{\\text{polymer}}\\,\\theta\\,F_G}{M_x}\\left(1 - \\frac{2 M_x}{M_n}\\right),\\qquad G = \\nu R T",
         caption:
-          "Egg-box junction density (guluronate-weighted) and the resulting gel modulus.",
+          "Egg-box junction density (guluronate-weighted) and the resulting gel modulus. Alginate's junction spacing is much longer than γ-PGA's, so dividing by it moves the two routes in opposite directions.",
         cites: [1, 2],
       },
       {

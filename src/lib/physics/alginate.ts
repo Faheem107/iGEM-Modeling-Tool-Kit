@@ -5,10 +5,15 @@
  * adjacent chains. Only G-blocks form load-bearing junctions, so junction density scales
  * with the guluronate fraction F_G of the lot used.
  *
- *   ρ_polymer = concToRho · C_applied                  applied %w/v → network density
- *   θ         = [Ca²⁺]/(Kd + [Ca²⁺])                   Langmuir Ca²⁺ saturation
- *   ν         = ρ_polymer · θ · F_G · (1 − 2Mx/Mn)     egg-box junction density
- *   G         = ν R T                                  gel shear modulus [Pa]
+ *   ρ_polymer = concToRho · C_applied                    applied %w/v → network density
+ *   θ         = [Ca²⁺]/(Kd + [Ca²⁺])                     Langmuir Ca²⁺ saturation
+ *   ν         = (ρ_polymer · θ · F_G / Mx)·(1 − 2Mx/Mn)  egg-box junction density [mol·m⁻³]
+ *   G         = ν R T                                    gel shear modulus [Pa]
+ *
+ * The division by Mx is the same correction described in crosslink.ts. Alginate's junction
+ * spacing is taken as the G-block scale, which is a good deal longer than γ-PGA's, so the two
+ * routes move in opposite directions once the division is put back. That is the reason it is
+ * worth fixing in both files at once rather than treating it as a scale factor.
  *
  * Alginate's honest limitations are modeled too: it is water-soluble (washout over rain
  * cycles) but an excellent water-magnet (moisture retention keeps the crust damp).
@@ -49,7 +54,7 @@ export interface AlginateInputs {
 export interface AlginateResult {
   rhoPolymer: number; // kg·m⁻³
   theta: number; // Ca²⁺ saturation 0–1
-  nu: number; // junction density [mol·m⁻³ proxy]
+  nu: number; // elastically effective junction density [mol·m⁻³]
   shearModulus: number; // Pa
 }
 
@@ -65,8 +70,9 @@ export function solveAlginateGel(inp: AlginateInputs): AlginateResult {
     inp.calciumMillimolar,
     cval(ALGINATE_CALIB.KdCa),
   );
+  const MxKgPerMol = Math.max(1e-6, Mx / 1000); // g·mol⁻¹ → kg·mol⁻¹
   const endCorrection = Math.max(0, 1 - (2 * Mx) / Mn);
-  const nu = rhoPolymer * theta * Fg * endCorrection;
+  const nu = ((rhoPolymer * theta * Fg) / MxKgPerMol) * endCorrection;
   const G = gelModulus(nu, inp.temperature);
 
   return { rhoPolymer, theta, nu, shearModulus: G };

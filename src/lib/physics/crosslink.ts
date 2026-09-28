@@ -7,12 +7,23 @@
  *
  * Theory (modeling_subteam_theory.md):
  *   Eq 4  θ      = [C²⁺] / (Kd + [C²⁺])                     fractional site saturation
- *   Eq 5  ν      = ρ_polymer · θ · (1 − 2·Mx/Mn)            effective network density
+ *   Eq 5  ν      = (ρ_polymer · θ / Mx) · (1 − 2·Mx/Mn)     elastic strand density [mol·m⁻³]
  *   Eq 6  G      = ν · R · T                                 shear modulus [Pa]
  *
+ * Note on Eq 5. The affine network model is G = (ρ/Mx)·R·T, so ν has to be a molar
+ * concentration of elastically effective strands before ν·R·T comes out in Pa. Earlier
+ * versions of this file left the division by Mx out, which made ν a mass density and G a
+ * specific energy rather than a stress. That mattered more than a constant scale factor,
+ * because γ-PGA and alginate use Mx values that differ by more than an order of magnitude,
+ * so the missing division did not cancel between the two routes. Mx arrives in g·mol⁻¹
+ * because that is the unit the interface and the literature both use, so it is converted to
+ * kg·mol⁻¹ here.
+ *
  * Note on ρ_polymer: kept as the theory's effective network-density proxy [kg·m⁻³] so the
- * model stays consistent with the .md derivation and the existing calibrated graph ranges.
- * The (1 − 2·Mx/Mn) chain-end correction is the standard affine-network finite-chain term.
+ * model stays consistent with the .md derivation. The (1 − 2·Mx/Mn) chain-end correction is
+ * the standard affine-network finite-chain term. It is worth saying that it barely moves the
+ * answer at any setting the interface allows, so it is here for completeness rather than
+ * because it changes a result.
  */
 
 import { PHYS } from "./constants";
@@ -40,7 +51,7 @@ export interface CrossLinkInputs {
 export interface CrossLinkResult {
   /** θ, fractional saturation of binding sites (0–1). */
   theta: number;
-  /** ν, effective cross-link network density [mol·m⁻³ proxy]. */
+  /** ν, density of elastically effective strands [mol·m⁻³]. */
   nu: number;
   /** G, shear modulus [Pa]. */
   shearModulus: number;
@@ -52,15 +63,19 @@ export function saturation(ionConcentration: number, Kd: number): number {
   return ionConcentration / (Kd + ionConcentration);
 }
 
-/** Eq 5, affine network cross-link density with finite-chain end correction. */
+/**
+ * Eq 5, affine network strand density with the finite-chain end correction.
+ * Returns mol·m⁻³, so ν·R·T below is a stress.
+ */
 export function crossLinkDensity(
   rhoPolymer: number,
   theta: number,
   Mx: number,
   Mn: number,
 ): number {
+  const MxKgPerMol = Math.max(1e-6, Mx / 1000); // g·mol⁻¹ → kg·mol⁻¹
   const endCorrection = 1 - (2 * Mx) / Mn; // chains shorter than 2·Mx cannot bear load
-  return Math.max(0, rhoPolymer * theta * endCorrection);
+  return Math.max(0, ((rhoPolymer * theta) / MxKgPerMol) * endCorrection);
 }
 
 /** Eq 6, rubber-elasticity shear modulus G = νRT. */

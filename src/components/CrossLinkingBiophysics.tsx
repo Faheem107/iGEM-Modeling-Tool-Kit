@@ -894,7 +894,7 @@ export default function CrossLinkingBiophysics({
                     <span
                       className={`font-extrabold text-[length:var(--text-caption)] text-dune-rose`}
                     >
-                      {results.nu.toFixed(5)} mol/cm³
+                      {results.nu.toFixed(3)} mol/m³
                     </span>
                   </div>
 
