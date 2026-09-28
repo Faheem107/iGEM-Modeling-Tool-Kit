@@ -200,10 +200,10 @@ export function DynamicsTab({ isLightMode }: Themed) {
               value={p.plasmidLossPerGen}
               min={0}
               max={0.25}
-              step={0.005}
+              step={0.001}
               format={(v) => `${(v * 100).toFixed(1)}%`}
               onChange={(v) => set({ plasmidLossPerGen: v })}
-              hint="Segregational instability. The plasmid-borne antitoxin dilutes out over about 20 generations."
+              hint="Segregational instability, the chance a daughter cell ends up without the plasmid. Post-segregational killing is meant to hold this low, so the default is small. Push it up a few percent and the antitoxin dilutes away on its own, which kills the un-induced cells too and leaves the trigger with nothing left to show."
             />
             <Slider
               isLightMode={isLightMode}

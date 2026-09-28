@@ -67,7 +67,10 @@ export interface KillSwitchParams {
   deathMax: number;
   /** Mean cell generation time [h] (B. subtilis 0.5–1.2 h; reframe cites 30–73 min). */
   genTime: number;
-  /** Plasmid loss probability per generation (segregational instability → dilution). */
+  /**
+   * Plasmid loss probability per generation (segregational instability → dilution).
+   * See the note on DEFAULT_KILLSWITCH for why this is small.
+   */
   plasmidLossPerGen: number;
   /** Whether the aTc trigger is actually applied during the run. */
   induce: boolean;
@@ -75,6 +78,24 @@ export interface KillSwitchParams {
   induceAt: number;
 }
 
+/**
+ * Defaults for the trigger run.
+ *
+ * A note on plasmidLossPerGen, which used to sit at 0.1. At a ten percent chance of losing the
+ * plasmid each generation the antitoxin dilutes away on its own, so the un-induced control died
+ * about as thoroughly as the induced one and the comparison stopped being a comparison. The
+ * whole point of putting MazE/MazF on the plasmid is post-segregational killing, which is
+ * supposed to suppress loss rather than cause it, and the figures we have seen for stabilised
+ * plasmids sit several orders of magnitude lower than a tenth. We have set it to 1e-3, which is
+ * conservative against those figures and still lets the un-induced cells persist over a two-day
+ * run, so the trigger is what does the killing.
+ *
+ * Two honest caveats. We have not measured this in our own strain, so it is a literature-shaped
+ * guess and not a result. And ECOLOGY_CALIB carries escapeFreqPerGen at 1e-8 for the same
+ * containment story, which is a long way from 1e-3; the two describe different events, loss of
+ * the plasmid against escape from killing, but we have not yet done the work to show they are
+ * consistent with each other.
+ */
 export const DEFAULT_KILLSWITCH: KillSwitchParams = {
   atc: 100,
   atcKd: 20,
@@ -93,7 +114,7 @@ export const DEFAULT_KILLSWITCH: KillSwitchParams = {
   muMax: 0.9,
   deathMax: 1.6,
   genTime: 0.75,
-  plasmidLossPerGen: 0.1,
+  plasmidLossPerGen: 0.001,
   induce: true,
   induceAt: 6,
 };

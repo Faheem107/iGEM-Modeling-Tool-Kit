@@ -33,7 +33,11 @@ plt.rcParams.update({
 P = dict(atc=100, atcKd=20, tetLeak=0.02, sigmaTconst=0.3, sigmaTmax=6.0,
          sigmaAconst=0.4, sigmaAplasmid=3.0, deltaA=1.0, deltaT=0.25, deltaC=0.1,
          kOn=2.0, kOff=1.0, toxK=1.0, toxN=3, muMax=0.9, deathMax=1.6,
-         genTime=0.75, plasmidLossPerGen=0.1, induce=True, induceAt=6.0)
+         genTime=0.75, plasmidLossPerGen=0.001, induce=True, induceAt=6.0)
+# plasmidLossPerGen was 0.1, at which the antitoxin dilutes away on its own and the un-induced
+# control dies about as hard as the induced one. Post-segregational killing is meant to suppress
+# loss, so 1e-3 is conservative and keeps the trigger as the thing doing the killing. Not
+# measured in our strain. See the note on DEFAULT_KILLSWITCH in src/lib/physics/killswitch.ts.
 
 
 def tet_output(atc_now, p=P):
