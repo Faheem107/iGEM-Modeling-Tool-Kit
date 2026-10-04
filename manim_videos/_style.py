@@ -2,7 +2,7 @@
 Shared visual language for the NYUAD iGEM 2026 module explainer videos.
 ====================================================================
 Every module video is a single narrated VoiceoverScene (Samantha + subtitles) that matches the
-toolkit's dark UI: near-black background, teal/cyan primary, amber/rose/fuchsia prong accents.
+toolkit's dark UI: near-black background, teal/cyan primary, amber/rose/fuchsia route accents.
 
 Typography: there is no TeX install on this machine, so MathTex is unavailable, but to get the
 LaTeX *look*, all text is set in **Latin Modern** (the OpenType descendant of Computer Modern,
@@ -101,13 +101,13 @@ MUTED = "#94a3b8"
 TEAL = "#2dd4bf"
 CYAN = "#22d3ee"
 INDIGO = "#818cf8"
-AMBER = "#fbbf24"      # Prong 1, γ-PGA
-EMERALD = "#34d399"    # Prong 2, CaCO3
-ROSE = "#fb7185"       # Prong 3, alginate
+AMBER = "#fbbf24"      # Route 1, γ-PGA
+EMERALD = "#34d399"    # Route 2, CaCO3
+ROSE = "#fb7185"       # Route 3, alginate
 FUCHSIA = "#e879f9"
 GRID = "#16233a"
 
-PRONG_COLORS = {1: AMBER, 2: EMERALD, 3: ROSE}
+ROUTE_COLORS = {1: AMBER, 2: EMERALD, 3: ROSE}
 
 
 class IGemScene(VoiceoverScene):

@@ -79,7 +79,7 @@ class AlginateExplainer(IGemScene):
                          for x in np.linspace(-3, 3, 9)])
         self.say(
             "There is an honest catch. Alginate dissolves in water, so every rain shower washes a "
-            "little of the gel away. That is why it is one prong of three, not the whole answer.",
+            "little of the gel away. That is why it is one route of three, not the whole answer.",
             AnimationGroup(FadeIn(caveat, shift=DOWN * 0.2),
                            LaggedStart(*[Create(d) for d in drops], lag_ratio=0.05)),
             hold=0.4,

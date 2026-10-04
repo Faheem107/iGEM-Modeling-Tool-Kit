@@ -6,7 +6,7 @@ Honest to src/lib/physics/grainsize.ts. MICP (CaCO3) cements a mid sweet spot ne
 63 to 125 microns and fails on the finest sand (cells cannot penetrate) and the
 coarsest (pores too wide to bridge). gamma-PGA gel is strongest on fine and medium
 grains and fades on coarse. Together they cover fine through medium; the coarse
-tail is where both fade. Two prongs, not three: alginate was dropped.
+tail is where both fade. Two routes, not three: alginate was dropped.
 """
 
 import numpy as np
@@ -76,7 +76,7 @@ class GrainsizeExplainer(IGemScene):
         weak = Text("coarse tail: both fade", font_size=18, color=ROSE).move_to(ax.c2p(9.0, 0.5))
         self.say(
             "The honest weak point is the coarsest tail, where both binders fade at once. A "
-            "two-prong crust is a coverage argument, not a claim to hold every grain.",
+            "two-route crust is a coverage argument, not a claim to hold every grain.",
             AnimationGroup(FadeIn(weak),
                            combined.animate.set_stroke(opacity=0.5)),
             hold=0.6,

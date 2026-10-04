@@ -1,13 +1,13 @@
 """
-Composite module explainer: "Why two prongs beat one".
+Composite module explainer: "Why two routes beat one".
 Renders one narrated scene: CompositeExplainer.
 
 Honest to src/lib/physics/composite.ts and interactions.ts for the two engineered
-prongs (gamma-PGA and CaCO3). Three effects bend the naive sum: shared-calcium
+routes (gamma-PGA and CaCO3). Three effects bend the naive sum: shared-calcium
 competition hits gamma-PGA hardest because calcite is the high-affinity sink;
 co-expression burden lowers both titres; gamma-PGA carboxylates template calcite,
 a real synergy. Redundancy across failure scenarios is the resilience argument.
-Alginate was dropped and is not a prong here.
+Alginate was dropped and is not a route here.
 """
 
 from manim import *
@@ -32,7 +32,7 @@ class CompositeExplainer(IGemScene):
         )
         self.play(FadeOut(g), run_time=0.6)
 
-        # --- 2. Two prongs -------------------------------------------------
+        # --- 2. Two routes -------------------------------------------------
         p1, b1 = pillar("γ-PGA", AMBER, 1.7, -3.0)
         p2, b2 = pillar("CaCO₃", EMERALD, 2.2, -0.4)
         self.say(
@@ -92,7 +92,7 @@ class CompositeExplainer(IGemScene):
         clab = Text("combined", font_size=20, color=INK, weight="BOLD").next_to(combined, UP, buff=0.2)
         self.say(
             "Add the synergy, subtract the competition and the burden, and the combined crust "
-            "still comes out tougher than either prong on its own.",
+            "still comes out tougher than either route on its own.",
             AnimationGroup(FadeOut(syn), FadeOut(syn_lab), GrowFromEdge(combined, DOWN), Write(clab)),
             hold=0.5,
         )
@@ -100,7 +100,7 @@ class CompositeExplainer(IGemScene):
         # --- 6. Redundancy -------------------------------------------------
         self.say(
             "And there is a safety reason to run both. If a rainstorm dissolves the polymer, the "
-            "insoluble calcite still holds. Two prongs fail in different ways, so together they "
+            "insoluble calcite still holds. Two routes fail in different ways, so together they "
             "survive conditions that break either one alone.",
             AnimationGroup(
                 Flash(combined.get_top(), color=FUCHSIA, line_length=0.4, num_lines=18, flash_radius=1.0),

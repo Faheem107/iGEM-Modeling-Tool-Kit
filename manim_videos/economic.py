@@ -2,13 +2,13 @@
 Economic module explainer: "Does it actually pencil out?".
 Renders one narrated scene: EconomicExplainer.
 
-Honest to src/lib/physics/economic.ts. Two engineered prongs share one bioprocess
+Honest to src/lib/physics/economic.ts. Two engineered routes share one bioprocess
 capex; cost per hectare is capex spread over the treated area plus a recurring
 term, so it starts high on a small plot and falls as the area grows, crossing the
 flat chemical-spray baseline (~2800 USD/ha) at a few tens of hectares. Concrete
 matting (~300,000 USD/ha) is a permanent surface, shown for scale. The CO2 credit
 is real but a few dollars a hectare, so it barely moves the crossover: the tonnage
-is the result, not the money. Alginate is not a deployed prong.
+is the result, not the money. Alginate is not a deployed route.
 """
 
 import numpy as np
@@ -36,7 +36,7 @@ class EconomicExplainer(IGemScene):
             row = self.chip(name, color, width=4.6, height=0.7).move_to([-2.6, y, 0])
             stack.add(row); y -= 0.95
         self.say(
-            "Two prongs, one bill. Fermentation for the polymer, feedstock and enzyme for the "
+            "Two routes, one bill. Fermentation for the polymer, feedstock and enzyme for the "
             "cementing, and a single fermentation setup shared between them.",
             LaggedStart(*[FadeIn(r, shift=RIGHT * 0.2) for r in stack], lag_ratio=0.3), hold=0.4,
         )

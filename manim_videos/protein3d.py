@@ -38,7 +38,7 @@ class Protein3dExplainer(IGemScene, ThreeDScene):
         arr, resids = load_ca_trace("1CA2.pdb", target_height=4.6, return_resids=True)
         ca = ribbon(arr, color_a=CYAN, color_b=TEAL, stroke_width=6.5)
 
-        label_ca = Text("Carbonic anhydrase II  ·  Prong 2", font_size=26, color=CYAN, weight="BOLD")
+        label_ca = Text("Carbonic anhydrase II  ·  Route 2", font_size=26, color=CYAN, weight="BOLD")
         label_ca.to_corner(UL, buff=0.6)
         label_ca.set_opacity(0)
         self.add_fixed_in_frame_mobjects(label_ca)
@@ -97,7 +97,7 @@ class Protein3dExplainer(IGemScene, ThreeDScene):
         pgs_arr = load_ca_trace("AF-O34899-F1-model_v6.pdb", target_height=4.8)
         pgs = ribbon(pgs_arr, color_a=AMBER, color_b=FUCHSIA, stroke_width=6.5)
 
-        label_pgs = Text("γ-PGA synthase (PgsB)  ·  AlphaFold model  ·  Prong 1",
+        label_pgs = Text("γ-PGA synthase (PgsB)  ·  AlphaFold model  ·  Route 1",
                          font_size=24, color=AMBER, weight="BOLD")
         label_pgs.to_corner(UL, buff=0.6)
         label_pgs.set_opacity(0)

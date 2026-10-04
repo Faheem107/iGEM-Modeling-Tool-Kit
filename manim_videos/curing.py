@@ -2,7 +2,7 @@
 Curing module explainer: "How the crust sets, ages, and is renewed".
 Renders one narrated scene: CuringExplainer.
 
-Honest to src/lib/physics/curing.ts. Two engineered prongs cure on their own
+Honest to src/lib/physics/curing.ts. Two engineered routes cure on their own
 clocks: gamma-PGA firms up within hours, calcite ripens across the 32 h spray
 protocol. In the field gamma-PGA biodegrades over months (half-life ~5 months)
 while calcite is the durable floor (~30 months), so the calcite is what sets the

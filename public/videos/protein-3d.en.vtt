@@ -9,46 +9,46 @@ The models talk about proteins, but what do they actually look like?
 Let's trace two of them, atom by atom, from real structures.
 
 3
-00:00:08.142 --> 00:00:10.860
+00:00:08.175 --> 00:00:10.893
 This is carbonic anhydrase, the enzyme we bolt
 
 4
-00:00:10.960 --> 00:00:13.372
+00:00:10.993 --> 00:00:13.405
 onto the cell to turn carbon dioxide into
 
 5
-00:00:13.472 --> 00:00:16.558
+00:00:13.505 --> 00:00:16.591
 carbonate. Every twist is its real, folded backbone.
 
 6
-00:00:16.958 --> 00:00:19.843
+00:00:16.975 --> 00:00:19.860
 Follow the chain to where the chemistry happens: three
 
 7
-00:00:19.943 --> 00:00:22.717
+00:00:19.960 --> 00:00:22.735
 histidines clamp a single zinc ion. That tiny pocket
 
 8
-00:00:22.817 --> 00:00:25.426
+00:00:22.835 --> 00:00:25.443
 is what speeds the reaction about a million-fold.
 
 9
-00:00:27.858 --> 00:00:30.883
+00:00:27.875 --> 00:00:30.900
 And this is the other one, the synthase that stitches
 
 10
-00:00:30.983 --> 00:00:35.365
+00:00:31.000 --> 00:00:35.382
 glutamate into long gamma-P-G-A chains. This fold is AlphaFold's prediction,
 
 11
-00:00:35.465 --> 00:00:37.606
+00:00:35.482 --> 00:00:37.623
 not a crystal, so we flag it honestly.
 
 12
-00:00:38.324 --> 00:00:41.328
+00:00:38.342 --> 00:00:41.346
 Two real enzymes, two real shapes, and the pocket on each
 
 13
-00:00:41.428 --> 00:00:44.650
+00:00:41.446 --> 00:00:44.668
 one is where every downstream number in this toolkit is born.
 
