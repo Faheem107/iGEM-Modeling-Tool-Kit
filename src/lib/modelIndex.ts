@@ -82,7 +82,7 @@ export const ARCHIVED_MODULES = MODULE_REGISTRY.filter((m) => m.appliesTo([3]) &
 
 /** Deep link into a module's section inside the workspace. */
 export function moduleHref(prongs: string, id: string) {
-  return `/model?prongs=${prongs}#mod-${id}`;
+  return `/model?routes=${prongs}#mod-${id}`;
 }
 
 export const TOTAL_MODULES = MODULE_REGISTRY.length;

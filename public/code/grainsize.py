@@ -67,10 +67,10 @@ def alginate_cover(d):
     return np.clip(ALG_FLOOR + ALG_BOOST * coarse, 0, 1)
 
 
-def combined(d, prongs):
+def combined(d, routes):
     fns = {1: pga_cover, 2: micp_eff, 3: alginate_cover}
     miss = np.ones_like(np.asarray(d, float))
-    for p in prongs:
+    for p in routes:
         miss = miss * (1 - np.clip(fns[p](d), 0, 1))
     return 1 - miss
 
@@ -81,18 +81,18 @@ def grain_pdf(d, d50=UAE_D50, sigma_g=UAE_SIGMA):
     return np.exp(-0.5 * z * z) / (ln_sigma * np.sqrt(2 * np.pi))
 
 
-def bound_fraction(prongs, d50=UAE_D50, sigma_g=UAE_SIGMA):
+def bound_fraction(routes, d50=UAE_D50, sigma_g=UAE_SIGMA):
     d = np.exp(np.linspace(np.log(20), np.log(600), 400))
     w = grain_pdf(d, d50, sigma_g)
     w /= w.sum()
-    return float(np.sum(w * combined(d, prongs)))
+    return float(np.sum(w * combined(d, routes)))
 
 
 def figures():
     figs = []
     d = np.exp(np.linspace(np.log(20), np.log(600), 400))
 
-    # 1) Per-prong coverage vs grain diameter + the site PSD. Two unions are drawn: the
+    # 1) Per-route coverage vs grain diameter + the site PSD. Two unions are drawn: the
     # deployed pair, and the same with alginate added. Alginate is modelled for
     # comparison and is not carried forward, so its union is the fainter line.
     fig1, ax1 = plt.subplots()
@@ -122,7 +122,7 @@ def figures():
     fig1.tight_layout()
     figs.append((fig1, "grainsize-1.png"))
 
-    # 2) Effective bound mass fraction per prong combination.
+    # 2) Effective bound mass fraction per route combination.
     combos = [[1], [2], [3], [1, 2], [1, 2, 3]]
     labels = ["P1", "P2", "P3*", "P1+P2", "P1+P2+P3*"]
     vals = [bound_fraction(c) * 100 for c in combos]
@@ -135,7 +135,7 @@ def figures():
     for i, v in enumerate(vals):
         ax2.text(i, v + 1, f"{v:.0f}%", ha="center", fontsize=9)
     ax2.set_ylabel("site sand held, by mass (%)")
-    ax2.set_title("Sand held by prong combination")
+    ax2.set_title("Sand held by route combination")
     ax2.set_ylim(0, 100)
     ax2.text(0.0, -0.20, "* includes alginate, which is modelled for comparison and not deployed",
              transform=ax2.transAxes, fontsize=8, color=ASH)

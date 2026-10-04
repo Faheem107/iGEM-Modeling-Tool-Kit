@@ -227,7 +227,7 @@ export default function GrainSizeCoveragePanel({
         <span>
           {multi ? (
             <>
-              The prongs are grain-size complementary: MICP (CaCO₃) peaks at
+              The routes are grain-size complementary: MICP (CaCO₃) peaks at
               63–125 µm, while γ-PGA and alginate close the coarse and fine gaps
               it misses, together holding
               <b> {(profile.boundMassFraction * 100).toFixed(0)}%</b> of the
@@ -239,7 +239,7 @@ export default function GrainSizeCoveragePanel({
               band is at
               <b> {profile.weakestDiameter.toFixed(0)} µm</b> (
               {(profile.weakestCoverage * 100).toFixed(0)}% held). Adding
-              another prong that covers that size raises the bound mass
+              another route that covers that size raises the bound mass
               fraction.
             </>
           )}

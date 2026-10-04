@@ -1,8 +1,8 @@
 """
 Composite strength synthesis - NYUAD iGEM 2026 Dunelock toolkit
 ===============================================================
-Reproduces the "Composite Synthesis" module: when two or more prongs act together their
-cohesions combine (rule of mixtures plus a labelled synergy term), after each prong is
+Reproduces the "Composite Synthesis" module: when two or more routes act together their
+cohesions combine (rule of mixtures plus a labelled synergy term), after each route is
 knocked down by the interactions it takes part in (shared-Ca2+ competition, co-expression
 burden). Redundancy is scored as: the crust survives a scenario if at least one mechanism
 survives it.
@@ -20,7 +20,7 @@ coexpressionBurden 0.78), CROSSLINK KdPGA 4.0, ALGINATE KdCa 1.0, COMPOSITE eta
 Two things the figures assume rather than compute. The standalone cohesions in figures()
 (0.5, 0.9 and 0.4 mN/m) are an operating point chosen to show the shape, not an output of
 this model; on the site they arrive from the crosslink and CaCO3 modules. And robustness
-takes prong failures as independent, which is the weak step: P1 and P2 are the same
+takes route failures as independent, which is the weak step: P1 and P2 are the same
 organism, so under Bacterial Death they fail together and the combined figure for that
 scenario reads better than it should. Alginate is modelled for comparison and is not
 deployed.
@@ -56,9 +56,9 @@ def occupancy(free_ca, kd):
     return free_ca / (kd + free_ca)
 
 
-def solve_free_ca(prongs, supply=CA_SUPPLY):
+def solve_free_ca(routes, supply=CA_SUPPLY):
     def bound(c):
-        return sum(CA_DEMAND[p] * occupancy(c, CA_KD[p]) for p in prongs)
+        return sum(CA_DEMAND[p] * occupancy(c, CA_KD[p]) for p in routes)
     lo, hi = 0.0, supply
     for _ in range(60):
         mid = 0.5 * (lo + hi)
@@ -69,36 +69,36 @@ def solve_free_ca(prongs, supply=CA_SUPPLY):
     return 0.5 * (lo + hi)
 
 
-def yield_factors(prongs):
-    free_shared = solve_free_ca(prongs)
+def yield_factors(routes):
+    free_shared = solve_free_ca(routes)
     out = {}
-    for p in prongs:
+    for p in routes:
         theta_shared = occupancy(free_shared, CA_KD[p])
         theta_alone = occupancy(solve_free_ca([p]), CA_KD[p])
         f = min(1.0, theta_shared / theta_alone) if theta_alone > 0 else 1.0
-        if p in (1, 2) and (1 in prongs and 2 in prongs):
+        if p in (1, 2) and (1 in routes and 2 in routes):
             f *= BURDEN
         out[p] = f
     return out
 
 
-def composite_cohesion(prongs, base_cohesion):
-    yf = yield_factors(prongs)
-    g = {p: base_cohesion[p] * yf[p] for p in prongs}
+def composite_cohesion(routes, base_cohesion):
+    yf = yield_factors(routes)
+    g = {p: base_cohesion[p] * yf[p] for p in routes}
     additive = sum(g.values())
     interaction = 0.0
-    for i in range(len(prongs)):
-        for j in range(i + 1, len(prongs)):
-            a, b = sorted((prongs[i], prongs[j]))
+    for i in range(len(routes)):
+        for j in range(i + 1, len(routes)):
+            a, b = sorted((routes[i], routes[j]))
             interaction += ETA.get((a, b), 0.0) * np.sqrt(g[a] * g[b])
     return additive, additive + interaction, yf
 
 
-def robustness(prongs):
+def robustness(routes):
     out = []
     for k in range(len(SCENARIOS)):
         miss = 1.0
-        for p in prongs:
+        for p in routes:
             miss *= 1 - RESILIENCE[p][k]
         out.append(1 - miss)
     return out
@@ -106,7 +106,7 @@ def robustness(prongs):
 
 def figures():
     figs = []
-    # Assumed operating point, not model output: standalone cohesion per prong [N/m].
+    # Assumed operating point, not model output: standalone cohesion per route [N/m].
     base = {1: 5e-4, 2: 9e-4, 3: 4e-4}
 
     # 1) Additive vs composite cohesion across combinations (competition + synergy).
@@ -128,7 +128,7 @@ def figures():
     ax1.set_xticks(x)
     ax1.set_xticklabels(labels)
     ax1.set_ylabel("cohesion  (mN/m)")
-    ax1.set_title("Cohesion by prong combination")
+    ax1.set_title("Cohesion by route combination")
     ax1.legend(frameon=False, fontsize=9)
     ax1.text(0, -0.20, "* includes alginate, modelled for comparison and not deployed. "
              "Standalone cohesions are an assumed operating point.",
@@ -136,12 +136,12 @@ def figures():
     fig1.tight_layout()
     figs.append((fig1, "composite-1.png"))
 
-    # 2) Redundancy: per-scenario resilience, single best prong vs full combination.
+    # 2) Redundancy: per-scenario resilience, single best route vs full combination.
     combined_pair = robustness([1, 2])
     best_single = [max(RESILIENCE[p][k] for p in (1, 2)) for k in range(len(SCENARIOS))]
     x = np.arange(len(SCENARIOS))
     fig2, ax2 = plt.subplots()
-    ax2.bar(x - 0.2, best_single, 0.4, color=ROSE, label="best single prong")
+    ax2.bar(x - 0.2, best_single, 0.4, color=ROSE, label="best single route")
     ax2.bar(x + 0.2, combined_pair, 0.4, color=TEAL, label="P1 + P2 together")
     ax2.set_xticks(x)
     ax2.set_xticklabels(SCENARIOS, rotation=20, ha="right", fontsize=9)

@@ -19,7 +19,7 @@ export default function PortalsView() {
           Sandbox portals
         </h1>
         <p className="mt-4 max-w-[60ch] text-[length:var(--text-body)] leading-relaxed text-muted-foreground">
-          Each portal is its own workspace, separate from the prong-tailored
+          Each portal is its own workspace, separate from the route-tailored
           simulation.
         </p>
       </div>

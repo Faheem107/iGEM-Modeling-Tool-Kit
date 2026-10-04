@@ -55,7 +55,7 @@ def p_at_least_one(p, N):
 def figures():
     figs = []
 
-    # 1) Ca2+ dosed by prongs 1-2 slows colony expansion (front speed, mm/day).
+    # 1) Ca2+ dosed by routes 1-2 slows colony expansion (front speed, mm/day).
     ca = np.linspace(0, 20, 200)
     speed_day = fisher_speed(MU_MAX, expansion_D(ca)) * 24
     fig1, ax1 = plt.subplots()

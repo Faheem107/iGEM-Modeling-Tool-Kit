@@ -222,7 +222,7 @@ export default function ProngConstellation({
                 glitch rather than as the count changing. */}
             <h2 className="relative text-[length:var(--text-h1)] text-foreground">
               <span className="invisible" aria-hidden>
-                Two prongs and a kill switch
+                Two routes and a kill switch
               </span>
               {["Three routes", "Two routes and a kill switch"].map((t, i) => (
                 <motion.span
@@ -246,7 +246,7 @@ export default function ProngConstellation({
               onClick={onSimulateBoth}
               className="caption rule-link text-dune-orange transition-colors hover:text-foreground"
             >
-              Simulate both prongs together
+              Simulate both routes together
             </button>
             <button
               onClick={onExplorePortals}

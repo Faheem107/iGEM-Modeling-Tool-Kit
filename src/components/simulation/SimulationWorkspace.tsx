@@ -425,7 +425,7 @@ export default function SimulationWorkspace({
     ],
   );
 
-  // Deep links from the model index arrive as /model?prongs=1#mod-metabolic.
+  // Deep links from the model index arrive as /model?routes=1#mod-metabolic.
   // The target section is not in the document on first paint: several modules
   // are dynamically imported and all of them mount inside an error boundary,
   // so the browser's own hash handling finds nothing and gives up. Resolve it
@@ -572,7 +572,7 @@ function AlginateRationaleBanner() {
         <h2 className="caption text-dune-rose">{ALGINATE_STATUS}</h2>
       </div>
       <p className="mb-4 max-w-[var(--measure)] text-[length:var(--text-micro)] leading-relaxed text-muted-foreground">
-        We scoped alginate as a third prong, a binder you spread on rather
+        We scoped alginate as a third route, a binder you spread on rather
         than one the cells make. Three findings took it out, and each one
         stands on its own:
       </p>

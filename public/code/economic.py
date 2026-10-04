@@ -1,15 +1,15 @@
 """
 Economic scalability - NYUAD iGEM 2026 Dunelock toolkit
 =======================================================
-Reproduces the "Economic Scalability" module: bottom-up per-prong deployment cost,
+Reproduces the "Economic Scalability" module: bottom-up per-route deployment cost,
 summed per combination and benchmarked against the published biocementation and
 carbon-market literature, plus break-even area vs a conventional chemical spray.
 
 Exact port of src/lib/physics/economic.ts.
-  Prong 1 (gamma-PGA)  : fermentation (glucose + salts + utilities), scaled by broth yield
-  Prong 2 (CaCO3/MICP) : calcium + enzyme dosing, scaled by crust depth, minus a CO2 credit
-  Prong 3 (alginate)   : purchased commodity biopolymer + crosslinker
-  Bacterial prongs (1,2) share one bioprocess capex; alginate needs none.
+  Route 1 (gamma-PGA)  : fermentation (glucose + salts + utilities), scaled by broth yield
+  Route 2 (CaCO3/MICP) : calcium + enzyme dosing, scaled by crust depth, minus a CO2 credit
+  Route 3 (alginate)   : purchased commodity biopolymer + crosslinker
+  Bacterial routes (1,2) share one bioprocess capex; alginate needs none.
 
 Constants from ECONOMIC_CALIB (constants.ts): capex 25000 USD, application 180 USD/ha,
 chemical baseline 2800 USD/ha, concrete 300000 USD/ha (30 USD/m2), caReagent 650 USD/ha
@@ -44,14 +44,14 @@ def m3_per_ha(mm):
     return 10000 * (mm / 1000.0)
 
 
-def prong_opex(prong, ctx=CTX):
+def route_opex(route, ctx=CTX):
     vol = m3_per_ha(ctx["crust_mm"])
-    if prong == 1:
+    if route == 1:
         pga_kg = vol * ctx["pga_demand_kg_per_m3"]
         liters = pga_kg / max(1e-6, ctx["pga_yield_g_per_L"] / 1000.0)
         per_liter = GLUC_FRAC * GLUCOSE_KG + MEDIA_L + UTIL_L
         return liters * per_liter
-    if prong == 2:
+    if route == 2:
         # The reagent soaks about one pore volume down, so the dose scales with depth.
         depth_scale = ctx["crust_mm"] / CA_REAGENT_REF_MM
         co2_kg = (ctx["co2_g_per_L"] / 1000.0) * (vol * 1000.0)
@@ -59,9 +59,9 @@ def prong_opex(prong, ctx=CTX):
     return ALG_DOSE_HA * ALG_KG
 
 
-def combination_cost(prongs, area_ha, ctx=CTX):
-    opex = sum(prong_opex(p, ctx) for p in prongs)
-    capex = CAPEX if any(p in (1, 2) for p in prongs) else 0.0
+def combination_cost(routes, area_ha, ctx=CTX):
+    opex = sum(route_opex(p, ctx) for p in routes)
+    capex = CAPEX if any(p in (1, 2) for p in routes) else 0.0
     recurring = opex + APPLICATION_HA
     total = capex + recurring * area_ha
     return capex, recurring, total

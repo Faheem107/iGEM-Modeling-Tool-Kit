@@ -365,7 +365,7 @@ export default function CuringTimelinePanel({
             <>
               This selection cures to withstand only{" "}
               <b>{timeline.maxSurvivableWindFresh.toFixed(0)} m/s</b> when fresh, below the {designWind} m/s design wind. Lower the design wind,
-              or add/strengthen the CaCO₃ (MICP) prong, whose cement supplies
+              or add/strengthen the CaCO₃ (MICP) route, whose cement supplies
               the extra cohesion needed to survive UAE storm winds.
             </>
           ) : timeline.survivesToScheduledReapply ? (

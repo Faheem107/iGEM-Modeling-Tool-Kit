@@ -137,11 +137,11 @@ out["_kill"] = {
 }
 
 hours = np.linspace(0, 48, 193)
-for prong, key in ((1, "maturation_pga"), (2, "maturation_caco3")):
-    out[key] = series(hours, curing.maturation_fraction(prong, hours))
+for route, key in ((1, "maturation_pga"), (2, "maturation_caco3")):
+    out[key] = series(hours, curing.maturation_fraction(route, hours))
 months = np.linspace(0, 18, 145)
-for prong, key in ((1, "weathering_pga"), (2, "weathering_caco3")):
-    out[key] = series(months, curing.field_retention(prong, months))
+for route, key in ((1, "weathering_pga"), (2, "weathering_caco3")):
+    out[key] = series(months, curing.field_retention(route, months))
 out["_curing"] = {
     "tau_pga_h": curing.TAU[1],
     "tau_caco3_h": curing.TAU[2],

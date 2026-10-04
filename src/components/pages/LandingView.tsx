@@ -55,7 +55,7 @@ export default function LandingView() {
 
   const goToModel = (prongs: number[]) => {
     if (prongs.length === 0) return;
-    router.push(`/model?prongs=${[...prongs].sort().join(",")}`);
+    router.push(`/model?routes=${[...prongs].sort().join(",")}`);
   };
 
   return (
@@ -102,7 +102,7 @@ export default function LandingView() {
         onSeeModel={handleSeeModel}
         onProceedToModel={() => {
           setShowAdventure(false);
-          router.push(`/model?prongs=1,2`);
+          router.push(`/model?routes=1,2`);
         }}
       />
     </motion.div>

@@ -34,19 +34,19 @@ COLOR = {1: ORANGE, 2: MAROON, 3: TEAL}
 REAPPLY_MONTHS = 6.0
 
 
-def maturation_fraction(prong, hours):
-    return np.where(hours <= 0, 0.0, 1 - np.exp(-hours / TAU[prong]))
+def maturation_fraction(route, hours):
+    return np.where(hours <= 0, 0.0, 1 - np.exp(-hours / TAU[route]))
 
 
-def field_retention(prong, months):
-    return np.where(months <= 0, 1.0, np.power(2.0, -months / HALFLIFE[prong]))
+def field_retention(route, months):
+    return np.where(months <= 0, 1.0, np.power(2.0, -months / HALFLIFE[route]))
 
 
 def figures():
     figs = []
-    mature = {1: 5e-4, 2: 9e-4, 3: 4e-4}   # mature per-prong cohesion [N/m]
+    mature = {1: 5e-4, 2: 9e-4, 3: 4e-4}   # mature per-route cohesion [N/m]
 
-    # 1) Maturation over the 0-48 h spray protocol (per prong + total).
+    # 1) Maturation over the 0-48 h spray protocol (per route + total).
     h = np.linspace(0, 48, 300)
     fig1, ax1 = plt.subplots()
     total = np.zeros_like(h)

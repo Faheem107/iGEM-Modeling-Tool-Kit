@@ -162,7 +162,7 @@ export default function CompositeSynthesisPanel({
           <p
             className={`text-[length:var(--text-caption)] text-muted-foreground`}
           >
-            No cross-prong interactions for this combination.
+            No cross-route interactions for this combination.
           </p>
         ) : (
           <div className="space-y-2">
@@ -204,7 +204,7 @@ export default function CompositeSynthesisPanel({
               className={`text-[length:var(--text-micro)] leading-relaxed pt-1 text-muted-foreground`}
             >
               Competition (Ca²⁺) and metabolic burden are applied to each
-              prong&apos;s cohesion <b>before</b> the synergy term above, so the
+              route&apos;s cohesion <b>before</b> the synergy term above, so the
               composite total already reflects them.
             </p>
           </div>

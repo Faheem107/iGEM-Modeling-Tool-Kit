@@ -22,7 +22,7 @@ export default function ModelsIndexView() {
           router.push(
             target === "killswitch"
               ? "/model?view=killswitch"
-              : `/model?prongs=${target}`,
+              : `/model?routes=${target}`,
           );
         }}
       />

@@ -33,7 +33,7 @@ export default function ModelView() {
     );
   }
 
-  const prongs = parseProngsParam(searchParams.get("prongs")) as ProngId[];
+  const prongs = parseProngsParam(searchParams.get("routes") ?? searchParams.get("prongs")) as ProngId[];
 
   return (
     <>

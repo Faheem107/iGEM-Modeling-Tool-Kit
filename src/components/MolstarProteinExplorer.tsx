@@ -116,7 +116,7 @@ export default function MolstarProteinExplorer({
                 <div className="flex items-center gap-2 mb-1">
                   <span className="font-bold text-[length:var(--text-micro)]">{s.label}</span>
                   <span className="ml-auto text-[length:var(--text-caption)] font-bold uppercase tracking-[0.12em] opacity-50">
-                    Prong {s.prong}
+                    Route {s.prong}
                   </span>
                 </div>
                 <p className="text-[length:var(--text-caption)] opacity-60 leading-snug">

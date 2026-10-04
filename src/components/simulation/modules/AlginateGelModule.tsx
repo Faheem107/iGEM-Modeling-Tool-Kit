@@ -330,7 +330,7 @@ export default function AlginateGelModule({ isLightMode, onUpdate }: Props) {
               The honest limit: alginate is soluble, so each wet cycle removes a
               fixed fraction and residual strength falls as (1 - washout
               rate)^cycles. That decay rate is a rainfall-simulation calibration
-              target, and it is why alginate is one prong of three, not the
+              target, and it is why alginate is one route of three, not the
               whole answer.
             </GlossaryText>
           </p>

@@ -6,7 +6,7 @@ import {
   PORTAL_NAMES,
 } from "@/content/copy";
 
-// Prong-tailored simulation lives at /model?prongs=1,2, one shared source of truth
+// Prong-tailored simulation lives at /model?routes=1,2, one shared source of truth
 // for the two engineered prongs, the biocontainment kill switch, the (archived) alginate
 // option, the portal cards, and the pipeline sub-nav.
 
@@ -155,12 +155,12 @@ export const NAV_ITEMS: NavItem[] = [
   { slug: "economic", label: "Economic Scalability"},
 ];
 
-/** Encode a set of prong ids for the /model?prongs= query (e.g. [1,2] → "1,2"). */
+/** Encode a set of prong ids for the /model?routes= query (e.g. [1,2] → "1,2"). */
 export function prongsToParam(ids: number[]): string {
   return ids.slice().sort().join(",");
 }
 
-/** Parse the /model?prongs= query back into a validated, de-duplicated id list. */
+/** Parse the /model?routes= query back into a validated, de-duplicated id list. */
 export function parseProngsParam(param: string | null | undefined): number[] {
   if (!param) return [];
   const ids = param
