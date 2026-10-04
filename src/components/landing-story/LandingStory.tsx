@@ -28,6 +28,11 @@ import HeroSandyx from "./HeroSandyx";
 // scroll travel is the six blocks that follow it.
 const LAST = BEATS.length + 1;
 
+// How far a scene drifts as it arrives or leaves, in vh. The scene layers
+// overscan by this much above and below, so a drift never shows an edge.
+const DRIFT = 3;
+const shift = (vh: number) => `translate3d(0, ${vh.toFixed(3)}vh, 0)`;
+
 const smooth = (x: number, a: number, b: number) => {
   const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
   return t * t * (3 - 2 * t);
@@ -86,6 +91,7 @@ export default function LandingStory({
     // under the one they can. It stays painted, not hidden: a hidden scene is
     // first rasterised when it fades in, and that cost lands mid-scroll.
     let lastDraw = -1;
+    const backdrop = document.getElementById("site-backdrop");
     const written = new Map<string, string>();
     const write = (el: HTMLElement | null, key: string, prop: string, value: string) => {
       if (!el) return;
@@ -94,10 +100,18 @@ export default function LandingStory({
       written.set(id, value);
       el.style.setProperty(prop, value);
     };
-    const place = (el: HTMLElement | null, transform: string, opacity: number) => {
+    // `near` is whether the scene is on screen or about to be. Only then is it
+    // a GPU layer at all. Every full-screen layer costs its pixels in GPU
+    // memory whether it is visible or not, and with all four scenes held at
+    // once the browser ran out of tile memory and drew the story with blocks
+    // missing. A scene is brought back a little before it fades in, so it is
+    // rasterised while still at zero opacity.
+    const place = (el: HTMLElement | null, transform: string, opacity: number, near: boolean) => {
       if (!el) return;
       const key = el.dataset.layer ?? "";
       const o = opacity < 0.002 ? 0 : opacity;
+      write(el, key, "visibility", near ? "visible" : "hidden");
+      write(el, key, "will-change", near ? "transform, opacity" : "auto");
       write(el, key, "transform", transform);
       write(el, key, "opacity", o.toFixed(3));
       const idle = o === 0 ? "1" : "0";
@@ -112,10 +126,12 @@ export default function LandingStory({
     // on a beat the frame is one scene, never two half-faded ones.
     const render = (s: number) => {
       const dive = smooth(s, 0.9, 1.85);
-      // The zoom is kept under 3x. The browser rasterises a scaled layer at its
-      // scaled size, and at the old 5.5x the field outgrew the GPU tile budget
-      // and was drawn with blocks missing. The descent wash covers the rest.
-      place(fieldRef.current, `scale(${(1 + dive * 1.8).toFixed(4)})`, 1 - smooth(s, 1.25, 1.8));
+      // Scenes drift, they do not zoom. A layer whose scale changes is
+      // re-rasterised at every new scale, and on a slower GPU the tiles could
+      // not keep up, so the story was drawn with blocks missing. A translation
+      // reuses the tiles it already has. The descent wash carries the move
+      // under the surface.
+      place(fieldRef.current, shift(-dive * DRIFT), 1 - smooth(s, 1.25, 1.8), s < 2.2);
       // The hero has wind; beat 1 is where it crosses the threshold and the
       // surface starts to move.
       write(fieldRef.current, "field", "--wind", (0.3 + 0.7 * smooth(s, 0.4, 1.0)).toFixed(3));
@@ -137,11 +153,19 @@ export default function LandingStory({
         grainRef.current,
         // Shrinking on the way out, so the cluster is the size the crust's
         // front row is when the crust takes over from it.
-        `scale(${((1.7 - arrive * 0.7) * (1 + inCell * 0.6) * (1 - leave * 0.62)).toFixed(4)})`,
+        // Scaling down reuses tiles already drawn at full size, so this one
+        // scale stays.
+        `${shift((1 - arrive) * DRIFT - inCell * DRIFT)} scale(${(1 - leave * 0.62).toFixed(4)})`,
         arrive * (1 - leave) * (1 - inCell),
+        s > 0.8 && s < 5.2,
       );
 
-      place(enzymeRef.current, `scale(${(0.88 + intoCell * 0.12).toFixed(4)})`, inCell);
+      place(
+        enzymeRef.current,
+        shift((1 - intoCell) * DRIFT),
+        inCell,
+        s > 1.85 && s < 4.15,
+      );
       write(enzymeRef.current, "enzyme", "--ca-draw", smooth(s, 2.25, 2.65).toFixed(3));
       write(enzymeRef.current, "enzyme", "--ca-grow", smooth(s, 2.5, 3.3).toFixed(3));
 
@@ -152,13 +176,17 @@ export default function LandingStory({
       }
 
       const crust = smooth(s, 4.25, 4.85);
-      place(crustRef.current, `scale(${(1.35 - crust * 0.35).toFixed(4)})`, crust);
+      place(crustRef.current, shift((1 - crust) * DRIFT), crust, s > 3.85);
       // The same wind as the opening, over ground that no longer answers it.
       write(crustRef.current, "crust", "--wind", crust.toFixed(3));
 
       const o = 1 - smooth(s, 0.08, 0.5);
       write(heroRef.current, "hero", "opacity", o.toFixed(3));
       write(heroRef.current, "hero", "pointer-events", o < 0.05 ? "none" : "auto");
+
+      // The stage is opaque and covers the viewport until the story ends, so
+      // the site backdrop behind it is taken off the GPU meanwhile.
+      write(backdrop, "backdrop", "visibility", progressRef.current < 0.999 ? "hidden" : "visible");
 
       const block = Math.min(LAST, Math.max(0, Math.round(s)));
       setActive((prev) => (prev === block ? prev : block));
@@ -205,6 +233,7 @@ export default function LandingStory({
       });
       return () => {
         window.removeEventListener("scroll", draw);
+        backdrop?.style.removeProperty("visibility");
         tl.revert?.();
       };
     }
@@ -264,6 +293,7 @@ export default function LandingStory({
     return () => {
       cancelAnimationFrame(raf);
       offLenis?.();
+      backdrop?.style.removeProperty("visibility");
       ro.disconnect();
       vis.disconnect();
       window.clearTimeout(resizeTimer);
@@ -295,7 +325,7 @@ export default function LandingStory({
           isLightMode ? "bg-[#e9c99a]" : "bg-[#0b0908]"
         }`}
       >
-        <div ref={fieldRef} data-layer="field" className="absolute inset-0 will-change-transform" style={{ transformOrigin: "52% 82%" }}>
+        <div ref={fieldRef} data-layer="field" className="absolute inset-x-0 -inset-y-[3vh]" style={{ transformOrigin: "52% 82%" }}>
           <div aria-hidden className="absolute inset-0" style={{ background: duneGradient(isLightMode) }}>
             {/* No blend mode here: a blended layer inside a zooming one is
                 recomposited against its backdrop on every frame. */}
@@ -313,26 +343,30 @@ export default function LandingStory({
                 : "radial-gradient(120% 95% at 50% 10%, rgba(42,29,19,0) 26%, rgba(18,11,8,0.5) 70%, rgba(11,9,8,0.82) 100%)",
             }}
           />
-          <FieldScene isLightMode={isLightMode} />
-          <div
-            aria-hidden
-            className={`absolute inset-0 ${
-              isLightMode
-                ? "bg-gradient-to-b from-transparent via-transparent to-[#e9c99a]/70"
-                : "bg-gradient-to-b from-[#0b0908]/35 via-transparent to-[#0b0908]/85"
-            }`}
+          <FieldScene
+            isLightMode={isLightMode}
+            shade={
+              <div
+                aria-hidden
+                className={`absolute inset-0 ${
+                  isLightMode
+                    ? "bg-gradient-to-b from-transparent via-transparent to-[#e9c99a]/70"
+                    : "bg-gradient-to-b from-[#0b0908]/35 via-transparent to-[#0b0908]/85"
+                }`}
+              />
+            }
           />
         </div>
 
-        <div ref={grainRef} data-layer="grain" className="absolute inset-0 will-change-transform" style={{ transformOrigin: "center", opacity: 0 }}>
+        <div ref={grainRef} data-layer="grain" className="absolute inset-x-0 -inset-y-[3vh]" style={{ transformOrigin: "center", opacity: 0 }}>
           <GrainScene isLightMode={isLightMode} grains={grains} bridges={bridges} lattice={lattice} />
         </div>
 
-        <div ref={enzymeRef} data-layer="enzyme" className="absolute inset-0 will-change-transform" style={{ transformOrigin: "center", opacity: 0 }}>
+        <div ref={enzymeRef} data-layer="enzyme" className="absolute inset-x-0 -inset-y-[3vh]" style={{ transformOrigin: "center", opacity: 0 }}>
           <EnzymeScene isLightMode={isLightMode} />
         </div>
 
-        <div ref={crustRef} data-layer="crust" className="absolute inset-0 will-change-transform" style={{ transformOrigin: "center", opacity: 0 }}>
+        <div ref={crustRef} data-layer="crust" className="absolute inset-x-0 -inset-y-[3vh]" style={{ transformOrigin: "center", opacity: 0 }}>
           <CrustScene isLightMode={isLightMode} />
         </div>
 

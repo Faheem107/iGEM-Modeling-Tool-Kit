@@ -74,7 +74,10 @@ export default function SandParticles({
     let particles: Particle[] = [];
 
     const build = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // 1x backing store. The grains are a pixel or two across, so a retina
+      // canvas looks the same and holds four times the GPU memory, which is
+      // what the landing story's layers were running short of.
+      dpr = 1;
       w = canvas.clientWidth;
       h = canvas.clientHeight;
       canvas.width = Math.round(w * dpr);

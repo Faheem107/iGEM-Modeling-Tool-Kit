@@ -23,6 +23,7 @@ export function GradientBackground() {
 
   return (
     <div
+      id="site-backdrop"
       className="fixed inset-0 -z-10"
       style={{ background: duneGradient(light) }}
       aria-hidden

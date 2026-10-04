@@ -32,10 +32,6 @@ const frame = "absolute inset-0 h-full w-full";
 // carried into the right of it. A group transform rather than a viewBox offset,
 // so the full-bleed backgrounds still reach both edges. The story sets
 // --subject to nothing on a narrow screen, where there is no side to move to.
-// A layer of its own for whatever animates on the CSS clock. SVG animations
-// repaint their whole <svg>, so the static art beside them stays separate.
-const LAYER: React.CSSProperties = { willChange: "transform" };
-
 const SUBJECT: React.CSSProperties = { transform: "translateX(var(--subject, 230px))" };
 
 // A soft-edged shadow without an SVG blur filter. A blur is re-run for every
@@ -89,7 +85,15 @@ function Wind({ y0, y1, colour }: { y0: number; y1: number; colour: string }) {
   );
 }
 
-export function FieldScene({ isLightMode }: { isLightMode: boolean }) {
+export function FieldScene({
+  isLightMode,
+  shade,
+}: {
+  isLightMode: boolean;
+  /** Drawn over the ridges and under the wind. Anything painted over an
+   * animated SVG part is promoted to a full-screen GPU layer of its own. */
+  shade?: React.ReactNode;
+}) {
   const ridges = useMemo(
     () =>
       [
@@ -127,9 +131,10 @@ export function FieldScene({ isLightMode }: { isLightMode: boolean }) {
       ))}
 
     </svg>
-    {/* The moving parts get their own layer, so the blurred ridge shadows
-        above are rasterised once rather than every time the wind moves. */}
-    <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" className={frame} style={LAYER} aria-hidden>
+    {shade}
+    {/* The moving parts sit in an <svg> of their own, so a frame of wind
+        repaints the streaks and not the ridges under them. */}
+    <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" className={frame} aria-hidden>
       <Wind y0={300} y1={620} colour={lit} />
 
       {/* Grains hopping along the near ridge. They are what the beat is about,
@@ -698,10 +703,11 @@ export function CrustScene({ isLightMode }: { isLightMode: boolean }) {
       })}
 
     </svg>
-    <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" className={frame} style={LAYER} aria-hidden>
-      <Wind y0={330} y1={640} colour={isLightMode ? "#fff2d2" : "#8a6a44"} />
-
+    <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" className={frame} aria-hidden>
+      {/* The vignette sits under the wind: painted over an animated part it
+          would become a full-screen GPU layer of its own. */}
       <rect x="0" y="0" width="1200" height="800" fill="url(#ls-crust-vignette)" />
+      <Wind y0={330} y1={640} colour={isLightMode ? "#fff2d2" : "#8a6a44"} />
     </svg>
     </>
   );

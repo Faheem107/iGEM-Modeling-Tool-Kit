@@ -310,7 +310,6 @@ input[type="range"]::-moz-range-thumb {
 }
 .hero-reveal {
   animation: hero-text-in 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
-  will-change: transform, opacity;
 }
 .hero-reveal-1 {
   animation-delay: 0.08s;
@@ -346,7 +345,6 @@ input[type="range"]::-moz-range-thumb {
 }
 .ca-gas-mol {
   animation: ca-gas-fall 7s linear infinite both;
-  will-change: transform, opacity;
 }
 
 /* ---- Wind combing the surface, story beats 1 and 5 ----
@@ -372,7 +370,6 @@ input[type="range"]::-moz-range-thumb {
 }
 .story-wind {
   animation: story-wind 5.5s linear infinite both;
-  will-change: transform, opacity;
 }
 
 /* ---- Saltation: a grain hops, lands, and knocks the next one on ----
