@@ -9,6 +9,7 @@ import {
 } from "@/src/components/connectors/useMeasuredConnectors";
 import { KILL_SWITCH } from "@/src/lib/portalsData";
 import { GRAIN_NOISE } from "@/src/lib/grain";
+import { useTheme } from "@/components/theme-context";
 import ModelIndex from "./ModelIndex";
 import { KILL_SWITCH_ROLE } from "@/content/copy";
 import { PRONG_TITLES, PRONG_SHORTS } from "@/content/copy";
@@ -23,7 +24,7 @@ import { PRONG_TITLES, PRONG_SHORTS } from "@/content/copy";
  * from "what is this project" to "open this simulation" in one click.
  *
  *   0 three    the fork branches to three labels
- *   1 strike   a hairline is drawn through Sodium Alginate
+ *   1 strike   a rule is drawn through Sodium Alginate
  *   2 wither   its branch retracts into the fork, the label fades in place
  *   3 close    the label is popped out of flow, the survivors glide to centre
  *   4 settle   a branch grows down to the kill switch
@@ -433,6 +434,8 @@ function Leaf({
   struck?: boolean;
   onClick: () => void;
 }) {
+  // Maroon reads on the light sand, orange on the dark ground.
+  const { isLightMode } = useTheme();
   return (
     <button
       type="button"
@@ -444,7 +447,9 @@ function Leaf({
         {title}
         <motion.span
           aria-hidden
-          className="pointer-events-none absolute left-0 top-1/2 h-px w-full origin-left bg-dune-maroon"
+          className={`pointer-events-none absolute left-0 top-[calc(50%-1.5px)] h-[3px] w-full origin-left ${
+            isLightMode ? "bg-dune-maroon" : "bg-dune-orange"
+          }`}
           initial={false}
           animate={{ scaleX: struck ? 1 : 0 }}
           transition={{ duration: 0.55, ease: EASE }}
