@@ -4,6 +4,7 @@ import React from "react";
 import { motion, AnimatePresence } from "motion/react";
 import DraggableSandyx from "./DraggableSandyx";
 import { useGlossary } from "./GlossaryTerm";
+import { readScroll } from "./SmoothScroll";
 
 /**
  * GlobalSandyx
@@ -38,7 +39,7 @@ export default function GlobalSandyx({
       ticking = true;
       requestAnimationFrame(() => {
         // Reveal once the reader is ~60% past the first viewport (the hero section).
-        setPastHero(window.scrollY > window.innerHeight * 0.6);
+        setPastHero(readScroll() > window.innerHeight * 0.6);
         ticking = false;
       });
     };

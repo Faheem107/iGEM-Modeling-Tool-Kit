@@ -25,6 +25,13 @@ declare global {
   }
 }
 
+/**
+ * The current scroll offset without a layout read. Lenis keeps the value it
+ * last wrote, so reading it is free; window.scrollY inside a scroll handler or
+ * a frame callback can force the browser to finish style and layout first.
+ */
+export const readScroll = () => window.__lenis?.animatedScroll ?? window.scrollY;
+
 export default function SmoothScroll() {
   useEffect(() => {
     if (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type MutableRefObject } from "react";
+import { readScroll } from "@/src/components/SmoothScroll";
 
 /**
  * SandParticles: an ambient, interactive field of drifting sand grains on a
@@ -114,7 +115,7 @@ export default function SandParticles({
     let mx = -9999;
     let my = -9999;
     let boost = 0;
-    let lastScroll = window.scrollY;
+    let lastScroll = readScroll();
 
     const onMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
@@ -126,8 +127,9 @@ export default function SandParticles({
       my = -9999;
     };
     const onScroll = () => {
-      boost = Math.min(6, boost + Math.abs(window.scrollY - lastScroll) * 0.04);
-      lastScroll = window.scrollY;
+      const y = readScroll();
+      boost = Math.min(6, boost + Math.abs(y - lastScroll) * 0.04);
+      lastScroll = y;
     };
     if (interactive && !coarse) {
       window.addEventListener("mousemove", onMove, { passive: true });

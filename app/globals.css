@@ -395,6 +395,12 @@ input[type="range"]::-moz-range-thumb {
     transform: translateY(var(--hop-y, -54px));
   }
 }
+/* A story scene at zero opacity is marked idle by LandingStory; pausing its clock
+ * stops the browser restyling and repainting animations nobody can see. */
+[data-idle] * {
+  animation-play-state: paused !important;
+}
+
 .story-hop {
   animation: story-hop-x 2.9s linear infinite both;
 }

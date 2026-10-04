@@ -32,7 +32,36 @@ const frame = "absolute inset-0 h-full w-full";
 // carried into the right of it. A group transform rather than a viewBox offset,
 // so the full-bleed backgrounds still reach both edges. The story sets
 // --subject to nothing on a narrow screen, where there is no side to move to.
+// A layer of its own for whatever animates on the CSS clock. SVG animations
+// repaint their whole <svg>, so the static art beside them stays separate.
+const LAYER: React.CSSProperties = { willChange: "transform" };
+
 const SUBJECT: React.CSSProperties = { transform: "translateX(var(--subject, 230px))" };
+
+// A soft-edged shadow without an SVG blur filter. A blur is re-run for every
+// tile at every scale the scene is drawn at, which is what left tiles of the
+// story blank mid-scroll. Widening, fading strokes give the same falloff and
+// cost no more than the shape itself.
+function SoftShadow({
+  d,
+  spread,
+  opacity,
+  transform,
+}: {
+  d: string;
+  spread: number;
+  opacity: number;
+  transform?: string;
+}) {
+  return (
+    <g transform={transform} fill="none" stroke="#0d0805" strokeLinejoin="round">
+      {[1, 0.66, 0.33].map((k) => (
+        <path key={k} d={d} strokeWidth={spread * k} strokeOpacity={opacity * 0.22} />
+      ))}
+      <path d={d} fill="#0d0805" fillOpacity={opacity * 0.7} stroke="none" />
+    </g>
+  );
+}
 
 // The wind runs on its own clock; --wind is the only part of it the scroll
 // sets, so the same streaks carry the calm of the hero and the threshold of
@@ -78,6 +107,7 @@ export function FieldScene({ isLightMode }: { isLightMode: boolean }) {
   const hops = useMemo(() => saltation(), []);
 
   return (
+    <>
     <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" className={frame} aria-hidden>
       <defs>
         {ridges.map((_, i) => (
@@ -87,24 +117,19 @@ export function FieldScene({ isLightMode }: { isLightMode: boolean }) {
             <stop offset="100%" stopColor={tone[i]} />
           </linearGradient>
         ))}
-        <filter id="ls-ridge-shadow" x="-10%" y="-30%" width="120%" height="180%">
-          <feGaussianBlur stdDeviation="18" />
-        </filter>
       </defs>
       {ridges.map((d, i) => (
         <g key={i}>
-          <path
-            d={d}
-            fill="#0d0805"
-            opacity={isLightMode ? 0.1 : 0.34}
-            filter="url(#ls-ridge-shadow)"
-            transform="translate(26 22)"
-          />
+          <SoftShadow d={d} spread={36} opacity={isLightMode ? 0.1 : 0.34} transform="translate(26 22)" />
           <path d={d} fill={`url(#ls-ridge-${i})`} />
           <path d={d} fill="none" stroke={lit} strokeWidth="1.4" opacity={isLightMode ? 0.5 : 0.3} />
         </g>
       ))}
 
+    </svg>
+    {/* The moving parts get their own layer, so the blurred ridge shadows
+        above are rasterised once rather than every time the wind moves. */}
+    <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" className={frame} style={LAYER} aria-hidden>
       <Wind y0={300} y1={620} colour={lit} />
 
       {/* Grains hopping along the near ridge. They are what the beat is about,
@@ -123,6 +148,7 @@ export function FieldScene({ isLightMode }: { isLightMode: boolean }) {
         ))}
       </g>
     </svg>
+    </>
   );
 }
 
@@ -198,12 +224,6 @@ export function GrainScene({
           <stop offset="42%" stopColor={DUNE.rose} stopOpacity="0" />
         </linearGradient>
 
-        <filter id="ls-far-blur" x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur stdDeviation="13" />
-        </filter>
-        <filter id="ls-shadow" x="-35%" y="-35%" width="170%" height="170%">
-          <feGaussianBlur stdDeviation="16" />
-        </filter>
         <clipPath id="ls-hero-clip">
           <path d={hero.path} />
         </clipPath>
@@ -213,19 +233,31 @@ export function GrainScene({
       <rect x="0" y="0" width="1200" height="800" fill="url(#ls-bounce)" />
 
       <g style={SUBJECT}>
-      {/* Back ring: blurred and dimmed, it fills the voids the front cluster
+      {/* Back ring: dimmed and softened, it fills the voids the front cluster
           leaves so the scene has a floor. */}
-      <g filter="url(#ls-far-blur)" opacity={isLightMode ? 0.42 : 0.3}>
+      <g opacity={isLightMode ? 0.36 : 0.26}>
         {back.map((g, i) => (
-          <path key={i} d={g.path} fill="url(#ls-grain-far)" />
+          <path
+            key={i}
+            d={g.path}
+            fill="url(#ls-grain-far)"
+            stroke="url(#ls-grain-far)"
+            strokeWidth="14"
+            strokeOpacity="0.35"
+            strokeLinejoin="round"
+          />
         ))}
       </g>
 
-      <g filter="url(#ls-shadow)" opacity={isLightMode ? 0.3 : 0.55}>
-        {grains.map((g, i) => (
-          <path key={i} d={g.path} fill="#1a0e05" transform={`translate(${sx} ${sy})`} />
-        ))}
-      </g>
+      {grains.map((g, i) => (
+        <SoftShadow
+          key={i}
+          d={g.path}
+          spread={30}
+          opacity={isLightMode ? 0.3 : 0.55}
+          transform={`translate(${sx} ${sy})`}
+        />
+      ))}
 
       {/* The polymer sits behind the grains it anchors into. */}
       <g fill="none" stroke={C.mesh} strokeWidth="5" strokeLinecap="round">
@@ -569,6 +601,7 @@ export function CrustScene({ isLightMode }: { isLightMode: boolean }) {
   const ground = isLightMode ? "#e6cb99" : "#2b1f15";
 
   return (
+    <>
     <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" className={frame} aria-hidden>
       <defs>
         <linearGradient id="ls-sky" x1="0" y1="0" x2="0" y2="1">
@@ -664,9 +697,12 @@ export function CrustScene({ isLightMode }: { isLightMode: boolean }) {
         );
       })}
 
+    </svg>
+    <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" className={frame} style={LAYER} aria-hidden>
       <Wind y0={330} y1={640} colour={isLightMode ? "#fff2d2" : "#8a6a44"} />
 
       <rect x="0" y="0" width="1200" height="800" fill="url(#ls-crust-vignette)" />
     </svg>
+    </>
   );
 }

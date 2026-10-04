@@ -5,6 +5,7 @@ import { createTimeline, svg, type Timeline } from "animejs";
 import StoryEscape, { skipToModels } from "@/src/components/landing/StoryEscape";
 import { playCinematic } from "@/src/lib/storyPlayback";
 import SandParticles from "@/src/components/dune-story/SandParticles";
+import { readScroll } from "@/src/components/SmoothScroll";
 import { CaptionText } from "@/src/components/CaptionText";
 import { duneGradient, grainOverlayStyle } from "@/src/lib/grain";
 import {
@@ -80,10 +81,30 @@ export default function LandingStory({
       500,
     );
 
+    // Only touch the DOM when a value changes. A scene at zero has its CSS
+    // clock paused, so the wind of a scene nobody can see is not repainted
+    // under the one they can. It stays painted, not hidden: a hidden scene is
+    // first rasterised when it fades in, and that cost lands mid-scroll.
+    let lastDraw = -1;
+    const written = new Map<string, string>();
+    const write = (el: HTMLElement | null, key: string, prop: string, value: string) => {
+      if (!el) return;
+      const id = `${key}:${prop}`;
+      if (written.get(id) === value) return;
+      written.set(id, value);
+      el.style.setProperty(prop, value);
+    };
     const place = (el: HTMLElement | null, transform: string, opacity: number) => {
       if (!el) return;
-      el.style.transform = transform;
-      el.style.opacity = opacity.toFixed(3);
+      const key = el.dataset.layer ?? "";
+      const o = opacity < 0.002 ? 0 : opacity;
+      write(el, key, "transform", transform);
+      write(el, key, "opacity", o.toFixed(3));
+      const idle = o === 0 ? "1" : "0";
+      if (written.get(`${key}:idle`) !== idle) {
+        written.set(`${key}:idle`, idle);
+        el.toggleAttribute("data-idle", idle === "1");
+      }
     };
 
     // s runs 0..6, one unit per block, so the scene and the words on screen are
@@ -91,18 +112,21 @@ export default function LandingStory({
     // on a beat the frame is one scene, never two half-faded ones.
     const render = (s: number) => {
       const dive = smooth(s, 0.9, 1.85);
-      place(fieldRef.current, `scale(${(1 + dive * 4.5).toFixed(4)})`, 1 - smooth(s, 1.25, 1.8));
-      if (fieldRef.current) {
-        // The hero has wind; beat 1 is where it crosses the threshold and the
-        // surface starts to move.
-        fieldRef.current.style.setProperty("--wind", (0.3 + 0.7 * smooth(s, 0.4, 1.0)).toFixed(3));
-        fieldRef.current.style.setProperty("--lift", smooth(s, 0.55, 1.05).toFixed(3));
-      }
+      // The zoom is kept under 3x. The browser rasterises a scaled layer at its
+      // scaled size, and at the old 5.5x the field outgrew the GPU tile budget
+      // and was drawn with blocks missing. The descent wash covers the rest.
+      place(fieldRef.current, `scale(${(1 + dive * 1.8).toFixed(4)})`, 1 - smooth(s, 1.25, 1.8));
+      // The hero has wind; beat 1 is where it crosses the threshold and the
+      // surface starts to move.
+      write(fieldRef.current, "field", "--wind", (0.3 + 0.7 * smooth(s, 0.4, 1.0)).toFixed(3));
+      write(fieldRef.current, "field", "--lift", smooth(s, 0.55, 1.05).toFixed(3));
 
-      if (descentRef.current)
-        descentRef.current.style.opacity = (
-          0.6 * smooth(s, 1.15, 1.5) * (1 - smooth(s, 1.55, 1.9))
-        ).toFixed(3);
+      write(
+        descentRef.current,
+        "descent",
+        "opacity",
+        (0.6 * smooth(s, 1.15, 1.5) * (1 - smooth(s, 1.55, 1.9))).toFixed(3),
+      );
 
       const arrive = smooth(s, 1.2, 1.8);
       const intoCell = smooth(s, 2.25, 2.8);
@@ -113,28 +137,28 @@ export default function LandingStory({
         grainRef.current,
         // Shrinking on the way out, so the cluster is the size the crust's
         // front row is when the crust takes over from it.
-        `scale(${((2.4 - arrive * 1.4) * (1 + inCell * 1.1) * (1 - leave * 0.62)).toFixed(4)})`,
+        `scale(${((1.7 - arrive * 0.7) * (1 + inCell * 0.6) * (1 - leave * 0.62)).toFixed(4)})`,
         arrive * (1 - leave) * (1 - inCell),
       );
 
       place(enzymeRef.current, `scale(${(0.88 + intoCell * 0.12).toFixed(4)})`, inCell);
-      if (enzymeRef.current) {
-        enzymeRef.current.style.setProperty("--ca-draw", smooth(s, 2.25, 2.65).toFixed(3));
-        enzymeRef.current.style.setProperty("--ca-grow", smooth(s, 2.5, 3.3).toFixed(3));
-      }
+      write(enzymeRef.current, "enzyme", "--ca-draw", smooth(s, 2.25, 2.65).toFixed(3));
+      write(enzymeRef.current, "enzyme", "--ca-grow", smooth(s, 2.5, 3.3).toFixed(3));
 
-      tl.seek(tl.duration * smooth(s, 3.35, 3.95));
+      const draw = smooth(s, 3.35, 3.95);
+      if (draw !== lastDraw) {
+        lastDraw = draw;
+        tl.seek(tl.duration * draw);
+      }
 
       const crust = smooth(s, 4.25, 4.85);
       place(crustRef.current, `scale(${(1.35 - crust * 0.35).toFixed(4)})`, crust);
       // The same wind as the opening, over ground that no longer answers it.
-      crustRef.current?.style.setProperty("--wind", crust.toFixed(3));
+      write(crustRef.current, "crust", "--wind", crust.toFixed(3));
 
-      if (heroRef.current) {
-        const o = 1 - smooth(s, 0.08, 0.5);
-        heroRef.current.style.opacity = o.toFixed(3);
-        heroRef.current.style.pointerEvents = o < 0.05 ? "none" : "auto";
-      }
+      const o = 1 - smooth(s, 0.08, 0.5);
+      write(heroRef.current, "hero", "opacity", o.toFixed(3));
+      write(heroRef.current, "hero", "pointer-events", o < 0.05 ? "none" : "auto");
 
       const block = Math.min(LAST, Math.max(0, Math.round(s)));
       setActive((prev) => (prev === block ? prev : block));
@@ -145,7 +169,13 @@ export default function LandingStory({
 
     let heroH = 0;
     let beatH = 0;
+    let top = 0;
+    let travel = 0;
     const measure = () => {
+      // Document offsets, read once here rather than a rect every frame: a
+      // rect read after the frame's style writes forces a layout each time.
+      top = section.getBoundingClientRect().top + window.scrollY;
+      travel = section.offsetHeight - window.innerHeight;
       heroH = hero.offsetHeight;
       beatH = beats.offsetHeight / BEATS.length;
       // Nothing to move the subject aside for once the beats span the frame.
@@ -157,9 +187,7 @@ export default function LandingStory({
     // Block index straight off the section's own rect, measured rather than
     // assumed, so an unequal hero cannot drift the scene off the words.
     const readStage = () => {
-      const rect = section.getBoundingClientRect();
-      const y = -rect.top;
-      const travel = rect.height - window.innerHeight;
+      const y = readScroll() - top;
       progressRef.current = travel > 0 ? Math.min(1, Math.max(0, y / travel)) : 0;
       const s = y <= heroH ? y / heroH : 1 + (y - heroH) / beatH;
       return Math.min(LAST, Math.max(0, s));
@@ -184,9 +212,15 @@ export default function LandingStory({
     let resizeTimer = 0;
     const onResize = () => {
       window.clearTimeout(resizeTimer);
-      resizeTimer = window.setTimeout(measure, 120);
+      resizeTimer = window.setTimeout(() => {
+        measure();
+        render(readStage());
+      }, 120);
     };
     window.addEventListener("resize", onResize);
+    // Fonts and the sections below settle after mount and can move the story.
+    const ro = new ResizeObserver(onResize);
+    ro.observe(document.body);
 
     let onScreen = true;
     const vis = new IntersectionObserver(([e]) => (onScreen = e.isIntersecting), {
@@ -194,13 +228,27 @@ export default function LandingStory({
     });
     vis.observe(section);
 
-    // dt-scaled, so a 120Hz display and a 60Hz one travel the same distance per
-    // second. 5.5 tracks the finger and still absorbs a wheel's discrete steps.
-    const SMOOTH = 5.5;
+    // Lenis already eases the scroll, so the scene is drawn from its scroll
+    // event, in the same frame Lenis moves the words. A second ease on top made
+    // the scene trail the text and settle late. Without Lenis the loop smooths
+    // a wheel's discrete steps itself. Lenis mounts after this effect runs, so
+    // the loop hands over to it once it exists.
+    const SMOOTH = 9;
     let shown = readStage();
     let last = performance.now();
     let raf = 0;
+    let offLenis: (() => void) | undefined;
+    const onLenis = () => {
+      if (onScreen) render(readStage());
+    };
     const loop = (now: number) => {
+      const lenis = window.__lenis;
+      if (lenis) {
+        offLenis = lenis.on("scroll", onLenis);
+        raf = 0;
+        render(readStage());
+        return;
+      }
       raf = requestAnimationFrame(loop);
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
@@ -210,10 +258,13 @@ export default function LandingStory({
       if (Math.abs(target - shown) < 0.001) shown = target;
       render(shown);
     };
+    render(shown);
     raf = requestAnimationFrame(loop);
 
     return () => {
       cancelAnimationFrame(raf);
+      offLenis?.();
+      ro.disconnect();
       vis.disconnect();
       window.clearTimeout(resizeTimer);
       window.removeEventListener("resize", onResize);
@@ -244,9 +295,14 @@ export default function LandingStory({
           isLightMode ? "bg-[#e9c99a]" : "bg-[#0b0908]"
         }`}
       >
-        <div ref={fieldRef} className="absolute inset-0 will-change-transform" style={{ transformOrigin: "52% 82%" }}>
+        <div ref={fieldRef} data-layer="field" className="absolute inset-0 will-change-transform" style={{ transformOrigin: "52% 82%" }}>
           <div aria-hidden className="absolute inset-0" style={{ background: duneGradient(isLightMode) }}>
-            <div className="absolute inset-0" style={grainOverlayStyle(isLightMode)} />
+            {/* No blend mode here: a blended layer inside a zooming one is
+                recomposited against its backdrop on every frame. */}
+            <div
+              className="absolute inset-0"
+              style={{ ...grainOverlayStyle(isLightMode), mixBlendMode: "normal", opacity: isLightMode ? 0.05 : 0.035 }}
+            />
           </div>
           <div
             aria-hidden
@@ -268,15 +324,15 @@ export default function LandingStory({
           />
         </div>
 
-        <div ref={grainRef} className="absolute inset-0 will-change-transform" style={{ transformOrigin: "center", opacity: 0 }}>
+        <div ref={grainRef} data-layer="grain" className="absolute inset-0 will-change-transform" style={{ transformOrigin: "center", opacity: 0 }}>
           <GrainScene isLightMode={isLightMode} grains={grains} bridges={bridges} lattice={lattice} />
         </div>
 
-        <div ref={enzymeRef} className="absolute inset-0 will-change-transform" style={{ transformOrigin: "center", opacity: 0 }}>
+        <div ref={enzymeRef} data-layer="enzyme" className="absolute inset-0 will-change-transform" style={{ transformOrigin: "center", opacity: 0 }}>
           <EnzymeScene isLightMode={isLightMode} />
         </div>
 
-        <div ref={crustRef} className="absolute inset-0 will-change-transform" style={{ transformOrigin: "center", opacity: 0 }}>
+        <div ref={crustRef} data-layer="crust" className="absolute inset-0 will-change-transform" style={{ transformOrigin: "center", opacity: 0 }}>
           <CrustScene isLightMode={isLightMode} />
         </div>
 
@@ -354,9 +410,13 @@ export default function LandingStory({
                   >
                     <div
                       aria-hidden
-                      className="pointer-events-none absolute -inset-x-6 -inset-y-8 rounded-[64px] blur-2xl"
+                      className="pointer-events-none absolute -inset-x-16 -inset-y-20"
                       style={{
-                        background: isLightMode ? "rgba(251, 247, 240, 0.5)" : "rgba(9, 7, 6, 0.55)",
+                        // A soft wash drawn as a gradient. A CSS blur filter here
+                        // was re-applied by the compositor on every frame.
+                        background: `radial-gradient(closest-side, ${
+                          isLightMode ? "rgba(251, 247, 240, 0.5)" : "rgba(9, 7, 6, 0.55)"
+                        } 55%, transparent)`,
                       }}
                     />
                     <div className="rail-row relative">
