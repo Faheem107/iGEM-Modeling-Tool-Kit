@@ -1,4 +1,5 @@
 import { MECHANISM } from "@/content/copy";
+import type { WikiLink } from "@/src/lib/wikiLinks";
 
 /**
  * The engineering design cycle, as it actually ran.
@@ -26,6 +27,8 @@ export interface CycleBeat {
   title: string;
   /** The whole beat, in two to four sentences. */
   body: string;
+  /** Where this step is written up on the wiki. */
+  wiki: WikiLink;
 }
 
 export const CYCLE_BEATS: CycleBeat[] = [
@@ -33,6 +36,7 @@ export const CYCLE_BEATS: CycleBeat[] = [
     stage: "Design",
     turn: 1,
     title: "Wind moves the sand",
+    wiki: { path: "/model/both#both-field", label: "The wind model" },
     body:
       "We started with how strong a crust has to be before the wind stops lifting grains. That meant putting numbers on the grain sizes in UAE dune sand, the wind speeds those grains see, and the threshold friction velocity that separates a still surface from a moving one. " +
       MECHANISM +
@@ -42,6 +46,7 @@ export const CYCLE_BEATS: CycleBeat[] = [
     stage: "Build",
     turn: 1,
     title: "Three routes",
+    wiki: { path: "/model#model-prongs", label: "The routes" },
     body:
       "With a target to hit, the question became which biological route could reach it. We built three of them separately: γ-PGA overexpression as a sticky matrix, carbonic anhydrase for calcium-carbonate cement, and sodium alginate as an applied binder. Modelling them apart is what made them comparable, because no route was flattered by being averaged with another.",
   },
@@ -49,6 +54,7 @@ export const CYCLE_BEATS: CycleBeat[] = [
     stage: "Test",
     turn: 1,
     title: "One route drops out, one layer goes on",
+    wiki: { path: "/model/both#both-cell-results", label: "The kill switch model" },
     body:
       "Running all three did not leave all three standing. Alginate absorbs water the cells need and depends on a calcium supply the site does not guarantee, so it stopped being a route. Separately we worked out what releasing a live engineered strain would take to be reversible, and added a MazE/MazF kill switch over both remaining routes. The deployment can now be ended, not only started.",
   },
@@ -56,6 +62,7 @@ export const CYCLE_BEATS: CycleBeat[] = [
     stage: "Learn",
     turn: 1,
     title: "From cell to crust",
+    wiki: { path: "/model/both", label: "Both routes together" },
     body:
       "Next we checked whether a change inside the cell reaches the surface. Flux balance analysis feeds polymer kinetics, kinetics feeds cross-linking, and cross-linking feeds the cohesion the wind model reads, so one grain can be traced from metabolism to cured crust. The two routes turned out to be complementary rather than redundant. Calcite covers the 63 to 125 µm band well and γ-PGA closes the coarse and fine gaps, which is why they are deployed together.",
   },
@@ -63,6 +70,7 @@ export const CYCLE_BEATS: CycleBeat[] = [
     stage: "Design",
     turn: 2,
     title: "From the wet lab to the field",
+    wiki: { path: "/model#model-weakest-input", label: "What we are still waiting on" },
     body:
       "The second turn asks which experiment is worth doing next. We ran the same chain backwards: the wind target sets the cohesion needed, cohesion sets the polymer yield, and yield sets the glutamate and OD600 our wet lab has to hit. The model names the assay instead of waiting for one, and when a measurement comes back it replaces an assumed parameter and the loop runs again.",
   },

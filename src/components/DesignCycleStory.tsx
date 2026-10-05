@@ -5,6 +5,7 @@ import { createTimeline, svg, stagger, type Timeline } from "animejs";
 import StoryEscape from "@/src/components/landing/StoryEscape";
 import { storyTravel } from "@/src/lib/scrollRestore";
 import { GlossaryText } from "@/src/components/GlossaryTerm";
+import { WikiBeatLink } from "@/src/components/landing/WikiBeatLink";
 import { DUNE } from "@/src/lib/palette";
 import {
   CYCLE_BEATS as BEATS,
@@ -30,6 +31,15 @@ const C = {
   line: "var(--border)",
   ink: "var(--foreground)",
   muted: "var(--muted-foreground)",
+};
+
+/** The tint each stage of the loop lays over the stage. Kept faint: it says
+ *  "something changed" without competing with the figure. */
+const STAGE_WASH: Record<string, string> = {
+  Design: "color-mix(in srgb, var(--dune-orange) 9%, transparent)",
+  Build: "color-mix(in srgb, var(--dune-teal) 11%, transparent)",
+  Test: "color-mix(in srgb, var(--dune-rose) 11%, transparent)",
+  Learn: "color-mix(in srgb, var(--dune-sand) 10%, transparent)",
 };
 
 // The figure field. Wide and short, because it sits under the text across the
@@ -262,17 +272,30 @@ export default function DesignCycleStory({
       >
         {!staticMode && <StoryEscape progressRef={progressRef} />}
 
-        {/* The beats change in place, so without this it is not obvious that
-            scrolling is what moves the loop on. */}
+        {/* Each stage of the loop tints the ground it sits on, so a change of
+            step is seen across the whole stage and not only in the words. */}
+        {!staticMode &&
+          CYCLE_STAGES.map((st) => (
+            <div
+              key={st}
+              aria-hidden
+              className="pointer-events-none absolute inset-0 transition-opacity duration-700 ease-out"
+              style={{
+                background: STAGE_WASH[st],
+                opacity: BEATS[active].stage === st ? 1 : 0,
+              }}
+            />
+          ))}
+
         {!staticMode && (
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 bottom-14 z-[45] flex justify-center px-6"
+            className="pointer-events-none absolute inset-x-0 bottom-10 z-[45] flex justify-center px-6"
           >
-            <span className="caption rounded-[4px] border border-border bg-background/70 px-3 py-1.5 backdrop-blur-sm">
+            <span className="caption text-muted-foreground">
               {active < BEATS.length - 1
-                ? "Scroll down for the next step \u2193"
-                : "Scroll down to keep going \u2193"}
+                ? "Scroll for the next step \u2193"
+                : "Scroll to keep going \u2193"}
             </span>
           </div>
         )}
@@ -285,6 +308,7 @@ export default function DesignCycleStory({
               <StageRail stage={BEATS[active].stage} turn={BEATS[active].turn} />
             )}
           </div>
+          {!staticMode && <StepMeter active={active} />}
 
           {staticMode ? (
             <ol className="mt-10 space-y-14">
@@ -297,13 +321,19 @@ export default function DesignCycleStory({
           ) : (
             <>
               {/* The beat. Headline across the left, its paragraph beside it. */}
-              <div className="relative mt-9 min-h-[200px] shrink-0 md:mt-10 lg:min-h-[176px]">
+              {/* Every beat sits in the same grid cell, so the box is as tall
+                  as the longest one and no paragraph runs into the figure. */}
+              <div className="relative mt-8 grid shrink-0 md:mt-9">
                 {BEATS.map((b, i) => (
                   <div
                     key={i}
-                    className="absolute inset-0 transition-opacity duration-500"
+                    className="[grid-area:1/1] transition-[opacity,transform] duration-700 ease-out"
                     style={{
                       opacity: i === active ? 1 : 0,
+                      transform:
+                        i === active
+                          ? "none"
+                          : `translateY(${i < active ? -28 : 28}px)`,
                       pointerEvents: i === active ? "auto" : "none",
                     }}
                     aria-hidden={i !== active}
@@ -355,14 +385,15 @@ function BeatBody({
       >
         {beat.title}
       </h2>
-      <p className="max-w-[var(--measure)] text-[length:var(--text-micro)] leading-[1.75] text-foreground lg:col-span-6 xl:col-start-7 xl:col-span-6">
+      <p className="max-w-[var(--measure)] text-[length:var(--text-body)] leading-[1.7] text-foreground lg:col-span-6 xl:col-start-7 xl:col-span-6">
         <GlossaryText>{beat.body}</GlossaryText>
+        <WikiBeatLink link={beat.wiki} className="mt-4 block" />
       </p>
     </div>
   );
 }
 
-/** Where we are in the loop, set on one line in the caption rail. */
+/** Where we are in the loop. The active stage is set at heading size. */
 function StageRail({
   stage,
   turn,
@@ -372,20 +403,47 @@ function StageRail({
 }) {
   const idx = CYCLE_STAGES.indexOf(stage as never);
   return (
-    <div className="flex items-baseline gap-5">
+    <div className="flex items-baseline gap-6">
       <span className="caption text-muted-foreground">Turn {turn}</span>
-      <div className="flex flex-wrap gap-x-5 gap-y-1">
+      <div className="flex flex-wrap items-baseline gap-x-6 gap-y-1">
         {CYCLE_STAGES.map((st, i) => (
           <span
             key={st}
-            className={`caption transition-colors duration-500 ${
-              i === idx ? "text-foreground" : "text-muted-foreground opacity-45"
+            className={`wght-head relative text-[length:var(--text-h3)] transition-[color,opacity] duration-500 ${
+              i === idx ? "text-foreground" : "text-muted-foreground opacity-40"
             }`}
+            style={{ fontVariationSettings: i === idx ? '"wght" 650' : '"wght" 400' }}
           >
             {st}
+            <span
+              aria-hidden
+              className="absolute -bottom-[6px] left-0 h-[2px] w-full origin-left bg-dune-orange transition-transform duration-500 ease-out"
+              style={{ transform: i === idx ? "scaleX(1)" : "scaleX(0)" }}
+            />
           </span>
         ))}
       </div>
+    </div>
+  );
+}
+
+/** One hairline segment per beat, filled up to the one on screen. */
+function StepMeter({ active }: { active: number }) {
+  return (
+    <div className="mt-3 flex items-center gap-4">
+      <div className="flex flex-1 gap-1.5">
+        {BEATS.map((_, i) => (
+          <span key={i} className="relative h-[2px] flex-1 bg-border">
+            <span
+              className="absolute inset-0 origin-left bg-dune-orange transition-transform duration-700 ease-out"
+              style={{ transform: i <= active ? "scaleX(1)" : "scaleX(0)" }}
+            />
+          </span>
+        ))}
+      </div>
+      <span className="caption text-muted-foreground">
+        Step {active + 1} of {BEATS.length}
+      </span>
     </div>
   );
 }
@@ -489,7 +547,8 @@ function StoryFigure({
         <path
           d={`M${algCx - 64} ${TILE_Y + TILE_H / 2} L${algCx + 64} ${TILE_Y + TILE_H / 2}`}
           stroke={C.ink}
-          strokeWidth={1.2}
+          strokeWidth={3.5}
+          strokeLinecap="round"
         />
         <text
           x={algCx}
