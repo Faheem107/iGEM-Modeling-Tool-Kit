@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion, useInView } from "motion/react";
+import { motion, useInView } from "motion/react";
 import { gsap } from "gsap";
 import {
   useMeasuredConnectors,
@@ -24,13 +24,14 @@ import { PRONG_TITLES, PRONG_SHORTS } from "@/content/copy";
  * from "what is this project" to "open this simulation" in one click.
  *
  *   0 three    the fork branches to three labels
- *   1 strike   a rule is drawn through Sodium Alginate
- *   2 wither   its branch retracts into the fork, the label fades in place
- *   3 close    the label is popped out of flow, the survivors glide to centre
+ *   1 strike   two seconds after the figure is in view, a rule is drawn
+ *              through Sodium Alginate
+ *   2 wither   its branch retracts into the fork
+ *   3 park     the label is taken out of the row and glides to the right
+ *              margin, still struck, while the survivors close up under the fork
  *   4 settle   a branch grows down to the kill switch
- *   5 index    the model index resolves underneath
  *
- * The survivors recentre because removing the third flex item is enough; the
+ * The survivors recentre because taking the third flex item out of flow is enough; the
  * branches follow on their own because every endpoint is MEASURED from the
  * live rect of the label it points at (see useMeasuredConnectors). Nothing
  * here hard-codes a coordinate, which is exactly why the tips can no longer
@@ -40,8 +41,11 @@ import { PRONG_TITLES, PRONG_SHORTS } from "@/content/copy";
 type Phase = 0 | 1 | 2 | 3 | 4 | 5;
 type ViewTarget = number | "killswitch";
 
-const HOLDS = [0.85, 0.7, 0.75, 0.85, 0.55];
+// The first hold is long on purpose: the reader has just arrived at the
+// figure, and the strike should happen while they are looking at it.
+const HOLDS = [2.85, 0.9, 0.7, 1.3, 0.55];
 const EASE = [0.22, 1, 0.36, 1] as const;
+const PARK = { duration: 1.4, ease: EASE };
 
 const LEAVES = [
   {
@@ -81,7 +85,7 @@ export default function ProngConstellation({
   const p2Ref = useRef<HTMLDivElement>(null);
   const algRef = useRef<HTMLDivElement>(null);
 
-  const started = useInView(hostRef, { amount: 0.25 });
+  const started = useInView(hostRef, { amount: 0.5 });
   const armed = useRef(true);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
   const [phase, setPhase] = useState<Phase>(0);
@@ -151,18 +155,17 @@ export default function ProngConstellation({
   // The branch withers on its own beat, before the row closes, so the line is
   // seen to retract rather than to vanish with the label.
   const retracting = phase === 2;
-  const withered = phase >= 3;
+  const parked = phase >= 3;
   const settled = phase >= 4;
-  const indexed = phase >= 5;
 
   const connectors: ConnectorSpec[] = useMemo(
     () => [
       { id: "b1", from: "fork", to: "p1" },
       { id: "b2", from: "fork", to: "p2" },
-      { id: "b3", from: "fork", to: "alg", hidden: withered },
+      { id: "b3", from: "fork", to: "alg", hidden: parked },
       { id: "b4", from: "fork", to: "kill", hidden: !settled },
     ],
-    [withered, settled],
+    [parked, settled],
   );
 
   const nodes = useMemo(
@@ -184,7 +187,7 @@ export default function ProngConstellation({
   useEffect(() => {
     if (reduced) return;
     let raf = 0;
-    const until = performance.now() + 1200;
+    const until = performance.now() + 1600;
     const tick = () => {
       remeasure();
       if (performance.now() < until) raf = requestAnimationFrame(tick);
@@ -199,7 +202,7 @@ export default function ProngConstellation({
   return (
     <section
       id="models"
-      className="relative w-full scroll-mt-24 overflow-hidden pb-24 pt-[8vh]"
+      className="relative w-full scroll-mt-24 overflow-hidden pb-12 pt-[8vh]"
     >
       {/* Sand, at the strength of paper texture. The section this sits behind is
           about ground, so the ground is present rather than described. */}
@@ -290,48 +293,45 @@ export default function ProngConstellation({
           />
         </div>
 
-        {/* Leaves. Dropping the third item is what recentres the survivors, and
-            the branches follow because they are measured, not positioned. */}
-        <div className="flex items-start justify-around gap-6 pt-24">
-          {/* popLayout takes the leaving label out of flow on the frame it is
-              removed, so the two survivors glide across while it fades instead
-              of waiting for it to finish. */}
-          <AnimatePresence mode="popLayout" onExitComplete={remeasure}>
-            {LEAVES.map((l) => {
-              const isAlg = l.key === "alg";
-              if (isAlg && withered) return null;
-              return (
-                <motion.div
-                  key={l.key}
-                  ref={refFor(l.key)}
-                  className="max-w-[15rem] flex-1"
-                  layout
-                  initial={false}
-                  animate={{
-                    // Dimmed while its branch retracts, so by the time the row
-                    // closes there is almost nothing left to remove.
-                    opacity: isAlg && retracting ? 0.25 : 1,
-                    scale: isAlg && retracting ? 0.96 : 1,
-                  }}
-                  exit={{ opacity: 0, scale: 0.94, y: 10 }}
-                  transition={{
-                    layout: { duration: 0.9, ease: EASE },
-                    duration: 0.5,
-                    ease: EASE,
-                  }}
-                  onLayoutAnimationComplete={remeasure}
-                >
-                  <Leaf
-                    title={l.title}
-                    lede={l.lede}
-                    struck={isAlg && struck}
-                    onClick={() => onView(l.target)}
-                  />
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
-        </div>
+        {/* Leaves. Parking the third item outside the row is what recentres
+            the survivors, and the branches follow because they are measured,
+            not positioned. The padding keeps the pair centred under the fork
+            with the parked label clear of it on the right. */}
+        <motion.div
+          layout
+          transition={{ layout: PARK }}
+          className={`relative flex items-start justify-around gap-6 pt-24 ${
+            parked ? "px-[12rem] lg:px-[16rem]" : ""
+          }`}
+        >
+          {LEAVES.map((l) => {
+            const isAlg = l.key === "alg";
+            const isParked = isAlg && parked;
+            return (
+              <motion.div
+                key={l.key}
+                ref={refFor(l.key)}
+                className={
+                  isParked
+                    ? "absolute right-0 top-24 w-[11rem] lg:w-[15rem]"
+                    : "max-w-[15rem] flex-1"
+                }
+                layout
+                initial={false}
+                animate={{ opacity: isParked ? 0.55 : 1 }}
+                transition={{ layout: PARK, duration: 0.8, ease: EASE }}
+                onLayoutAnimationComplete={remeasure}
+              >
+                <Leaf
+                  title={l.title}
+                  lede={l.lede}
+                  struck={isAlg && struck}
+                  onClick={() => onView(l.target)}
+                />
+              </motion.div>
+            );
+          })}
+        </motion.div>
 
         {/* The kill switch grows in where the third branch used to lead. */}
         <div className="flex justify-center pt-24">
@@ -357,7 +357,7 @@ export default function ProngConstellation({
         <div className="mb-12 border-t border-border" />
 
         {/* ---- The index. Everything, grouped and folded. ---- */}
-        <ModelIndex show={indexed || reduced} onView={onView} />
+        <ModelIndex onView={onView} />
       </div>
     </section>
   );
@@ -447,12 +447,12 @@ function Leaf({
         {title}
         <motion.span
           aria-hidden
-          className={`pointer-events-none absolute left-0 top-[calc(50%-1.5px)] h-[3px] w-full origin-left ${
+          className={`pointer-events-none absolute left-0 top-[calc(50%-2.5px)] h-[5px] w-full origin-left ${
             isLightMode ? "bg-dune-maroon" : "bg-dune-orange"
           }`}
           initial={false}
           animate={{ scaleX: struck ? 1 : 0 }}
-          transition={{ duration: 0.55, ease: EASE }}
+          transition={{ duration: 0.7, ease: EASE }}
         />
       </h3>
       <p className="mx-auto mt-2 max-w-[24ch] text-[length:var(--text-micro)] leading-snug text-muted-foreground">

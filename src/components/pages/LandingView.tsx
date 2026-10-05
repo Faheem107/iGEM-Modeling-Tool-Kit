@@ -62,7 +62,7 @@ export default function LandingView() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="relative w-full z-10 pb-12"
+      className="relative w-full z-10"
     >
       {/* --- THE STORY: the hero, then five beats that scroll past one sticky
           scene. Field → grain and cell → the enzyme on the wall → the polymer
