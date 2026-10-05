@@ -211,17 +211,17 @@ out["_cost"] = {
     ),
 }
 
-# -- added 2026-10-04: spread, containment, heat, and the cement's polymorphs --
+# -- spread, containment, heat, and the cement's polymorphs ----------------
 ecological = load("ecological")
 
-# Colony front speed as the calcium the routes add slows the cells' sliding.
+# Colony front speed. Calcium slows how the cells slide.
 ca_local = np.linspace(0, 20, 81)
 out["front_speed"] = series(
     ca_local, ecological.fisher_speed(ecological.MU_MAX, ecological.expansion_D(ca_local)) * 24
 )
 
-# The chance that at least one cell escapes, over a 1 m by 1 m patch, against the
-# per-cell escape frequency. log10 on x so the plot can use a log axis.
+# Chance of at least one escapee over 1 m2, against the per-cell escape rate.
+# x is log10(p), so the wiki can plot it on a linear axis.
 patch_cells = float(ecological.deployed_population(span_mm=1000.0))
 p_escape = np.logspace(-14, -6, 81)
 out["escape_probability"] = series(
@@ -233,16 +233,16 @@ out["_escape"] = {
     "expected_at_nih": round(patch_cells * ecological.NIH_TARGET, 1),
 }
 
-# Toxin and antitoxin after the trigger, from the same run as the viability curve.
+# Toxin and antitoxin, from the same run as the viability curve.
 out["kill_antitoxin"] = series(*thin(tk, hist[:, 0], 40))
 out["kill_toxin"] = series(*thin(tk, hist[:, 1], 40))
 
-# The enzyme's melting point across pH, at three salinities.
+# Melting point across pH, at three salinities.
 ph_axis = np.linspace(5.5, 9.0, 71)
 for salt, key in ((0.5, "tm_salt_low"), (1.2, "tm_salt_opt"), (2.0, "tm_salt_high")):
     out[key] = series(ph_axis, [thermal.operative_tm(float(v), salt) for v in ph_axis])
 
-# The cement as it forms: metastable vaterite first, then durable calcite.
+# Vaterite forms first, then turns into calcite.
 tc, cal, vat, _, _ = caco3.simulate()
 out["polymorph_calcite"] = series(*thin(tc, cal * 1000.0, 2))
 out["polymorph_vaterite"] = series(*thin(tc, vat * 1000.0, 2))

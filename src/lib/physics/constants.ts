@@ -499,7 +499,7 @@ export const GRAINSIZE_CALIB = {
   micpPeakDiameter: calib(
     90,
     "µm",
-    "Erdmann et al. (2024), Discover Materials 4, doi:10.1007/s43939-024-00108-3. MICP UCS peaks at SP0063/SP0125 (≈3.1/2.9 MPa), falling to ≈1.6 MPa at SP0250 and ≈0.7 MPa at SP0500",
+    "Erdmann et al. (2024), Discover Materials 4, 45, doi:10.1007/s43939-024-00108-3. MICP UCS is 3.04 MPa at SP0063 and 0.74 MPa at SP0500 (text); SP0125 ≈2.9 and SP0250 ≈1.6 MPa are read off its Fig. 5",
     "UCS of MICP-treated cores sieved to several narrow size bands; locate the UCS-vs-d peak.",
     [63, 125],
   ),

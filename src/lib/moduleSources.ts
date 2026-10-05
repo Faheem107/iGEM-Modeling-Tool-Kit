@@ -278,7 +278,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
         label:
           "Abdelfattah (2009), Soil Survey Horizons 50:3, doi:10.2136/sh2009.1.0003",
         citation:
-          "Abdelfattah, M. A. Land Degradation Indicators and Management Options in the Desert Environment of Abu Dhabi. Soil Surv. Horiz. 2009, 50 (1), 3–10.",
+          "Abdelfattah, M. A. Land Degradation Indicators and Management Options in the Desert Environment of Abu Dhabi, United Arab Emirates. Soil Surv. Horiz. 2009, 50 (1), 3–10.",
         detail:
           "Measured in Abu Dhabi Emirate dune soils: 70 to 92 percent of sand movement is saltation and only 2 to 8 percent is suspension. This is the local evidence that the threshold is the right thing to model. Sand here hops; it mostly does not fly.",
         kind: "literature",
@@ -311,11 +311,11 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
     sources: [
       {
         label:
-          "Erdmann et al. (2024), Discover Materials, MICP vs particle size",
+          "Erdmann et al. (2024), Discover Materials 4, 45",
         citation:
-          "Erdmann, N.; et al. Influence of Particle Size on Microbially Induced Calcite Precipitation. Discovery Mater. 2024, 4, 34.",
+          "Erdmann, N.; Schaefer, S.; Simon, T.; Becker, A.; Bröckel, U.; Strieth, D. MICP Treated Sand: Insights into the Impact of Particle Size on Mechanical Parameters and Pore Network after Biocementation. Discov. Mater. 2024, 4, 45.",
         detail:
-          "Compressive strength peaks at 63 to 125 µm (about 3.1 and 2.9 MPa), falls to about 1.6 MPa at 250 µm and about 0.7 MPa at 500 µm. That curve is the whole shape of this module: coarse pores are too wide to bridge, fine ones too tight for cells to enter.",
+          "Compressive strength falls as the grains get coarser, from 3.04 MPa for the 63 µm fraction to 0.74 MPa for the 500 µm fraction. That fall is the shape of this module: coarse pores are too wide for the cement to bridge.",
         kind: "literature",
         url: "https://doi.org/10.1007/s43939-024-00108-3",
       },
@@ -418,7 +418,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
         label:
           "Yan, Nakashima, Takano & Kawasaki (2025), World J. Microbiol. Biotechnol. 41",
         citation:
-          "Yan, X.; Nakashima, K.; Takano, C.; Kawasaki, S. Cost Reduction Strategies for Microbially Induced Carbonate Precipitation. World J. Microbiol. Biotechnol. 2025, 41, 96.",
+          "Yan, Z.; Nakashima, K.; Takano, C.; Kawasaki, S. Strategies for Cost-Optimized Biocement Production: A Comprehensive Review. World J. Microbiol. Biotechnol. 2025, 41 (2), 67.",
         detail:
           "Where the cost of biocement actually goes: cheaper media and lower-grade cementation chemicals cut it by large fractions. The paper reports those fractions, not prices, so it tells us which line items matter and cannot set any figure here.",
         kind: "literature",
@@ -564,18 +564,18 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
         url: "https://doi.org/10.1306/051204740933",
       },
       {
-        label: "Benaafi et al. (2016), Arab. J. Geosci. 9, 1970, Table 1",
+        label: "Benaafi & Abdullatif (2015), Arab. J. Geosci. 8, 11073, Table 1",
         citation:
-          "Benaafi, M.; Al-Shaibani, A.; Abdullatif, O. Sedimentological and Geochemical Characterisation of the Dune Sands in Saudi Arabia. Arab. J. Geosci. 2016, 9, 1970.",
+          "Benaafi, M.; Abdullatif, O. Sedimentological, Mineralogical, and Geochemical Characterization of Sand Dunes in Saudi Arabia. Arab. J. Geosci. 2015, 8 (12), 11073–11092.",
         detail:
-          "Measured grain size for Saudi dune fields, including the Rub' al-Khali, which the paper itself states resembles eastern UAE dune sand. 99.7 percent of that mass is in the saltation band.",
+          "Measured grain size for Saudi dune fields, including the Rub' al-Khali, which the paper says is similar to the dune sand of the eastern UAE. By our calculation from its Table 1, 99.7 percent of that mass falls in the 60 to 2000 µm saltation band.",
         kind: "literature",
         url: "https://doi.org/10.1007/s12517-015-1970-9",
       },
       {
         label: "Chappell et al. (2024), Geophys. Res. Lett. 51, e2023GL106540, Eq 3",
         citation:
-          "Chappell, A.; Webb, N. P.; Hennen, M.; et al. Evaluating Aeolian Dust Emission from a Land Surface Model. Geophys. Res. Lett. 2024, 51, e2023GL106540.",
+          "Chappell, A.; Hennen, M.; Schepanski, K.; Dhital, S.; Tong, D. Reducing Resolution Dependency of Dust Emission Modeling Using Albedo-Based Wind Friction. Geophys. Res. Lett. 2024, 51 (5), e2023GL106540.",
         detail:
           "Sandblasting efficiency against soil clay content: how much fine dust saltating grains knock loose.",
         kind: "literature",
@@ -584,7 +584,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label: "Tian et al. (2018), Land Degrad. Dev. 29, 4271",
         citation:
-          "Tian, J.; Dong, Z.; Shi, Z.; et al. Aeolian Sand Transport over a Wind-Eroded Surface. Land Degrad. Dev. 2018, 29 (11), 4271–4281.",
+          "Tian, K.; Wu, Y.; Zhang, H.; Li, D.; Nie, K.; Zhang, S. Increasing Wind Erosion Resistance of Aeolian Sandy Soil by Microbially Induced Calcium Carbonate Precipitation. Land Degrad. Dev. 2018, 29 (12), 4271–4281.",
         detail:
           "Wind tunnel threshold for untreated aeolian sand, 5.73 m/s at 0.6 m. An independent check on the threshold this model computes from grain size.",
         kind: "literature",
@@ -593,7 +593,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       {
         label: "Ginoux et al. (2012), Rev. Geophys. 50, RG3005",
         citation:
-          "Ginoux, P.; Prospero, J. M.; Gill, T. E.; Hsu, N. C.; Zhao, M. Global-Scale Attribution of Anthropogenic and Natural Dust Sources. Rev. Geophys. 2012, 50, RG3005.",
+          "Ginoux, P.; Prospero, J. M.; Gill, T. E.; Hsu, N. C.; Zhao, M. Global-Scale Attribution of Anthropogenic and Natural Dust Sources and Their Emission Rates Based on MODIS Deep Blue Aerosol Products. Rev. Geophys. 2012, 50, RG3005.",
         detail:
           "The mapped dust source areas, by how often dust is seen over them. 0.1 degree grid, March to May only for this region.",
         kind: "literature",
@@ -664,7 +664,7 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
       },
       {
         label:
-          "Alhebsi, Abuelgasim, Almurshidi, Al Hosani & Ramadan (2025), ISPRS Archives XLVIII-4/W17",
+          "Alhebsi, Abuelgasim, Almurshidi, Al Hosani & Ramadan (2026), ISPRS Archives XLVIII-4/W17-2025",
         detail:
           "Twenty Abu Dhabi stations, 2022. PM10 peaks near 218 µg/m³ in summer and the PM2.5/PM10 ratio stays under 0.5, which says the sources are natural. It names the UAE part of the Rub' al Khali as the primary PM10 source inland and west.",
         kind: "literature",

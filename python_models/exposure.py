@@ -37,7 +37,7 @@ Sources
 -------
 Sandblasting efficiency vs clay : Chappell et al. (2024), GRL, 10.1029/2023GL106540, Eq 3
 Settling velocity               : Ferguson & Church (2004), J Sediment Res 74, 933
-Grain size                      : Benaafi et al. (2016), Arab J Geosci, Table 1
+Grain size                      : Benaafi & Abdullatif (2015), Arab J Geosci 8, Table 1
 Mapped hotspots                 : Ginoux et al. (2012), Rev Geophys 50, RG3005
 Wind                            : ERA5 2022-2024 via the Open-Meteo archive
 Target sites                    : OpenStreetMap contributors, ODbL
