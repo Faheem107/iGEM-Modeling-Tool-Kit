@@ -21,6 +21,7 @@ import {
   type Grain,
 } from "@/src/lib/dune-story/geometry";
 import { BEATS } from "./beats";
+import { WikiBeatLink } from "@/src/components/landing/WikiBeatLink";
 import { CrustScene, EnzymeScene, FieldScene, GrainScene } from "./scenes";
 import HeroSandyx from "./HeroSandyx";
 
@@ -471,6 +472,8 @@ export default function LandingStory({
                       >
                         {beat.line}
                       </p>
+                      <span className="hidden md:block" />
+                      <WikiBeatLink link={beat.wiki} shadow={shadow} />
                     </div>
                   </div>
                 </div>
