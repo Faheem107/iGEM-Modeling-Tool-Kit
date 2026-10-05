@@ -9,8 +9,11 @@ honest limitation (water solubility / rain washout) is modelled too.
 Exact port of src/lib/physics/alginate.ts.
   rho_polymer = concToRho * C_applied
   theta       = [Ca]/(Kd + [Ca])
-  nu          = rho_polymer * theta * F_G * (1 - 2 Mx/Mn)
+  nu          = (rho_polymer * theta * F_G / Mx) * (1 - 2 Mx/Mn)   [mol/m3]
   G           = nu R T
+
+The division by Mx is the same correction described in crosslink.py: nu has to be a molar
+strand concentration for nu * R * T to be a stress.
   R(n)        = (1 - k)^n                          residual after n rain cycles
 
 Constants from ALGINATE_CALIB (constants.ts): guluronateFraction 0.55, KdCa 1.0 mM,
@@ -46,8 +49,9 @@ def egg_box_saturation(ca_mM, Kd=KD_CA):
 def gel_modulus(applied_percent, ca_mM, temperature=T):
     rho = np.maximum(0.0, applied_percent) * CONC_TO_RHO
     theta = egg_box_saturation(ca_mM)
+    Mx_kg_per_mol = max(1e-6, MX / 1000.0)
     end_correction = max(0.0, 1 - 2 * MX / MN)
-    nu = rho * theta * F_G * end_correction
+    nu = rho * theta * F_G / Mx_kg_per_mol * end_correction
     return nu * R * temperature   # Pa
 
 

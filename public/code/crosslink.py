@@ -6,9 +6,13 @@ carboxylated biopolymer (gamma-PGA) into a load-bearing hydrogel, via a Langmuir
 binding isotherm feeding affine rubber-elasticity network theory.
 
 Exact port of src/lib/physics/crosslink.ts.
-  theta = [C2+] / (Kd + [C2+])                 fractional site saturation (Langmuir)
-  nu    = rho_polymer * theta * (1 - 2 Mx/Mn)  effective network density
-  G     = nu * R * T                            shear modulus [Pa]
+  theta = [C2+] / (Kd + [C2+])                       fractional site saturation (Langmuir)
+  nu    = (rho_polymer * theta / Mx) * (1 - 2 Mx/Mn) elastic strand density [mol/m3]
+  G     = nu * R * T                                  shear modulus [Pa]
+
+The affine network model is G = (rho / Mx) R T, so nu has to be a molar concentration of
+elastic strands before nu * R * T comes out in Pa. Mx is given in g/mol, as the interface
+and the literature both do, and converted to kg/mol here.
 
 Constants from CROSSLINK_CALIB in src/lib/physics/constants.ts:
   KdPGA = 4.0 mM. R = 8.314462618 J/mol/K (PHYS.R). Run:  python crosslink.py
@@ -36,8 +40,9 @@ def saturation(ca_mM, Kd=KD_PGA):
 
 
 def crosslink_density(rho_polymer, theta, Mx, Mn):
+    Mx_kg_per_mol = max(1e-6, Mx / 1000.0)
     end_correction = 1 - 2 * Mx / Mn
-    return np.maximum(0.0, rho_polymer * theta * end_correction)
+    return np.maximum(0.0, rho_polymer * theta / Mx_kg_per_mol * end_correction)
 
 
 def shear_modulus(rho_polymer, ca_mM, Mx=2000.0, Mn=100000.0, temperature=T):

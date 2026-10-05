@@ -13,7 +13,8 @@ Exact port of src/lib/physics/caco3.ts.
 
 Constants from CACO3_CALIB in src/lib/physics/constants.ts (pKa1 6.35, pKa2 10.33,
 pKspCalcite 8.48, pKspACC 6.4, kPrecip 0.12, kAccToCalcite 0.05, vateriteFraction 0.6,
-kVateriteToCalcite 0.02, vateriteStrengthFactor 0.55, kUcs 31.6, nUcs 1.5).
+kVateriteToCalcite 0.02, vateriteStrengthFactor 0.55, kUcs 31.6, nUcs 1.5,
+kHydrationUncatalysed 140, kCo2Transfer 0.6, caRateEnhancement 1e6).
 Run:  python caco3.py
 """
 
@@ -31,6 +32,10 @@ plt.rcParams.update({
 pKa1, pKa2 = 6.35, 10.33
 pKspCal, pKspACC = 8.48, 6.4
 kPrecip, kRipen = 0.12, 0.05
+# Carbonic anhydrase speeds up CO2 hydration; it does not move the equilibrium. So activity
+# feeds the rate constant, and the un-catalysed hydration rate and the CO2 delivery rate are
+# kept apart because they sit in series.
+kHydrationUncat, kCo2Transfer, caEnhancement = 140.0, 0.6, 1.0e6
 fVaterite, kVatToCal, vatStrength = 0.6, 0.02, 0.55
 kUcs, nUcs = 31.6, 1.5
 M_CaCO3 = 100.0869
@@ -50,8 +55,10 @@ def simulate(ca_mM=20.0, dic_max_mM=25.0, pH=9.5, ca_activity=0.9,
              hours=48.0, dt=0.25, sand_g_per_L=1500.0):
     steps = int(round(hours / dt))
     a2 = alpha2(np.clip(pH, 8.5, 10.5))
-    dic_target = dic_max_mM * np.clip(ca_activity, 0, 1) / 1000.0
-    kDic = 0.6
+    dic_target = dic_max_mM / 1000.0
+    activity = float(np.clip(ca_activity, 0, 1))
+    kHydration = kHydrationUncat * (1 + activity * (caEnhancement - 1))
+    kDic = 1.0 / (1.0 / kCo2Transfer + 1.0 / kHydration)
     ca, dic, acc, vaterite, calcite = ca_mM / 1000.0, 0.0, 0.0, 0.0, 0.0
     t = np.zeros(steps + 1)
     cal_series, vat_series, si_series = (np.zeros(steps + 1) for _ in range(3))
