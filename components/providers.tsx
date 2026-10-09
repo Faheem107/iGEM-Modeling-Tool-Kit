@@ -24,7 +24,7 @@ export function Providers({ children }: { children: ReactNode }) {
   // free of a mismatch.
   useEffect(() => {
     try {
-      if (localStorage.getItem(THEME_KEY) === "light") setIsLightMode(true);
+      if (localStorage.getItem(THEME_KEY) === "dark") setIsLightMode(false);
     } catch {
       /* private mode: the default stands */
     }

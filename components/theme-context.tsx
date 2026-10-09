@@ -6,7 +6,7 @@ import React, { createContext, useContext, useState } from "react";
 export const THEME_KEY = "dunelock:theme";
 
 /**
- * Theme state. Dark is the default, and it is the value both the server render
+ * Theme state. Light is the default, and it is the value both the server render
  * and the first client render use, which is what keeps hydration honest: the
  * server cannot know a reader's saved choice, so nothing may depend on it until
  * after hydration. The saved choice is read in components/providers.tsx, inside
@@ -19,12 +19,12 @@ const ThemeContext = createContext<{
   isLightMode: boolean;
   setIsLightMode: (val: boolean) => void;
 }>({
-  isLightMode: false, // Dark is the default
+  isLightMode: true, // Light is the default
   setIsLightMode: () => {},
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [isLightMode, setIsLightMode] = useState(false);
+  const [isLightMode, setIsLightMode] = useState(true);
 
   const choose = (val: boolean) => {
     setIsLightMode(val);
