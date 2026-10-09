@@ -45,35 +45,35 @@ export const MODULE_VIDEOS: Record<VideoId, ModuleVideo> = {
     title: "How the cell decides where carbon goes",
     plain:
       "Imagine the cell as a city of pipes carrying sugar. Flux Balance Analysis asks: with a fixed sugar supply and no carbon allowed to pile up anywhere, which routing sends the most flow toward the product we want? It is a traffic plan on a fixed road network. The answer tells the rest of the models how much precursor the cell can spare.",
-    length: "~47 s",
+    length: "~53 s",
     ready: true,
   },
   metabolic: {
     title: "From gene to glue, step by step",
     plain:
       'A gene is a recipe. First it is copied into a short-lived message (mRNA), that message is read to build the enzyme, and the enzyme then stitches glutamate into long γ-PGA chains. We follow all three in time, and show how knocking out the "scissors" genes that chew γ-PGA back up lets it pile up instead.',
-    length: "~54 s",
+    length: "~66 s",
     ready: true,
   },
   crosslink: {
     title: "Why calcium turns goo into gel",
     plain:
       "γ-PGA on its own is a floppy tangle of negatively-charged chains. Add calcium, which carries two positive charges, and each ion clamps two chains together. Enough clamps and the tangle becomes a springy solid. We count the clamps with a binding curve and turn that count into a stiffness.",
-    length: "~50 s",
+    length: "~62 s",
     ready: true,
   },
   "ca-anchoring": {
     title: "Bolting an enzyme to the cell wall",
     plain:
       "To speed up cementing, we put the enzyme carbonic anhydrase on the OUTSIDE of the bacterium. Getting it there is a relay: export it, fold it, and staple it down. Each step only works part of the time, so the final active fraction is those chances multiplied together, and the enzyme itself speeds the key reaction about a million-fold.",
-    length: "~40 s",
+    length: "~49 s",
     ready: true,
   },
   caco3: {
     title: "Turning CO₂ and calcium into rock",
     plain:
       "The enzyme grabs CO₂ from the air and turns it into carbonate. Carbonate meets calcium in the sand and, once the water is over-saturated, they crystallise into solid calcium carbonate that glues grains together. The twist: it does not become hard limestone instantly. It first forms a softer crystal called vaterite, which slowly rearranges into strong calcite, so the crust literally gets stronger as it ages.",
-    length: "~63 s",
+    length: "~75 s",
     ready: true,
   },
   alginate: {
@@ -87,35 +87,35 @@ export const MODULE_VIDEOS: Record<VideoId, ModuleVideo> = {
     title: "Why heat can switch a protein off",
     plain:
       'A protein is only useful when it is folded into the right shape. Heat is a tug-of-war between order and disorder; past a certain temperature the disorder wins and the protein unfolds. We track the folded fraction, the "how alive is this enzyme" dial that gates every downstream rate.',
-    length: "~40 s",
+    length: "~53 s",
     ready: true,
   },
   "protein-3d": {
     title: "A look inside the real enzymes",
     plain:
       "These are the actual 3-D shapes of the two proteins we engineer, γ-PGA synthase for Route 1 and carbonic anhydrase for Route 2, traced from real deposited structures. Following the backbone shows where the chemistry happens: the active-site pocket that does all the work.",
-    length: "~46 s",
+    length: "~55 s",
     ready: true,
   },
   ecological: {
     title: "Spreading safely, the kill switch",
     plain:
       "A living crust keeps repairing itself, which is the point, and also the risk. The bacteria grow and diffuse across the sand like ink in water, but we engineer a kill switch: cross an environmental trigger and a toxin gene shuts the colony down. We watch growth and containment fight it out on a resource grid.",
-    length: "~36 s",
+    length: "~42 s",
     ready: true,
   },
   aeolian: {
     title: "What it takes to stop sand from blowing",
     plain:
       "Wind only moves sand once it blows harder than a threshold. Below it, nothing happens. Just above it, sand transport climbs as the cube of the wind speed. Our crust adds stickiness between grains, which raises that threshold, so the same wind that used to strip bare sand now slides harmlessly over the treated surface.",
-    length: "~45 s",
+    length: "~58 s",
     ready: true,
   },
   wetlab: {
     title: "From the wet lab to the dune",
     plain:
       "This connects real lab numbers, how dense the culture is, how much glutamate we feed, how salty the water is, straight into the same wind-erosion physics. Change a wet lab dial and watch the virtual dune hold or erode, so an experiment on Monday becomes a field prediction on Tuesday.",
-    length: "~39 s",
+    length: "~55 s",
     ready: true,
   },
   grainsize: {

@@ -1,58 +1,57 @@
 WEBVTT
 
 1
-00:00:00.000 --> 00:00:03.126
+00:00:00.000 --> 00:00:04.140
 Every cell is a tiny chemical factory. Feed it sugar, and
 
 2
-00:00:03.226 --> 00:00:06.012
+00:00:04.190 --> 00:00:06.940
 it has to decide where all that carbon should flow.
 
 3
-00:00:06.879 --> 00:00:09.364
+00:00:07.470 --> 00:00:10.240
 Think of its metabolism as a network of pipes.
 
 4
-00:00:09.464 --> 00:00:12.510
+00:00:10.890 --> 00:00:14.000
 Sugar enters here, and splits between building new cells
 
 5
-00:00:12.610 --> 00:00:14.589
+00:00:14.050 --> 00:00:16.520
 and making the product we care about.
 
 6
-00:00:14.689 --> 00:00:17.936
+00:00:16.870 --> 00:00:21.140
 The key rule is balance. At steady state nothing is allowed to
 
 7
-00:00:18.036 --> 00:00:21.120
+00:00:21.190 --> 00:00:25.240
 pile up: whatever flows into a junction must flow back out.
 
 8
-00:00:22.220 --> 00:00:25.249
+00:00:25.290 --> 00:00:29.260
 So the cell is really solving a routing puzzle: given a
 
 9
-00:00:25.349 --> 00:00:28.207
+00:00:29.310 --> 00:00:32.840
 fixed sugar supply, which split of the flow is best?
 
 10
-00:00:28.273 --> 00:00:32.069
+00:00:33.490 --> 00:00:37.620
 Flux Balance Analysis picks the routing that maximises our objective,
 
 11
-00:00:32.169 --> 00:00:35.174
+00:00:38.070 --> 00:00:41.920
 here, the precursor that feeds the rest of the toolkit.
 
 12
-00:00:38.074 --> 00:00:40.410
+00:00:42.330 --> 00:00:45.040
 No new chemistry is invented. it is simply the
 
 13
-00:00:40.510 --> 00:00:42.898
+00:00:45.090 --> 00:00:48.500
 best traffic plan on a fixed road network. That
 
 14
-00:00:42.998 --> 00:00:45.811
+00:00:48.550 --> 00:00:51.700
 single number sets the stage for everything downstream.
-

@@ -1,54 +1,53 @@
 WEBVTT
 
 1
-00:00:00.000 --> 00:00:03.924
+00:00:00.000 --> 00:00:04.640
 The models talk about proteins, but what do they actually look like?
 
 2
-00:00:04.024 --> 00:00:07.475
+00:00:05.010 --> 00:00:09.480
 Let's trace two of them, atom by atom, from real structures.
 
 3
-00:00:08.175 --> 00:00:10.893
+00:00:10.050 --> 00:00:13.680
 This is carbonic anhydrase, the enzyme we bolt
 
 4
-00:00:10.993 --> 00:00:13.405
+00:00:13.730 --> 00:00:16.780
 onto the cell to turn carbon dioxide into
 
 5
-00:00:13.505 --> 00:00:16.591
+00:00:16.830 --> 00:00:21.460
 carbonate. Every twist is its real, folded backbone.
 
 6
-00:00:16.975 --> 00:00:19.860
+00:00:21.990 --> 00:00:25.540
 Follow the chain to where the chemistry happens: three
 
 7
-00:00:19.960 --> 00:00:22.735
+00:00:25.590 --> 00:00:29.760
 histidines clamp a single zinc ion. That tiny pocket
 
 8
-00:00:22.835 --> 00:00:25.443
+00:00:29.810 --> 00:00:32.540
 is what speeds the reaction about a million-fold.
 
 9
-00:00:27.875 --> 00:00:30.900
+00:00:33.510 --> 00:00:37.100
 And this is the other one, the synthase that stitches
 
 10
-00:00:31.000 --> 00:00:35.382
+00:00:37.150 --> 00:00:42.720
 glutamate into long gamma-P-G-A chains. This fold is AlphaFold's prediction,
 
 11
-00:00:35.482 --> 00:00:37.623
+00:00:43.190 --> 00:00:45.720
 not a crystal, so we flag it honestly.
 
 12
-00:00:38.342 --> 00:00:41.346
+00:00:46.310 --> 00:00:50.280
 Two real enzymes, two real shapes, and the pocket on each
 
 13
-00:00:41.446 --> 00:00:44.668
+00:00:50.330 --> 00:00:54.200
 one is where every downstream number in this toolkit is born.
-
