@@ -147,7 +147,7 @@ const GAPS: Gap[] = [
   },
   {
     title: "The crust strength is ours to measure",
-    body: "How much cohesion the treatment adds is a dial on this page because our own lab has not measured it yet. Until it does, the difference we report is a range, not a number.",
+    body: "How much cohesion the treatment adds is a dial on this page because our own lab has not measured it yet. Until it does, the difference we report is a range, not a number. Experiments are ongoing!",
   },
   {
     title: "The browser has not been checked against the maths",
