@@ -77,7 +77,7 @@ export const PRONG_TITLES = {
 
 /** One lede per prong. Previously four to five phrasings each. */
 export const PRONG_SHORTS = {
-  1: "γ-PGA, a sticky biopolymer. The genes are there but silent, so we switch them on",
+  1: "γ-PGA, a sticky biopolymer. The native genes are silent, so we put them back in on a plasmid",
   2: "Calcium carbonate formed between grains, without ammonia",
   3: "A gel you spread on. Modelled, not deployed",
 } as const;
@@ -95,7 +95,8 @@ export const PRONG_MOLECULES = {
 
 export const KILL_SWITCH_TITLE = "Biocontainment Kill Switch";
 
-export const KILL_SWITCH_SHORT = "A toxin that the cells hold in check, until they cannot";
+export const KILL_SWITCH_SHORT =
+  "A toxin held in check by a co-expressed antitoxin, with induced excess triggering cell death";
 
 /** How the kill switch is framed relative to the prongs. Was five phrasings. */
 export const KILL_SWITCH_ROLE = "Biosafety layer over both routes";

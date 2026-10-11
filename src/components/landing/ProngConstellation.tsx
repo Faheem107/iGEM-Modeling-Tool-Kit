@@ -221,6 +221,18 @@ export default function ProngConstellation({
         {/* Section head */}
         <div className="mb-4 flex flex-wrap items-end justify-between gap-6">
           <div>
+            {/* The figure takes about six seconds to tell its change, and a
+                reader who keeps scrolling sees three labels and never the two.
+                The line says so, and it goes once the change has happened. */}
+            <motion.p
+              className="caption mb-4 hidden text-dune-orange md:block"
+              initial={false}
+              animate={{ opacity: settled ? 0 : 1 }}
+              transition={{ duration: 0.5, ease: EASE }}
+              aria-hidden={settled}
+            >
+              Stop scrolling and watch. This figure changes.
+            </motion.p>
             <p className="caption mb-4">The design, and every model in it</p>
             {/* Cross-faded in place. Swapping the string mid-sequence read as a
                 glitch rather than as the count changing. */}
