@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import { useTheme } from "@/components/theme-context";
 import LandingStory from "@/src/components/landing-story/LandingStory";
-import DesignCycleStory from "@/src/components/DesignCycleStory";
 import ProngConstellation from "@/src/components/landing/ProngConstellation";
 import ModelCycle from "@/src/components/landing/ModelCycle";
 import SandyxAdventure from "@/src/components/SandyxAdventure";
@@ -73,8 +72,10 @@ export default function LandingView() {
         onOpenAdventure={() => setShowAdventure(true)}
       />
 
-      {/* --- ENGINEERING DESIGN CYCLE: scroll-scrubbed 5-beat story --- */}
-      <DesignCycleStory isLightMode={isLightMode} />
+      {/* --- THE ENGINEERING CYCLE: the five turns the models took, in the
+          same diagram the wiki's Model page draws, so the two read as one
+          team's work. --- */}
+      <ModelCycle />
 
       {/* --- THE PRONGS + THE MODEL INDEX: the 3 → 2 reframe and the added
           kill switch, told in type and hairlines, with every model, the
@@ -84,12 +85,6 @@ export default function LandingView() {
         onExplorePortals={() => router.push("/portals")}
         onSimulateBoth={() => goToModel([1, 2])}
       />
-
-      {/* --- THE ENGINEERING CYCLE: the same five iterations the wiki's Model
-          page shows, in the same diagram, so the two read as one team's work.
-          It comes after the index because the routes say what the models are,
-          and this says how they got that way. --- */}
-      <ModelCycle />
 
       {/* --- PRONG / KILL-SWITCH INFORMATION MODAL --- */}
       <ProngModal

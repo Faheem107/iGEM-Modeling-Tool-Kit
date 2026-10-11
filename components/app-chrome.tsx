@@ -26,7 +26,7 @@ import { playCinematic } from "@/src/lib/storyPlayback";
 const LANDING_LINKS: { label: string; to: string }[] = [
   { label: "models", to: "#models" },
   { label: "story", to: "#cinematic" },
-  { label: "design", to: "#design-cycle" },
+  { label: "design", to: "#model-cycle" },
 ];
 
 const SITE_LINKS: { label: string; href: string }[] = [
@@ -84,7 +84,7 @@ export function AppChrome() {
     // takes 0 rather than its own offset.
     if (sel === "#cinematic") return curtainJumpTo(0, 0, playCinematic);
     if (sel === "#models") return curtainJumpTo(el as HTMLElement, -70);
-    if (sel === "#design-cycle") return curtainJumpTo(el as HTMLElement, -70);
+    if (sel === "#model-cycle") return curtainJumpTo(el as HTMLElement, -70);
     smoothNavTo(el as HTMLElement, -70);
   };
 
