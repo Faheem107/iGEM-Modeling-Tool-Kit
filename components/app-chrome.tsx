@@ -102,13 +102,16 @@ export function AppChrome() {
     />
   );
 
+  // The icon shows the theme you would be switching TO, which is the thing the
+  // word used to say. A sun while the page is dark, a moon while it is light.
   const themeToggle = (
     <button
       onClick={() => setIsLightMode(!isLightMode)}
       aria-label={isLightMode ? "Switch to dark theme" : "Switch to light theme"}
-      className="caption shrink-0 border border-border px-3 py-2 text-muted-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
+      title={isLightMode ? "Switch to dark theme" : "Switch to light theme"}
+      className="inline-flex h-[38px] w-[38px] shrink-0 items-center justify-center border border-border text-muted-foreground transition-colors hover:border-dune-orange hover:text-dune-orange"
     >
-      {isLightMode ? "Dark" : "Light"}
+      {isLightMode ? <MoonIcon /> : <SunIcon />}
     </button>
   );
 
@@ -227,5 +230,46 @@ export function AppChrome() {
         isLightMode={isLightMode}
       />
     </>
+  );
+}
+
+/**
+ * The two theme marks. Drawn inline rather than pulled from an icon package,
+ * because they are the only two icons the chrome needs and they inherit the
+ * button's colour on their own.
+ */
+function SunIcon() {
+  return (
+    <svg
+      aria-hidden
+      fill="none"
+      height="17"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeWidth="1.5"
+      viewBox="0 0 24 24"
+      width="17"
+    >
+      <circle cx="12" cy="12" r="4.4" />
+      <path d="M12 2.4v2.2M12 19.4v2.2M2.4 12h2.2M19.4 12h2.2M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M18.8 5.2l-1.6 1.6M6.8 17.2l-1.6 1.6" />
+    </svg>
+  );
+}
+
+function MoonIcon() {
+  return (
+    <svg
+      aria-hidden
+      fill="none"
+      height="17"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.5"
+      viewBox="0 0 24 24"
+      width="17"
+    >
+      <path d="M20.3 14.2A8.4 8.4 0 0 1 9.8 3.7a8.4 8.4 0 1 0 10.5 10.5Z" />
+    </svg>
   );
 }

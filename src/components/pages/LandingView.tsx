@@ -7,6 +7,7 @@ import { useTheme } from "@/components/theme-context";
 import LandingStory from "@/src/components/landing-story/LandingStory";
 import DesignCycleStory from "@/src/components/DesignCycleStory";
 import ProngConstellation from "@/src/components/landing/ProngConstellation";
+import ModelCycle from "@/src/components/landing/ModelCycle";
 import SandyxAdventure from "@/src/components/SandyxAdventure";
 import ProngModal, { type ProngTarget } from "@/src/components/ProngModal";
 import { restoreLandingScroll } from "@/src/lib/scrollRestore";
@@ -83,6 +84,12 @@ export default function LandingView() {
         onExplorePortals={() => router.push("/portals")}
         onSimulateBoth={() => goToModel([1, 2])}
       />
+
+      {/* --- THE ENGINEERING CYCLE: the same five iterations the wiki's Model
+          page shows, in the same diagram, so the two read as one team's work.
+          It comes after the index because the routes say what the models are,
+          and this says how they got that way. --- */}
+      <ModelCycle />
 
       {/* --- PRONG / KILL-SWITCH INFORMATION MODAL --- */}
       <ProngModal

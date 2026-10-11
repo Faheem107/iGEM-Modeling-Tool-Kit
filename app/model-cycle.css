@@ -1,0 +1,506 @@
+/* ---------- The engineering cycle ----------
+   The same section the wiki's Model page carries, restated here on the dune
+   tokens. The diagram's class names are the engine's (see
+   src/lib/edcDiagram.ts), so its rules are scoped under .model-cycle rather
+   than written as utilities. Everything reads from the --mc-* locals below, so
+   the light and dark palettes are the only thing that differs between the two
+   sites. */
+
+.model-cycle {
+  --mc-accent: var(--dune-orange);
+  --mc-ink: var(--foreground);
+  --mc-muted: var(--muted-foreground);
+  --mc-soft: color-mix(in srgb, var(--muted-foreground) 88%, transparent);
+  --mc-faint: color-mix(in srgb, var(--muted-foreground) 55%, transparent);
+  --mc-line: var(--border);
+  --mc-dash: color-mix(in srgb, var(--foreground) 26%, transparent);
+  /* The ground a node or a dot is punched out of. --background is transparent
+     in dark mode, which would let the track line show through the nodes. */
+  --mc-ground: var(--dune-paper);
+  border-block-start: 1px solid var(--border);
+  margin-inline: auto;
+  max-width: 1100px;
+  padding-block: clamp(48px, 7vw, 96px);
+  padding-inline: clamp(24px, 7vw, 96px);
+  /* The nav is sticky, so an anchor into this section has to stop below it. */
+  scroll-margin-block-start: 6rem;
+}
+
+.dark .model-cycle {
+  --mc-ground: var(--dune-ink);
+}
+
+.model-cycle-head {
+  align-items: end;
+  display: grid;
+  gap: clamp(20px, 4vw, 56px);
+  grid-template-columns: 1fr 1fr;
+  margin-block-end: clamp(28px, 4vw, 44px);
+}
+
+.model-cycle-eyebrow,
+.model-cycle-count {
+  color: var(--mc-soft);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  margin: 0 0 10px;
+  text-transform: uppercase;
+}
+
+.model-cycle h2 {
+  color: var(--mc-ink);
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.model-cycle-status {
+  border-inline-start: 2px solid var(--mc-accent);
+  margin: 0;
+  padding-inline-start: 16px;
+}
+
+.model-cycle-status strong {
+  color: var(--mc-accent);
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.model-cycle-status span {
+  color: var(--mc-muted);
+  display: block;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  margin-block-start: 4px;
+  text-wrap: pretty;
+}
+
+.model-cycle-body {
+  align-items: start;
+  display: grid;
+  gap: clamp(28px, 5vw, 64px);
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+}
+
+.model-cycle-info h3 {
+  animation: model-cycle-rise 320ms ease both;
+  color: var(--mc-ink);
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0 0 12px;
+  text-wrap: balance;
+}
+
+.model-cycle-summary {
+  animation: model-cycle-rise 320ms ease 60ms both;
+  color: var(--mc-muted);
+  font-size: 0.94rem;
+  line-height: 1.6;
+  margin: 0 0 14px;
+  min-height: 4.8em;
+  text-wrap: pretty;
+}
+
+@keyframes model-cycle-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+.model-cycle-link {
+  color: var(--mc-accent);
+  display: inline-block;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-transform: uppercase;
+  text-underline-offset: 4px;
+}
+
+.model-cycle-link::before {
+  content: "Open ";
+}
+
+.model-cycle-link::after {
+  content: " \2197";
+}
+
+.model-cycle-link:hover,
+.model-cycle-link:focus-visible {
+  text-decoration-thickness: 2px;
+}
+
+/* The iteration row: a hairline that fills as far as the current turn. */
+.model-cycle-nav {
+  margin-block-start: 30px;
+  padding: 10px 0 34px;
+  position: relative;
+}
+
+.model-cycle-track {
+  background: var(--mc-line);
+  height: 2px;
+  inset-inline: 7px;
+  position: absolute;
+  top: 17px;
+}
+
+.model-cycle-fill {
+  background: var(--mc-accent);
+  height: 100%;
+  transition: width 420ms ease;
+}
+
+.model-cycle-dots {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.model-cycle-dot {
+  background: var(--mc-ground);
+  border: 2px solid var(--mc-dash);
+  border-radius: 50%;
+  cursor: pointer;
+  height: 14px;
+  padding: 0;
+  position: relative;
+  transition:
+    border-color 200ms ease,
+    background 200ms ease,
+    box-shadow 200ms ease;
+  width: 14px;
+}
+
+/* A 14px dot is too small to tap, so the hit area is widened around it. */
+.model-cycle-dot::before {
+  content: "";
+  inset: -15px;
+  position: absolute;
+}
+
+.model-cycle-dot:hover,
+.model-cycle-dot.passed {
+  border-color: var(--mc-accent);
+}
+
+.model-cycle-dot.on {
+  background: var(--mc-accent);
+  border-color: var(--mc-accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--mc-accent) 18%, transparent);
+}
+
+.model-cycle-dot:focus-visible {
+  outline: 2px solid var(--mc-accent);
+  outline-offset: 4px;
+}
+
+.model-cycle-dot span {
+  color: var(--mc-soft);
+  font-size: 0.62rem;
+  font-weight: 600;
+  left: 50%;
+  letter-spacing: 0.02em;
+  position: absolute;
+  text-transform: uppercase;
+  top: 24px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.model-cycle-dot:first-child span {
+  left: 0;
+  transform: none;
+}
+
+.model-cycle-dot:last-child span {
+  left: auto;
+  right: 0;
+  transform: none;
+}
+
+.model-cycle-dot.on span {
+  color: var(--mc-accent);
+}
+
+/* ---------- the diagram and its four cards ---------- */
+
+.model-cycle .edc {
+  display: grid;
+  gap: 16px;
+}
+
+.model-cycle .edc-graphic {
+  margin-inline: auto;
+  max-width: 430px;
+  width: 100%;
+}
+
+.model-cycle .edc-graphic svg {
+  display: block;
+  height: auto;
+  overflow: visible;
+  width: 100%;
+}
+
+.model-cycle .edc-head {
+  align-items: baseline;
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+  margin-block-end: 12px;
+}
+
+.model-cycle .kicker {
+  color: var(--mc-soft);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.model-cycle .edc-head b {
+  color: var(--mc-ink);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-align: right;
+}
+
+.model-cycle .edc-track {
+  fill: none;
+  stroke: var(--mc-line);
+  stroke-width: 2;
+}
+
+.model-cycle .edc-lap {
+  fill: none;
+  stroke: var(--mc-accent);
+  stroke-width: 1.2;
+  transition:
+    opacity 200ms,
+    stroke-width 200ms;
+}
+
+.model-cycle .edc-lap-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 7;
+}
+
+.model-cycle .clickable .edc-lap-hit {
+  cursor: pointer;
+  pointer-events: stroke;
+}
+
+.model-cycle .clickable .edc-lap-group:hover .edc-lap,
+.model-cycle .clickable .edc-lap-group:focus-visible .edc-lap {
+  opacity: 0.85 !important;
+  stroke-width: 2.6;
+}
+
+.model-cycle .edc-lap-group {
+  outline: none;
+}
+
+.model-cycle .edc-progress {
+  fill: none;
+  stroke: var(--mc-accent);
+  stroke-linecap: round;
+  stroke-width: 3;
+}
+
+.model-cycle .edc-chevron {
+  fill: none;
+  stroke: var(--mc-dash);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
+.model-cycle .edc-node {
+  cursor: pointer;
+  outline: none;
+}
+
+.model-cycle .edc-node circle {
+  fill: var(--mc-ground);
+  stroke: var(--mc-dash);
+  stroke-width: 1.5;
+  transition:
+    fill 250ms,
+    stroke 250ms;
+}
+
+.model-cycle .edc-node text {
+  dominant-baseline: central;
+  fill: var(--mc-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-anchor: middle;
+  transition: fill 250ms;
+}
+
+.model-cycle .edc-node .edc-label {
+  fill: var(--mc-soft);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.model-cycle .edc-node.done circle,
+.model-cycle .edc-node:hover circle {
+  stroke: var(--mc-accent);
+}
+
+.model-cycle .edc-node.done text {
+  fill: var(--mc-accent);
+}
+
+.model-cycle .edc-node.on circle {
+  fill: var(--mc-accent);
+  stroke: var(--mc-accent);
+}
+
+.model-cycle .edc-node.on .edc-num {
+  fill: var(--mc-ground);
+}
+
+.model-cycle .edc-node.on .edc-label {
+  fill: var(--mc-accent);
+}
+
+.model-cycle .edc-node:focus-visible circle {
+  stroke-width: 3;
+}
+
+.model-cycle .edc-traveller {
+  fill: var(--mc-accent);
+}
+
+.model-cycle .edc-traveller-halo {
+  fill: var(--mc-accent);
+  opacity: 0.18;
+}
+
+.model-cycle .edc-center-of {
+  fill: var(--mc-soft);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-anchor: middle;
+  text-transform: uppercase;
+}
+
+.model-cycle .edc-cards {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.model-cycle .edc-card {
+  background: transparent;
+  border: 1px solid var(--mc-line);
+  border-radius: 6px;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  padding: 14px 16px 14px 18px;
+  position: relative;
+  text-align: left;
+  transition:
+    border-color 200ms,
+    background 200ms;
+}
+
+.model-cycle .edc-card::before {
+  background: var(--mc-line);
+  bottom: 14px;
+  content: "";
+  left: 0;
+  position: absolute;
+  top: 14px;
+  transition: background 200ms;
+  width: 3px;
+}
+
+.model-cycle .edc-card small {
+  align-items: center;
+  color: var(--mc-soft);
+  display: flex;
+  font-size: 0.66rem;
+  font-weight: 600;
+  gap: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.model-cycle .edc-card small i {
+  color: var(--mc-faint);
+  font-style: normal;
+}
+
+.model-cycle .edc-card p {
+  color: var(--mc-muted);
+  font-size: 0.86rem;
+  line-height: 1.55;
+  margin: 6px 0 0;
+  text-wrap: pretty;
+}
+
+.model-cycle .edc-card:hover {
+  border-color: var(--mc-dash);
+}
+
+.model-cycle .edc-card.on {
+  background: color-mix(in srgb, var(--mc-accent) 7%, transparent);
+  border-color: var(--mc-accent);
+}
+
+.model-cycle .edc-card.on::before {
+  background: var(--mc-accent);
+}
+
+.model-cycle .edc-card.on p {
+  color: var(--mc-ink);
+}
+
+.model-cycle .edc-card:focus-visible {
+  outline: 2px solid var(--mc-accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 900px) {
+  .model-cycle-head,
+  .model-cycle-body {
+    grid-template-columns: 1fr;
+  }
+
+  .model-cycle-summary {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .model-cycle .edc-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .model-cycle-info h3,
+  .model-cycle-summary {
+    animation: none;
+  }
+
+  .model-cycle-fill {
+    transition: none;
+  }
+}

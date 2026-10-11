@@ -4,6 +4,7 @@ import { Lexend, Press_Start_2P } from "next/font/google";
 import localFont from "next/font/local";
 import { Suspense } from "react";
 import "./globals.css";
+import "./model-cycle.css";
 import "katex/dist/katex.min.css";
 import { ThemeProvider } from "@/components/theme-context";
 import { GradientBackground } from "@/components/gradient-background";
