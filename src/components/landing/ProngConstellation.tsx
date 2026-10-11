@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, useInView } from "motion/react";
 import { gsap } from "gsap";
+import { useScrollFloor } from "@/src/lib/scrollFloor";
 import {
   useMeasuredConnectors,
   type ConnectorSpec,
@@ -44,6 +46,8 @@ type ViewTarget = number | "killswitch";
 // The first hold is long on purpose: the reader has just arrived at the
 // figure, and the strike should happen while they are looking at it.
 const HOLDS = [2.85, 0.9, 0.7, 1.3, 0.55];
+/** Where the figure has finished saying what it changed. */
+const SETTLE_AT = HOLDS.slice(0, 4).reduce((sum, h) => sum + h, 0);
 const EASE = [0.22, 1, 0.36, 1] as const;
 const PARK = { duration: 1.4, ease: EASE };
 
@@ -91,6 +95,7 @@ export default function ProngConstellation({
   const [phase, setPhase] = useState<Phase>(0);
   const [nudge, setNudge] = useState(false);
   const [reduced, setReduced] = useState(false);
+  const [running, setRunning] = useState(false);
 
   useEffect(() => {
     const m = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -119,9 +124,9 @@ export default function ProngConstellation({
 
   // Landing here through a curtain jump means the section can already be in
   // view on the frame the observer is attached, and a hard-refresh at this
-  // scroll position can leave useInView reporting stale. There is no Skip
-  // control any more, so the sequence has to be self-starting: if the host is
-  // inside the viewport and nothing has fired shortly after mount, start it.
+  // scroll position can leave useInView reporting stale. The sequence has to
+  // be self-starting either way: if the host is inside the viewport and
+  // nothing has fired shortly after mount, start it.
   useEffect(() => {
     const id = window.setTimeout(() => {
       const el = hostRef.current;
@@ -146,6 +151,7 @@ export default function ProngConstellation({
       tl.call(() => setPhase((i + 1) as Phase), undefined, acc);
     });
     tlRef.current = tl;
+    setRunning(true);
     return () => {
       tl.kill();
     };
@@ -157,6 +163,20 @@ export default function ProngConstellation({
   const retracting = phase === 2;
   const parked = phase >= 3;
   const settled = phase >= 4;
+
+  // The floor. A reader who keeps scrolling sees three routes and never the
+  // two, so until the figure has finished the page does not go past it. It
+  // exists only while the change is actually running, and Skip ends both the
+  // change and the floor at once.
+  const holding = running && !settled && !reduced;
+  const { held, release } = useScrollFloor({ active: holding, ref: hostRef });
+
+  const skip = useCallback(() => {
+    tlRef.current?.kill();
+    tlRef.current = null;
+    setPhase(5);
+    release();
+  }, [release]);
 
   const connectors: ConnectorSpec[] = useMemo(
     () => [
@@ -221,18 +241,6 @@ export default function ProngConstellation({
         {/* Section head */}
         <div className="mb-4 flex flex-wrap items-end justify-between gap-6">
           <div>
-            {/* The figure takes about six seconds to tell its change, and a
-                reader who keeps scrolling sees three labels and never the two.
-                The line says so, and it goes once the change has happened. */}
-            <motion.p
-              className="caption mb-4 hidden text-dune-orange md:block"
-              initial={false}
-              animate={{ opacity: settled ? 0 : 1 }}
-              transition={{ duration: 0.5, ease: EASE }}
-              aria-hidden={settled}
-            >
-              Stop scrolling and watch. This figure changes.
-            </motion.p>
             <p className="caption mb-4">The design, and every model in it</p>
             {/* Cross-faded in place. Swapping the string mid-sequence read as a
                 glitch rather than as the count changing. */}
@@ -371,6 +379,46 @@ export default function ProngConstellation({
         {/* ---- The index. Everything, grouped and folded. ---- */}
         <ModelIndex onView={onView} />
       </div>
+
+      {/* The floor itself is a few listeners on the window. This is the part
+          the reader sees: why the page stopped, how much of the change is
+          left, and the way out. Desktop only, like the figure it belongs to. */}
+      {holding && createPortal(
+        <motion.div
+          className="fixed inset-x-0 bottom-0 z-40 hidden border-t bg-popover/95 backdrop-blur md:block"
+          style={{ borderTopColor: held ? "var(--dune-orange)" : "var(--border)" }}
+          initial={{ y: "100%" }}
+          animate={{ y: 0 }}
+          transition={{ duration: 0.3, ease: EASE }}
+        >
+          <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-3">
+            <p
+              aria-live="polite"
+              className="text-[length:var(--text-micro)] text-foreground"
+            >
+              This figure changes. The page holds here until it finishes.
+            </p>
+            <button
+              type="button"
+              onClick={skip}
+              className="caption rule-link flex-none text-dune-orange transition-colors hover:text-foreground"
+            >
+              Skip
+            </button>
+          </div>
+          {/* How much of the change is left. A reader who can see the wait is
+              short is far less likely to want out of it. */}
+          <div aria-hidden className="h-[2px] w-full bg-dune-orange/15">
+            <motion.div
+              className="h-full bg-dune-orange"
+              initial={{ width: "0%" }}
+              animate={{ width: "100%" }}
+              transition={{ duration: SETTLE_AT, ease: "linear" }}
+            />
+          </div>
+        </motion.div>,
+        document.body,
+      )}
     </section>
   );
 }
