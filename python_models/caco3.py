@@ -52,7 +52,7 @@ def sat_ratio(ca_M, co3_M, pKsp):
 
 
 def simulate(ca_mM=20.0, dic_max_mM=25.0, pH=9.5, ca_activity=0.9,
-             hours=48.0, dt=0.25, sand_g_per_L=1500.0):
+             hours=48.0, dt=0.25, sand_g_per_L=1500.0, return_acc=False):
     steps = int(round(hours / dt))
     a2 = alpha2(np.clip(pH, 8.5, 10.5))
     dic_target = dic_max_mM / 1000.0
@@ -62,12 +62,14 @@ def simulate(ca_mM=20.0, dic_max_mM=25.0, pH=9.5, ca_activity=0.9,
     ca, dic, acc, vaterite, calcite = ca_mM / 1000.0, 0.0, 0.0, 0.0, 0.0
     t = np.zeros(steps + 1)
     cal_series, vat_series, si_series = (np.zeros(steps + 1) for _ in range(3))
+    acc_series = np.zeros(steps + 1)
     for i in range(steps + 1):
         co3 = a2 * dic
         omegaCal = sat_ratio(ca, co3, pKspCal)
         omegaACC = sat_ratio(ca, co3, pKspACC)
         t[i] = i * dt
         cal_series[i], vat_series[i] = calcite, vaterite
+        acc_series[i] = acc
         si_series[i] = np.log10(omegaCal) if omegaCal > 0 else -np.inf
         dDic = kDic * (dic_target - dic)
         accDrive = max(0.0, omegaACC - 1)
@@ -82,6 +84,10 @@ def simulate(ca_mM=20.0, dic_max_mM=25.0, pH=9.5, ca_activity=0.9,
     cal_wt = cal_series * M_CaCO3 / sand_g_per_L * 100
     vat_wt = vat_series * M_CaCO3 / sand_g_per_L * 100
     load_wt = cal_wt + vatStrength * vat_wt
+    if return_acc:
+        # The amorphous phase as well, for the carbon balance: caco3.ts counts
+        # calcite + vaterite + ACC towards the CO2 held.
+        return t, cal_series, vat_series, si_series, load_wt, acc_series
     return t, cal_series, vat_series, si_series, load_wt
 
 
