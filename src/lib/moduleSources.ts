@@ -406,12 +406,12 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
   },
   economic: {
     intro:
-      "Bottom-up per-route deployment cost, summed per combination and compared against conventional treatment. None of the prices below is a supplier quote yet, so read the comparison rather than the absolute figures.",
+      "Deployment cost per combination, compared against conventional treatment. None of the prices below is a supplier quote yet, so read the comparison rather than the absolute figures.",
     sources: [
       {
-        label: "None of the thirteen cost figures is a supplier quote",
+        label: "None of the cost figures is a supplier quote",
         detail:
-          "Every one of them is our own estimate, and each carries a wide range: the calcium and enzyme figure is 650 USD per hectare with a range of 200 to 1500, a factor of seven and a half. The verification note attached to each constant is written as a job still to do, not as a price already obtained.",
+          "The bacterial treatment is costed at 1,750 USD per hectare, field application included. That is the business team's estimate, not a quote. It replaced a sum we had built from fermentation, calcium and enzyme, and spray-pass prices, which came to about 960 USD per hectare at a 5 mm crust, and the gap between the two is a fair measure of how loosely this number is known. The other figures are our own estimates too, and the verification note attached to each is written as a job still to do.",
         kind: "internal",
       },
       {
@@ -433,9 +433,9 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
         url: "https://doi.org/10.1371/journal.pone.0331241",
       },
       {
-        label: "Why our per-hectare figure is so far under that $135 per m³",
+        label: "How our per-hectare figure compares with that $135 per m³",
         detail:
-          "650 USD buys the dose for a 12.5 mm crust, which is 125 m³ of soil in a hectare, so about 5 USD per m³. The dose scales with depth, so that per-m³ figure holds at any depth. The gap is mostly real: those studies cement a whole soil column to a load-bearing strength, we grow a thin crust to resist wind, and our route makes carbonate from CO₂ rather than urea so it skips roughly 480 kg of urea per hectare. The part we cannot yet check is whether one pore volume of reagent is really enough at depths well beyond the 12.5 mm field trial.",
+          "At a 12.5 mm crust a hectare holds 125 m³ of soil, so 1,750 USD is about 14 USD per m³. Those studies cement a whole soil column to a load-bearing strength, while we grow a thin crust to resist wind, so a per-m³ figure well under theirs is expected. The part we cannot yet check is how the cost of a hectare changes with crust depth, since the estimate is one flat figure.",
         kind: "internal",
       },
       {
@@ -445,14 +445,6 @@ export const MODULE_SOURCES: Record<ModuleId, ModuleSources> = {
           "We use 10.5 USD per kg, the middle of that spread. It is about 20 percent under the US price, so the alginate route is still costed slightly in its favour.",
         kind: "literature",
         url: "https://www.imarcgroup.com/sodium-alginate-price-trend",
-      },
-      {
-        label:
-          "State of the Voluntary Carbon Market 2025 (2024 average ≈ $6.3 tCO₂⁻¹)",
-        detail:
-          "We use $10 per tonne. Calcite is a durable mineral removal and those trade far higher, over $100 per tonne, so this is a deliberate floor. It makes almost no difference either way: the credit is worth a few dollars a hectare against a cost of over a thousand, so treat the tonnage as the result and not the money.",
-        kind: "literature",
-        url: "https://carboncredits.com/carbon-prices-today/",
       },
       {
         label: "Conventional baselines, and how soft they are",

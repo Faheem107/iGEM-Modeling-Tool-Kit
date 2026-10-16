@@ -142,7 +142,7 @@ export const MODULE_VIDEOS: Record<VideoId, ModuleVideo> = {
   economic: {
     title: "Does it actually pencil out?",
     plain:
-      "We build the cost from the ground up: fermentation for γ-PGA, feedstock plus enzyme for cementing, and one shared bioprocess setup. Chemical spray is a flat rate per hectare; our crust carries an upfront cost that spreads out as the treated area grows, so past a break-even of a few tens of hectares it is the cheaper option. Concrete matting sits far above, for scale. The CO₂ credit is real but only a few dollars a hectare, so the captured tonnage is the result, not what pays for the crust.",
+      "Treating a hectare with our bacteria costs about 1,750 USD, the business team's estimate, plus one shared bioprocess setup. Chemical spray is a flat rate per hectare; our crust carries an upfront cost that spreads out as the treated area grows, so past a break-even of a few tens of hectares it is the cheaper option. Concrete matting sits far above, for scale.",
     length: "~64 s",
     ready: true,
   },

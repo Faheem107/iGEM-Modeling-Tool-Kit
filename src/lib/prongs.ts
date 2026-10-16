@@ -240,7 +240,7 @@ export const MODULE_REGISTRY: ModuleMeta[] = [
   {
     id: "economic",
     title: "Economic Scalability",
-    blurb: "What a hectare costs per route, and the point at which that beats spraying conventional stabilizer.",
+    blurb: "What a hectare costs, and the point at which that beats spraying conventional stabilizer.",
     scale: "economic",
     appliesTo: (s) => s.length > 0,
   },

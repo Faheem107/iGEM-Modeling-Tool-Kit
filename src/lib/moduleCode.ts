@@ -180,7 +180,7 @@ export const MODULE_CODE: Partial<Record<ModuleId, ModuleCode>> = {
   economic: entry(
     "economic",
     "Economic Scalability",
-    "Bottom-up per-route deployment cost summed per combination, with capex amortisation and break-even against a conventional chemical spray.",
+    "Deployment cost per combination, with the bacterial treatment at a flat 1,750 USD per hectare, capex amortisation, and break-even against a conventional chemical spray.",
     [
       p("economic", 1, "All-in cost per hectare against treated area, with baselines. The per-hectare cost falls as the capex amortises."),
       p("economic", 2, "Deployment cost breakdown per combination at 100 ha. Bars marked with a star include alginate, which is modelled for comparison and not deployed."),

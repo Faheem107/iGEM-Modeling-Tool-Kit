@@ -860,70 +860,12 @@ export const INTERACTION_CALIB = {
 
 /** Economic scalability, per-prong deployment cost bases (field-scale). */
 export const ECONOMIC_CALIB = {
-  // --- Prong 1: γ-PGA fermentation ---
-  glucoseCostPerKg: calib(
-    0.4,
-    "USD·kg⁻¹",
-    "bulk dextrose feedstock",
-    "Quote from feedstock supplier at project scale.",
-    [0.2, 1.0],
-  ),
-  mediaSaltsCostPerL: calib(
-    0.08,
-    "USD·L⁻¹",
-    "nitrogen/mineral salts per L broth",
-    "Cost the defined medium recipe per litre.",
-    [0.02, 0.25],
-  ),
-  utilitiesCostPerL: calib(
-    0.04,
-    "USD·L⁻¹",
-    "water + aeration + power per L",
-    "Meter reactor utilities per batch.",
-    [0.01, 0.15],
-  ),
-  glucoseMassFractionInMedia: calib(
-    0.03,
-    "fraction",
-    "~3 %w/v glucose fermentation",
-    "Set by the actual medium formulation.",
-    [0.01, 0.08],
-  ),
-  // --- Prong 2: CaCO₃ (MICP via carbonic anhydrase) ---
-  calciumSourceCostPerKg: calib(
-    0.15,
-    "USD·kg⁻¹ CaCl₂",
-    "bulk calcium chloride",
-    "Quote calcium feedstock; CaCl₂ vs Ca(OH)₂.",
-    [0.08, 0.5],
-  ),
-  caReagentCostPerHa: calib(
-    650,
+  // --- Prongs 1 & 2: the bacterial treatment ---
+  treatmentCostPerHa: calib(
+    1750,
     "USD·ha⁻¹",
-    "enzyme induction + Ca dosing for one hectare of crust at the reference depth below. Cross-checked against the Ulan Buh field recipe: 4 L·m⁻² of 0.2 M solution is ≈888 kg CaCl₂ per hectare, ≈$133 at bulk price, leaving ≈$517 for enzyme and inducer",
-    "Cost calcium + inducer dosing for one treated hectare.",
-    [200, 1500],
-  ),
-  /**
-   * The crust depth `caReagentCostPerHa` was costed at. Reagent is sprayed onto
-   * the surface and soaks roughly one pore volume down, so the dose scales with
-   * depth. Without this the calcite prong cost the same for a 5 mm crust as for
-   * a 50 mm one, which is the axis the comparison against published per-m³ MICP
-   * costs turns on.
-   */
-  caReagentReferenceDepthMm: calib(
-    12.5,
-    "mm",
-    "the crust the Ulan Buh field trial grew at 4 L·m⁻² and 0.2 M, which is where the per-hectare dose above comes from",
-    "Record the crust depth the dosing was costed against.",
-    [5, 30],
-  ),
-  co2CreditPerKg: calib(
-    0.01,
-    "USD·kg⁻¹ CO₂",
-    "voluntary carbon market 2024 ≈ $6/tCO₂ avg; nature-based removals command a premium, $10/t is a defensible mid-point (State of the VCM 2024)",
-    "Use the applicable carbon-credit price for durable mineral removal.",
-    [0.003, 0.03],
+    "business team estimate of the recurring cost to treat one hectare with the bacterial routes, field application included. It is our own estimate, not a supplier quote. It replaced a bottom-up sum of fermentation, calcium and enzyme, and spray-pass costs, which came to about 960 USD·ha⁻¹ at a 5 mm crust",
+    "Replace with a supplier or contractor quote for one treated hectare.",
   ),
   // --- Prong 3: sodium alginate (purchased commodity) ---
   alginateCostPerKg: calib(
@@ -951,7 +893,7 @@ export const ECONOMIC_CALIB = {
   fieldApplicationCostPerHa: calib(
     180,
     "USD·ha⁻¹",
-    "spray rig + labour per hectare",
+    "spray rig + labour per hectare. Charged only for alginate on its own; the bacterial treatment figure above already includes it",
     "Cost the spray application pass per hectare.",
     [80, 400],
   ),

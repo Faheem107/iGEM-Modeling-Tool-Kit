@@ -1,11 +1,12 @@
 /**
  * Economic Scalability, combination-aware deployment cost
  * ========================================================
- * Cost is built bottom-up, per prong, then summed for whatever combination is deployed:
- *   Prong 1 (γ-PGA)  : fermentation, glucose + salts + utilities, scaled by broth yield.
- *   Prong 2 (CaCO₃)  : calcium feedstock + carbonic-anhydrase dosing, minus a CO₂ credit.
- *   Prong 3 (alginate): purchased commodity biopolymer + crosslinker, sprayed directly.
- * Bacterial prongs (1,2) share a one-time bioprocess capex; alginate needs none.
+ * The bacterial treatment (γ-PGA, CaCO₃, or both) is costed as one flat figure per
+ * hectare, the business team's estimate of what one treated hectare costs with the
+ * field application included. It replaced a bottom-up sum of fermentation, reagent and
+ * application line items, which came to about 960 USD per hectare at a 5 mm crust.
+ * Purchased alginate stays bottom-up (dose × price), since it is bought, not grown.
+ * Bacterial routes share a one-time bioprocess capex; alginate needs none.
  * The result is compared against conventional chemical-spray and concrete-blanket baselines.
  */
 
@@ -15,33 +16,24 @@ import type { ProngId } from "./composite";
 export interface EconContext {
   /** Treated area [hectares]. */
   areaHa: number;
-  /** Required crust thickness [mm]. */
+  /** Required crust thickness [mm]. Sets the volume the CO₂ figure is taken over. */
   crustThicknessMm: number;
-  /** γ-PGA broth yield [g·L⁻¹] (Prong 1 fermentation efficiency). */
-  pgaYieldGPerL: number;
-  /** Polymer loading target [kg·m⁻³ of treated soil] (Prong 1). */
-  pgaDemandKgPerM3: number;
-  /** CaCO₃ CO₂ sequestered [g per L pore solution] (Prong 2 climate credit). */
+  /** CaCO₃ CO₂ sequestered [g per L pore solution] (Prong 2). */
   co2SequesteredGPerL?: number;
-}
-
-export interface ProngCost {
-  prong: ProngId;
-  /** One-time capital cost [USD]. */
-  capex: number;
-  /** Recurring cost per hectare [USD·ha⁻¹]. */
-  opexPerHa: number;
-  /** Net CO₂ balance per hectare [kg·ha⁻¹] (negative = sequestered). */
-  co2PerHa: number;
 }
 
 export interface CombinationCost {
   prongs: ProngId[];
   capex: number;
-  opexPerHa: number;
-  /** Field application pass (shared, once per combination) [USD·ha⁻¹]. */
+  /** Bacterial treatment per hectare, application included [USD·ha⁻¹]. 0 without a bacterial route. */
+  treatmentPerHa: number;
+  /** Purchased alginate per hectare [USD·ha⁻¹]. 0 without Prong 3. */
+  alginatePerHa: number;
+  /** Application pass, charged only when there is no bacterial treatment to carry it [USD·ha⁻¹]. */
   applicationPerHa: number;
-  /** Total cost over the whole area [USD] = capex + (opex+application)·area. */
+  /** Everything paid per hectare [USD·ha⁻¹]. */
+  recurringPerHa: number;
+  /** Total cost over the whole area [USD] = capex + recurring·area. */
   totalCost: number;
   /** All-in cost per hectare including amortised capex over the area [USD·ha⁻¹]. */
   costPerHa: number;
@@ -53,86 +45,43 @@ export interface CombinationCost {
 
 const M3_PER_HA = (thicknessMm: number) => 10000 * (thicknessMm / 1000); // m³ of crust per hectare
 
-/** Per-hectare recurring cost + capex + CO₂ for a single prong. */
-export function prongTreatmentCost(
-  prong: ProngId,
-  ctx: EconContext,
-): ProngCost {
-  const volumePerHa = M3_PER_HA(ctx.crustThicknessMm);
-
-  if (prong === 1) {
-    // γ-PGA fermentation.
-    const pgaKgPerHa = volumePerHa * ctx.pgaDemandKgPerM3;
-    const yieldKgPerL = Math.max(1e-6, ctx.pgaYieldGPerL / 1000);
-    const litersPerHa = pgaKgPerHa / yieldKgPerL;
-    const perLiter =
-      cval(E.glucoseMassFractionInMedia) * cval(E.glucoseCostPerKg) +
-      cval(E.mediaSaltsCostPerL) +
-      cval(E.utilitiesCostPerL);
-    return {
-      prong: 1,
-      capex: cval(E.bacterialSetupCapex),
-      opexPerHa: litersPerHa * perLiter,
-      co2PerHa: 0,
-    };
-  }
-
-  if (prong === 2) {
-    // CaCO₃ / MICP: calcium + enzyme dosing, minus a CO₂ credit.
-    // The reagent is sprayed on and soaks about one pore volume down, so the
-    // dose goes with depth. Costing it flat made a 50 mm crust as cheap as a
-    // 5 mm one, and depth is exactly what separates this from the per-m³ figures
-    // published for full-depth biocementation.
-    const depthScale =
-      ctx.crustThicknessMm / cval(E.caReagentReferenceDepthMm);
-    const co2KgPerHa =
-      ((ctx.co2SequesteredGPerL ?? 0) / 1000) * (volumePerHa * 1000); // g/L × L(=m³·1000) → kg
-    const credit = co2KgPerHa * cval(E.co2CreditPerKg);
-    return {
-      prong: 2,
-      capex: cval(E.bacterialSetupCapex),
-      opexPerHa: Math.max(
-        0,
-        cval(E.caReagentCostPerHa) * depthScale - credit,
-      ),
-      co2PerHa: -co2KgPerHa, // sequestered
-    };
-  }
-
-  // Prong 3, purchased alginate commodity, no fermentation.
-  const alginateOpex = cval(E.alginateDoseKgPerHa) * cval(E.alginateCostPerKg);
-  return { prong: 3, capex: 0, opexPerHa: alginateOpex, co2PerHa: 0 };
-}
-
 /** Full cost of a prong combination over the deployment area. */
 export function combinationCost(
   prongs: ProngId[],
   ctx: EconContext,
 ): CombinationCost {
-  const per = prongs.map((p) => prongTreatmentCost(p, ctx));
-  // Bacterial prongs share one bioprocess capex (don't double-count 1 & 2).
+  // Bacterial prongs share one bioprocess capex and one treatment figure.
   const hasBacterial = prongs.some((p) => p === 1 || p === 2);
   const capex = hasBacterial ? cval(E.bacterialSetupCapex) : 0;
-  const opexPerHa = per.reduce((s, c) => s + c.opexPerHa, 0);
-  const applicationPerHa = cval(E.fieldApplicationCostPerHa);
-  const co2PerHa = per.reduce((s, c) => s + c.co2PerHa, 0);
+  const treatmentPerHa = hasBacterial ? cval(E.treatmentCostPerHa) : 0;
+  const alginatePerHa = prongs.includes(3)
+    ? cval(E.alginateDoseKgPerHa) * cval(E.alginateCostPerKg)
+    : 0;
+  // The treatment figure already pays for the spray pass.
+  const applicationPerHa = hasBacterial ? 0 : cval(E.fieldApplicationCostPerHa);
+  const recurringPerHa = treatmentPerHa + alginatePerHa + applicationPerHa;
 
   const area = Math.max(0, ctx.areaHa);
-  const recurringPerHa = opexPerHa + applicationPerHa;
   const totalCost = capex + recurringPerHa * area;
   const costPerHa = area > 0 ? totalCost / area : recurringPerHa;
-  const co2Total = co2PerHa * area;
+
+  const co2KgPerHa = prongs.includes(2)
+    ? ((ctx.co2SequesteredGPerL ?? 0) / 1000) *
+      (M3_PER_HA(ctx.crustThicknessMm) * 1000) // g/L × L(=m³·1000) → kg
+    : 0;
+  const co2Total = -co2KgPerHa * area; // sequestered
 
   // Break-even vs conventional chemical spray: capex / (chemical/ha − our recurring/ha).
-  const chemPerHa = cval(E.chemicalSprayCostPerHa);
-  const margin = chemPerHa - recurringPerHa;
+  const margin = cval(E.chemicalSprayCostPerHa) - recurringPerHa;
   const breakEvenHaVsChemical = margin > 0 ? capex / margin : Infinity;
 
   return {
     prongs,
     capex,
-    opexPerHa,
+    treatmentPerHa,
+    alginatePerHa,
     applicationPerHa,
+    recurringPerHa,
     totalCost,
     costPerHa,
     co2Total,

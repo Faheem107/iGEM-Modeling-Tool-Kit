@@ -347,25 +347,19 @@ export const MODULE_MATH: Record<ModuleId, ModuleMath> = {
   economic: {
     title: "Economic Scalability",
     intro:
-      "Cost is built bottom-up per route (fermentation for γ-PGA, feedstock + enzyme for CaCO₃, commodity purchase for alginate) then summed for the chosen combination and compared against conventional stabilisers.",
+      "The bacterial treatment is one flat cost per hectare, the business team's estimate with field application included. Alginate is a commodity purchase costed from dose and price. The chosen combination is compared against conventional stabilisers.",
     blocks: [
       {
-        tex: "C_{\\text{combo}} = C^{\\text{capex}} + A \\left( \\sum_{p} C_p^{\\text{opex/ha}} + C^{\\text{app/ha}} \\right)",
+        tex: "C_{\\text{combo}} = C^{\\text{capex}} + A \\, C^{\\text{/ha}}",
         caption:
-          "Total cost over area A. The two bacterial routes share one bioprocess capex, and the field application pass is paid once per hectare whatever the combination.",
-        cites: [1, 2],
+          "Total cost over area A. The two bacterial routes share one bioprocess capex and one treatment cost per hectare, C/ha = 1,750 USD, which includes the application pass. Alginate adds its own dose cost.",
+        cites: [1],
       },
       {
-        tex: "C_2^{\\text{opex/ha}} = C_{\\text{Ca}}^{\\text{/ha}} \\, \\frac{h}{h_{\\text{ref}}} - p_{\\text{CO}_2} m_{\\text{CO}_2}",
-        caption:
-          "The CaCO₃ dose soaks about one pore volume down, so it scales with crust depth h against the 12.5 mm depth it was costed at, less a small CO₂ credit.",
-        cites: [1, 3],
-      },
-      {
-        tex: "A_{\\text{break-even}} = \\frac{C^{\\text{capex}}}{C_{\\text{chem}}^{\\text{/ha}} - \\left( C^{\\text{opex/ha}} + C^{\\text{app/ha}} \\right)}",
+        tex: "A_{\\text{break-even}} = \\frac{C^{\\text{capex}}}{C_{\\text{chem}}^{\\text{/ha}} - C^{\\text{/ha}}}",
         caption:
           "Area above which the treatment costs less than the chemical spray baseline. If the recurring cost is above the spray's, there is no break-even.",
-        cites: [1, 7],
+        cites: [1, 6],
       },
     ],
   },

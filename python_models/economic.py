@@ -1,20 +1,18 @@
 """
 Economic scalability - NYUAD iGEM 2026 Dunelock toolkit
 =======================================================
-Reproduces the "Economic Scalability" module: bottom-up per-route deployment cost,
-summed per combination and benchmarked against the published biocementation and
-carbon-market literature, plus break-even area vs a conventional chemical spray.
+Reproduces the "Economic Scalability" module: deployment cost per combination,
+benchmarked against a conventional chemical spray, plus the break-even area.
 
 Exact port of src/lib/physics/economic.ts.
-  Route 1 (gamma-PGA)  : fermentation (glucose + salts + utilities), scaled by broth yield
-  Route 2 (CaCO3/MICP) : calcium + enzyme dosing, scaled by crust depth, minus a CO2 credit
-  Route 3 (alginate)   : purchased commodity biopolymer + crosslinker
-  Bacterial routes (1,2) share one bioprocess capex; alginate needs none.
+  Routes 1 and 2 (bacterial): one flat treatment cost per hectare, 1750 USD, the business
+                              team's estimate with field application included
+  Route 3 (alginate)        : purchased commodity biopolymer + crosslinker
+  Bacterial routes share one bioprocess capex; alginate needs none.
 
-Constants from ECONOMIC_CALIB (constants.ts): capex 25000 USD, application 180 USD/ha,
-chemical baseline 2800 USD/ha, concrete 300000 USD/ha (30 USD/m2), caReagent 650 USD/ha
-for a 12.5 mm crust, alginate 10.5 USD/kg x 400 kg/ha, etc.
-Every figure is checked against a cited study (see moduleSources). Run:  python economic.py
+Constants from ECONOMIC_CALIB (constants.ts): treatment 1750 USD/ha, capex 25000 USD,
+application 180 USD/ha (alginate alone only), chemical baseline 2800 USD/ha, concrete
+300000 USD/ha (30 USD/m2), alginate 10.5 USD/kg x 400 kg/ha. Run:  python economic.py
 """
 
 import numpy as np
@@ -29,40 +27,25 @@ plt.rcParams.update({
 })
 
 # ECONOMIC_CALIB
-GLUCOSE_KG, MEDIA_L, UTIL_L, GLUC_FRAC = 0.4, 0.08, 0.04, 0.03
-CA_REAGENT_HA, CO2_CREDIT_KG = 650.0, 0.01
-CA_REAGENT_REF_MM = 12.5          # crust depth the reagent dose was costed at
+TREATMENT_HA = 1750.0
 ALG_KG, ALG_DOSE_HA = 10.5, 400.0
 CAPEX, APPLICATION_HA = 25000.0, 180.0
 CHEM_HA, CONCRETE_HA = 2800.0, 300000.0
 
-CTX = dict(crust_mm=5.0, pga_yield_g_per_L=25.0, pga_demand_kg_per_m3=2.0,
-           co2_g_per_L=8.0)
+
+def recurring_lines(routes):
+    """Per-hectare cost lines: (bacterial treatment, alginate, application pass)."""
+    bacterial = any(p in (1, 2) for p in routes)
+    treatment = TREATMENT_HA if bacterial else 0.0
+    alginate = ALG_DOSE_HA * ALG_KG if 3 in routes else 0.0
+    # The treatment figure already pays for the spray pass.
+    application = 0.0 if bacterial else APPLICATION_HA
+    return treatment, alginate, application
 
 
-def m3_per_ha(mm):
-    return 10000 * (mm / 1000.0)
-
-
-def route_opex(route, ctx=CTX):
-    vol = m3_per_ha(ctx["crust_mm"])
-    if route == 1:
-        pga_kg = vol * ctx["pga_demand_kg_per_m3"]
-        liters = pga_kg / max(1e-6, ctx["pga_yield_g_per_L"] / 1000.0)
-        per_liter = GLUC_FRAC * GLUCOSE_KG + MEDIA_L + UTIL_L
-        return liters * per_liter
-    if route == 2:
-        # The reagent soaks about one pore volume down, so the dose scales with depth.
-        depth_scale = ctx["crust_mm"] / CA_REAGENT_REF_MM
-        co2_kg = (ctx["co2_g_per_L"] / 1000.0) * (vol * 1000.0)
-        return max(0.0, CA_REAGENT_HA * depth_scale - co2_kg * CO2_CREDIT_KG)
-    return ALG_DOSE_HA * ALG_KG
-
-
-def combination_cost(routes, area_ha, ctx=CTX):
-    opex = sum(route_opex(p, ctx) for p in routes)
+def combination_cost(routes, area_ha):
     capex = CAPEX if any(p in (1, 2) for p in routes) else 0.0
-    recurring = opex + APPLICATION_HA
+    recurring = sum(recurring_lines(routes))
     total = capex + recurring * area_ha
     return capex, recurring, total
 
@@ -74,7 +57,6 @@ def figures():
     area = np.linspace(1, 500, 300)
     fig1, ax1 = plt.subplots()
     for combo, lab, c in [([1, 2], "gamma-PGA + CaCO3", MAROON),
-                          ([2], "CaCO3 only", ORANGE),
                           ([3], "alginate only (modelled, not deployed)", TEAL)]:
         capex, recurring, _ = combination_cost(combo, 1.0)
         cost_per_ha = capex / area + recurring
@@ -93,18 +75,23 @@ def figures():
     combos = [[1], [2], [3], [1, 2], [1, 2, 3]]
     labels = ["P1", "P2", "P3*", "P1+P2", "all*"]
     area = 100.0
-    capex_ha, opex_ha, app_ha = [], [], []
+    treat_ha, alg_ha, app_ha, capex_ha = [], [], [], []
     for c in combos:
-        capex, recurring, _ = combination_cost(c, area)
+        treatment, alginate, application = recurring_lines(c)
+        capex, _, _ = combination_cost(c, area)
+        treat_ha.append(treatment)
+        alg_ha.append(alginate)
+        app_ha.append(application)
         capex_ha.append(capex / area)
-        opex_ha.append(recurring - APPLICATION_HA)
-        app_ha.append(APPLICATION_HA)
     x = np.arange(len(combos))
     fig2, ax2 = plt.subplots()
-    ax2.bar(x, opex_ha, color=MAROON, label="reagents / fermentation")
-    ax2.bar(x, app_ha, bottom=opex_ha, color=ORANGE, label="field application")
-    ax2.bar(x, capex_ha, bottom=np.array(opex_ha) + np.array(app_ha),
-            color=TEAL, label="amortised capex (100 ha)")
+    bottom = np.zeros(len(combos))
+    for vals, col, lab in [(treat_ha, MAROON, "bacterial treatment (incl. application)"),
+                           (alg_ha, ROSE, "alginate"),
+                           (app_ha, ORANGE, "field application"),
+                           (capex_ha, TEAL, "amortised capex (100 ha)")]:
+        ax2.bar(x, vals, bottom=bottom, color=col, label=lab)
+        bottom += np.array(vals)
     ax2.set_xticks(x)
     ax2.set_xticklabels(labels)
     for i, c in enumerate(combos):          # hatch anything that leans on alginate

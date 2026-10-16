@@ -2,8 +2,8 @@
 
 /**
  * Economic Scalability, combination-aware deployment cost.
- * Costs the SELECTED prong combination (γ-PGA fermentation, CaCO₃ feedstock+enzyme, and/or
- * purchased alginate), then compares every possible combination and the conventional
+ * Costs the SELECTED prong combination (the bacterial treatment at a flat per-hectare figure,
+ * and/or purchased alginate), then compares every possible combination and the conventional
  * chemical-spray / concrete baselines on one chart. Physics lives in lib/physics/economic.ts.
  */
 
@@ -43,8 +43,6 @@ interface Props {
   isLightMode: boolean;
   prongs?: ProngId[];
   contributions?: ProngContribution[];
-  polymerYield?: number; // g/L (Prong 1)
-  alginateModulus?: number; // Pa (Prong 3, informational)
   caco3?: { ucs: number; calcitePct: number; co2: number };
   requiredCrustThickness?: number; // mm
 }
@@ -55,7 +53,6 @@ const sameSet = (a: ProngId[], b: ProngId[]) =>
 export default function EconomicScalabilityEngine({
   isLightMode,
   prongs,
-  polymerYield = 35,
   caco3,
   requiredCrustThickness = 15,
 }: Props) {
@@ -66,17 +63,14 @@ export default function EconomicScalabilityEngine({
       : ([1] as ProngId[]);
 
   const [targetArea, setTargetArea] = useState(100); // hectares
-  const [pgaDensity, setPgaDensity] = useState(1.5); // kg/m³ polymer loading
 
   const ctx: EconContext = useMemo(
     () => ({
       areaHa: targetArea,
       crustThicknessMm: requiredCrustThickness,
-      pgaYieldGPerL: polymerYield,
-      pgaDemandKgPerM3: pgaDensity,
       co2SequesteredGPerL: caco3?.co2 ?? 0,
     }),
-    [targetArea, requiredCrustThickness, polymerYield, pgaDensity, caco3?.co2],
+    [targetArea, requiredCrustThickness, caco3?.co2],
   );
 
   const cost = useMemo(() => combinationCost(selected, ctx), [selected, ctx]);
@@ -131,7 +125,7 @@ export default function EconomicScalabilityEngine({
     .join(" ");
 
   const takeawayNote = [
-    "None of these prices is a supplier quote yet. They are our own estimates, and the calcium and enzyme cost is the one that moves the answer most.",
+    "None of these prices is a supplier quote yet. The treatment cost is the business team's estimate for one hectare, and it is the number that moves the answer most.",
     "We are also comparing one treatment against one spray, which is not the same as comparing a year against a year: our crust is resprayed about every six months, and we do not know how long the chemical lasts.",
     selected.includes(3)
       ? "The alginate route is priced so it can be compared, not because it is carried forward."
@@ -139,6 +133,24 @@ export default function EconomicScalabilityEngine({
   ]
     .filter(Boolean)
     .join(" ");
+
+  const costLines = [
+    cost.treatmentPerHa > 0 && {
+      label: "Bacterial treatment",
+      note: "business team estimate, field application included",
+      perHa: cost.treatmentPerHa,
+    },
+    cost.alginatePerHa > 0 && {
+      label: combinationLabel([3]),
+      note: "purchased sodium alginate + crosslinker",
+      perHa: cost.alginatePerHa,
+    },
+    cost.applicationPerHa > 0 && {
+      label: "Field application",
+      note: "spray rig + labour",
+      perHa: cost.applicationPerHa,
+    },
+  ].filter(Boolean) as { label: string; note: string; perHa: number }[];
 
   const barColor = (kind: string) =>
     kind === "selected"
@@ -154,37 +166,21 @@ export default function EconomicScalabilityEngine({
   const controls = (
     <>
       <Panel
-        title="Area and dose"
+        title="Area"
         isLightMode={isLightMode}
       >
-        <div className="space-y-4">
-          <Slider
-            isLightMode={isLightMode}
-            accent="accent-dune-orange"
-            label="Stabilization area"
-            value={targetArea}
-            min={1}
-            max={1000}
-            step={5}
-            unit="ha"
-            onChange={(v) => setTargetArea(Math.round(v))}
-            hint="1 ha dune spur → 1,000 ha regreening corridor."
-          />
-          {selected.includes(1) && (
-            <Slider
-              isLightMode={isLightMode}
-              accent="accent-dune-teal"
-              label="γ-PGA loading density"
-              value={pgaDensity}
-              min={0.5}
-              max={5}
-              step={0.1}
-              unit="kg/m³"
-              onChange={setPgaDensity}
-              hint="Polymer mass per m³ of treated soil (Route 1 only)."
-            />
-          )}
-        </div>
+        <Slider
+          isLightMode={isLightMode}
+          accent="accent-dune-orange"
+          label="Stabilization area"
+          value={targetArea}
+          min={1}
+          max={1000}
+          step={5}
+          unit="ha"
+          onChange={(v) => setTargetArea(Math.round(v))}
+          hint="1 ha dune spur → 1,000 ha regreening corridor."
+        />
       </Panel>
 
       <div className="grid grid-cols-2 gap-4">
@@ -320,53 +316,40 @@ export default function EconomicScalabilityEngine({
         </Panel>
 
         <Panel
-          title="What each route costs"
+          title="What a hectare costs"
           isLightMode={isLightMode}
         >
           <div className="space-y-2">
-            {selected.map((p) => {
-              const single = combinationCost([p], ctx);
-              const label = combinationLabel([p]);
-              const note =
-                p === 1
-                  ? "fermentation: glucose + salts + utilities"
-                  : p === 2
-                    ? "calcium + carbonic-anhydrase dosing (− CO₂ credit)"
-                    : "purchased sodium alginate + crosslinker";
-              return (
-                <div
-                  key={p}
-                  className={`flex items-center justify-between p-4 rounded-[6px] border ${isLightMode ? "bg-white border-dune-orange/10" : "bg-dune-ink border-border"}`}
-                >
-                  <div className="min-w-0">
-                    <span
-                      className={`text-[length:var(--text-micro)] font-bold text-foreground`}
-                    >
-                      {label}
-                    </span>
-                    <span
-                      className={`block text-[length:var(--text-caption)] text-muted-foreground`}
-                    >
-                      {note}
-                    </span>
-                  </div>
+            {costLines.map((line) => (
+              <div
+                key={line.label}
+                className={`flex items-center justify-between p-4 rounded-[6px] border ${isLightMode ? "bg-white border-dune-orange/10" : "bg-dune-ink border-border"}`}
+              >
+                <div className="min-w-0">
                   <span
-                    className={`font-mono font-black text-[length:var(--text-micro)] shrink-0 text-dune-orange`}
+                    className={`text-[length:var(--text-micro)] font-bold text-foreground`}
                   >
-                    ${Math.round(single.opexPerHa).toLocaleString()}/ha
+                    {line.label}
+                  </span>
+                  <span
+                    className={`block text-[length:var(--text-caption)] text-muted-foreground`}
+                  >
+                    {line.note}
                   </span>
                 </div>
-              );
-            })}
+                <span
+                  className={`font-mono font-black text-[length:var(--text-micro)] shrink-0 text-dune-orange`}
+                >
+                  ${Math.round(line.perHa).toLocaleString()}/ha
+                </span>
+              </div>
+            ))}
             <p
               className={`text-[length:var(--text-caption)] text-muted-foreground`}
             >
-              Plus a shared ${Math.round(cost.applicationPerHa)}/ha
-              field-application pass
               {cost.capex > 0
-                ? ` and a one-time $${cost.capex.toLocaleString()} bioprocess capex`
+                ? `Plus a one-time $${cost.capex.toLocaleString()} bioprocess capex. `
                 : ""}
-              .{" "}
               {Number.isFinite(cost.breakEvenHaVsChemical)
                 ? `Break-even vs chemical spray at about ${Math.ceil(cost.breakEvenHaVsChemical)} ha.`
                 : "At these settings the treatment never breaks even against chemical spray, however large the area."}

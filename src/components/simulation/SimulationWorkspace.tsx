@@ -380,8 +380,6 @@ export default function SimulationWorkspace({
               isLightMode={isLightMode}
               prongs={prongs}
               contributions={contributions}
-              polymerYield={pgaAccum}
-              alginateModulus={alginateOut.modulus}
               caco3={caco3Out}
               requiredCrustThickness={12.0}
             />
@@ -411,7 +409,6 @@ export default function SimulationWorkspace({
       effectiveShear,
       caDisplayEff,
       caco3Out,
-      alginateOut.modulus,
       interactions,
       yieldFactors,
       onBack,
