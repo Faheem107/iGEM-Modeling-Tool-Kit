@@ -62,15 +62,16 @@ export default function XanthanSandPanel({ isLightMode }: { isLightMode: boolean
         <StatCard
           isLightMode={isLightMode}
           label="Wind speed at the dish"
-          value={CARRIER_TEST_WIND === null ? null : CARRIER_TEST_WIND.toFixed(1)}
+          value={CARRIER_TEST_WIND === null ? null : String(CARRIER_TEST_WIND)}
           unit="m/s"
-          sub="not recorded in the notebook"
+          sub="hairdryer, near the surface"
           accent="text-dune-teal"
         />
       </div>
 
       <p className="mt-6 max-w-[var(--measure)] text-[length:var(--text-caption)] leading-snug text-muted-foreground">
-        Sand loss per dish after {CARRIER_BLOW_SECONDS} seconds of hairdryer wind, against the
+        Sand loss per dish after {CARRIER_BLOW_SECONDS} seconds of hairdryer wind at{" "}
+        {CARRIER_TEST_WIND} m/s, against the
         xanthan concentration of the solution put on it. Each point is one dish. The shaded band
         is the two untreated dishes. Both axes are logarithmic.
       </p>
@@ -169,23 +170,23 @@ export default function XanthanSandPanel({ isLightMode }: { isLightMode: boolean
         <Note label="How it was measured">
           Xanthan solutions were made up in 50 g of deionised water, put on dried, sifted sand about
           1 cm deep in petri dishes, and left uncovered to dry. There were no cells. Each dish was
-          weighed, blown for {CARRIER_BLOW_SECONDS} seconds with a hairdryer on its cold setting,
-          and weighed again. Dish and sand together weighed 88 to 91 g. The notebook&apos;s 14
+          weighed, blown for {CARRIER_BLOW_SECONDS} seconds with a hairdryer on its cold setting
+          at {CARRIER_TEST_WIND} m/s, and weighed again. Dish and sand together weighed 88 to 91 g. The notebook&apos;s 14
           October table repeats the 8 October values as one of the two dishes for 0.05 to 0.5% and
           for the control; here they are listed under the day they were measured.
         </Note>
         <Note label="Why it matters for the model">
           Every crust model in this toolkit gives the carrier no cohesion. These dishes held sand
           with the carrier alone, so a crust with cells has to be compared against carrier-only
-          sand, not bare sand, or the carrier&apos;s effect is credited to the cells. Once the wind
-          speed at the dish is known, the inverse of Equation 8 in the aeolian module gives a lower
-          bound on the carrier&apos;s cohesion at each concentration that held.
+          sand, not bare sand, or the carrier&apos;s effect is credited to the cells. This test cannot
+          size that cohesion. Equation 8 in the aeolian module needs the friction velocity at the
+          grain surface, and a hairdryer jet has no settled boundary layer from which to work it
+          out.
         </Note>
         <Note label="What would make this wrong">
-          The wind speed and the volume of solution per dish were not recorded, so the result cannot
-          yet be turned into a cohesion or a dose per square metre. A hairdryer jet slows with
-          distance and has no settled boundary layer, so converting even a measured jet speed into a
-          friction velocity is an assumption. The untreated dishes were blown on 8 October only, so
+          The volume of solution per dish was not recorded, so the result cannot be turned into a
+          dose per square metre. The {CARRIER_TEST_WIND} m/s is the speed of a jet near the surface,
+          so it cannot be compared directly with the 10 m wind the field models use. The untreated dishes were blown on 8 October only, so
           the 14 October dishes have no same-day control. At 0.005 and 0.01% the 11 October dishes
           lost 21.3 and 71.1 g against under 0.2 g on 14 October, and we do not know why. One
           difference is that the 11 October solutions were weighed out directly, 2.5 mg of powder

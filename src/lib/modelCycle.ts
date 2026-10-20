@@ -111,10 +111,10 @@ export const MODEL_CYCLE: readonly ModelCycleIteration[] = [
       design:
         "Dropping alginate left xanthan gum as the carrier. Every crust model assumed it adds no cohesion, and nobody had checked.",
       build:
-        "Our wet lab put xanthan solutions from 0.005 to 0.5 percent on dried sand, blew each dish for 5 seconds with a hairdryer, and weighed it before and after.",
+        "Our wet lab put xanthan solutions from 0.005 to 0.5 percent on dried sand, blew each dish for 5 seconds with a hairdryer at 8 m/s, and weighed it before and after.",
       test: "Untreated dishes lost 6.7 and 14.2 g. On 14 October every treated dish lost under 0.25 g. An earlier run disagrees at the two lowest concentrations.",
       learn:
-        "The carrier is not neutral. Cells have to be compared with carrier-only sand, and the crust models miss a carrier cohesion we cannot size until the wind speed at the dish is known.",
+        "The carrier is not neutral. Cells have to be compared with carrier-only sand, and the crust models miss a carrier cohesion that this test cannot size.",
     },
   },
   {

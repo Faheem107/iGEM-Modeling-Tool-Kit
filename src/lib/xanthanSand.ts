@@ -53,11 +53,10 @@ export const CARRIER_CONCENTRATIONS = [0.005, 0.01, 0.02, 0.025, 0.05, 0.1, 0.25
 export const CARRIER_BLOW_SECONDS = 5;
 
 /**
- * Wind speed at the dish, m/s. Not recorded in the notebook, so the page states the absence rather
- * than assume a value. Once measured, Equation 8 of the aeolian module turns each dish that held
- * into a lower bound on the carrier's cohesion.
+ * Wind speed of the hairdryer at the dish, m/s, as the wet lab measured it. It is a near-surface jet
+ * speed, not a 10 m wind, so it does not go into the aeolian module's equations.
  */
-export const CARRIER_TEST_WIND: number | null = null;
+export const CARRIER_TEST_WIND: number | null = 8;
 
 /** Every dish from one run at one concentration, as recorded, or null if that run did not test it. */
 export function dishesAt(run: readonly CarrierDish[], concentration: number): number[] | null {
