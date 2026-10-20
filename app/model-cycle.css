@@ -139,7 +139,7 @@
 /* The iteration row: a hairline that fills as far as the current turn. */
 .model-cycle-nav {
   margin-block-start: 30px;
-  padding: 10px 0 34px;
+  padding: 10px 0 50px;
   position: relative;
 }
 
@@ -223,6 +223,11 @@
   left: auto;
   right: 0;
   transform: none;
+}
+
+/* Six labels do not fit on one line beside the dots, so every second one sits a line lower. */
+.model-cycle-dot:nth-child(even) span {
+  top: 40px;
 }
 
 .model-cycle-dot.on span {

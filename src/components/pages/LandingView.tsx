@@ -72,7 +72,7 @@ export default function LandingView() {
         onOpenAdventure={() => setShowAdventure(true)}
       />
 
-      {/* --- THE ENGINEERING CYCLE: the five turns the models took, in the
+      {/* --- THE ENGINEERING CYCLE: the six turns the models took, in the
           same diagram the wiki's Model page draws, so the two read as one
           team's work. --- */}
       <ModelCycle />

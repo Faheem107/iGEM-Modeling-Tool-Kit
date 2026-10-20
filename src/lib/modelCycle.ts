@@ -1,16 +1,16 @@
 import type { WikiLink } from "@/src/lib/wikiLinks";
 
 /**
- * The engineering cycle of the models themselves: four turns on the models and
+ * The engineering cycle of the models themselves: five turns on the models and
  * one on teaching them.
  * ==========================================================================
- * The same five iterations the wiki's Model page shows, kept here so the
+ * The same six iterations the wiki's Model page shows, kept here so the
  * toolkit and the wiki do not drift apart. Each stage is a sentence or two
  * because it is read inside a card beside the cycle diagram, and each
  * iteration links to where it is written up in full.
  *
  * This is the long view. `designCycle.ts` is the scroll-scrubbed story of the
- * first two turns, told in paragraphs; this is all five, told in stages.
+ * first two turns, told in paragraphs; this is all six, told in stages.
  */
 
 export type ModelCycleStageKey = "design" | "build" | "test" | "learn";
@@ -34,7 +34,7 @@ export const MODEL_CYCLE_STAGES: readonly { key: ModelCycleStageKey; name: strin
 export const MODEL_CYCLE_STATUS = "Experiments are ongoing!";
 
 export const MODEL_CYCLE_STATUS_NOTE =
-  "Every turn below was closed with modelling, literature and public data. Our wet lab measurements will reopen them as they come in.";
+  "The carrier turn rests on our own wet lab measurement. The others were closed with modelling, literature and public data, and our measurements will reopen them as they come in.";
 
 export const MODEL_CYCLE: readonly ModelCycleIteration[] = [
   {
@@ -99,6 +99,22 @@ export const MODEL_CYCLE: readonly ModelCycleIteration[] = [
       test: "Direction agrees with the airports to within 6.3°. Flux is off by a median 18.8% out of sample, and the fit fails its own tolerance in winter.",
       learn:
         "The drift direction is well supported and the transport magnitude is not. No predicted sand flux has been compared with a measured one.",
+    },
+  },
+  {
+    short: "Carrier",
+    title: "Testing the carrier on sand",
+    summary:
+      "The crust models give the carrier no cohesion, so our wet lab put it on sand without any cells.",
+    wiki: { path: "/model/both#both-carrier", label: "The carrier on its own" },
+    cycle: {
+      design:
+        "Dropping alginate left xanthan gum as the carrier. Every crust model assumed it adds no cohesion, and nobody had checked.",
+      build:
+        "Our wet lab put xanthan solutions from 0.005 to 0.5 percent on dried sand, blew each dish for 5 seconds with a hairdryer, and weighed it before and after.",
+      test: "Untreated dishes lost 6.7 and 14.2 g. On 14 October every treated dish lost under 0.25 g. An earlier run disagrees at the two lowest concentrations.",
+      learn:
+        "The carrier is not neutral. Cells have to be compared with carrier-only sand, and the crust models miss a carrier cohesion we cannot size until the wind speed at the dish is known.",
     },
   },
   {

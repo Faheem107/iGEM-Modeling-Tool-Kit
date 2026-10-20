@@ -32,6 +32,7 @@ import { useTheme } from "@/components/theme-context";
 import { PortalIntro } from "@/components/portal-intro";
 import { PORTAL_INTROS } from "@/src/lib/portalIntros";
 import ModuleErrorBoundary from "@/src/components/ErrorBoundary";
+import XanthanSandPanel from "@/src/components/XanthanSandPanel";
 import Katex from "@/src/components/Katex";
 import { PORTAL_NAMES } from "@/content/copy";
 import { NAV } from "@/content/copy";
@@ -872,6 +873,9 @@ function XanthanFlowContent({ isLightMode }: { isLightMode: boolean }) {
           </span>
         </div>
       </Panel>
+
+      {/* 9. The carrier on sand, measured by our wet lab rather than modelled. */}
+      <XanthanSandPanel isLightMode={isLightMode} />
     </div>
   );
 }
